@@ -21,4 +21,16 @@ public class UserTest extends TestCase {
         assertEquals("User Login",user.getLogin());
     }
 
+    @Test
+    public void testGetUserName() throws Exception {
+        user.setUserName("User Name");
+        assertEquals("User Name", user.getUserName());
+    }
+
+    @Test
+    public void testGetUserId() throws Exception {
+        user.setUserId(1234567);
+        assertEquals(1234567, user.getUserId());
+    }
+
 }
