@@ -33,4 +33,11 @@ public class UserTest extends TestCase {
         assertEquals(1234567, user.getUserId());
     }
 
+    @Test
+    public void testSetUserId() throws Exception {
+        long IdUser = 11223344;
+        user.setUserId(IdUser);
+        assertEquals(IdUser,user.getUserId());
+    }
+
 }
