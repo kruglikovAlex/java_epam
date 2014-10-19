@@ -1,11 +1,8 @@
 package com.epam.brest.courses.domain;
 
-import org.junit.Assert;
+import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
-import junit.framework.TestCase;
-
-import static org.junit.Assert.assertEquals;
 
 public class UserTest extends TestCase {
     User user;
@@ -29,15 +26,8 @@ public class UserTest extends TestCase {
 
     @Test
     public void testGetUserId() throws Exception {
-        user.setUserId(1234567);
-        assertEquals(1234567, user.getUserId());
+        long idUser = (long)(Math.random()*100000);
+        user.setUserId(idUser);
+        assertEquals(idUser, user.getUserId());
     }
-
-    @Test
-    public void testSetUserId() throws Exception {
-        long IdUser = 11223344;
-        user.setUserId(IdUser);
-        assertEquals(IdUser,user.getUserId());
-    }
-
 }
