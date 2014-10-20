@@ -8,7 +8,10 @@
 
 	<modules>
 		<module>app-core</module>
-	</modules>
+	    <module>app-dao</module>
+    </modules>
+
+
 
 	<properties>
 		<project.build.sourceEncoging>UTF-8</project.build.sourceEncoging>
