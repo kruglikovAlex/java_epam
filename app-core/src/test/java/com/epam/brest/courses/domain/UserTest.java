@@ -1,11 +1,16 @@
 package com.epam.brest.courses.domain;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import org.junit.Before;
 import org.junit.Test;
+import junit.textui.TestRunner;
 
 public class UserTest extends TestCase {
     User user;
+    public UserTest(String testName){
+        super(testName);
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -29,5 +34,14 @@ public class UserTest extends TestCase {
         long idUser = (long)(Math.random()*100000);
         user.setUserId(idUser);
         assertEquals(idUser, user.getUserId());
+    }
+
+    public static void main(String[] args) {
+        TestRunner runner = new TestRunner();
+        TestSuite suite = new TestSuite();
+        suite.addTest(new UserTest("testGetLogin"));
+        suite.addTest(new UserTest("testGetUserName"));
+        suite.addTest(new UserTest("testGetUserId"));
+        runner.doRun(suite);
     }
 }
