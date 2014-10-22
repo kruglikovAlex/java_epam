@@ -36,12 +36,13 @@ public class UserTest extends TestCase {
         assertEquals(idUser, user.getUserId());
     }
 
-    public static void main(String[] args) {
+   /* @Test
+    public void testAll() throws Exception {
         TestRunner runner = new TestRunner();
         TestSuite suite = new TestSuite();
         suite.addTest(new UserTest("testGetLogin"));
         suite.addTest(new UserTest("testGetUserName"));
         suite.addTest(new UserTest("testGetUserId"));
         runner.doRun(suite);
-    }
+    }*/
 }

@@ -9,6 +9,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -22,5 +24,21 @@ public class UserDaoImplTest {
     public void getUsers() {
         List<User> users = userDao.getUser();
         assertNotNull(users);
+        assertFalse(users.isEmpty());
+    }
+
+    @Test
+    public void addUser(){
+        List<User> users = userDao.getUser();
+        int sizeBefore = users.size();
+        User user = new User();
+        user.setUserId(3L);
+        user.setLogin(("userLogin3"));
+        user.setUserName("userName3");
+
+        userDao.addUser(user);
+
+        users = userDao.getUser();
+        assertEquals(sizeBefore,users.size()-1);
     }
 }

@@ -20,7 +20,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void addUser(User user) {
-
+        jdbcTemplate.update("insert into USER (userid, login, name) values (?,?,?)",user.getUserId(), user.getLogin(), user.getUserName());
     }
 
     @Override
