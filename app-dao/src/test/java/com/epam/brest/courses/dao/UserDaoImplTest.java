@@ -9,9 +9,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/testApplicationContextSpring.xml"})
@@ -19,13 +17,6 @@ public class UserDaoImplTest {
 
     @Autowired
     private UserDao userDao;
-
-    @Test
-    public void getUsers() {
-        List<User> users = userDao.getUser();
-        assertNotNull(users);
-        assertFalse(users.isEmpty());
-    }
 
     @Test
     public void addUser(){
@@ -40,5 +31,23 @@ public class UserDaoImplTest {
 
         users = userDao.getUser();
         assertEquals(sizeBefore,users.size()-1);
+    }
+
+    @Test
+    public void getUsers() {
+        List<User> users = userDao.getUser();
+        assertNotNull(users);
+        assertFalse(users.isEmpty());
+    }
+
+    @Test
+    public void removeUsers() {
+        List<User> users = userDao.getUser();
+        int sizeBefore = users.size();
+        for (int i=0; i<sizeBefore; i++) {
+            userDao.removeUser(users.get(i).getUserId());
+        }
+        users = userDao.getUser();
+        assertTrue(users.isEmpty());
     }
 }

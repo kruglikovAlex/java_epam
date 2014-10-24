@@ -30,7 +30,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void removeUser(long userId) {
-
+        jdbcTemplate.update("delete from USER where userId=?", userId);
     }
 
     public class UserMapper implements RowMapper<User> {

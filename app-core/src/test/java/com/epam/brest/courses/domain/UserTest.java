@@ -1,5 +1,6 @@
 package com.epam.brest.courses.domain;
 
+import com.epam.brest.courses.domain.User;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.junit.Before;
@@ -20,7 +21,7 @@ public class UserTest extends TestCase {
     @Test
     public void testGetLogin() throws Exception {
         user.setLogin("User Login");
-        assertEquals("User Login",user.getLogin());
+        assertEquals("User Login", user.getLogin());
     }
 
     @Test
