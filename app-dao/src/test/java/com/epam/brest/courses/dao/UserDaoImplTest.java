@@ -36,17 +36,35 @@ public class UserDaoImplTest {
     @Test
     public void getUsers() {
         List<User> users = userDao.getUser();
-        assertNotNull(users);
-        assertFalse(users.isEmpty());
+        if (users.size() == 0) {
+
+        } else {
+            assertNotNull(users);
+            assertFalse(users.isEmpty());
+        }
+
     }
 
     @Test
     public void removeUsers() {
         List<User> users = userDao.getUser();
         int sizeBefore = users.size();
+        if (sizeBefore==0) {
+            User user = new User();
+            user.setUserId(3L);
+            user.setLogin(("userLogin3"));
+            user.setUserName("userName3");
+
+            userDao.addUser(user);
+
+            users = userDao.getUser();
+            sizeBefore = users.size();
+        }
+
         for (int i=0; i<sizeBefore; i++) {
             userDao.removeUser(users.get(i).getUserId());
         }
+
         users = userDao.getUser();
         assertTrue(users.isEmpty());
     }
