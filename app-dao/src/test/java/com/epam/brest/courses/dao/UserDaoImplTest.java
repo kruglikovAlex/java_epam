@@ -52,7 +52,6 @@ public class UserDaoImplTest {
             assertNotNull(users);
             assertFalse(users.isEmpty());
         }
-
     }
 
     @Test

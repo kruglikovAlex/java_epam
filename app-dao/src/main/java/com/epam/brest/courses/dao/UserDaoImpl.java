@@ -3,6 +3,9 @@ package com.epam.brest.courses.dao;
 import com.epam.brest.courses.domain.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -13,6 +16,8 @@ import java.util.List;
 public class UserDaoImpl implements UserDao {
 
     private JdbcTemplate jdbcTemplate;
+    private static final Logger logger = LogManager.getLogger();
+
 
     public void setDataSource(DataSource dataSource){
         jdbcTemplate = new JdbcTemplate(dataSource);
