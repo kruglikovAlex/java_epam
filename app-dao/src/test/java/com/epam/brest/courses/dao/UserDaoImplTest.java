@@ -37,7 +37,17 @@ public class UserDaoImplTest {
     public void getUsers() {
         List<User> users = userDao.getUser();
         if (users.size() == 0) {
+            User user = new User();
+            user.setUserId(3L);
+            user.setLogin(("userLogin3"));
+            user.setUserName("userName3");
 
+            userDao.addUser(user);
+
+            users = userDao.getUser();
+
+            assertNotNull(users);
+            assertFalse(users.isEmpty());
         } else {
             assertNotNull(users);
             assertFalse(users.isEmpty());
