@@ -1,17 +1,15 @@
 package com.epam.brest.courses.domain;
 
-import com.epam.brest.courses.domain.User;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.junit.Before;
 import org.junit.Test;
-import junit.textui.TestRunner;
+import static org.junit.Assert.assertEquals;
+public class UserTest {
 
-public class UserTest extends TestCase {
     User user;
-    public UserTest(String testName){
+
+    /*public UserTest(String testName){
         super(testName);
-    }
+    }*/
 
     @Before
     public void setUp() throws Exception {

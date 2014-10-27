@@ -3,13 +3,9 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/jdbc
-        http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
-
-    <bean id="userService" class="com.epam.brest.courses.service.UserServiceImpl">
-        <property name="userDao" ref="userDao" />
-    </bean>
+http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/jdbc
+http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
     <bean id="userDao" class="com.epam.brest.courses.dao.UserDaoImpl">
         <property name="dataSource" ref="dataSource" />
@@ -26,13 +22,4 @@
         <jdbc:script location="create-tables.sql"/>
         <jdbc:script location="data-script.sql"/>
     </jdbc:initialize-database>
-
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource"/>
-    </bean>
-
-    <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
-        <property name="transactionManager" ref="transactionManager" />
-    </bean>
-
 </beans>

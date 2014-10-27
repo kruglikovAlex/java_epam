@@ -1,18 +1,22 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>com.epam.brest.courses</groupId>
     <artifactId>sampleusermanagement</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+
     <modules>
         <module>app-core</module>
         <module>app-dao</module>
         <module>app-service</module>
     </modules>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <org.springframework.version>4.1.1.RELEASE</org.springframework.version>
     </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -23,6 +27,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>app-dao</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>app-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -78,6 +87,7 @@
 
         </dependencies>
     </dependencyManagement>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -113,6 +123,7 @@
             </plugins>
         </pluginManagement>
     </build>
+
     <reporting>
         <plugins>
             <plugin>
@@ -121,4 +132,5 @@
             </plugin>
         </plugins>
     </reporting>
+
 </project>
