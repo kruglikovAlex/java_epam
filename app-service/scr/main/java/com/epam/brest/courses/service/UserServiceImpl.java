@@ -42,30 +42,6 @@ public class UserServiceImpl implements UserService {
 }
     /*
     @Override
-    public void addUser(User user) {
-        Assert.notNull(user);
-        Assert.isNull(user.getUserId());
-        Assert.notNull(user.getLogin(), "User login should be specified.");
-        Assert.notNull(user.getUserName(), "User name should be specified.");
-        User existingUser = getUserByLogin(user.getLogin());
-        if (existingUser != null) {
-            throw new IllegalArgumentException("User is present in DB");
-        }
-        userDao.addUser(user);
-    }
-    @Override
-    public User getUserByLogin(String login) {
-        LOGGER.debug("getUserByLogin({}) ", login);
-        User user = null;
-        try {
-            user = userDao.getUserByLogin(login);
-        } catch (EmptyResultDataAccessException e) {
-            LOGGER.error("getUserByLogin({}) ", login);
-        }
-        return user;
-    }
-
-    @Override
     public void removeUser(long user_Id) {
         User user = userDao.getUserById(user_Id);
         Assert.isTrue(!user.getLogin().equals("login"));
