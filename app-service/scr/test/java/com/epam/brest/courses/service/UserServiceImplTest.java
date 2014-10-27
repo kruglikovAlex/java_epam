@@ -1,6 +1,7 @@
 package com.epam.brest.courses.service;
 
 import com.epam.brest.courses.domain.User;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,14 +47,27 @@ public class UserServiceImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddUserWithSameLogin() throws Exception {
-        userService.addUser(new User(null, ADMIN, ADMIN));
-        userService.addUser(new User(null, ADMIN, ADMIN));
+        User usertest = new User();
+        usertest.setUserId(null);
+        usertest.setLogin(ADMIN);
+        usertest.setUserName(ADMIN);
+        userService.addUser(usertest);
+        userService.addUser(usertest);
+        //userService.addUser(new User(null, ADMIN, ADMIN));
+        //userService.addUser(new User(null, ADMIN, ADMIN));
     }
 
     @Test
     public void testAddUser() throws Exception {
-        userService.addUser(new User(null, ADMIN, ADMIN));
+        User usertest = new User();
+        usertest.setUserId(null);
+        usertest.setLogin(ADMIN);
+        usertest.setUserName(ADMIN);
+        userService.addUser(usertest);
+        //userService.addUser(new User(null, ADMIN, ADMIN));
         User user = userService.getUserByLogin(ADMIN);
         Assert.assertEquals(ADMIN, user.getLogin());
     }
+
+
 }

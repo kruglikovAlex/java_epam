@@ -6,13 +6,13 @@ public class User{
 	private String login;
 	private String userName;
 
-    public User(){
-    }
-
     public User(long userId, String login, String userName){
         this.userId = userId;
         this.login = login;
         this.userName = userName;
+    }
+
+    public User(){
     }
 
     //-----------
