@@ -1,7 +1,6 @@
 package com.epam.brest.courses.service;
 
 import com.epam.brest.courses.domain.User;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,14 +11,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.Assert.*;
-
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:/testServiceApplicationContextSpring.xml" })
+@ContextConfiguration(locations = {"classpath*:/spring-services-test.xml"})
 @TransactionConfiguration(transactionManager="transactionManager", defaultRollback=false)
 @Transactional
-public class UserServiceImplTest {
 
+public class UserServiceImplTest {
     public static final String ADMIN = "admin";
 
     @Autowired
@@ -27,7 +24,6 @@ public class UserServiceImplTest {
 
     @Before
     public void setUp() throws Exception {
-
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -47,27 +43,14 @@ public class UserServiceImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddUserWithSameLogin() throws Exception {
-        User usertest = new User();
-        usertest.setUserId(null);
-        usertest.setLogin(ADMIN);
-        usertest.setUserName(ADMIN);
-        userService.addUser(usertest);
-        userService.addUser(usertest);
-        //userService.addUser(new User(null, ADMIN, ADMIN));
-        //userService.addUser(new User(null, ADMIN, ADMIN));
+        userService.addUser(new User(null, ADMIN, ADMIN));
+        userService.addUser(new User(null, ADMIN, ADMIN));
     }
 
     @Test
     public void testAddUser() throws Exception {
-        User usertest = new User();
-        usertest.setUserId(null);
-        usertest.setLogin(ADMIN);
-        usertest.setUserName(ADMIN);
-        userService.addUser(usertest);
-        //userService.addUser(new User(null, ADMIN, ADMIN));
+        userService.addUser(new User(null, ADMIN, ADMIN));
         User user = userService.getUserByLogin(ADMIN);
         Assert.assertEquals(ADMIN, user.getLogin());
     }
-
-
 }

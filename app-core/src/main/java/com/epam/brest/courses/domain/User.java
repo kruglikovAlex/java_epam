@@ -2,17 +2,17 @@ package com.epam.brest.courses.domain;
 
 public class User{
 
-	private long userId;
+	private Long userId;
 	private String login;
 	private String userName;
 
-    public User(long userId, String login, String userName){
+    public User(Long userId, String login, String userName){
         this.userId = userId;
         this.login = login;
         this.userName = userName;
     }
 
-    public User(){
+   public User(){
     }
 
     //-----------
