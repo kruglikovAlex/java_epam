@@ -33,7 +33,7 @@
 	</dependencies>
 
     <build>
-        <testSourceDirectory>src/test/java/com/epam/brest/courses/domain</testSourceDirectory>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
     </build>
 
 </project>

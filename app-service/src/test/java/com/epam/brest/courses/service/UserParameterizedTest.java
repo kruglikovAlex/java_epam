@@ -28,6 +28,7 @@ public class UserParameterizedTest {
     public UserParameterizedTest(User user) {
         this.user = user;
     }
+
     @Before
     public void setUp() throws Exception {
         TestContextManager testContextManager = new TestContextManager(getClass());

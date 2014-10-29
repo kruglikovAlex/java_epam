@@ -17,9 +17,7 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = { "classpath*:/testServiceApplicationContextSpring.xml" })
 @TransactionConfiguration(transactionManager="transactionManager", defaultRollback=false)
 @Transactional
-
 public class UserServiceImplTest {
-
     public static final String ADMIN = "admin";
 
     @Autowired
@@ -27,7 +25,6 @@ public class UserServiceImplTest {
 
     @Before
     public void setUp() throws Exception {
-
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -54,8 +51,8 @@ public class UserServiceImplTest {
     @Test
     public void testAddUser() throws Exception {
         userService.addUser(new User(null, ADMIN, ADMIN));
-        //User user = userService.getUserByLogin(ADMIN);
-        //Assert.assertEquals(ADMIN, user.getLogin());
+        User user = userService.getUserByLogin(ADMIN);
+        Assert.assertEquals(ADMIN, user.getLogin());
     }
 
     @Test(expected = IllegalArgumentException.class)

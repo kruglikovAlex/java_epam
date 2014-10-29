@@ -20,21 +20,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addUser(User user) {
-        LOGGER.debug("addUser(user={}) ", user);
         Assert.notNull(user);
-        Assert.notNull(user.getUserId());
+        Assert.isNull(user.getUserId());
         Assert.notNull(user.getLogin(), "User login should be specified.");
         Assert.notNull(user.getUserName(), "User name should be specified.");
-        Assert.hasLength(user.getLogin(), "User login mustn't empty");
-        Assert.hasLength(user.getUserName(), "User name mustn't empty");
-        User existingUser = userDao.getUserByLogin(user.getLogin());
+        User existingUser = getUserByLogin(user.getLogin());
         if (existingUser != null) {
-            LOGGER.error("getUserByLogin({}) ", user.getLogin());
             throw new IllegalArgumentException("User is present in DB");
         }
         userDao.addUser(user);
     }
-
     @Override
     public User getUserByLogin(String login) {
         LOGGER.debug("getUserByLogin({}) ", login);

@@ -25,7 +25,7 @@ public class UserDaoImpl implements UserDao {
 
     public static final String UPDATE_USER_SQL = "update USER set username=:username, login=:login where userid=:userid";
 
-    public static final String SELECT_USER_BY_LOGIN_SQL="select userid, login, username from USER where LCASE(login)=:login";
+    public static final String SELECT_USER_BY_LOGIN_SQL="select userid, login, username from USER where LCASE(login)=?";
     public static final String SELECT_USER_BY_ID_SQL="select userid, login, username from USER where userid=?";
     public static final String SELECT_USER_BY_NAME_SQL="select userid, login, username from USER where username=?";
     public static final String SELECT_ALL_USERS_SQL="select userid, login, username from USER";
@@ -75,7 +75,8 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User getUserByLogin(String login){
         LOGGER.debug("getUserByLogin(login={})",login);
-        return jdbcTemplate.queryForObject(SELECT_USER_BY_LOGIN_SQL,new UserMapper(),login.toLowerCase());
+        return jdbcTemplate.queryForObject(SELECT_USER_BY_LOGIN_SQL,
+                new String[]{login.toLowerCase()}, new UserMapper());
     }
 
     @Override
