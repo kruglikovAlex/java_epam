@@ -5,10 +5,10 @@ import java.util.List;
 public interface UserDao {
     public void addUser(User user);
     public List<User> getUsers();
-    public void removeUser(long userId);
+    public void removeUser(Long userId);
     public void removeAllUser(String login);
     public User getUserByLogin(String login);
-    public User getUserById(long userId);
+    public User getUserById(Long userId);
     public User getUserByUserName(String userName);
     public void updateUser(User user);
 }

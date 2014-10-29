@@ -3,6 +3,8 @@ package com.epam.brest.courses.domain;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 public class UserTest {
 
     User user;
@@ -30,9 +32,10 @@ public class UserTest {
 
     @Test
     public void testGetUserId() throws Exception {
-        long idUser = (long)(Math.random()*100000);
+        Long idUser;
+        idUser = new Long((long)(Math.random() * 10));
         user.setUserId(idUser);
-        assertEquals(idUser, user.getUserId());
+        assertTrue(idUser== user.getUserId());
     }
 
    /* @Test

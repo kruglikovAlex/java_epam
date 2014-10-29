@@ -25,7 +25,7 @@ public class UserDaoImpl implements UserDao {
 
     public static final String UPDATE_USER_SQL = "update USER set username=:username, login=:login where userid=:userid";
 
-    public static final String SELECT_USER_BY_LOGIN_SQL="select userid, login, username from USER where LCASE(login)=?";
+    public static final String SELECT_USER_BY_LOGIN_SQL="select userid, login, username from USER where LCASE(login)=:login";
     public static final String SELECT_USER_BY_ID_SQL="select userid, login, username from USER where userid=?";
     public static final String SELECT_USER_BY_NAME_SQL="select userid, login, username from USER where username=?";
     public static final String SELECT_ALL_USERS_SQL="select userid, login, username from USER";
@@ -47,7 +47,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void addUser(User user) {
         LOGGER.debug("addUser({})", user);
-        Map<String,Object> parameters = new HashMap(3);
+        Map<String,Object> parameters = new HashMap<String,Object>(3);
         parameters.put(USER_ID, user.getUserId());
         parameters.put(LOGIN, user.getLogin());
         parameters.put(USERNAME, user.getUserName());
@@ -61,7 +61,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void removeUser(long userId) {
+    public void removeUser(Long userId) {
         LOGGER.debug("removeUser(userId={})",userId);
         jdbcTemplate.update(DELETE_USER_SQL, userId);
     }
@@ -69,17 +69,17 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void removeAllUser(String login) {
         LOGGER.debug("removeAllUser(login={})",login);
-        jdbcTemplate.update(DELETE_ALL_USER_LIKE_LOGIN_SQL+login.toLowerCase()+"%' ");//, new String[]{login.toLowerCase()});
+        jdbcTemplate.update(DELETE_ALL_USER_LIKE_LOGIN_SQL+login.toLowerCase()+"%' ");
     }
 
     @Override
     public User getUserByLogin(String login){
         LOGGER.debug("getUserByLogin(login={})",login);
-        return jdbcTemplate.queryForObject(SELECT_USER_BY_LOGIN_SQL,new String[]{login.toLowerCase()}, new UserMapper());
+        return jdbcTemplate.queryForObject(SELECT_USER_BY_LOGIN_SQL,new UserMapper(),login.toLowerCase());
     }
 
     @Override
-    public User getUserById(long userId) {
+    public User getUserById(Long userId) {
         LOGGER.debug("getUserById(userId={})", userId);
         return jdbcTemplate.queryForObject(SELECT_USER_BY_ID_SQL, new UserMapper(),userId);
     }
@@ -93,7 +93,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void updateUser(User user){
         LOGGER.debug("updateUser({})", user);
-        Map<String, Object> parameters = new HashMap(3);
+        Map<String, Object> parameters = new HashMap<String, Object>(3);
         parameters.put(USER_ID, user.getUserId());
         parameters.put(LOGIN,user.getLogin());
         parameters.put(USERNAME, user.getUserName());

@@ -98,7 +98,7 @@ public class UserDaoImplTest {
         sizeBefore = users.size();
         int indexUser = (int)(Math.random()*sizeBefore);
 
-        long testid = users.get(indexUser).getUserId();
+        Long testid = users.get(indexUser).getUserId();
 
         user.setUserId(testid);
         user.setLogin(users.get(indexUser).getLogin());
@@ -126,7 +126,7 @@ public class UserDaoImplTest {
         sizeBefore = users.size();
         int indexUser = (int)(Math.random()*sizeBefore);
 
-        long testid = users.get(indexUser).getUserId();
+        Long testid = users.get(indexUser).getUserId();
         String testUser;
 
         user.setUserId(users.get(indexUser).getUserId());

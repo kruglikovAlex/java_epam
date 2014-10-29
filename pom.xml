@@ -54,6 +54,7 @@
                 <artifactId>spring-jdbc</artifactId>
                 <version>${org.springframework.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
@@ -66,18 +67,10 @@
                 <version>2.3.1</version>
                 <scope>test</scope>
             </dependency>
-
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.11</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.easymock</groupId>
-                <artifactId>easymock</artifactId>
-                <version>3.2</version>
                 <scope>test</scope>
             </dependency>
 
@@ -130,7 +123,6 @@
             </plugins>
         </pluginManagement>
     </build>
-
     <reporting>
         <plugins>
             <plugin>
