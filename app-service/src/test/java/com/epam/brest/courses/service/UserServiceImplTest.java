@@ -1,5 +1,6 @@
 package com.epam.brest.courses.service;
 
+import com.epam.brest.courses.dao.UserDao;
 import com.epam.brest.courses.domain.User;
 import org.junit.Assert;
 import org.junit.Before;
@@ -11,6 +12,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -19,12 +22,16 @@ import static org.junit.Assert.*;
 @Transactional
 public class UserServiceImplTest {
     public static final String ADMIN = "admin";
+    //private UserDao userDao;
+
+    int sizeBefore = 0;
 
     @Autowired
     private UserService userService;
 
     @Before
     public void setUp() throws Exception {
+
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -59,4 +66,20 @@ public class UserServiceImplTest {
     public void testUpdateEmptyUser() throws Exception {
         userService.updateUser(new User());
      }
+
+    @Test
+    public void testUpdateUser() throws Exception {
+        List<User> users = userService.getUsers();
+        sizeBefore = users.size();
+        User user = userService.getUserById(1+(long)(Math.random()*sizeBefore));
+        String testUser = user.toString();
+        user.setLogin("updateLogin");
+        user.setUserName("updateUserName");
+
+        userService.updateUser(user);
+        Long id_user = user.getUserId();
+
+        Assert.assertNotEquals(testUser, userService.getUserById(id_user).toString());
+        Assert.assertEquals(user.getLogin(),userService.getUserById(id_user).getLogin());
+    }
 }

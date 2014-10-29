@@ -34,6 +34,7 @@ public class UserServiceImplMockTest {
         userService.addUser(user);
         verify(userDao);
     }
+
     @Test
     public void addUser2() {
         User user = UserDataFixture.getNewUser();
@@ -46,6 +47,7 @@ public class UserServiceImplMockTest {
         userService.addUser(user);
         verify(userDao);
     }
+
     @Test
     public void getUserByLogin() {
         User user = UserDataFixture.getExistUser(1);
@@ -62,6 +64,52 @@ public class UserServiceImplMockTest {
         replay(userDao);
         userService.addUser(user);
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void AddNotNullIdUser() {
+
+        User user = UserDataFixture.getNotNullIdUser();
+
+        userDao.getUserByLogin(user.getLogin());
+        expectLastCall().andReturn(user);
+        replay(userDao);
+
+        userService.addUser(user);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void AddNullUser() {
+        User user = UserDataFixture.getNullUser();
+
+        userDao.getUserByLogin(user.getLogin());
+        expectLastCall().andReturn(user);
+        replay(userDao);
+
+        userService.addUser(user);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void AddEmptyUser() {
+        User user = UserDataFixture.getEmptyUser();
+
+        userDao.getUserByLogin(user.getLogin());
+        expectLastCall().andReturn(user);
+        replay(userDao);
+
+        userService.addUser(user);
+    }
+
+    @Test//(expected = IllegalArgumentException.class)
+    public void UpdateEmptyUser(){
+        User user = UserDataFixture.getEmptyUser();
+
+        userDao.getUserById(user.getUserId());
+        expectLastCall().andReturn(user);
+        replay(userDao);
+
+        userService.updateUser(new User());
+    }
+
     @Test(expected = UnsupportedOperationException.class)
     public void throwException() {
         User user = UserDataFixture.getNewUser();

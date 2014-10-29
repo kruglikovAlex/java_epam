@@ -19,4 +19,19 @@ public class UserDataFixture {
         user.setLogin("login");
         return user;
     }
+
+    public static User getNullUser() {
+        User user = new User(null,null,null);
+        return user;
+    }
+
+    public static User getNotNullIdUser() {
+        User user = new User(7L,"","");
+        return user;
+    }
+
+    public static User getEmptyUser() {
+        User user = new User();
+        return user;
+    }
 }
