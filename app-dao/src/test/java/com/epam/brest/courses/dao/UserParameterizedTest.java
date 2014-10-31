@@ -1,28 +1,28 @@
-package com.epam.brest.courses.service;
-
+package com.epam.brest.courses.dao;
 import com.epam.brest.courses.domain.User;
-import org.hsqldb.lib.Collection;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+
 import java.util.Arrays;
+import java.util.Collection;
 
-
-/**
- * Created by irina on 27.10.14.
- */
 @RunWith(Parameterized.class)
-@ContextConfiguration(locations = {"classpath*:/testServiceApplicationContextSpring.xml"})
+@ContextConfiguration(locations = {"classpath:/spring-dao-test.xml"})
 public class UserParameterizedTest {
+    public static final String ADMIN = "admin";
 
     @Autowired
-    private UserService userService;
+    private UserDao userDao;
+
     private User user;
 
     public UserParameterizedTest(User user) {
@@ -37,15 +37,16 @@ public class UserParameterizedTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void test() {
-        userService.addUser(user);
+        userDao.addUser(user);
     }
 
+    @Parameterized.Parameters
     public static Collection data() {
         Object[][] params = new Object[][] {
                 {null},
                 {new User()},
-                {new User(12l,"","")}
+                {new User(12L, "", "")}
         };
-        return (Collection) Arrays.asList(params);
+        return Arrays.asList(params);
     }
 }

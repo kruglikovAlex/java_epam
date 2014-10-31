@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:/testServiceApplicationContextSpring.xml" })
+@ContextConfiguration(locations = { "classpath:/spring-services-test.xml" })
 @TransactionConfiguration(transactionManager="transactionManager", defaultRollback=false)
 @Transactional
 public class UserServiceImplTest {

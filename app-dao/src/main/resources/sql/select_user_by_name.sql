@@ -1,0 +1,1 @@
+select userid, login, username from USER where username=?

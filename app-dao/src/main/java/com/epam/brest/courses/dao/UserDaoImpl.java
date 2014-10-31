@@ -1,12 +1,14 @@
 package com.epam.brest.courses.dao;
 
 import com.epam.brest.courses.domain.User;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-
+import org.springframework.util.Assert;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -18,17 +20,29 @@ import java.util.Map;
 
 public class UserDaoImpl implements UserDao {
 
-    public static final String ADD_NEW_USER_SQL = "insert into USER (userid, login, username) VALUES (:userid, :login, :username)";
+    @Value("#{T(org.apache.commons.io.FileUtils).readFileToString((new org.springframework.core.io.ClassPathResource('${insert_into_user_path}')).file)}")
+    public String addNewUserSql;
 
-    public static final String DELETE_USER_SQL = "delete from USER where userid = ?";
-    public static final String DELETE_ALL_USER_LIKE_LOGIN_SQL = "delete from USER where LCASE(login) like '%";
+    @Value("#{T(org.apache.commons.io.FileUtils).readFileToString((new org.springframework.core.io.ClassPathResource('${delete_all_users_path}')).file)}")
+    public String deleteAllUserSql;
 
-    public static final String UPDATE_USER_SQL = "update USER set username=:username, login=:login where userid=:userid";
+    @Value("#{T(org.apache.commons.io.FileUtils).readFileToString((new org.springframework.core.io.ClassPathResource('${delete_all_users_like_login_path}')).file)}")
+    public String deleteAllUserLikeLoginSql;
 
-    public static final String SELECT_USER_BY_LOGIN_SQL="select userid, login, username from USER where LCASE(login)=?";
-    public static final String SELECT_USER_BY_ID_SQL="select userid, login, username from USER where userid=?";
-    public static final String SELECT_USER_BY_NAME_SQL="select userid, login, username from USER where username=?";
-    public static final String SELECT_ALL_USERS_SQL="select userid, login, username from USER";
+    @Value("#{T(org.apache.commons.io.FileUtils).readFileToString((new org.springframework.core.io.ClassPathResource('${update_user_path}')).file)}")
+    public String updateUserSql;
+
+    @Value("#{T(org.apache.commons.io.FileUtils).readFileToString((new org.springframework.core.io.ClassPathResource('${select_user_by_login_path}')).file)}")
+    public String selectUserByLoginSql;
+
+    @Value("#{T(org.apache.commons.io.FileUtils).readFileToString((new org.springframework.core.io.ClassPathResource('${select_user_by_id_path}')).file)}")
+    public String selectUserByIdSql;
+
+    @Value("#{T(org.apache.commons.io.FileUtils).readFileToString((new org.springframework.core.io.ClassPathResource('${select_user_by_name_path}')).file)}")
+    public String selectUserByNameSql;
+
+    @Value("#{T(org.apache.commons.io.FileUtils).readFileToString((new org.springframework.core.io.ClassPathResource('${select_all_users_path}')).file)}")
+    public String selectAllUsersSql;
 
     public static final String USER_ID = "userid";
     public static final String LOGIN = "login";
@@ -47,48 +61,62 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void addUser(User user) {
         LOGGER.debug("addUser({})", user);
-        Map<String,Object> parameters = new HashMap<String,Object>(3);
-        parameters.put(USER_ID, user.getUserId());
-        parameters.put(LOGIN, user.getLogin());
-        parameters.put(USERNAME, user.getUserName());
-        namedJdbcTemplate.update(ADD_NEW_USER_SQL,parameters);
+        Assert.notNull(user);
+        Assert.isNull(user.getUserId());
+        Assert.notNull(user.getLogin(), "User login should be specified.");
+        Assert.notNull(user.getUserName(), "User name should be specified.");
+        User existingUser = null;
+        try {
+            existingUser = getUserByLogin(user.getLogin());
+        } catch (EmptyResultDataAccessException e) {
+            LOGGER.error("getUserByLogin({}) ", user.getLogin());
+            if (existingUser != null) {
+                throw new IllegalArgumentException("User is present in DB");
+            }
+
+            Map<String,Object> parameters = new HashMap<String,Object>(3);
+            parameters.put(USER_ID, user.getUserId());
+            parameters.put(LOGIN, user.getLogin());
+            parameters.put(USERNAME, user.getUserName());
+            namedJdbcTemplate.update(addNewUserSql,parameters);
+        }
     }
 
     @Override
     public List<User> getUsers() {
         LOGGER.debug("getUsers()");
-        return jdbcTemplate.query(SELECT_ALL_USERS_SQL, new UserMapper());
+        return jdbcTemplate.query(selectAllUsersSql, new UserMapper());
     }
 
     @Override
     public void removeUser(Long userId) {
         LOGGER.debug("removeUser(userId={})",userId);
-        jdbcTemplate.update(DELETE_USER_SQL, userId);
+        jdbcTemplate.update(deleteAllUserSql, userId);
     }
 
     @Override
     public void removeAllUser(String login) {
         LOGGER.debug("removeAllUser(login={})",login);
-        jdbcTemplate.update(DELETE_ALL_USER_LIKE_LOGIN_SQL+login.toLowerCase()+"%' ");
+        jdbcTemplate.update(deleteAllUserLikeLoginSql+login.toLowerCase()+"%' ");
     }
 
     @Override
     public User getUserByLogin(String login){
-        LOGGER.debug("getUserByLogin(login={})",login);
-        return jdbcTemplate.queryForObject(SELECT_USER_BY_LOGIN_SQL,
+        LOGGER.debug("getUserByLogin({}) ", login);
+        return jdbcTemplate.queryForObject(selectUserByLoginSql,
                 new String[]{login.toLowerCase()}, new UserMapper());
     }
 
     @Override
     public User getUserById(Long userId) {
         LOGGER.debug("getUserById(userId={})", userId);
-        return jdbcTemplate.queryForObject(SELECT_USER_BY_ID_SQL, new UserMapper(),userId);
+        return jdbcTemplate.queryForObject(selectUserByIdSql, new UserMapper(),userId);
     }
 
     @Override
     public User getUserByUserName(String username){
         LOGGER.debug("getUserByUserName()", username);
-        return jdbcTemplate.queryForObject(SELECT_USER_BY_NAME_SQL, new UserMapper(),username);
+        return jdbcTemplate.queryForObject(selectUserByNameSql, new UserMapper(),username);
     }
 
     @Override
@@ -98,7 +126,7 @@ public class UserDaoImpl implements UserDao {
         parameters.put(USER_ID, user.getUserId());
         parameters.put(LOGIN,user.getLogin());
         parameters.put(USERNAME, user.getUserName());
-        namedJdbcTemplate.update(UPDATE_USER_SQL,parameters);
+        namedJdbcTemplate.update(updateUserSql,parameters);
     }
 
     public class UserMapper implements RowMapper<User> {

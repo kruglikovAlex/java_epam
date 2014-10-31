@@ -99,7 +99,7 @@ public class UserServiceImplMockTest {
         userService.addUser(user);
     }
 
-    @Test//(expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void UpdateEmptyUser(){
         User user = UserDataFixture.getEmptyUser();
 

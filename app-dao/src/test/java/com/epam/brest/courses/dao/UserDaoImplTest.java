@@ -13,7 +13,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/testApplicationContextSpring.xml"})
+@ContextConfiguration(locations = {"classpath:/spring-dao-test.xml"})
 
 public class UserDaoImplTest {
     User user;
@@ -38,7 +38,7 @@ public class UserDaoImplTest {
     @Test
     public void testAddUser(){
         sizeBefore = users.size();
-        user.setUserId(3L);
+        //user.setUserId(null);
         user.setLogin(("userLogin3"));
         user.setUserName("userName3");
 
