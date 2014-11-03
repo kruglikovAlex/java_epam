@@ -23,11 +23,12 @@ public class UserServiceImplMockTest {
     public void clean() {
         reset(userDao);
     }
+
     @Test
     public void addUser() {
         User user = UserDataFixture.getNewUser();
         userDao.addUser(user);
-        expectLastCall();
+        expectLastCall().andReturn(Long.valueOf(1L));
         userDao.getUserByLogin(user.getLogin());
         expectLastCall().andReturn(null);
         replay(userDao);

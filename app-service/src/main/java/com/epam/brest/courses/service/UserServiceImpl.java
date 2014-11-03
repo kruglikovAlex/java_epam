@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addUser(User user) {
+    public Long addUser(User user) {
         Assert.notNull(user);
         Assert.isNull(user.getUserId());
         Assert.notNull(user.getLogin(), "User login should be specified.");
@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("User is present in DB");
         }
         userDao.addUser(user);
+        return user.getUserId();
     }
     @Override
     public User getUserByLogin(String login) {

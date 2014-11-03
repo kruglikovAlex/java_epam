@@ -5,10 +5,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.util.Assert;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -59,7 +63,8 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void addUser(User user) {
+    public Long addUser(User user) {
+        KeyHolder keyholder = new GeneratedKeyHolder();
         LOGGER.debug("addUser({})", user);
         Assert.notNull(user);
         Assert.isNull(user.getUserId());
@@ -74,12 +79,17 @@ public class UserDaoImpl implements UserDao {
                 throw new IllegalArgumentException("User is present in DB");
             }
 
-            Map<String,Object> parameters = new HashMap<String,Object>(3);
-            parameters.put(USER_ID, user.getUserId());
-            parameters.put(LOGIN, user.getLogin());
-            parameters.put(USERNAME, user.getUserName());
-            namedJdbcTemplate.update(addNewUserSql,parameters);
+
+            SqlParameterSource namedParameters;
+            namedParameters = new MapSqlParameterSource()
+                    .addValue(USERNAME, user.getUserName())
+                    .addValue(LOGIN, user.getLogin())
+                    .addValue(USER_ID, user.getUserId());
+            namedJdbcTemplate.update(addNewUserSql, namedParameters, keyholder);
+            LOGGER.debug("addUser(): id{}",keyholder.getKey());
+
         }
+        return (long)keyholder.getKey().intValue();
     }
 
     @Override
