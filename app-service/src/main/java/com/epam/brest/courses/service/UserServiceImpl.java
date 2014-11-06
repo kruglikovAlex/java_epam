@@ -5,6 +5,7 @@ import com.epam.brest.courses.domain.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import org.springframework.util.Assert;
 import java.util.List;
 
@@ -28,8 +29,8 @@ public class UserServiceImpl implements UserService {
         if (existingUser != null) {
             throw new IllegalArgumentException("User is present in DB");
         }
-        userDao.addUser(user);
-        return user.getUserId();
+
+        return userDao.addUser(user);
     }
     @Override
     public User getUserByLogin(String login) {
@@ -52,9 +53,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(Long userId) {
-        LOGGER.debug("getUserById(userId={}) ", userId);
-        return userDao.getUserById(userId);
+    public User getUserById(long userId) {
+        //LOGGER.debug("getUserById(userId={}) ", userId);
+        //return userDao.getUserById(userId);
+        throw new NotImplementedException();
     }
 
     @Override
@@ -77,8 +79,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getUsers() {
-        LOGGER.debug("getUsers()");
-        return userDao.getUsers();
+       // LOGGER.debug("getUsers()");
+       // return userDao.getUsers();
+        throw new NotImplementedException();
     }
 }
 

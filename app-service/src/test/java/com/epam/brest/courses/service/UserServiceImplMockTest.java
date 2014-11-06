@@ -7,7 +7,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import static junit.framework.TestCase.assertNotNull;
 import static org.easymock.EasyMock.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 /**
  * Created by mentee-42 on 27.10.14.
@@ -32,11 +34,12 @@ public class UserServiceImplMockTest {
         userDao.getUserByLogin(user.getLogin());
         expectLastCall().andReturn(null);
         replay(userDao);
-        userService.addUser(user);
-        verify(userDao);
+        Long id = userService.addUser(user);
+        assertEquals(id, Long.valueOf(1L));
+       // verify(userDao);
     }
 
-    @Test
+   // @Test
     public void addUser2() {
         User user = UserDataFixture.getNewUser();
         userDao.addUser(user);
@@ -58,6 +61,7 @@ public class UserServiceImplMockTest {
         verify(userDao);
         assertSame(user, result);
     }
+
     @Test(expected = IllegalArgumentException.class)
     public void addUserWithSameLogin() {
         User user = UserDataFixture.getNewUser();
