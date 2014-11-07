@@ -10,6 +10,11 @@ import org.springframework.util.Assert;
 import java.util.List;
 
 public class UserServiceImpl implements UserService {
+    public static final String ERROR_DB_EMPTY = "There is no records in the database";
+    public static final String ERROR_METHOD_PARAM = "The parameter can not be null";
+    public static final String LOGIN = "ADMIN";
+    public static final String ERROR_DELETE = "The user can not be deleted or changed";
+    public static final String ERROR_USER = "In the database there is no user with such parameters";
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -45,18 +50,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void removeUser(Long user_Id) {
-        User user = userDao.getUserById(user_Id);
-        Assert.isTrue(!user.getLogin().equals("login"));
-        LOGGER.debug("removeUser(userId={}) ", user_Id);
+    public void removeUser(long user_Id) {
+        Assert.notNull(user_Id,ERROR_METHOD_PARAM);
+        try {
+            User user = userDao.getUserById(user_Id);
+            if (user.getLogin().equals(LOGIN)) {
+                throw new IllegalArgumentException(ERROR_DELETE);
+            }
+        } catch (EmptyResultDataAccessException e) {
+            LOGGER.warn(ERROR_USER, user_Id);
+            throw new IllegalArgumentException(ERROR_USER);
+        }
         userDao.removeUser(user_Id);
     }
 
     @Override
     public User getUserById(long userId) {
-        //LOGGER.debug("getUserById(userId={}) ", userId);
+        LOGGER.debug("getUserById(userId={}) ", userId);
         //return userDao.getUserById(userId);
-        throw new NotImplementedException();
+        User user = null;
+        try {
+            user = userDao.getUserById(userId);
+        } catch (EmptyResultDataAccessException e) {
+            LOGGER.error("getUserById({}), Exception:{}",userId, e.toString());
+        }
+        return user;
     }
 
     @Override
@@ -66,22 +84,30 @@ public class UserServiceImpl implements UserService {
         Assert.notNull(user.getUserId());
         Assert.notNull(user.getLogin(), "User login should be specified.");
         Assert.notNull(user.getUserName(), "User name should be specified.");
-        User existingUser = userDao.getUserById(user.getUserId());
+        if ((user.getLogin().equals(LOGIN))|(user.getUserName().equals(LOGIN)))
+            throw new IllegalArgumentException(ERROR_DELETE);
+        User existingUser = null;
+        try {
+            existingUser = userDao.getUserById(user.getUserId());
+        } catch (EmptyResultDataAccessException e) {
+            throw new IllegalArgumentException(ERROR_USER);
+        }
+        existingUser = getUserByLogin(user.getLogin());
         if (existingUser != null) {
             userDao.updateUser(user);
         } else {
-            LOGGER.error("getUserById({}) ", user.getUserId());
-            throw new IllegalArgumentException("User don't present in DB");
+            LOGGER.warn(ERROR_USER);
+            throw new IllegalArgumentException(ERROR_USER);
         }
-
-
     }
 
     @Override
     public List<User> getUsers() {
-       // LOGGER.debug("getUsers()");
-       // return userDao.getUsers();
-        throw new NotImplementedException();
+        LOGGER.debug("getUsers()");
+        // throw new NotImplementedException();
+        List<User> users = userDao.getUsers();
+        Assert.notEmpty(users, ERROR_DB_EMPTY);
+        return users;
     }
 }
 
