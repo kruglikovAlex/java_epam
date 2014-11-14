@@ -24,7 +24,7 @@ public class UserServiceImplTest {
     public static final String ADMIN = "admin";
     //private UserDao userDao;
 
-    int sizeBefore = 0;
+    int size = 0;
 
     @Autowired
     private UserService userService;
@@ -56,7 +56,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void testAddUser() throws Exception {
+    public void testAddUser() {//throws Exception {
         userService.addUser(new User(null, ADMIN, ADMIN));
         User user = userService.getUserByLogin(ADMIN);
         Assert.assertEquals(ADMIN, user.getLogin());
@@ -67,19 +67,18 @@ public class UserServiceImplTest {
         userService.updateUser(new User());
      }
 
-   // @Test
+    @Test
     public void testUpdateUser() throws Exception {
         List<User> users = userService.getUsers();
-        sizeBefore = users.size();
-        User user = userService.getUserById(1+(long)(Math.random()*sizeBefore));
-        String testUser = user.toString();
+        size = users.size();
+
+        User user = userService.getUserById(1+(long)(Math.random()*size));
+
         user.setLogin("updateLogin");
         user.setUserName("updateUserName");
 
         userService.updateUser(user);
-        Long id_user = user.getUserId();
 
-        Assert.assertNotEquals(testUser, userService.getUserById(id_user).toString());
-        Assert.assertEquals(user.getLogin(),userService.getUserById(id_user).getLogin());
+        Assert.assertEquals(user.toString(), userService.getUserById(user.getUserId()).toString());
     }
 }

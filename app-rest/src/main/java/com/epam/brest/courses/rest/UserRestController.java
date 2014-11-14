@@ -70,8 +70,13 @@ public class UserRestController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity removeUser(@PathVariable Long id) {
-
-        userService.removeUser(id);
-        return new ResponseEntity("", HttpStatus.OK);
+        try {
+            userService.removeUser(id);
+            return new ResponseEntity("", HttpStatus.OK);
+        }
+        catch (Exception ex) {
+            return new ResponseEntity("User not found for id=" + id + " error:"
+                    + ex.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 }

@@ -25,8 +25,8 @@ import java.util.Map;
 public class UserDaoImpl implements UserDao {
 
     //@Value("#{T(org.apache.commons.io.FileUtils).readFileToString((new org.springframework.core.io.ClassPathResource('${insert_into_user_path}')).file)}")
-    @Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${insert_into_user_path}')).inputStream)}")
-    public String addNewUserSql;
+    //@Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${insert_into_user_path}')).inputStream)}")
+    public String addNewUserSql = "insert into USER (userid, login, username) VALUES (:userid, :login, :username)";
 
     //@Value("#{T(org.apache.commons.io.FileUtils).readFileToString((new org.springframework.core.io.ClassPathResource('${delete_all_users_path}')).file)}")
     @Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${delete_all_users_path}')).inputStream)}")
@@ -72,31 +72,22 @@ public class UserDaoImpl implements UserDao {
         Assert.isNull(user.getUserId());
         Assert.notNull(user.getLogin(), "User login should be specified.");
         Assert.notNull(user.getUserName(), "User name should be specified.");
-        User existingUser = null;
-        try {
-            existingUser = getUserByLogin(user.getLogin());
-        } catch (EmptyResultDataAccessException e) {
-            LOGGER.error("getUserByLogin({}) ", user.getLogin());
-            if (existingUser != null) {
-                throw new IllegalArgumentException("User is present in DB");
-            }
 
+        Map<String, Object> namedParameters;
+            namedParameters = new HashMap(3);
+            namedParameters.put(USERNAME, user.getUserName());
+            namedParameters.put(LOGIN, user.getLogin());
+            namedParameters.put(USER_ID, user.getUserId());
 
-            SqlParameterSource namedParameters;
-            namedParameters = new MapSqlParameterSource()
-                    .addValue(USERNAME, user.getUserName())
-                    .addValue(LOGIN, user.getLogin())
-                    .addValue(USER_ID, user.getUserId());
-            namedJdbcTemplate.update(addNewUserSql, namedParameters, keyholder);
-            LOGGER.debug("addUser(): id{}",keyholder.getKey());
+        namedJdbcTemplate.update(addNewUserSql, new MapSqlParameterSource(namedParameters), keyholder);
+        LOGGER.debug("addUser(): id{}",keyholder.getKey());
 
-        }
-        return (long)keyholder.getKey().intValue();
+        return keyholder.getKey().longValue();
     }
 
     @Override
     public List<User> getUsers() {
-        LOGGER.debug("getUsers()");
+        LOGGER.debug("get users()");
         return jdbcTemplate.query(selectAllUsersSql, new UserMapper());
     }
 
@@ -114,7 +105,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getUserByLogin(String login){
-        LOGGER.debug("getUserByLogin({}) ", login);
+        LOGGER.debug("getUserByLogin(login={}) ", login);
         return jdbcTemplate.queryForObject(selectUserByLoginSql,
                 new String[]{login.toLowerCase()}, new UserMapper());
     }
@@ -127,18 +118,21 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getUserByUserName(String username){
-        LOGGER.debug("getUserByUserName()", username);
+        LOGGER.debug("getUserByUserName(username={})", username);
         return jdbcTemplate.queryForObject(selectUserByNameSql, new UserMapper(),username);
     }
 
     @Override
     public void updateUser(User user){
+        KeyHolder keyholder = new GeneratedKeyHolder();
         LOGGER.debug("updateUser({})", user);
-        Map<String, Object> parameters = new HashMap<String, Object>(3);
-        parameters.put(USER_ID, user.getUserId());
-        parameters.put(LOGIN,user.getLogin());
-        parameters.put(USERNAME, user.getUserName());
-        namedJdbcTemplate.update(updateUserSql,parameters);
+        Map<String, Object> parameters = new HashMap(3);
+            parameters.put(USER_ID, user.getUserId());
+            parameters.put(LOGIN,user.getLogin());
+            parameters.put(USERNAME, user.getUserName());
+        namedJdbcTemplate.update(updateUserSql,new MapSqlParameterSource(parameters),keyholder);
+        LOGGER.debug("updateUser(): id{}",keyholder.getKey());
+       
     }
 
     public class UserMapper implements RowMapper<User> {

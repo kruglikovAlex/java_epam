@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByLogin(String login) {
         LOGGER.debug("getUserByLogin({}) ", login);
-        User user = null;
+        User user = null;//???????????????????????? testing without try
         try {
             user = userDao.getUserByLogin(login);
         } catch (EmptyResultDataAccessException e) {
@@ -67,7 +67,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(long userId) {
         LOGGER.debug("getUserById(userId={}) ", userId);
-        //return userDao.getUserById(userId);
         User user = null;
         try {
             user = userDao.getUserById(userId);
@@ -92,7 +91,6 @@ public class UserServiceImpl implements UserService {
         } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException(ERROR_USER);
         }
-        existingUser = getUserByLogin(user.getLogin());
         if (existingUser != null) {
             userDao.updateUser(user);
         } else {

@@ -49,4 +49,9 @@ public class UserParameterizedTest {
         };
         return Arrays.asList(params);
     }
+
+   /* @Test
+    public void testUpdate() {
+        userDao.updateUser(user);
+    }*/
 }
