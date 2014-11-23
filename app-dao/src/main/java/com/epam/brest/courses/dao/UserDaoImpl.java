@@ -2,6 +2,7 @@ package com.epam.brest.courses.dao;
 
 import com.epam.brest.courses.domain.User;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -13,7 +14,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.util.Assert;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,16 +24,16 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Component
 public class UserDaoImpl implements UserDao {
 
     //@Value("#{T(org.apache.commons.io.FileUtils).readFileToString((new org.springframework.core.io.ClassPathResource('${insert_into_user_path}')).file)}")
-    //@Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${insert_into_user_path}')).inputStream)}")
-    public String addNewUserSql = "insert into USER (userid, login, username) VALUES (:userid, :login, :username)";
+    @Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${insert_into_user_path}')).inputStream)}")
+    public String addNewUserSql;
 
     //@Value("#{T(org.apache.commons.io.FileUtils).readFileToString((new org.springframework.core.io.ClassPathResource('${delete_all_users_path}')).file)}")
-    @Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${delete_all_users_path}')).inputStream)}")
-    public String deleteAllUserSql;
+    @Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${delete_user_path}')).inputStream)}")
+    public String deleteUserSql;
 
     @Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${delete_all_users_like_login_path}')).inputStream)}")
     public String deleteAllUserLikeLoginSql;
@@ -56,33 +59,32 @@ public class UserDaoImpl implements UserDao {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    @Autowired
+    private DataSource dataSource;
+
     private JdbcTemplate jdbcTemplate;
     private NamedParameterJdbcTemplate namedJdbcTemplate;
 
-    public void setDataSource(DataSource dataSource){
+    @PostConstruct
+    public void init(){
         jdbcTemplate = new JdbcTemplate(dataSource);
         namedJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 
     @Override
     public Long addUser(User user) {
-        KeyHolder keyholder = new GeneratedKeyHolder();
-        LOGGER.debug("addUser({})", user);
+        LOGGER.debug("addUser({}) ", user);
         Assert.notNull(user);
         Assert.isNull(user.getUserId());
         Assert.notNull(user.getLogin(), "User login should be specified.");
         Assert.notNull(user.getUserName(), "User name should be specified.");
-
-        Map<String, Object> namedParameters;
-            namedParameters = new HashMap(3);
-            namedParameters.put(USERNAME, user.getUserName());
-            namedParameters.put(LOGIN, user.getLogin());
-            namedParameters.put(USER_ID, user.getUserId());
-
-        namedJdbcTemplate.update(addNewUserSql, new MapSqlParameterSource(namedParameters), keyholder);
-        LOGGER.debug("addUser(): id{}",keyholder.getKey());
-
-        return keyholder.getKey().longValue();
+        Map<String, Object> parameters = new HashMap(3);
+        parameters.put(USERNAME, user.getUserName());
+        parameters.put(LOGIN, user.getLogin());
+        parameters.put(USER_ID, user.getUserId());
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        namedJdbcTemplate.update(addNewUserSql, new MapSqlParameterSource(parameters), keyHolder);
+        return keyHolder.getKey().longValue();
     }
 
     @Override
@@ -94,7 +96,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void removeUser(Long userId) {
         LOGGER.debug("removeUser(userId={})",userId);
-        jdbcTemplate.update(deleteAllUserSql, userId);
+        jdbcTemplate.update(deleteUserSql, userId);
     }
 
     @Override

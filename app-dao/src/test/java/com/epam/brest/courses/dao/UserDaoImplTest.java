@@ -16,12 +16,12 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = {"classpath:/spring-dao-test.xml"})
 
 public class UserDaoImplTest {
-    User user;
-    List<User> users;
-    int sizeBefore = 0;
 
     @Autowired
     private UserDao userDao;
+    User user;
+    List<User> users;
+    int sizeBefore = 0;
 
     @Before
     public void setUp() throws Exception {

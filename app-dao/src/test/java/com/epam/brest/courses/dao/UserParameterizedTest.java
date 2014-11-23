@@ -1,4 +1,5 @@
 package com.epam.brest.courses.dao;
+
 import com.epam.brest.courses.domain.User;
 import org.junit.Before;
 import org.junit.Test;

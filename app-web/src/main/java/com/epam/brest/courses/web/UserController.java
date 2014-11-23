@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @RequestMapping("/submitData")
-    public String getInputForm(@RequestParam("login")String login, @RequestParam("name")String userName) {
+    public String getInputForm(@RequestParam("login")String login, @RequestParam("userName")String userName) {
         User user = new User();
         user.setLogin(login);
         user.setUserName(userName);
@@ -51,11 +51,3 @@ public class UserController {
     }
 
 }
-/*
-@RequestMapping("/submitData2")
-    public String deleteForm(@RequestParam("login")String login,@RequestParam("name")String userName){
-        User user = userService.getUserByLogin(login);
-        userService.removeUser(user.getUserId());
-        return "redirect:/userListData";
-    }
- */

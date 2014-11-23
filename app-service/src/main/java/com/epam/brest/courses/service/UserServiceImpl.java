@@ -4,11 +4,18 @@ import com.epam.brest.courses.dao.UserDao;
 import com.epam.brest.courses.domain.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import org.springframework.util.Assert;
+
+
 import java.util.List;
 
+@Component
 public class UserServiceImpl implements UserService {
     public static final String ERROR_DB_EMPTY = "There is no records in the database";
     public static final String ERROR_METHOD_PARAM = "The parameter can not be null";
@@ -18,13 +25,16 @@ public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    @Autowired
     private UserDao userDao;
 
+    @Autowired
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
     }
 
     @Override
+    @Transactional
     public Long addUser(User user) {
         Assert.notNull(user);
         Assert.isNull(user.getUserId());
@@ -37,6 +47,7 @@ public class UserServiceImpl implements UserService {
 
         return userDao.addUser(user);
     }
+
     @Override
     public User getUserByLogin(String login) {
         LOGGER.debug("getUserByLogin({}) ", login);
@@ -50,7 +61,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void removeUser(long user_Id) {
+    @Transactional
+    public void removeUser(Long user_Id) {
         Assert.notNull(user_Id,ERROR_METHOD_PARAM);
         try {
             User user = userDao.getUserById(user_Id);
@@ -65,7 +77,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(long userId) {
+    @Transactional
+    public User getUserById(Long userId) {
         LOGGER.debug("getUserById(userId={}) ", userId);
         User user = null;
         try {
@@ -77,6 +90,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void updateUser(User user) {
         LOGGER.debug("updateUser(user={}) ", user);
         Assert.notNull(user);
@@ -100,6 +114,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public List<User> getUsers() {
         LOGGER.debug("getUsers()");
         // throw new NotImplementedException();
@@ -108,4 +123,5 @@ public class UserServiceImpl implements UserService {
         return users;
     }
 }
+
 

@@ -9,7 +9,7 @@
         </File>
     </Appenders>
     <Loggers>
-        <Logger name="com.epam.brest.courses" level="DEBUG">
+        <Logger name="com.epam.brest.courses.client" level="DEBUG">
             <AppenderRef ref="Console"/>
         </Logger>
         <Root level="error">

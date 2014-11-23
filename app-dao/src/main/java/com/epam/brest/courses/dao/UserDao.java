@@ -1,4 +1,5 @@
 package com.epam.brest.courses.dao;
+
 import com.epam.brest.courses.domain.User;
 import java.util.List;
 

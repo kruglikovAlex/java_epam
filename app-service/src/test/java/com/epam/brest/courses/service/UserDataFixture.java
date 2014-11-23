@@ -5,6 +5,7 @@ import com.epam.brest.courses.domain.User;
  * Created by irina on 27.10.14.
  */
 public class UserDataFixture {
+
     public static User getNewUser(){
         User user = new User();
         user.setUserName("name");

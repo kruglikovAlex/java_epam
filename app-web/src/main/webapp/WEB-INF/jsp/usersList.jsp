@@ -35,7 +35,7 @@
             <td/>
             <td>${user.userId}</td>
             <td>${user.login}</td>
-            <td>${user.name}</td>
+            <td>${user.userName}</td>
         </tr>
     </c:forEach>
     </table>

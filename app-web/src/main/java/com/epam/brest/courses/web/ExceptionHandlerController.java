@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 /**
- * Created by irina on 14.11.14.
+ * Created by xalf on 11/11/14.
  */
 @ControllerAdvice
 public class ExceptionHandlerController {
@@ -30,4 +30,5 @@ public class ExceptionHandlerController {
         mav.addObject("url", request.getRequestURL());
         return mav;
     }
+
 }

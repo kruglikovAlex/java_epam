@@ -20,7 +20,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-
 /**
  * Created by mentee-42 on 3.11.14.
  */
@@ -33,13 +32,11 @@ public class VersionRestControllerMockTest {
     @Resource
     private VersionRestController versionRestController;
 
-
     @Before
     public void setUp() {
         this.mockMvc = standaloneSetup(versionRestController)
                 .setMessageConverters(new MappingJackson2HttpMessageConverter()).build();
     }
-
 
     @Test
     public void getRestApiVersionTest() throws Exception {
@@ -51,6 +48,4 @@ public class VersionRestControllerMockTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("\"1.0\""));
     }
-
-
 }

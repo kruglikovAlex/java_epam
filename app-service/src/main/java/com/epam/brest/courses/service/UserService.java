@@ -8,10 +8,15 @@ import java.util.List;
 public interface UserService {
 
     public Long addUser(User user);
+
     public User getUserByLogin(String login);
-    public void removeUser(long userId);
-    public User getUserById(long userId);
+
+    public User getUserById(Long userId);
+
+    public void removeUser(Long userId);
+
     public void updateUser(User user);
+
     public List<User> getUsers();
 
 }

@@ -1,4 +1,5 @@
 // The root URL for the RESTful services
+//var REST_URL = "http://localhost:8080/app-web-1.0.0-SNAPSHOT/users";
 var REST_URL = "http://localhost:8080/users";
 var currentUser;
 
@@ -27,6 +28,11 @@ $('#btnSave').click(function () {
     return false;
 });
 
+$('#btnRemove').click(function () {
+    removeUser();
+    return false;
+});
+
 function addUser() {
     console.log('addUser');
     $.ajax({
@@ -44,19 +50,37 @@ function addUser() {
         }
     });
 }
+
 function updateUser() {
     console.log('updateUser');
     $.ajax({
         type: 'PUT',
         contentType: 'application/json',
-        url: REST_URL + '/' + $('#userId').val(),
-        dataType: "json",
+        url: REST_URL,
         data: formToJSON(),
         success: function (data, textStatus, jqXHR) {
             alert('User updated successfully');
+            findAll();
         },
         error: function (jqXHR, textStatus, errorThrown) {
             alert('updateUser error: ' + textStatus);
+        }
+    });
+}
+
+function removeUser() {
+    console.log('removeUser');
+    $.ajax({
+        type: 'DELETE',
+        url: REST_URL + '/' + $('#userId').val(),
+        success: function (data, textStatus, jqXHR) {
+            alert('User removed successfully');
+            findAll();
+            currentUser = {};
+            renderDetails(currentUser);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            alert('removeUser error: ' + textStatus);
         }
     });
 }
@@ -82,7 +106,7 @@ function findById(id) {
         url: REST_URL + '/' + id,
         dataType: "json",
         success: function (data) {
-            console.log('findById success: ' + data.name);
+            console.log('findById success: ' + data.userName);
             currentUser = data;
             renderDetails(currentUser);
         },
@@ -98,7 +122,7 @@ function renderList(data) {
     var list = data == null ? [] : (data instanceof Array ? data : [data]);
     $('#userList li').remove();
     $.each(list, function (index, user) {
-        $('#userList').append('<li><a href="#" data-identity="' + user.userId + '">' + user.login + "  "+ user.name + '</a></li>');
+        $('#userList').append('<li><a href="#" data-identity="' + user.userId + '">' + user.login + "  "+ user.userName + '</a></li>');
     });
 }
 
@@ -110,7 +134,12 @@ function newUser() {
 function renderDetails(user) {
     $('#userId').val(user.userId);
     $('#login').val(user.login);
-    $('#name').val(user.name);
+    $('#userName').val(user.userName);
+    if (user.userId == undefined) {
+        $('#btnRemove').hide();
+    } else {
+        $('#btnRemove').show();
+    }
 }
 
 function search(searchKey) {
@@ -142,7 +171,7 @@ function findByLogin(login) {
         url: REST_URL + '/login/' + login,
         dataType: "json",
         success: function (data) {
-            console.log('findByLogin success: ' + data.name);
+            console.log('findByLogin success: ' + data.userName);
             currentUser = data;
             renderDetails(currentUser);
         },
@@ -159,6 +188,6 @@ function formToJSON() {
     return JSON.stringify({
         "userId": userId == "" ? null : userId,
         "login": $('#login').val(),
-        "name": $('#name').val()
+        "userName": $('#userName').val()
     });
 }
