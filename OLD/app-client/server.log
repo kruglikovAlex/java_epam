@@ -1,0 +1,7 @@
+2014-11-23 00:39:02,279 [main] addUser User{userid=null, login='login1', username='name1'}
+2014-11-23 00:39:02,628 [main] getUserByLogin login1
+2014-11-23 00:39:02,732 [main] updateUser User{userid=1, login='newlogin', username='newname'}
+2014-11-23 00:39:02,810 [main] getRestVesrsion http://host
+2014-11-23 00:39:02,857 [main] removeUser 1
+2014-11-23 00:39:02,916 [main] getUserById 1
+2014-11-23 00:39:02,954 [main] getUsers http://host
