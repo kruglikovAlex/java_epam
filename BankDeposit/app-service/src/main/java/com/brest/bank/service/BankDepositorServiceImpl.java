@@ -80,10 +80,8 @@ public class BankDepositorServiceImpl implements BankDepositorService {
         try {
 	    depositors = bankDepositorDao.getBankDepositorByIdDeposit(depositorIdDeposit);
         } catch (EmptyResultDataAccessException e) {
-            LOGGER.error("getBankDepositorById({}), Exception:{}",depositorIdDeposit, e.toString());
+            LOGGER.error("getBankDepositorById({}), Exception:{}", depositorIdDeposit, e.toString());
         }
-        Assert.notEmpty(depositors, ERROR_DB_EMPTY);
-        Assert.isTrue(depositors.size()>=0);
         return depositors;
     }
 

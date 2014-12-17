@@ -103,10 +103,12 @@ public class BankDepositServiceImpl implements BankDepositService {
             throw new IllegalArgumentException(ERROR_DEPOSIT);
         }
         List<BankDepositor> depositors = bankDepositorService.getBankDepositorByIdDeposit(depositId);
-        if (depositors.size()!=0){
+        if ((depositors.isEmpty())|(depositors.size()==0)) {
+            bankDepositDao.removeBankDeposit(depositId);
+        } else {
             Assert.isTrue(bankDepositorService.removeBankDepositorByIdDeposit(depositId));
             bankDepositDao.removeBankDeposit(depositId);
-        } else bankDepositDao.removeBankDeposit(depositId);
+        }
     }
 
     @Override
