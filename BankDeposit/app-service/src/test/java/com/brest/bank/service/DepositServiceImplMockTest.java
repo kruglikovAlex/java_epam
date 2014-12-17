@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.TestCase.assertNotNull;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
@@ -32,10 +33,15 @@ public class DepositServiceImplMockTest {
 
     @Autowired
     private BankDepositService depositService;
+
+    @Autowired
     private BankDepositorService depositorService;
 
     @Autowired
     private BankDepositDao depositDao;
+
+    @Autowired
+    private BankDepositorDao depositorDao;
 
     
    // @Before
@@ -211,13 +217,19 @@ public class DepositServiceImplMockTest {
         depositDao.removeBankDeposit(deposit.getDepositId());
         expectLastCall();
 
+        depositorDao.getBankDepositorByIdDeposit(depositors.get(1).getDepositorIdDeposit());
+        expectLastCall().andReturn(depositors);
+
+        depositorDao.removeBankDepositorByIdDeposit(depositors.get(1).getDepositorIdDeposit());
+        expectLastCall();
+
         depositorService.getBankDepositorByIdDeposit(deposit.getDepositId());
-        expectLastCall().andReturn(null);
+        expectLastCall().andReturn(depositors);
 
-        //depositorService.removeBankDepositorByIdDeposit(deposit.getDepositId());
-        //expectLastCall().andReturn(true);
+        depositorService.removeBankDepositorByIdDeposit(deposit.getDepositId());
+        expectLastCall().andReturn(true);
 
-        replay(depositDao);//,depositorService);
+        replay(depositDao,depositorDao,depositorService);
 
         depositService.removeBankDeposit(deposit.getDepositId());
 

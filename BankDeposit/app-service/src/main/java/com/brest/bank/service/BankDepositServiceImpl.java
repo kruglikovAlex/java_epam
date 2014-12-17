@@ -31,7 +31,11 @@ public class BankDepositServiceImpl implements BankDepositService {
 
     @Autowired
     private BankDepositDao bankDepositDao;
+
+    @Autowired
     private BankDepositorDao bankDepositorDao;
+
+    @Autowired
     private BankDepositorService bankDepositorService;
 
     @Autowired
@@ -103,7 +107,7 @@ public class BankDepositServiceImpl implements BankDepositService {
             throw new IllegalArgumentException(ERROR_DEPOSIT);
         }
         List<BankDepositor> depositors = bankDepositorService.getBankDepositorByIdDeposit(depositId);
-        if ((depositors.isEmpty())|(depositors.size()==0)) {
+        if ((depositors.isEmpty())|(depositors.size()==0)|(depositors==null)) {
             bankDepositDao.removeBankDeposit(depositId);
         } else {
             Assert.isTrue(bankDepositorService.removeBankDepositorByIdDeposit(depositId));
