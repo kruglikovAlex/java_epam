@@ -15,7 +15,7 @@
                 <label path="depositorIdDeposit">Id Deposit:</label>
                 	<input type="text" name="depositorIdDeposit" value='<c:out value="${depositor.depositorIdDeposit}"/>'/><br/>
                 <label path="depositorDateDeposit:">Date Deposit:</label>
-                	<input type="text" name="depositorDateDeposit" value='<c:out value="${depositor.depositorDateDeposit}"/>'/><br/>
+                	<input id="MyDate7" type="text" name="depositorDateDeposit" value='<c:out value="${depositor.depositorDateDeposit}"/>'/><br/>
                 <label path="depositorAmountDeposit:">Amount:</label>
                 	<input type="text" name="depositorAmountDeposit" value='<c:out value="${depositor.depositorAmountDeposit}"/>'/><br/>
                 <label path="depositorAmountPlusDeposit:">Amount Plus:</label>
@@ -23,12 +23,15 @@
                 <label path="depositorAmountMinusDeposit:">Amount Minus:</label>
                 	<input type="text" name="depositorAmountMinusDeposit" value='<c:out value="${depositor.depositorAmountMinusDeposit}"/>'/><br/>
                 <label path="depositorDateReturnDeposit:">Date Return:</label>
-                	<input type="text" name="depositorDateReturnDeposit" value='<c:out value="${depositor.depositorDateReturnDeposit}"/>'/><br/>
+                	<input id="MyDate8" type="text" name="depositorDateReturnDeposit" value='<c:out value="${depositor.depositorDateReturnDeposit}"/>'/><br/>
                 <label path="depositorMarkReturnDeposit:">Mark Return:</label>
                 	<input type="text" name="depositorMarkReturnDeposit" value='<c:out value="${depositor.depositorMarkReturnDeposit}"/>'/><br/>
 			</ul>
     		<input type="submit" name="Submit">
  </form>
 
+<script src="/resources/js/jquery-1.11.1.js"></script>
+<script src="/resources/js/jquery.maskedinput.js"></script>
+<script src="/resources/js/bankDeposit.js"></script>
 </body>
 </html>

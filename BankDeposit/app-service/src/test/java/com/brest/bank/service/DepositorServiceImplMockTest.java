@@ -159,7 +159,7 @@ public class DepositorServiceImplMockTest {
         assertSame(depositor, depositorResult);
     }
 
-    @Test()
+    @Test
     public void getDepositorByIdDeposit() throws ParseException{
     	List<BankDepositor> depositors = DataFixture.getExistDepositors();
 
@@ -174,7 +174,7 @@ public class DepositorServiceImplMockTest {
     	assertSame(depositors, depositorsResult); //????
     }
 
-    @Test()
+    @Test
     public void getDepositorBetweenDateDeposit() throws ParseException{
     	List<BankDepositor> depositors = DataFixture.getExistDepositors();
     	
@@ -189,7 +189,7 @@ public class DepositorServiceImplMockTest {
     	assertSame(depositors, depositorsResult); //????
     }
 
-    @Test()
+    @Test
     public void getDepositorBetweenDateReturnDeposit() throws ParseException{
     	List<BankDepositor> depositors = DataFixture.getExistDepositors();
     	
@@ -261,11 +261,11 @@ public class DepositorServiceImplMockTest {
         
         replay(depositorDao);
         
-        depositorService.removeBankDepositorByIdDeposit(depositors.get(1).getDepositorIdDeposit());
+        boolean res = depositorService.removeBankDepositorByIdDeposit(depositors.get(1).getDepositorIdDeposit());
                 
         verify(depositorDao);
 
-        //assertTrue(res);
+        assertTrue(res);
     }
 
     @Test(expected = IllegalArgumentException.class)

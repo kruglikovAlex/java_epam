@@ -9,6 +9,10 @@ TABLE {
     TH {
         background: #b0e0e6;
     }
+    TFOOT {
+        background: #b0e0e6;
+        font-weight: bold;
+    }
     a.knopkaDel {
       color: #fff; /* цвет текста */
       text-decoration: none; /* убирать подчёркивание у ссылок */
@@ -51,7 +55,7 @@ a.knopkaUpd {
     color: rgb(212,68,68);
     text-decoration: none;
     user-select: none;
-    padding: .2em 1.2em;
+    padding: .5em 1.2em;
     outline: none;
     border: 1px solid rgba(0,0,0,.1);
     border-radius: 2px;
@@ -75,10 +79,10 @@ a.buttonAdd {
     font-family: arial,sans-serif;
     font-size: 11px;
     font-weight: bold;
-    color: rgb(68,212,68);
+    color: rgb(90,212,90);
     text-decoration: none;
     user-select: none;
-    padding: .2em 1.2em;
+    padding: .5em 1.2em;
     outline: none;
     border: 1px solid rgba(0,0,0,.1);
     border-radius: 2px;
@@ -106,7 +110,7 @@ a.buttonUpd {
     color: rgb(68,68,212);
     text-decoration: none;
     user-select: none;
-    padding: .2em 1.2em;
+    padding: .5em 1.2em;
     outline: none;
     border: 1px solid rgba(0,0,0,.1);
     border-radius: 2px;

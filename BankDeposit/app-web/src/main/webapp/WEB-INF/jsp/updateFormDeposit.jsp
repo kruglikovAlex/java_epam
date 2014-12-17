@@ -24,7 +24,7 @@
                 	<input type="text" name="depositAddConditions" value='<c:out value="${deposit.depositAddConditions}"/>'/><br/>
                 </ul>
     		<input type="submit" name="Submit">
- </form>
+ 	</form>
 
 </body>
 </html>

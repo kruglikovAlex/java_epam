@@ -7,6 +7,7 @@ import com.brest.bank.service.BankDepositorService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 
@@ -23,11 +25,15 @@ public class DepositController {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
     @Autowired
     private BankDepositService depositService;
+
+    @Autowired
     private BankDepositorService depositorService;
 
-//    @RequestMapping("/")
+    //    @RequestMapping("/")
 //    public String init() {
 //        return "redirect:/depositsList";
 //    }
@@ -120,11 +126,23 @@ public class DepositController {
     }
 
     @RequestMapping("/depositsList")
-    public ModelAndView getListDepositsView() {
-        List<BankDeposit> deposits = depositService.getBankDeposits();
-        LOGGER.debug("deposits.size = " + deposits.size());
-        ModelAndView view = new ModelAndView("depositsList","deposits", deposits);
-
+    public ModelAndView getListDepositsView() throws ParseException{
+        List<BankDeposit> deposits = null;
+        List<BankDepositor> depositors = null;
+        ModelAndView view = new ModelAndView("depositsList");
+        try {
+            deposits = depositService.getBankDeposits();
+        } catch(IllegalArgumentException e) {
+            deposits.add(new BankDeposit(0L," ",0,0," ",0," "));
+        }
+        try {
+            depositors = depositorService.getBankDepositors();
+        } catch(IllegalArgumentException e) {
+            depositors.add(new BankDepositor(0L," ",0L,dateFormat.parse("2014-12-01"),0,0,0,dateFormat.parse("214-12-01"),0));
+        }
+        view.addObject("deposits",deposits);
+        view.addObject("depositors", depositors);
         return view;
     }
+
 }

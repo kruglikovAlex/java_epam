@@ -1,7 +1,9 @@
 package com.brest.bank.web;
 
+import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
 import com.brest.bank.service.BankDepositorService;
+import com.brest.bank.service.BankDepositService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +30,30 @@ public class DepositorController {
     @Autowired
     private BankDepositorService depositorService;
 
-    @RequestMapping("/inputFormDepositor")
-    public ModelAndView launchInputForm() {
+    @Autowired
+    private BankDepositService depositService;
+
+    @RequestMapping("/inputDepositor")
+    public ModelAndView InputForm() {
         return new ModelAndView("inputFormDepositor", "depositor", new BankDepositor());
     }
 
-    @RequestMapping("/submitDataDepositor")
+    @RequestMapping(value={"/inputFormDepositor"}, method = RequestMethod.GET)
+    public ModelAndView launchAddForm(RedirectAttributes redirectAttributes,
+                                         @RequestParam("depositorIdDeposit")Long depositorIdDeposit
+                                     ) {
+        try {
+            BankDepositor depositor = new BankDepositor();
+            depositor.setDepositorIdDeposit(depositorIdDeposit);
+            return new ModelAndView("inputFormDepositor", "depositor", depositor);
+        }catch(Exception e) {
+            LOGGER.debug(e);
+            redirectAttributes.addFlashAttribute( "message", e.getMessage());
+            return new ModelAndView("redirect:/depositorsList");
+        }
+    }
+
+    @RequestMapping(value={"/inputFormDepositor"}, method=RequestMethod.POST)
     public String getInputForm( @RequestParam("depositorName")String depositorName,
     							@RequestParam("depositorIdDeposit")Long depositorIdDeposit,
     							@RequestParam("depositorDateDeposit")String depositorDateDeposit,
@@ -127,8 +147,10 @@ public class DepositorController {
     @RequestMapping("/depositorsList")
     public ModelAndView getListDepositorsView() {
         List<BankDepositor> depositors = depositorService.getBankDepositors();
+        List<BankDeposit> deposits = depositService.getBankDeposits();
         LOGGER.debug("depositors.size = " + depositors.size());
-        ModelAndView view = new ModelAndView("depositorsList", "depositors", depositors);
+        ModelAndView view = new ModelAndView("depositsList", "depositors", depositors);
+        view.addObject("deposits",deposits);
         return view;
     }
 }
