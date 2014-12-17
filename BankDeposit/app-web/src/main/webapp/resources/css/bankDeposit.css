@@ -1,0 +1,127 @@
+TABLE {
+        width: 300px;
+        border-collapse: collapse;
+    }
+    TD, TH {
+        padding: 3px;
+        border: 1px solid black;
+    }
+    TH {
+        background: #b0e0e6;
+    }
+    a.knopkaDel {
+      color: #fff; /* цвет текста */
+      text-decoration: none; /* убирать подчёркивание у ссылок */
+      user-select: none; /* убирать выделение текста */
+      background: rgb(212,75,56); /* фон кнопки */
+      padding: .12em 1.0em; /* отступ от текста */
+      outline: none; /* убирать контур в Mozilla */
+    }
+    a.knopkaDel:hover { background: rgb(232,95,76); } /* при наведении курсора мышки */
+    a.knopkaDel:active { background: rgb(152,15,0); } /* при нажатии */
+
+a.knopkaAdd {
+      color: #fff; /* цвет текста */
+      text-decoration: none; /* убирать подчёркивание у ссылок */
+      user-select: none; /* убирать выделение текста */
+      background: rgb(75,212,56); /* фон кнопки */
+      padding: .12em 1.0em; /* отступ от текста */
+      outline: none; /* убирать контур в Mozilla */
+    }
+    a.knopkaAdd:hover { background: rgb(95,232,76); } /* при наведении курсора мышки */
+    a.knopkaAdd:active { background: rgb(15,152,0); } /* при нажатии */
+
+a.knopkaUpd {
+      color: #fff; /* цвет текста */
+      text-decoration: none; /* убирать подчёркивание у ссылок */
+      user-select: none; /* убирать выделение текста */
+      background: rgb(75,56,212); /* фон кнопки */
+      padding: .12em 1.0em; /* отступ от текста */
+          outline: none; /* убирать контур в Mozilla */
+      }
+      a.knopkaUpd:hover { background: rgb(95,76,232); } /* при наведении курсора мышки */
+      a.knopkaUpd:active { background: rgb(15,0,152); } /* при нажатии */
+
+
+ a.buttonDel {
+    display: inline-block;
+    font-family: arial,sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    color: rgb(212,68,68);
+    text-decoration: none;
+    user-select: none;
+    padding: .2em 1.2em;
+    outline: none;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 2px;
+    background: rgb(245,245,245) linear-gradient(#f4f4f4, #f1f1f1);
+    transition: all .218s ease 0s;
+  }
+  a.buttonDel:hover {
+    color: rgb(24,24,24);
+    border: 1px solid rgb(198,198,198);
+    background: #f7f7f7 linear-gradient(#f7f7f7, #f1f1f1);
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+  }
+  a.buttonDel:active {
+    color: rgb(51,51,51);
+    border: 1px solid rgb(204,204,204);
+    background: rgb(238,238,238) linear-gradient(rgb(238,238,238), rgb(224,224,224));
+    box-shadow: 0 1px 2px rgba(0,0,0,.1) inset;
+  }
+a.buttonAdd {
+    display: inline-block;
+    font-family: arial,sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    color: rgb(68,212,68);
+    text-decoration: none;
+    user-select: none;
+    padding: .2em 1.2em;
+    outline: none;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 2px;
+    background: rgb(245,245,245) linear-gradient(#f4f4f4, #f1f1f1);
+    transition: all .218s ease 0s;
+  }
+  a.buttonAdd:hover {
+    color: rgb(24,24,24);
+    border: 1px solid rgb(198,198,198);
+    background: #f7f7f7 linear-gradient(#f7f7f7, #f1f1f1);
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+  }
+  a.buttonAdd:active {
+    color: rgb(51,51,51);
+    border: 1px solid rgb(204,204,204);
+    background: rgb(238,238,238) linear-gradient(rgb(238,238,238), rgb(224,224,224));
+    box-shadow: 0 1px 2px rgba(0,0,0,.1) inset;
+  }
+
+a.buttonUpd {
+    display: inline-block;
+    font-family: arial,sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    color: rgb(68,68,212);
+    text-decoration: none;
+    user-select: none;
+    padding: .2em 1.2em;
+    outline: none;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 2px;
+    background: rgb(245,245,245) linear-gradient(#f4f4f4, #f1f1f1);
+    transition: all .218s ease 0s;
+  }
+  a.buttonUpd:hover {
+    color: rgb(24,24,24);
+    border: 1px solid rgb(198,198,198);
+    background: #f7f7f7 linear-gradient(#f7f7f7, #f1f1f1);
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+  }
+  a.buttonUpd:active {
+    color: rgb(51,51,51);
+    border: 1px solid rgb(204,204,204);
+    background: rgb(238,238,238) linear-gradient(rgb(238,238,238), rgb(224,224,224));
+    box-shadow: 0 1px 2px rgba(0,0,0,.1) inset;
+  }
