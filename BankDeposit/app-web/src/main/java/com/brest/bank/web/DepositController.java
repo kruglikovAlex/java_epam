@@ -134,10 +134,14 @@ public class DepositController {
             deposits = depositService.getBankDeposits();
         } catch(IllegalArgumentException e) {
             deposits.add(new BankDeposit(0L," ",0,0," ",0," "));
+        } catch(NullPointerException e) {
+            deposits.add(new BankDeposit(0L," ",0,0," ",0," "));
         }
         try {
             depositors = depositorService.getBankDepositors();
         } catch(IllegalArgumentException e) {
+            depositors.add(new BankDepositor(0L," ",0L,dateFormat.parse("2014-12-01"),0,0,0,dateFormat.parse("214-12-01"),0));
+        } catch(NullPointerException e) {
             depositors.add(new BankDepositor(0L," ",0L,dateFormat.parse("2014-12-01"),0,0,0,dateFormat.parse("214-12-01"),0));
         }
         view.addObject("deposits",deposits);

@@ -42,7 +42,7 @@ $(document).ready(function(){
                 <c:forEach items="${deposits}" var="deposit">
                     <tr>
                         <td/>
-                        <td><a href='<spring:url value="/inputFormDepositor" >  <spring:param name="depositorIdDeposit" value="${deposit.depositId}"/>   </spring:url>' class="buttonAdd"><b>ADD_DEPOSITOR(${deposit.depositId})</td>
+                        <td><a href='<spring:url value="/inputFormDepositor" >  <spring:param name="depositorIdDeposit" value="${deposit.depositId}"/>   </spring:url>' class="buttonAdd"><b>ADD_DEPOSITOR_(${deposit.depositId})</td>
                         <td>${deposit.depositName}</td>
                         <td>${deposit.depositMinTerm}</td>
                         <td>${deposit.depositMinAmount}</td>
@@ -59,15 +59,22 @@ $(document).ready(function(){
 
         <h2><spring:message code="depositor.list" /></h2>
         <ul>
-        <label path="depositorDateDeposit">Date deposit, (yyyy-mm-dd)- from :</label>
-            <input  id="MyDate1" type="text" name="StartDateDeposit"/>
-        <label path="depositorDateDeposit"> to :</label>
-            <input id="MyDate2" type="text" name="EndDateDeposit"/><br/>
-        <label path="depositorDateReturnDeposit">Date Return deposit, (yyyy-mm-dd)- from :</label>
-            <input id="MyDate3" type="text" name="StartDateReturnDeposit"/>
-        <label path="depositorDateReturnDeposit"> to :</label>
-            <input id="MyDate4" type="text" name="EndDateReturnDeposit"/>
-        <a href='<spring:url value="/filterBetweenDateDeposit" >  <spring:param name="depositorId" value="${depositor.depositorId}"/>   </spring:url>' class="buttonUpd"><b>UPDATE</b></a>
+        <a href='<spring:url value="/depositsList" > </spring:url>' class="buttonFilter">Clean filter</a>
+        <form action="/filterBetweenDateDeposit" method="POST">
+            <label path="depositorDateDeposit">Date deposit, (yyyy-mm-dd)- from :</label>
+                <input  id="MyDate1" type="text" name="StartDateDeposit"/>
+            <label path="depositorDateDeposit"> to :</label>
+                <input id="MyDate2" type="text" name="EndDateDeposit"/>
+            <input type="submit" name="Submit" value="filter go">
+        </form>
+
+        <form action="/filterBetweenDateReturnDeposit" method="POST">
+            <label path="depositorDateReturnDeposit">Date Return deposit, (yyyy-mm-dd)- from :</label>
+                <input id="MyDate3" type="text" name="StartDateReturnDeposit"/>
+            <label path="depositorDateReturnDeposit"> to :</label>
+                <input id="MyDate4" type="text" name="EndDateReturnDeposit"/>
+            <input type="submit" name="Submit" value="filter go">
+        </form>
         <p>
             <table frame="hsides" rules="cols">
                 <th>

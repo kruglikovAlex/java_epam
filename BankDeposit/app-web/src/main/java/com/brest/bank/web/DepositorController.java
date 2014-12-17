@@ -53,6 +53,42 @@ public class DepositorController {
         }
     }
 
+    //====
+    @RequestMapping("/filterBetweenDateDeposit")
+    public ModelAndView getFilterBetweenDate(@RequestParam("StartDateDeposit")String StartDateDeposit,
+                                             @RequestParam("EndDateDeposit")String EndDateDeposit
+                                            )throws ParseException{
+        Date startDate = dateFormat.parse(StartDateDeposit);
+        Date endDate = dateFormat.parse(EndDateDeposit);
+        List<BankDepositor> depositors = depositorService.getBankDepositorBetweenDateDeposit(startDate, endDate);
+        LOGGER.debug("depositors.size = " + depositors.size());
+        List<BankDeposit> deposits = depositService.getBankDeposits();
+        LOGGER.debug("deposits.size = " + deposits.size());
+
+        ModelAndView view = new ModelAndView("depositsList", "depositors", depositors);
+        view.addObject("deposits",deposits);
+
+        return  view;
+    }
+
+    @RequestMapping("/filterBetweenDateReturnDeposit")
+    public ModelAndView getFilterBetweenDateReturn( @RequestParam("StartDateReturnDeposit")String StartDateDeposit,
+                                                    @RequestParam("EndDateReturnDeposit")String EndDateDeposit
+                                                  )throws ParseException{
+        Date startDate = dateFormat.parse(StartDateDeposit);
+        Date endDate = dateFormat.parse(EndDateDeposit);
+        List<BankDepositor> depositors = depositorService.getBankDepositorBetweenDateReturnDeposit(startDate, endDate);
+        LOGGER.debug("depositors.size = " + depositors.size());
+        List<BankDeposit> deposits = depositService.getBankDeposits();
+        LOGGER.debug("deposits.size = " + deposits.size());
+
+        ModelAndView view = new ModelAndView("depositsList", "depositors", depositors);
+        view.addObject("deposits",deposits);
+
+        return  view;
+    }
+    //====
+
     @RequestMapping(value={"/inputFormDepositor"}, method=RequestMethod.POST)
     public String getInputForm( @RequestParam("depositorName")String depositorName,
     							@RequestParam("depositorIdDeposit")Long depositorIdDeposit,
