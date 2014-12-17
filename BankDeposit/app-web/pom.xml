@@ -67,6 +67,7 @@
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>
+                    <warName>BankDeposit</warName>
                 </configuration>
             </plugin>
 
