@@ -132,20 +132,20 @@ public class DepositController {
         ModelAndView view = new ModelAndView("depositsList");
         try {
             deposits = depositService.getBankDeposits();
+            view.addObject("deposits",deposits);
         } catch(IllegalArgumentException e) {
-            deposits.add(new BankDeposit(0L," ",0,0," ",0," "));
+            return new ModelAndView("inputFormDeposit", "deposit", new BankDeposit());
         } catch(NullPointerException e) {
-            deposits.add(new BankDeposit(0L," ",0,0," ",0," "));
+            return new ModelAndView("inputFormDeposit", "deposit", new BankDeposit());
         }
         try {
             depositors = depositorService.getBankDepositors();
+            view.addObject("depositors", depositors);
         } catch(IllegalArgumentException e) {
-            depositors.add(new BankDepositor(0L," ",0L,dateFormat.parse("2014-12-01"),0,0,0,dateFormat.parse("214-12-01"),0));
+            return view;
         } catch(NullPointerException e) {
-            depositors.add(new BankDepositor(0L," ",0L,dateFormat.parse("2014-12-01"),0,0,0,dateFormat.parse("214-12-01"),0));
+            return view;
         }
-        view.addObject("deposits",deposits);
-        view.addObject("depositors", depositors);
         return view;
     }
 
