@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>BankDeposit management</title>
+</head>
+<body>
+
+<fieldset style="width: 60%" >
+	<legend style="font-weight: bold">DEPOSITS. Check your REST query</legend><br>
+	<div class="header">
+		<button id="btnSearchByIdDeposit">GET-></button>
+		deposit by Id: <input type="text" id="searchKeyIdDeposit"/>
+		<button id="btnSearchByNameDeposit">GET-></button>
+		deposit by Name: <input type="text" id="searchKeyNameDeposit"/>
+
+	</div>
+	<p></p>
+		<form id="depositForm">
+
+    		<div class="mainDepositArea">
+				<table frame="hsides" rules="cols">
+	  				<th>
+	 					<td><label>Deposit Id:</label></td>
+						<td><label>Deposit Name:</label></td>
+						<td><label>Minimum Termin:</label></td>
+						<td><label>Minimum Amount:</label></td>
+						<td><label>Currency:</label></td>
+						<td><label>Interest Rate:</label></td>
+						<td><label>Add Conditions:</label></td>
+	  				</th>
+	  				<tr>
+						<td></td>
+						<td><input id="depositId" name="depositId" type="text" disabled size="10"/></a></td>
+	    				<td><input id="depositName" name="depositName" type="text" required/></td>
+	    				<td><input id="depositMinTerm" name="depositMinTerm" type="text" size="3"></td>
+	    				<td><input id="depositMinAmount" name="depositMinAmount" type="text"/></td>
+	    				<td><input id="depositCurrency" name="depositCurrency" type="text" size="3"/></td>
+	    				<td><input id="depositInterestRate" name="depositInterestRate" type="text" size="3"/></td>
+	    				<td><input id="depositAddConditions" name="depositAddConditions" type="text"/></td>
+	   				</tr>
+				</table>
+
+        		<button id="btnSaveDeposit">POST/PUT</button>
+        		<button id="btnRemoveDeposit" style="display:none">DELETE</button>
+				<button id="btnAddDeposit">CLEAR</button>
+    		</div>
+		</form>
+	<p></p>
+	<div class="depositListArea">
+		<table id="depositList" frame="hsides" rules="cols" style="width: 80%"><td></td></table>
+	</div>
+</fieldset>
+
+<p></p>
+
+
+
+<fieldset style="width: 60%" >
+	<legend style="font-weight: bold">DEPOSITORS. Check your REST query</legend><br>
+	<div class="header">
+		<button id="btnSearchByIdDepositor">GET-></button>
+		depositor by Id: <input type="text" id="searchKeyIdDepositor"/>
+		<button id="btnSearchByIdDepositDepositor">GET-></button>
+		depositor by Id deposit: <input type="text" id="searchKeyIdDepositDepositor"/>
+		<button id="btnSearchByNameDepositor">GET-></button>
+		depositor by Name: <input type="text" id="searchKeyNameDepositor"/></br>
+
+		<button id="btnSearchBetweenDateDepositor">GET-></button>
+		by date deposit, (yyyy-mm-dd)-from:<input  id="MyDate1" type="text"  size="10"/>
+		to:<input id="MyDate2" type="text"  size="10"/>
+		<button id="btnSearchBetweenDateReturnDepositor">GET-></button>
+		by date Return deposit, (yyyy-mm-dd)-from:<input id="MyDate3" type="text"  size="10"/>
+		to:	<input id="MyDate4" type="text"  size="10"/>
+
+	</div>
+	<p></p>
+		<form id="depositorForm">
+    	<div class="mainDepositorArea">
+			<table frame="hsides" rules="cols">
+	  			<th>
+	 				<td><label>Depositor Id:</label></td>
+					<td><label>Depositor Name:</label></td>
+					<td><label>Deposit Id:</label></td>
+					<td><label>Date Deposit:</label></td>
+					<td><label>Amount Deposit:</label></td>
+					<td><label>Amount Plus:</label></td>
+					<td><label>Amount Minus:</label></td>
+					<td><label>Date Return :</label></td>
+					<td><label>Return Mark:</label></td>
+	  			</th>
+	  			<tr>
+					<td></td>
+					<td><input id="depositorId" name="depositorId" type="text" disabled size="10"/></td>
+	   				<td><input id="depositorName" name="depositorName" type="text" required/></td>
+	        		<td><input id="depositorIdDeposit" name="depositorIdDeposit" type="text" required size="10" disabled></td>
+	        		<td><input id="depositorDateDeposit" name="depositorDateDeposit" type="datetime" required
+					   pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size=10/></td>
+	        		<td><input id="depositorAmountDeposit" name="depositorAmountDeposit" type="text" /></td>
+	        		<td><input id="depositorAmountPlusDeposit" name="depositorAmountPlusDeposit" type="text" /></td>
+	        		<td><input id="depositorAmountMinusDeposit" name="depositorAmountMinusDeposit" type="text"/></td>
+	        		<td><input id="depositorDateReturnDeposit" name="depositorDateReturnDeposit" type="datetime" required
+					   pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size=10/></td>
+	        		<td><input id="depositorMarkReturnDeposit" name="depositorMarkReturnDeposit" type="text" size="1"/></td>
+	   			</tr>
+			</table>
+        	<button id="btnSaveDepositor">POST/PUT</button>
+        	<button id="btnRemoveDepositor" style="display:none">DELETE</button>
+			<button id="btnAddDepositor">CLEAR</button>
+		</div>
+		</form>
+	<p></p>
+	<div class="depositorListArea">
+		<table id="depositorList" frame="hsides" rules="cols" style="width: 80%"></table>
+	</div>
+</fieldset>
+
+<script src="js/jquery-1.11.1.js"></script>
+<script src="js/main.js"></script>
+<script src="js/jquery.maskedinput.js"></script>
+</body>
+</html>
