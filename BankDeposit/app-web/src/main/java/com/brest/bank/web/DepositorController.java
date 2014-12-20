@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.text.SimpleDateFormat;
@@ -74,10 +75,56 @@ public class DepositorController {
     @RequestMapping("/filterBetweenDateReturnDeposit")
     public ModelAndView getFilterBetweenDateReturn( @RequestParam("StartDateReturnDeposit")String StartDateDeposit,
                                                     @RequestParam("EndDateReturnDeposit")String EndDateDeposit
-                                                  )throws ParseException{
+    )throws ParseException{
         Date startDate = dateFormat.parse(StartDateDeposit);
         Date endDate = dateFormat.parse(EndDateDeposit);
         List<BankDepositor> depositors = depositorService.getBankDepositorBetweenDateReturnDeposit(startDate, endDate);
+        LOGGER.debug("depositors.size = " + depositors.size());
+        List<BankDeposit> deposits = depositService.getBankDeposits();
+        LOGGER.debug("deposits.size = " + deposits.size());
+
+        ModelAndView view = new ModelAndView("depositsList", "depositors", depositors);
+        view.addObject("deposits",deposits);
+
+        return  view;
+    }
+
+    @RequestMapping("/filterByIdDepositor")
+    public ModelAndView getFilterDepositorById(@RequestParam("depositorById")Long depositorById
+    ){
+        BankDepositor depositor = depositorService.getBankDepositorById(depositorById);
+        List<BankDepositor> depositors = new ArrayList<BankDepositor>();
+        depositors.add(depositor);
+        LOGGER.debug("depositors.size = " + depositors.size());
+        List<BankDeposit> deposits = depositService.getBankDeposits();
+        LOGGER.debug("deposits.size = " + deposits.size());
+
+        ModelAndView view = new ModelAndView("depositsList", "depositors", depositors);
+        view.addObject("deposits",deposits);
+
+        return  view;
+    }
+
+    @RequestMapping("/filterByIdDepositDepositor")
+    public ModelAndView getFilterDepositorByIdDeposit(@RequestParam("depositorByIdDeposit")Long depositorByIdDeposit
+    ){
+        List<BankDepositor> depositors = depositorService.getBankDepositorByIdDeposit(depositorByIdDeposit);
+        LOGGER.debug("depositors.size = " + depositors.size());
+        List<BankDeposit> deposits = depositService.getBankDeposits();
+        LOGGER.debug("deposits.size = " + deposits.size());
+
+        ModelAndView view = new ModelAndView("depositsList", "depositors", depositors);
+        view.addObject("deposits",deposits);
+
+        return  view;
+    }
+
+    @RequestMapping("/filterByNameDepositor")
+    public ModelAndView getFilterDepositorByName(@RequestParam("depositorByName")String depositorByName
+    ){
+        BankDepositor depositor = depositorService.getBankDepositorByName(depositorByName);
+        List<BankDepositor> depositors = new ArrayList<BankDepositor>();
+        depositors.add(depositor);
         LOGGER.debug("depositors.size = " + depositors.size());
         List<BankDeposit> deposits = depositService.getBankDeposits();
         LOGGER.debug("deposits.size = " + deposits.size());

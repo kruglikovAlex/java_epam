@@ -1,7 +1,14 @@
 var REST_URL = "http://localhost:8080/depositsList";
 
+function changeFunc() {
+    var pattern=/['A-z']/;
+    if(!pattern.test(this.value)) alert('Check the correct fields - Find by name ');
+}
+
 $(document).ready(function(){
     var summ = 0;
+
+
 <!-- on open document -->
     $('td.Am').each(function(){
         summ += Number($(this).text());
@@ -47,4 +54,5 @@ $(document).ready(function(){
         $("#MyDate1,#MyDate2,#MyDate3,#MyDate4,#MyDate5,#MyDate6,#MyDate7,#MyDate8")
         .mask("9999-99-99",{completed:function(){alert("You typed the following: "+this.val());}});
     });
+
 });

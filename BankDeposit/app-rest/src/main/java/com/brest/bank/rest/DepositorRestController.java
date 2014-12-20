@@ -4,17 +4,18 @@ import com.brest.bank.domain.BankDepositor;
 import com.brest.bank.service.BankDepositorService;
 import java.text.SimpleDateFormat;
 
-import org.springframework.beans.factory.annotation.Autowired; //Dependency lookup
+import org.springframework.beans.factory.annotation.Autowired; //Dependency loookup
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Controller
-@RequestMapping("/depositors")
+//@RequestMapping("/depositors")
 public class DepositorRestController {
 	
 	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -23,7 +24,7 @@ public class DepositorRestController {
     private BankDepositorService depositorService;
 
 	//--- getBankDepositorById()
-    @RequestMapping(value = "/{depositorId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/depositors/{depositorId}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<BankDepositor> getDepositorById(@PathVariable Long depositorId) {
         try {
@@ -36,7 +37,7 @@ public class DepositorRestController {
     }
 
 	//--- getBankDepositorByIdDeposit()
-    @RequestMapping(value = "/deposit/{depositorIdDeposit}", method = RequestMethod.GET)
+    @RequestMapping(value = "/depositors/deposit/{depositorIdDeposit}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<List<BankDepositor>> getDepositorByIdDeposit(@PathVariable Long depositorIdDeposit) {
         try {
@@ -49,7 +50,7 @@ public class DepositorRestController {
     }
 
 	//--- getDepositorByName()
-    @RequestMapping(value = "/name/{depositorName}", method = RequestMethod.GET)
+    @RequestMapping(value = "/depositors/name/{depositorName}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<BankDepositor> getDepositorByName(@PathVariable String depositorName) {
         try{
@@ -62,7 +63,7 @@ public class DepositorRestController {
     }
 
 	//--- getDepositorBetweenDateDeposit()
-    @RequestMapping(value = "/date/{DateDeposit1}/{DateDeposit2}", method = RequestMethod.GET)
+    @RequestMapping(value = "/depositors/date/{DateDeposit1}/{DateDeposit2}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<List<BankDepositor>> getBankDepositorBetweenDateDeposit(@PathVariable String DateDeposit1, @PathVariable String DateDeposit2) {
         try{
@@ -75,7 +76,7 @@ public class DepositorRestController {
     }
 
 	//--- getDepositorBetweenDateReturnDeposit()
-    @RequestMapping(value = "/date/return/{DateDeposit1}/{DateDeposit2}", method = RequestMethod.GET)
+    @RequestMapping(value = "/depositors/date/return/{DateDeposit1}/{DateDeposit2}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<List<BankDepositor>> getDepositorBetweenDateReturnDeposit(@PathVariable String DateDeposit1, @PathVariable String DateDeposit2) {
         try{
@@ -88,7 +89,7 @@ public class DepositorRestController {
     }
 	
 	//--- getDepositors()
-    @RequestMapping(method= RequestMethod.GET)
+    @RequestMapping(value = "/depositors",method= RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<List<BankDepositor>> getDepositors() {
     	try {
@@ -101,7 +102,7 @@ public class DepositorRestController {
     }
 
 	//--- addDepositor()
-    @RequestMapping(method= RequestMethod.POST)
+    @RequestMapping(value = "/depositors",method= RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Long> addDepositor(@RequestBody BankDepositor depositor) {
         try {
@@ -119,7 +120,7 @@ public class DepositorRestController {
     }
 
 	//--- updateDepositor()
-    @RequestMapping(method = RequestMethod.PUT)
+    @RequestMapping(value = "/depositors",method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity updateDepositor(@RequestBody BankDepositor depositor) {
         try{
@@ -137,7 +138,7 @@ public class DepositorRestController {
     }
 
 	//--- removeDepositor()
-    @RequestMapping(value = "/{depositorId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/depositors/{depositorId}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity removeDepositor(@PathVariable Long depositorId) {
         try {
@@ -155,7 +156,7 @@ public class DepositorRestController {
     }
 
 	//--- removeDepositorByIdDeposit()
-    @RequestMapping(value = "/deposit/{depositorIdDeposit}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/depositors/deposit/{depositorIdDeposit}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity removeDepositorByIdDeposit(@PathVariable Long depositorIdDeposit) {
         try {

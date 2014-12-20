@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/deposits")
+//@RequestMapping("/deposits")
 public class DepositRestController {
 
     @Autowired
     private BankDepositService depositService;
 
 	//--- getBankDepositById()
-    @RequestMapping(value = "/{depositId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/deposits/{depositId}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<BankDeposit> getDepositById(@PathVariable Long depositId) {
         try {
@@ -32,7 +32,7 @@ public class DepositRestController {
     }
 
 	//--- getDepositByName()
-    @RequestMapping(value = "/name/{depositName}", method = RequestMethod.GET)
+    @RequestMapping(value = "/deposits/name/{depositName}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<BankDeposit> getDepositByName(@PathVariable String depositName) {
     	try {
@@ -45,7 +45,7 @@ public class DepositRestController {
 
 	//--- getDeposits()
     @ResponseBody
-    @RequestMapping(method= RequestMethod.GET)
+    @RequestMapping(value = "/deposits",method= RequestMethod.GET)
     public ResponseEntity<List<BankDeposit>> getDeposits() {
         try {
         	List deposits = depositService.getBankDeposits();
@@ -57,7 +57,7 @@ public class DepositRestController {
 
 	//--- addDeposit()
     @ResponseBody
-    @RequestMapping(method= RequestMethod.POST)
+    @RequestMapping(value = "/deposits",method= RequestMethod.POST)
     public ResponseEntity<Long> addDeposit(@RequestBody BankDeposit deposit) {
         try {
             if (deposit == null){
@@ -74,7 +74,7 @@ public class DepositRestController {
     }
 
     //--- UpdateDeposit()
-    @RequestMapping(method = RequestMethod.PUT)
+    @RequestMapping(value = "/deposits",method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity updateDeposit(@RequestBody BankDeposit deposit) {
         try {
@@ -92,7 +92,7 @@ public class DepositRestController {
     }
 
 	//--- RemoveDeposit()
-    @RequestMapping(value = "/{depositId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/deposits/{depositId}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity removeDeposit(@PathVariable Long depositId) {
         try {

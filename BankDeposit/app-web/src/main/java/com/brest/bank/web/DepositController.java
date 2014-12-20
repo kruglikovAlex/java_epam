@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -65,6 +66,37 @@ public class DepositController {
         
     }
 
+    @RequestMapping("/filterByIdDeposit")
+    public ModelAndView getFilterDepositById(@RequestParam("depositById")Long depositById
+    ){
+        BankDeposit deposit = depositService.getBankDepositById(depositById);
+        List<BankDeposit> deposits = new ArrayList<BankDeposit>();
+        deposits.add(deposit);
+        LOGGER.debug("deposits.size = " + deposits.size());
+        List<BankDepositor> depositors = depositorService.getBankDepositors();
+        LOGGER.debug("depositors.size = " + depositors.size());
+
+        ModelAndView view = new ModelAndView("depositsList", "deposits", deposits);
+        view.addObject("depositors",depositors);
+
+        return  view;
+    }
+
+    @RequestMapping("/filterByNameDeposit")
+    public ModelAndView getFilterDepositByName(@RequestParam("depositByName")String depositByName
+    ){
+        BankDeposit deposit = depositService.getBankDepositByName(depositByName);
+        List<BankDeposit> deposits = new ArrayList<BankDeposit>();
+        deposits.add(deposit);
+        LOGGER.debug("deposits.size = " + deposits.size());
+        List<BankDepositor> depositors = depositorService.getBankDepositors();
+        LOGGER.debug("depositors.size = " + depositors.size());
+
+        ModelAndView view = new ModelAndView("depositsList", "deposits", deposits);
+        view.addObject("depositors",depositors);
+
+        return  view;
+    }
     @RequestMapping(value={"/updateFormDeposit"}, method = RequestMethod.GET)
     public ModelAndView launchUpdateForm(RedirectAttributes redirectAttributes,
                                          @RequestParam("depositId")Long depositId

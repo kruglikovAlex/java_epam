@@ -3,7 +3,10 @@
 <%@ page isELIgnored="false"%>
 
 <html>
+<head>
+</head>
 <body>
+
 <form action="/inputFormDepositor" method="POST">
     	<form:form method="get" modelAttribute="depositor">
 			<h1><spring:message code="depositor.create" /></h1>
@@ -12,7 +15,8 @@
                 <label path="depositorIdDeposit">Id Deposit:</label>
                     <input type="text" name="depositorIdDeposit" value='<c:out value="${depositor.depositorIdDeposit}"/>' /><br/>
                 <label path="depositorDateDeposit">Date Deposit, (yyyy-mm-dd):</label>
-                    <input id="MyDate5" type="text" name="depositorDateDeposit" /><br/>
+                    <input id="MyDate5" type="text" name="depositorDateDeposit"
+                    pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size=10/><br/>
                 <label path="depositorAmountDeposit">Amount:</label>
                     <input type="text" name="depositorAmountDeposit"/><br/>
                 <label path="depositorAmountPlusDeposit">Amount Plus:</label>
@@ -20,9 +24,10 @@
                 <label path="depositorAmountMinusDeposit">Amount Minus:</label>
                     <input type="text" name="depositorAmountMinusDeposit"/><br/>
                 <label path="depositorDateReturnDeposit">Date Return, (yyyy-mm-dd):</label>
-                    <input id="MyDate6" type="text" name="depositorDateReturnDeposit"/><br/>
+                    <input id="MyDate6" type="text" name="depositorDateReturnDeposit"
+                    pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size=10/><br/>
                 <label path="depositorMarkReturnDeposit">Mark Return:</label>
-                    <input type="text" name="depositorMarkReturnDeposit"/><br/>
+                    <input id="depositorMarkReturnDeposit" name="depositorMarkReturnDeposit" type="text" value="0" size=1 /><br/>
             </ul>
             <input type="submit" name="Submit">
 </form>

@@ -6,28 +6,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-$(document).ready(function(){
-    var summ = 0;
-    $('td.summ1').mouseenter(function(){
-        alert("Указатель мыши на td.summ1");
-    });
-    $('td.summ1').click(function(){
-        $('td.Am').each(function(){
-            summ += Number($(this).text());
-        });
-        $('td.summ1').text(summ);
-    });
-});
-</script>
 </head>
 <body>
-<p><h1>OOO "New Age Bank"</h1></p>
+<h1>OOO "New Age Bank"</h1>
 <link href="<c:url value="/resources/css/bankDeposit.css" />" rel="stylesheet">
 
-<form:form method="get" modelAttribute="deposits">
+<script type="text/javascript">
+   function changeFunc() {
+    var pattern=/['A-z']/;
+    if(!pattern.test(this.value)) alert('Check the correct fields - Find by name ');
+   }
+</script>
+
+<div>
+  <form:form method="get" modelAttribute="deposits">
     <h2><spring:message code="deposit.list" /></h2>
-        <ul>
+     <ul>
+     <a href='<spring:url value="/depositsList" > </spring:url>' class="buttonFilter">Clean filter</a>
+             <div>
+                 <table style="width: 70%" border=0 rules="none">
+                     <tr>
+                         <td>
+                             <form action="/filterByIdDeposit" method="POST">
+                                 <label path="depositById">Find by id :</label>
+                                    <input  id="depositById" type="text" name="depositById" />
+                                 <input type="submit" name="Submit" value="<-Find">
+                             </form>
+                         </td>
+                         <td>
+                             <form action="/filterByNameDeposit" method="POST">
+                                 <label path="depositByName">Find by name :</label>
+                                     <input id="depositByName" type="text" name="depositByName" >
+                                 <input type="submit" name="Submit" value="<-Find">
+                             </form>
+                         </td>
+                     </tr>
+                 </table>
+             <div>
+        <p>
             <table frame="hsides" rules="cols">
                 <th>
           	        <td align=middle><b>Id</td>
@@ -55,26 +71,66 @@ $(document).ready(function(){
                     </tr>
                 </c:forEach>
             </table>
-        </ul>
+        </p>
+        </div>
+     </ul>
 
-        <h2><spring:message code="depositor.list" /></h2>
-        <ul>
+     <h2><spring:message code="depositor.list" /></h2>
+     <ul>
         <a href='<spring:url value="/depositsList" > </spring:url>' class="buttonFilter">Clean filter</a>
-        <form action="/filterBetweenDateDeposit" method="POST">
-            <label path="depositorDateDeposit">Date deposit, (yyyy-mm-dd)- from :</label>
-                <input  id="MyDate1" type="text" name="StartDateDeposit"/>
-            <label path="depositorDateDeposit"> to :</label>
-                <input id="MyDate2" type="text" name="EndDateDeposit"/>
-            <input type="submit" name="Submit" value="filter go">
-        </form>
-
-        <form action="/filterBetweenDateReturnDeposit" method="POST">
-            <label path="depositorDateReturnDeposit">Date Return deposit, (yyyy-mm-dd)- from :</label>
-                <input id="MyDate3" type="text" name="StartDateReturnDeposit"/>
-            <label path="depositorDateReturnDeposit"> to :</label>
-                <input id="MyDate4" type="text" name="EndDateReturnDeposit"/>
-            <input type="submit" name="Submit" value="filter go">
-        </form>
+        <div>
+            <table style="width: 90%" border=0 rules="none">
+                <tr>
+                    <td>
+                        <form action="/filterByIdDepositor" method="POST">
+                            <label path="depositorById">Find by id :</label>
+                               <input  id="depositorById" type="text" name="depositorById" />
+                            <input type="submit" name="Submit" value="<-Find">
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/filterByNameDepositor" method="POST">
+                            <label path="depositorByName">Find by name :</label>
+                                <input id="depositorByName" type="text" name="depositorByName" onchange="var pattern=/['A-z']/; if(!pattern.test(this.value)) alert('Check the correct fields - Find by name ');"/>
+                            <input type="submit" name="Submit" value="<-Find">
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <td COLSPAN="2">
+                        <form action="/filterByIdDepositDepositor" method="POST">
+                             <label path="depositorByIdDeposit">Find depositor by id deposit:</label>
+                             <input  id="depositorByIdDeposit" type="text" name="depositorByIdDeposit" />
+                             <input type="submit" name="Submit" value="<-Find">
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <form action="/filterBetweenDateDeposit" method="POST">
+                              <label path="depositorDateDeposit">Date deposit, (yyyy-mm-dd)- from :</label>
+                                 <input  id="MyDate1" type="text" name="StartDateDeposit"
+                                        pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size=10/>
+                              <label path="depositorDateDeposit"> to :</label>
+                                 <input id="MyDate2" type="text" name="EndDateDeposit"
+                                        pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size=10/>
+                              <input type="submit" name="Submit" value="<-Find">
+                            </form>
+                    </td>
+                    <td>
+                        <form action="/filterBetweenDateReturnDeposit" method="POST">
+                            <label path="depositorDateReturnDeposit">Date Return deposit, (yyyy-mm-dd)- from :</label>
+                               <input id="MyDate3" type="text" name="StartDateReturnDeposit"
+                                        pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size=10/>
+                            <label path="depositorDateReturnDeposit"> to :</label>
+                               <input id="MyDate4" type="text" name="EndDateReturnDeposit"
+                                        pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size=10/>
+                            <input type="submit" name="Submit" value="<-Find">
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
         <p>
             <table frame="hsides" rules="cols">
                 <th>
@@ -117,8 +173,8 @@ $(document).ready(function(){
             </table>
         </p>
         </ul>
-</form:form>
-
+  </form:form>
+</div>
 <script src="/resources/js/jquery-1.11.1.js"></script>
 <script src="/resources/js/jquery.maskedinput.js"></script>
 <script src="/resources/js/bankDeposit.js"></script>
