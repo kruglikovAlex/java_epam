@@ -12,6 +12,7 @@
         <module>app-service</module>
         <module>app-rest</module>
         <module>app-web</module>
+        <module>app-client</module>
     </modules>
 
     <properties>
@@ -45,6 +46,12 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>app-rest</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>app-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
