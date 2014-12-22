@@ -67,6 +67,18 @@ public class BankDepositorDaoImpl implements BankDepositorDao{
 	@Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${select_bankDepositor_by_name_path}')).inputStream)}")
 	public String selectBankDepositorByNameSql;
 
+	@Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${select_bankDepositor_summ_amounts_path}')).inputStream)}")
+	public String selectBankDepositorSummAmountsSQL;
+
+	@Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${select_bankDepositor_summ_amounts_deposit_between_date_deposit_path}')).inputStream)}")
+	public String selectBankDepositorSummAmountsDepositBetweenDateDepositSql;
+
+	@Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${select_bankDepositor_summ_amounts_deposit_between_date_return_deposit_path}')).inputStream)}")
+	public String selectBankDepositorSummAmountsDepositBetweenDateReturnDepositSql;
+
+	@Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${select_bankDepositor_summ_by_id_deposit_path}')).inputStream)}")
+	public String selectBankDepositorSummByIdDepositSql;
+
 	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	
 	public static final String DEPOSITOR_ID = "depositorId"; 
@@ -121,7 +133,31 @@ public class BankDepositorDaoImpl implements BankDepositorDao{
 		 LOGGER.debug("get depositors()");
 		 return jdbcTemplate.query(selectAllBankDepositorsSql, new BankDepositorMapper());
 	 }
-	 
+	 //==========================
+	 @Override
+	public BankDepositor getBankDepositorsAllSummAmount(){
+		LOGGER.debug("get All summ amount depositors()");
+		return jdbcTemplate.queryForObject(selectBankDepositorSummAmountsSQL, new BankDepositorMapper());
+	}
+
+	@Override
+	public BankDepositor getBankDepositorSummAmountDepositBetweenDateDeposit(Date startDate, Date endDate) {
+		LOGGER.debug("getBankDepositorSummAmountDepositBetweenDateDeposit(id:{} Dates:{}{})", dateFormat.format(startDate),dateFormat.format(endDate));
+		return jdbcTemplate.queryForObject(selectBankDepositorSummAmountsDepositBetweenDateDepositSql, new BankDepositorMapper(), dateFormat.format(startDate),dateFormat.format(endDate));
+	}
+
+	@Override
+	public BankDepositor getBankDepositorSummAmountDepositBetweenDateReturnDeposit(Date startDate, Date endDate) {
+		LOGGER.debug("getBankDepositorSummAmountDepositBetweenDateReturnDeposit(id:{} Dates:{}{})", dateFormat.format(startDate),dateFormat.format(endDate));
+		return jdbcTemplate.queryForObject(selectBankDepositorSummAmountsDepositBetweenDateReturnDepositSql, new BankDepositorMapper(), dateFormat.format(startDate), dateFormat.format(endDate));
+	}
+
+	@Override
+	public BankDepositor getBankDepositorsSummAmountByIdDeposit(Long depositorIdDeposit) {
+		LOGGER.debug("getBankDepositorsSummAmountByIdDeposit(depositorIdDeposit={})", depositorIdDeposit);
+		return jdbcTemplate.queryForObject(selectBankDepositorSummByIdDepositSql, new BankDepositorMapper(),depositorIdDeposit);
+	}
+	//===========================
 	@Override
 	public void removeBankDepositor(Long depositorId) {
 		LOGGER.debug("removeBankDepositor(depositorId={})",depositorId);

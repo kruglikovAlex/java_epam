@@ -13,6 +13,11 @@ public interface BankDepositorService {
 	public List<BankDepositor> getBankDepositorByIdDeposit(Long depositorIdDeposit);
 	public List<BankDepositor> getBankDepositorBetweenDateDeposit(Date startDate, Date endDate);
 	public List<BankDepositor> getBankDepositorBetweenDateReturnDeposit(Date startDate, Date endDate);
+	public BankDepositor getBankDepositorsAllSummAmount();
+	public BankDepositor getBankDepositorsSummAmountByIdDeposit(Long depositorIdDeposit);
+	public BankDepositor getBankDepositorSummAmountDepositBetweenDateDeposit(Date startDate, Date endDate);
+	public BankDepositor getBankDepositorSummAmountDepositBetweenDateReturnDeposit(Date startDate, Date endDate);
+
 	//--- change data
 	public Long addBankDepositor(BankDepositor bankDepositor);
 	public void removeBankDepositor(Long depositorId);

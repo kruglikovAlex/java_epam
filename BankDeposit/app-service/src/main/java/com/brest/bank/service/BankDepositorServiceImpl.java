@@ -98,20 +98,68 @@ public class BankDepositorServiceImpl implements BankDepositorService {
         Assert.notEmpty(depositors, ERROR_DB_EMPTY);
         return depositors;
     }
-    
+    //======================
     @Override
     @Transactional
-	public List<BankDepositor> getBankDepositorBetweenDateReturnDeposit(Date startDate, Date endDate){
-    	LOGGER.debug("getBankDepositorBetweenDateReturnDeposit(Date:{}{}) ", startDate, endDate);
-    	List<BankDepositor> depositors = null;
+    public BankDepositor getBankDepositorsAllSummAmount() {
+        LOGGER.debug("getBankDepositors()");
+        BankDepositor depositor = bankDepositorDao.getBankDepositorsAllSummAmount();
+        Assert.notNull(depositor, ERROR_DB_EMPTY);
+        return depositor;
+    }
+
+    @Override
+    @Transactional
+    public BankDepositor getBankDepositorsSummAmountByIdDeposit(Long depositorId) {
+        LOGGER.debug("getBankDepositorsSummAmountByIdDeposit(depositorId={}) ", depositorId);
+        BankDepositor depositor = null;
+        try {
+            depositor = bankDepositorDao.getBankDepositorsSummAmountByIdDeposit(depositorId);
+        } catch (EmptyResultDataAccessException e) {
+            LOGGER.error("getBankDepositorsSummAmountByIdDeposit({}), Exception:{}",depositorId, e.toString());
+        }
+        return depositor;
+    }
+    @Override
+    @Transactional
+	public BankDepositor getBankDepositorSummAmountDepositBetweenDateDeposit(Date startDate, Date endDate){
+    	LOGGER.debug("getBankDepositorSummAmountDepositBetweenDateDeposit(Date:{}{}) ", startDate, endDate);
+        BankDepositor depositor = null;
     	try {
-    		depositors = bankDepositorDao.getBankDepositorBetweenDateReturnDeposit(startDate, endDate);
+    		depositor = bankDepositorDao.getBankDepositorSummAmountDepositBetweenDateDeposit(startDate, endDate);
     	} catch (EmptyResultDataAccessException e) {
-    		LOGGER.error("getBankDepositorBetweenDateReturnDeposit({}{}), Exception:{}",startDate, endDate, e.toString());
+    		LOGGER.error("getBankDepositorSummAmountDepositBetweenDateDeposit({}{}), Exception:{}",startDate, endDate, e.toString());
     	}
-    	Assert.notEmpty(depositors, ERROR_DB_EMPTY);
-    	return depositors;
+    	Assert.notNull(depositor, ERROR_DB_EMPTY);
+    	return depositor;
 	}
+    @Override
+    @Transactional
+    public BankDepositor getBankDepositorSummAmountDepositBetweenDateReturnDeposit(Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositorSummAmountDepositBetweenDateReturnDeposit(Date:{}{}) ", startDate, endDate);
+        BankDepositor depositor = null;
+        try {
+            depositor = bankDepositorDao.getBankDepositorSummAmountDepositBetweenDateReturnDeposit(startDate, endDate);
+        } catch (EmptyResultDataAccessException e) {
+            LOGGER.error("getBankDepositorSummAmountDepositBetweenDateReturnDeposit({}{}), Exception:{}",startDate, endDate, e.toString());
+        }
+        Assert.notNull(depositor, ERROR_DB_EMPTY);
+        return depositor;
+    }
+    //======================
+    @Override
+    @Transactional
+    public List<BankDepositor> getBankDepositorBetweenDateReturnDeposit(Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositorBetweenDateReturnDeposit(Date:{}{}) ", startDate, endDate);
+        List<BankDepositor> depositors = null;
+        try {
+            depositors = bankDepositorDao.getBankDepositorBetweenDateReturnDeposit(startDate, endDate);
+        } catch (EmptyResultDataAccessException e) {
+            LOGGER.error("getBankDepositorBetweenDateReturnDeposit({}{}), Exception:{}",startDate, endDate, e.toString());
+        }
+        Assert.notEmpty(depositors, ERROR_DB_EMPTY);
+        return depositors;
+    }
 
     @Override
     @Transactional

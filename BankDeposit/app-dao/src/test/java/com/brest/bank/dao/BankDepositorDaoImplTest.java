@@ -147,7 +147,96 @@ public class BankDepositorDaoImplTest {
 		assertNotNull(bankDepositorsByIdDeposit);
 		assertFalse(bankDepositorsByIdDeposit.isEmpty());
 	}
-	
+	//============================
+	@Test
+	public void testGetBankDepositorsAllSummAmount() {
+		List<BankDepositor> depositors = bankDepositorDao.getBankDepositors();
+		Integer Summ1=0, Summ2=0, Summ3=0;
+		BankDepositor depositor = bankDepositorDao.getBankDepositorsAllSummAmount();
+
+		for (int i=0; i<depositors.size(); i++) {
+			Summ1 += bankDepositors.get(i).getDepositorAmountDeposit();
+			Summ2 += bankDepositors.get(i).getDepositorAmountPlusDeposit();
+			Summ3 += bankDepositors.get(i).getDepositorAmountMinusDeposit();
+		}
+		assertTrue(Summ1 == depositor.getDepositorAmountDeposit());
+		assertTrue(Summ2 == depositor.getDepositorAmountPlusDeposit());
+		assertTrue(Summ3 == depositor.getDepositorAmountMinusDeposit());
+	}
+
+	@Test
+	public void testGetBankDepositorsSummAmountByIdDeposit() {
+		sizeBefore = bankDepositors.size();
+		int indexDep = (int)(Math.random()*sizeBefore);
+		Long testid = bankDepositors.get(indexDep).getDepositorIdDeposit();
+
+		List<BankDepositor> depositors = bankDepositorDao.getBankDepositorByIdDeposit(testid);
+
+		assertNotNull(depositors);
+		assertFalse(depositors.isEmpty());
+
+		Integer Summ1=0, Summ2=0, Summ3=0;
+		BankDepositor depositor = bankDepositorDao.getBankDepositorsSummAmountByIdDeposit(testid);
+
+		for (int i=0; i<depositors.size(); i++) {
+			Summ1 += depositors.get(i).getDepositorAmountDeposit();
+			Summ2 += depositors.get(i).getDepositorAmountPlusDeposit();
+			Summ3 += depositors.get(i).getDepositorAmountMinusDeposit();
+		}
+		assertTrue(Summ1 == depositor.getDepositorAmountDeposit());
+		assertTrue(Summ2 == depositor.getDepositorAmountPlusDeposit());
+		assertTrue(Summ3 == depositor.getDepositorAmountMinusDeposit());
+	}
+
+	@Test
+	public void testGetBankDepositorSummAmountDepositBetweenDateDeposit() throws ParseException{
+		Date start = dateFormat.parse("2014-12-01");
+		Date end = dateFormat.parse("2014-12-03");
+		Integer Summ1=0, Summ2=0, Summ3=0;
+
+		List<BankDepositor> depositors = bankDepositorDao.getBankDepositorBetweenDateDeposit(start,end);
+		BankDepositor depositorSum = bankDepositorDao.getBankDepositorSummAmountDepositBetweenDateDeposit(start, end);
+
+		assertNotNull(depositors);
+		assertFalse(depositors.isEmpty());
+		assertNotNull(depositorSum);
+
+		for (int i=0; i<depositors.size(); i++){
+			Summ1 += depositors.get(i).getDepositorAmountDeposit();
+			Summ2 += depositors.get(i).getDepositorAmountPlusDeposit();
+			Summ3 += depositors.get(i).getDepositorAmountMinusDeposit();
+		}
+
+		assertTrue(Summ1 == depositorSum.getDepositorAmountDeposit());
+		assertTrue(Summ2 == depositorSum.getDepositorAmountPlusDeposit());
+		assertTrue(Summ3 == depositorSum.getDepositorAmountMinusDeposit());
+	}
+
+	@Test
+	public void testGetBankDepositorSummAmountDepositBetweenDateReturnDeposit() throws ParseException{
+		Date start = dateFormat.parse("2014-12-02");
+		Date end = dateFormat.parse("2014-12-04");
+		Integer Summ1=0, Summ2=0, Summ3=0;
+
+		List<BankDepositor> depositors = bankDepositorDao.getBankDepositorBetweenDateReturnDeposit(start,end);
+		BankDepositor depositorSum = bankDepositorDao.getBankDepositorSummAmountDepositBetweenDateReturnDeposit(start, end);
+
+		assertNotNull(depositors);
+		assertFalse(depositors.isEmpty());
+		assertNotNull(depositorSum);
+
+		for (int i=0; i<depositors.size(); i++){
+			Summ1 += depositors.get(i).getDepositorAmountDeposit();
+			Summ2 += depositors.get(i).getDepositorAmountPlusDeposit();
+			Summ3 += depositors.get(i).getDepositorAmountMinusDeposit();
+		}
+
+		assertTrue(Summ1 == depositorSum.getDepositorAmountDeposit());
+		assertTrue(Summ2 == depositorSum.getDepositorAmountPlusDeposit());
+		assertTrue(Summ3 == depositorSum.getDepositorAmountMinusDeposit());;
+
+	}
+	//============================
 	@Test
 	public void testGetBankDepositorBetweenDateDeposit() throws ParseException{
 		Date start = dateFormat.parse("2014-12-01");

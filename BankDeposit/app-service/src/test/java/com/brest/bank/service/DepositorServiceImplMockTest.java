@@ -8,7 +8,6 @@ import java.util.List;
 import com.brest.bank.dao.BankDepositorDao;
 import com.brest.bank.domain.BankDepositor;
 
-import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static junit.framework.Assert.assertTrue;
-import static junit.framework.TestCase.assertNotNull;
+
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -173,7 +172,79 @@ public class DepositorServiceImplMockTest {
     	assertEquals(depositors, depositorsResult); //????
     	assertSame(depositors, depositorsResult); //????
     }
+    //====================
+    @Test()
+    public void getBankDepositorsAllSummAmount() throws ParseException{
+        BankDepositor depositor = DataFixture.getExistDepositor(1L);
 
+        depositorDao.getBankDepositorsAllSummAmount();
+        expectLastCall().andReturn(depositor);
+        replay(depositorDao);
+
+        BankDepositor depositorResult = depositorService.getBankDepositorsAllSummAmount();
+        verify(depositorDao);
+
+        assertEquals(depositor, depositorResult);
+        assertSame(depositor, depositorResult);
+        assertTrue(depositor.getDepositorAmountDeposit()==depositorResult.getDepositorAmountDeposit());
+        assertTrue(depositor.getDepositorAmountPlusDeposit()==depositorResult.getDepositorAmountPlusDeposit());
+        assertTrue(depositor.getDepositorAmountMinusDeposit()==depositorResult.getDepositorAmountMinusDeposit());
+    }
+
+    @Test
+    public void getBankDepositorsSummAmountByIdDeposit() throws ParseException{
+        BankDepositor depositor = DataFixture.getExistDepositor(1L);
+
+        depositorDao.getBankDepositorsSummAmountByIdDeposit(depositor.getDepositorIdDeposit());
+        expectLastCall().andReturn(depositor);
+        replay(depositorDao);
+
+        BankDepositor depositorResult = depositorService.getBankDepositorsSummAmountByIdDeposit(depositor.getDepositorIdDeposit());
+        verify(depositorDao);
+
+        assertEquals(depositor, depositorResult);
+        assertSame(depositor, depositorResult);
+        assertTrue(depositor.getDepositorAmountDeposit()==depositorResult.getDepositorAmountDeposit());
+        assertTrue(depositor.getDepositorAmountPlusDeposit() == depositorResult.getDepositorAmountPlusDeposit());
+        assertTrue(depositor.getDepositorAmountMinusDeposit() == depositorResult.getDepositorAmountMinusDeposit());
+    }
+
+    @Test
+    public void getBankDepositorSummAmountDepositBetweenDateDeposi() throws ParseException{
+        BankDepositor depositor = DataFixture.getExistDepositor(1L);
+
+        depositorDao.getBankDepositorSummAmountDepositBetweenDateDeposit(dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
+        expectLastCall().andReturn(depositor);
+        replay(depositorDao);
+
+        BankDepositor depositorResult = depositorService.getBankDepositorSummAmountDepositBetweenDateDeposit(dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
+        verify(depositorDao);
+
+        assertEquals(depositor, depositorResult); //????
+        assertSame(depositor, depositorResult); //????
+        assertTrue(depositor.getDepositorAmountDeposit()==depositorResult.getDepositorAmountDeposit());
+        assertTrue(depositor.getDepositorAmountPlusDeposit()==depositorResult.getDepositorAmountPlusDeposit());
+        assertTrue(depositor.getDepositorAmountMinusDeposit()==depositorResult.getDepositorAmountMinusDeposit());
+    }
+
+    @Test
+    public void getBankDepositorSummAmountDepositBetweenDateReturnDeposi() throws ParseException{
+        BankDepositor depositor = DataFixture.getExistDepositor(1L);
+
+        depositorDao.getBankDepositorSummAmountDepositBetweenDateReturnDeposit(dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
+        expectLastCall().andReturn(depositor);
+        replay(depositorDao);
+
+        BankDepositor depositorResult = depositorService.getBankDepositorSummAmountDepositBetweenDateReturnDeposit(dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
+        verify(depositorDao);
+
+        assertEquals(depositor, depositorResult); //????
+        assertSame(depositor, depositorResult); //????
+        assertTrue(depositor.getDepositorAmountDeposit()==depositorResult.getDepositorAmountDeposit());
+        assertTrue(depositor.getDepositorAmountPlusDeposit()==depositorResult.getDepositorAmountPlusDeposit());
+        assertTrue(depositor.getDepositorAmountMinusDeposit()==depositorResult.getDepositorAmountMinusDeposit());
+    }
+    //====================
     @Test
     public void getDepositorBetweenDateDeposit() throws ParseException{
     	List<BankDepositor> depositors = DataFixture.getExistDepositors();
