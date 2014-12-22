@@ -9,11 +9,13 @@ import org.springframework.web.client.RestTemplate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class RestClient {
 
     private static final Logger LOGGER = LogManager.getLogger();
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     private String host;
     private RestTemplate restTemplate = new RestTemplate();
@@ -103,14 +105,18 @@ public class RestClient {
     //--- request method - GET -> .getForObject()
     public BankDepositor[] getBankDepositorBetweenDateDeposit(Date startDate, Date endDate){
         LOGGER.debug("getBankDepositorBetweenDateDeposit(Date:{}{})", startDate, endDate);
-        return restTemplate.getForObject(host+"/depositors/date/"+startDate+"/"+endDate, BankDepositor[].class);
+
+        return restTemplate.getForObject(host+"/depositors/date/"+dateFormat.format(startDate)+"/"+dateFormat.format(endDate), BankDepositor[].class);
     }
     //--- get depositor between dates of the alleged liquidation or full liquidation deposit from ... to
     //--- http://<name_host:port>/depositors/date/return/{DateDeposit1}/{DateDeposit2}
     //--- request method - GET -> .getForObject()
     public BankDepositor[] getBankDepositorBetweenDateReturnDeposit(Date startDate, Date endDate){
         LOGGER.debug("getBankDepositorBetweenDateReturnDeposit(Date:{}{})", startDate, endDate);
-        return restTemplate.getForObject(host+"/depositors/date/return/"+startDate+"/"+endDate, BankDepositor[].class);
+        String date1, date2;
+        date1 = dateFormat.format(startDate);
+        date2 = dateFormat.format(endDate);
+        return restTemplate.getForObject(host+"/depositors/date/return/"+date1+"/"+date2, BankDepositor[].class);
     }
 
     //--- change data

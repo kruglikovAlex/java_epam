@@ -20,6 +20,7 @@ import static junit.framework.TestCase.assertEquals;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -218,5 +219,298 @@ public class RestClientTest {
                 .andRespond(withSuccess("", MediaType.APPLICATION_JSON));
         client.removeBankDeposit(1L);
     }
+    //=============================
+    @Test
+    public void getBankDepositorByIdTest(){
+        mockServer.expect(requestTo(HOST+"/depositors/1"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess("{\"depositorId\":1,\"depositorName\":\"depositorName1\",\"depositorIdDeposit\":1,\"depositorDateDeposit\":1417381200000,\"depositorAmountDeposit\":10000,\"depositorAmountPlusDeposit\":1000,\"depositorAmountMinusDeposit\":11000,\"depositorDateReturnDeposit\":1417467600000,\"depositorMarkReturnDeposit\":0}",MediaType.APPLICATION_JSON));
+
+        BankDepositor depositor = client.getBankDepositorById(1L);
+
+        assertNotNull(depositor);
+
+        assertNotNull(depositor.getDepositorId());
+        assertEquals(new Long(1),depositor.getDepositorId());
+
+        assertNotNull(depositor.getDepositorName());
+        assertEquals("depositorName1",depositor.getDepositorName());
+
+        assertNotNull(depositor.getDepositorIdDeposit());
+        assertEquals(new Long(1),depositor.getDepositorIdDeposit());
+
+        assertNotNull(depositor.getDepositorDateDeposit());
+        assertEquals("2014-12-01",dateFormat.format(depositor.getDepositorDateDeposit()));
+
+        assertNotNull(depositor.getDepositorAmountDeposit());
+        assertEquals(10000,depositor.getDepositorAmountDeposit());
+
+        assertNotNull(depositor.getDepositorAmountPlusDeposit());
+        assertEquals(1000,depositor.getDepositorAmountPlusDeposit());
+
+        assertNotNull(depositor.getDepositorAmountMinusDeposit());
+        assertEquals(11000,depositor.getDepositorAmountMinusDeposit());
+
+        assertNotNull(depositor.getDepositorDateReturnDeposit());
+        assertEquals("2014-12-02",dateFormat.format(depositor.getDepositorDateReturnDeposit()));
+
+        assertNotNull(depositor.getDepositorMarkReturnDeposit());
+        assertEquals(0,depositor.getDepositorMarkReturnDeposit());
+
+        test = "BankDepositor: { depositorId =1, depositorName =depositorName1, depositorIdDeposit =1, depositorDateDeposit =2014-12-01, depositorAmountDeposit =10000, depositorAmountPlusDeposit =1000, depositorAmountMinusDeposit =11000, depositorDateReturnDeposit =2014-12-02, depositorMarkReturnDeposit =0}";
+        assertEquals(test,depositor.toString());
+    }
+
+    @Test
+    public void getBankDepositorByIdDepositTest(){
+        mockServer.expect(requestTo(HOST+"/depositors/deposit/1"))
+                .andExpect(method(HttpMethod.GET))
+        .andRespond(withSuccess("[{\"depositorId\":1,\"depositorName\":\"depositorName1\",\"depositorIdDeposit\":1,\"depositorDateDeposit\":1417381200000,\"depositorAmountDeposit\":10000,\"depositorAmountPlusDeposit\":1000,\"depositorAmountMinusDeposit\":11000,\"depositorDateReturnDeposit\":1417467600000,\"depositorMarkReturnDeposit\":0}," +
+                "{\"depositorId\":2,\"depositorName\":\"depositorName2\",\"depositorIdDeposit\":1,\"depositorDateDeposit\":1417381200000,\"depositorAmountDeposit\":10000,\"depositorAmountPlusDeposit\":1000,\"depositorAmountMinusDeposit\":11000,\"depositorDateReturnDeposit\":1417467600000,\"depositorMarkReturnDeposit\":0}," +
+                "{\"depositorId\":3,\"depositorName\":\"depositorName3\",\"depositorIdDeposit\":1,\"depositorDateDeposit\":1417381200000,\"depositorAmountDeposit\":10000,\"depositorAmountPlusDeposit\":1000,\"depositorAmountMinusDeposit\":11000,\"depositorDateReturnDeposit\":1417467600000,\"depositorMarkReturnDeposit\":0}]"
+                , MediaType.APPLICATION_JSON));
+
+        BankDepositor[] depositors = client.getBankDepositorByIdDeposit(1L);
+
+        assertEquals(3, depositors.length);
+        assertNotNull(depositors[0]);
+        assertNotNull(depositors[1]);
+        assertNotNull(depositors[2]);
+
+
+        assertNotNull(depositors[0].getDepositorId());
+        assertEquals(new Long(1),depositors[0].getDepositorId());
+
+        assertNotNull(depositors[0].getDepositorName());
+        assertEquals("depositorName1",depositors[0].getDepositorName());
+
+        assertNotNull(depositors[0].getDepositorIdDeposit());
+        assertEquals(new Long(1),depositors[0].getDepositorIdDeposit());
+
+        assertNotNull(depositors[0].getDepositorDateDeposit());
+        assertEquals("2014-12-01",dateFormat.format(depositors[0].getDepositorDateDeposit()));
+
+        assertNotNull(depositors[0].getDepositorAmountDeposit());
+        assertEquals(10000,depositors[0].getDepositorAmountDeposit());
+
+        assertNotNull(depositors[0].getDepositorAmountPlusDeposit());
+        assertEquals(1000,depositors[0].getDepositorAmountPlusDeposit());
+
+        assertNotNull(depositors[0].getDepositorAmountMinusDeposit());
+        assertEquals(11000,depositors[0].getDepositorAmountMinusDeposit());
+
+        assertNotNull(depositors[0].getDepositorDateReturnDeposit());
+        assertEquals("2014-12-02",dateFormat.format(depositors[0].getDepositorDateReturnDeposit()));
+
+        assertNotNull(depositors[0].getDepositorMarkReturnDeposit());
+        assertEquals(0,depositors[0].getDepositorMarkReturnDeposit());
+
+        test = "BankDepositor: { depositorId =1, depositorName =depositorName1, depositorIdDeposit =1, depositorDateDeposit =2014-12-01, depositorAmountDeposit =10000, depositorAmountPlusDeposit =1000, depositorAmountMinusDeposit =11000, depositorDateReturnDeposit =2014-12-02, depositorMarkReturnDeposit =0}";
+        assertEquals(test,depositors[0].toString());
+        test = "BankDepositor: { depositorId =2, depositorName =depositorName2, depositorIdDeposit =1, depositorDateDeposit =2014-12-01, depositorAmountDeposit =10000, depositorAmountPlusDeposit =1000, depositorAmountMinusDeposit =11000, depositorDateReturnDeposit =2014-12-02, depositorMarkReturnDeposit =0}";
+        assertEquals(test,depositors[1].toString());
+        test = "BankDepositor: { depositorId =3, depositorName =depositorName3, depositorIdDeposit =1, depositorDateDeposit =2014-12-01, depositorAmountDeposit =10000, depositorAmountPlusDeposit =1000, depositorAmountMinusDeposit =11000, depositorDateReturnDeposit =2014-12-02, depositorMarkReturnDeposit =0}";
+        assertEquals(test,depositors[2].toString());
+
+    }
+
+    @Test
+    public void getBankDepositorByNameTest(){
+        mockServer.expect(requestTo(HOST+"/depositors/name/depositorName1"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess("{\"depositorId\":1,\"depositorName\":\"depositorName1\",\"depositorIdDeposit\":1,\"depositorDateDeposit\":1417381200000,\"depositorAmountDeposit\":10000,\"depositorAmountPlusDeposit\":1000,\"depositorAmountMinusDeposit\":11000,\"depositorDateReturnDeposit\":1417467600000,\"depositorMarkReturnDeposit\":0}",MediaType.APPLICATION_JSON));
+
+        BankDepositor depositor = client.getBankDepositorByName("depositorName1");
+
+        assertNotNull(depositor);
+
+        assertNotNull(depositor.getDepositorId());
+        assertEquals(new Long(1),depositor.getDepositorId());
+
+        assertNotNull(depositor.getDepositorName());
+        assertEquals("depositorName1",depositor.getDepositorName());
+
+        assertNotNull(depositor.getDepositorIdDeposit());
+        assertEquals(new Long(1),depositor.getDepositorIdDeposit());
+
+        assertNotNull(depositor.getDepositorDateDeposit());
+        assertEquals("2014-12-01",dateFormat.format(depositor.getDepositorDateDeposit()));
+
+        assertNotNull(depositor.getDepositorAmountDeposit());
+        assertEquals(10000,depositor.getDepositorAmountDeposit());
+
+        assertNotNull(depositor.getDepositorAmountPlusDeposit());
+        assertEquals(1000,depositor.getDepositorAmountPlusDeposit());
+
+        assertNotNull(depositor.getDepositorAmountMinusDeposit());
+        assertEquals(11000,depositor.getDepositorAmountMinusDeposit());
+
+        assertNotNull(depositor.getDepositorDateReturnDeposit());
+        assertEquals("2014-12-02",dateFormat.format(depositor.getDepositorDateReturnDeposit()));
+
+        assertNotNull(depositor.getDepositorMarkReturnDeposit());
+        assertEquals(0,depositor.getDepositorMarkReturnDeposit());
+
+        test = "BankDepositor: { depositorId =1, depositorName =depositorName1, depositorIdDeposit =1, depositorDateDeposit =2014-12-01, depositorAmountDeposit =10000, depositorAmountPlusDeposit =1000, depositorAmountMinusDeposit =11000, depositorDateReturnDeposit =2014-12-02, depositorMarkReturnDeposit =0}";
+        assertEquals(test,depositor.toString());
+    }
+
+    @Test
+    public void getBankDepositorBetweenDateDepositTest() throws ParseException{
+        mockServer.expect(requestTo(HOST+"/depositors/date/2014-12-01/2014-12-02"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess("[{\"depositorId\":1,\"depositorName\":\"depositorName1\",\"depositorIdDeposit\":1,\"depositorDateDeposit\":1417381200000,\"depositorAmountDeposit\":10000,\"depositorAmountPlusDeposit\":1000,\"depositorAmountMinusDeposit\":11000,\"depositorDateReturnDeposit\":1417467600000,\"depositorMarkReturnDeposit\":0}," +
+                        "{\"depositorId\":2,\"depositorName\":\"depositorName2\",\"depositorIdDeposit\":1,\"depositorDateDeposit\":1417381200000,\"depositorAmountDeposit\":10000,\"depositorAmountPlusDeposit\":1000,\"depositorAmountMinusDeposit\":11000,\"depositorDateReturnDeposit\":1417467600000,\"depositorMarkReturnDeposit\":0}," +
+                        "{\"depositorId\":3,\"depositorName\":\"depositorName3\",\"depositorIdDeposit\":1,\"depositorDateDeposit\":1417381200000,\"depositorAmountDeposit\":10000,\"depositorAmountPlusDeposit\":1000,\"depositorAmountMinusDeposit\":11000,\"depositorDateReturnDeposit\":1417467600000,\"depositorMarkReturnDeposit\":0}]"
+                        ,MediaType.APPLICATION_JSON));
+
+
+        BankDepositor[] depositors = client.getBankDepositorBetweenDateDeposit(dateFormat.parse("2014-12-01"),dateFormat.parse("2014-12-02"));
+
+        assertEquals(3, depositors.length);
+        assertNotNull(depositors[0]);
+        assertNotNull(depositors[1]);
+        assertNotNull(depositors[2]);
+
+
+        assertNotNull(depositors[0].getDepositorId());
+        assertEquals(new Long(1),depositors[0].getDepositorId());
+
+        assertNotNull(depositors[0].getDepositorName());
+        assertEquals("depositorName1",depositors[0].getDepositorName());
+
+        assertNotNull(depositors[0].getDepositorIdDeposit());
+        assertEquals(new Long(1),depositors[0].getDepositorIdDeposit());
+
+        assertNotNull(depositors[0].getDepositorDateDeposit());
+        assertEquals("2014-12-01",dateFormat.format(depositors[0].getDepositorDateDeposit()));
+
+        assertNotNull(depositors[0].getDepositorAmountDeposit());
+        assertEquals(10000,depositors[0].getDepositorAmountDeposit());
+
+        assertNotNull(depositors[0].getDepositorAmountPlusDeposit());
+        assertEquals(1000,depositors[0].getDepositorAmountPlusDeposit());
+
+        assertNotNull(depositors[0].getDepositorAmountMinusDeposit());
+        assertEquals(11000,depositors[0].getDepositorAmountMinusDeposit());
+
+        assertNotNull(depositors[0].getDepositorDateReturnDeposit());
+        assertEquals("2014-12-02",dateFormat.format(depositors[0].getDepositorDateReturnDeposit()));
+
+        assertNotNull(depositors[0].getDepositorMarkReturnDeposit());
+        assertEquals(0,depositors[0].getDepositorMarkReturnDeposit());
+
+        test = "BankDepositor: { depositorId =1, depositorName =depositorName1, depositorIdDeposit =1, depositorDateDeposit =2014-12-01, depositorAmountDeposit =10000, depositorAmountPlusDeposit =1000, depositorAmountMinusDeposit =11000, depositorDateReturnDeposit =2014-12-02, depositorMarkReturnDeposit =0}";
+        assertEquals(test,depositors[0].toString());
+        test = "BankDepositor: { depositorId =2, depositorName =depositorName2, depositorIdDeposit =1, depositorDateDeposit =2014-12-01, depositorAmountDeposit =10000, depositorAmountPlusDeposit =1000, depositorAmountMinusDeposit =11000, depositorDateReturnDeposit =2014-12-02, depositorMarkReturnDeposit =0}";
+        assertEquals(test,depositors[1].toString());
+        test = "BankDepositor: { depositorId =3, depositorName =depositorName3, depositorIdDeposit =1, depositorDateDeposit =2014-12-01, depositorAmountDeposit =10000, depositorAmountPlusDeposit =1000, depositorAmountMinusDeposit =11000, depositorDateReturnDeposit =2014-12-02, depositorMarkReturnDeposit =0}";
+        assertEquals(test,depositors[2].toString());
+    }
+
+    @Test
+    public void getBankDepositorBetweenDateReturnDepositTest() throws ParseException{
+        mockServer.expect(requestTo(HOST+"/depositors/date/return/2014-12-01/2014-12-02"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess("[{\"depositorId\":1,\"depositorName\":\"depositorName1\",\"depositorIdDeposit\":1,\"depositorDateDeposit\":1417381200000,\"depositorAmountDeposit\":10000,\"depositorAmountPlusDeposit\":1000,\"depositorAmountMinusDeposit\":11000,\"depositorDateReturnDeposit\":1417467600000,\"depositorMarkReturnDeposit\":0}," +
+                        "{\"depositorId\":2,\"depositorName\":\"depositorName2\",\"depositorIdDeposit\":1,\"depositorDateDeposit\":1417381200000,\"depositorAmountDeposit\":10000,\"depositorAmountPlusDeposit\":1000,\"depositorAmountMinusDeposit\":11000,\"depositorDateReturnDeposit\":1417467600000,\"depositorMarkReturnDeposit\":0}," +
+                        "{\"depositorId\":3,\"depositorName\":\"depositorName3\",\"depositorIdDeposit\":1,\"depositorDateDeposit\":1417381200000,\"depositorAmountDeposit\":10000,\"depositorAmountPlusDeposit\":1000,\"depositorAmountMinusDeposit\":11000,\"depositorDateReturnDeposit\":1417467600000,\"depositorMarkReturnDeposit\":0}]"
+                        ,MediaType.APPLICATION_JSON));
+
+
+        BankDepositor[] depositors = client.getBankDepositorBetweenDateReturnDeposit(dateFormat.parse("2014-12-01"),dateFormat.parse("2014-12-02"));
+
+        assertEquals(3, depositors.length);
+        assertNotNull(depositors[0]);
+        assertNotNull(depositors[1]);
+        assertNotNull(depositors[2]);
+
+
+        assertNotNull(depositors[0].getDepositorId());
+        assertEquals(new Long(1),depositors[0].getDepositorId());
+
+        assertNotNull(depositors[0].getDepositorName());
+        assertEquals("depositorName1",depositors[0].getDepositorName());
+
+        assertNotNull(depositors[0].getDepositorIdDeposit());
+        assertEquals(new Long(1),depositors[0].getDepositorIdDeposit());
+
+        assertNotNull(depositors[0].getDepositorDateDeposit());
+        assertEquals("2014-12-01",dateFormat.format(depositors[0].getDepositorDateDeposit()));
+
+        assertNotNull(depositors[0].getDepositorAmountDeposit());
+        assertEquals(10000,depositors[0].getDepositorAmountDeposit());
+
+        assertNotNull(depositors[0].getDepositorAmountPlusDeposit());
+        assertEquals(1000,depositors[0].getDepositorAmountPlusDeposit());
+
+        assertNotNull(depositors[0].getDepositorAmountMinusDeposit());
+        assertEquals(11000,depositors[0].getDepositorAmountMinusDeposit());
+
+        assertNotNull(depositors[0].getDepositorDateReturnDeposit());
+        assertEquals("2014-12-02",dateFormat.format(depositors[0].getDepositorDateReturnDeposit()));
+
+        assertNotNull(depositors[0].getDepositorMarkReturnDeposit());
+        assertEquals(0,depositors[0].getDepositorMarkReturnDeposit());
+
+        test = "BankDepositor: { depositorId =1, depositorName =depositorName1, depositorIdDeposit =1, depositorDateDeposit =2014-12-01, depositorAmountDeposit =10000, depositorAmountPlusDeposit =1000, depositorAmountMinusDeposit =11000, depositorDateReturnDeposit =2014-12-02, depositorMarkReturnDeposit =0}";
+        assertEquals(test,depositors[0].toString());
+        test = "BankDepositor: { depositorId =2, depositorName =depositorName2, depositorIdDeposit =1, depositorDateDeposit =2014-12-01, depositorAmountDeposit =10000, depositorAmountPlusDeposit =1000, depositorAmountMinusDeposit =11000, depositorDateReturnDeposit =2014-12-02, depositorMarkReturnDeposit =0}";
+        assertEquals(test,depositors[1].toString());
+        test = "BankDepositor: { depositorId =3, depositorName =depositorName3, depositorIdDeposit =1, depositorDateDeposit =2014-12-01, depositorAmountDeposit =10000, depositorAmountPlusDeposit =1000, depositorAmountMinusDeposit =11000, depositorDateReturnDeposit =2014-12-02, depositorMarkReturnDeposit =0}";
+        assertEquals(test,depositors[2].toString());
+    }
+
+    @Test
+    public void addBankDepositorTest() throws ParseException{
+        mockServer.expect(requestTo(HOST+"/depositors/"))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().string("{\"depositorId\":null,\"depositorName\":\"depositorName2\",\"depositorIdDeposit\":1,\"depositorDateDeposit\":1417381200000,\"depositorAmountDeposit\":10000,\"depositorAmountPlusDeposit\":1000,\"depositorAmountMinusDeposit\":11000,\"depositorDateReturnDeposit\":1417467600000,\"depositorMarkReturnDeposit\":0}"))
+                .andRespond(withSuccess("4",MediaType.APPLICATION_JSON));
+
+
+        BankDepositor depositor = new BankDepositor();
+        depositor.setDepositorName("depositorName2");
+        depositor.setDepositorIdDeposit(1L);
+        depositor.setDepositorDateDeposit(dateFormat.parse("2014-12-01"));
+        depositor.setDepositorAmountDeposit(10000);
+        depositor.setDepositorAmountPlusDeposit(1000);
+        depositor.setDepositorAmountMinusDeposit(11000);
+        depositor.setDepositorDateReturnDeposit(dateFormat.parse("2014-12-02"));
+        depositor.setDepositorMarkReturnDeposit(0);
+        long id = client.addBankDepositor(depositor);
+        assertEquals(4, id);
+    }
+
+    @Test
+    public void updateBankDepositor() throws ParseException{
+        mockServer.expect(requestTo(HOST+"/depositors/"))
+                .andExpect(method(HttpMethod.PUT))
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().string("{\"depositorId\":2,\"depositorName\":\"newDepositorName1\",\"depositorIdDeposit\":1,\"depositorDateDeposit\":1417381200000,\"depositorAmountDeposit\":10000,\"depositorAmountPlusDeposit\":1000,\"depositorAmountMinusDeposit\":11000,\"depositorDateReturnDeposit\":1417467600000,\"depositorMarkReturnDeposit\":0}"))
+                .andRespond(withSuccess("",MediaType.APPLICATION_JSON));
+        BankDepositor depositor = new BankDepositor();
+        depositor.setDepositorId(2L);
+        depositor.setDepositorName("newDepositorName1");
+        depositor.setDepositorIdDeposit(1L);
+        depositor.setDepositorDateDeposit(dateFormat.parse("2014-12-01"));
+        depositor.setDepositorAmountDeposit(10000);
+        depositor.setDepositorAmountPlusDeposit(1000);
+        depositor.setDepositorAmountMinusDeposit(11000);
+        depositor.setDepositorDateReturnDeposit(dateFormat.parse("2014-12-02"));
+        depositor.setDepositorMarkReturnDeposit(0);
+
+        client.updateBankDepositor(depositor);
+    }
+
+    @Test
+    public void removeBankDepositor() {
+        mockServer.expect(requestTo(HOST + "/depositors/1"))
+                .andExpect(method(HttpMethod.DELETE))
+                .andRespond(withSuccess("", MediaType.APPLICATION_JSON));
+        client.removeBankDepositor(1L);
+    }
+
 }
 
