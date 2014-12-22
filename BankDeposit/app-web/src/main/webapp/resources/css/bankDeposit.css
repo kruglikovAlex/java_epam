@@ -1,51 +1,39 @@
-TABLE {
-        width: 300px;
-        border-collapse: collapse;
-    }
-    TD, TH {
-        padding: 3px;
-        border: 1px solid black;
-    }
-    TH {
-        background: #b0e0e6;
-    }
-    TFOOT {
-        background: #b0e0e6;
-        font-weight: bold;
-    }
-    a.knopkaDel {
-      color: #fff; /* цвет текста */
-      text-decoration: none; /* убирать подчёркивание у ссылок */
-      user-select: none; /* убирать выделение текста */
-      background: rgb(212,75,56); /* фон кнопки */
-      padding: .12em 1.0em; /* отступ от текста */
-      outline: none; /* убирать контур в Mozilla */
-    }
-    a.knopkaDel:hover { background: rgb(232,95,76); } /* при наведении курсора мышки */
-    a.knopkaDel:active { background: rgb(152,15,0); } /* при нажатии */
 
-a.knopkaAdd {
-      color: #fff; /* цвет текста */
-      text-decoration: none; /* убирать подчёркивание у ссылок */
-      user-select: none; /* убирать выделение текста */
-      background: rgb(75,212,56); /* фон кнопки */
-      padding: .12em 1.0em; /* отступ от текста */
-      outline: none; /* убирать контур в Mozilla */
+
+.scrolling-table th {
+color: #E90E8B;
+border-bottom: 1px solid #E90E8B;
+}
+
+.scrolling-table tr td {
+padding: 2px 5px;
+border-right: 1px solid #E90E8B;
+border-bottom: 1px solid #E90E8B;
+text-align: center;
+color: #666;
+}
+
+.scrolling-table tr td:last-child {
+border-right: none;
+}
+
+.scrolling-table tr:last-child td {
+border-bottom: none;
+}
+
+.scrolling-table tbody {
+      display: block;
+      height: 350px;
+      width: 1200px;
+      overflow: hidden;
+      overflow-y: auto;
     }
-    a.knopkaAdd:hover { background: rgb(95,232,76); } /* при наведении курсора мышки */
-    a.knopkaAdd:active { background: rgb(15,152,0); } /* при нажатии */
-
-a.knopkaUpd {
-      color: #fff; /* цвет текста */
-      text-decoration: none; /* убирать подчёркивание у ссылок */
-      user-select: none; /* убирать выделение текста */
-      background: rgb(75,56,212); /* фон кнопки */
-      padding: .12em 1.0em; /* отступ от текста */
-          outline: none; /* убирать контур в Mozilla */
-      }
-      a.knopkaUpd:hover { background: rgb(95,76,232); } /* при наведении курсора мышки */
-      a.knopkaUpd:active { background: rgb(15,0,152); } /* при нажатии */
-
+.scrolling-table tr {
+background: none;
+      display: table;
+      width: 1200px;
+      table-layout: fixed;
+}
 
  a.buttonDel {
     display: inline-block;

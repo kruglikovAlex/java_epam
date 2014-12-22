@@ -161,6 +161,8 @@ public class DepositController {
     public ModelAndView getListDepositsView() throws ParseException{
         List<BankDeposit> deposits = null;
         List<BankDepositor> depositors = null;
+        List<BankDepositor> depositorsSum = new ArrayList<BankDepositor>();
+        BankDepositor depositorSum = null;
         ModelAndView view = new ModelAndView("depositsList");
         try {
             deposits = depositService.getBankDeposits();
@@ -173,6 +175,15 @@ public class DepositController {
         try {
             depositors = depositorService.getBankDepositors();
             view.addObject("depositors", depositors);
+        } catch(IllegalArgumentException e) {
+            return view;
+        } catch(NullPointerException e) {
+            return view;
+        }
+        try {
+            depositorSum = depositorService.getBankDepositorsAllSummAmount();
+            depositorsSum.add(depositorSum);
+            view.addObject("depositorSum", depositorsSum);
         } catch(IllegalArgumentException e) {
             return view;
         } catch(NullPointerException e) {

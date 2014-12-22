@@ -8,21 +8,11 @@
 <head>
 </head>
 <body>
-<h1>OOO "New Age Bank"</h1>
 <link href="<c:url value="/resources/css/bankDeposit.css" />" rel="stylesheet">
-
-<script type="text/javascript">
-   function changeFunc() {
-    var pattern=/['A-z']/;
-    if(!pattern.test(this.value)) alert('Check the correct fields - Find by name ');
-   }
-</script>
-
-<div>
-  <form:form method="get" modelAttribute="deposits">
-    <h2><spring:message code="deposit.list" /></h2>
-     <ul>
-     <a href='<spring:url value="/depositsList" > </spring:url>' class="buttonFilter">Clean filter</a>
+<fieldset style="width: 60% " >
+	<legend style="font-weight: bold">DEPOSITS. </legend>
+    <div>
+        <form:form method="get" modelAttribute="deposits">
              <div>
                  <table style="width: 70%" border=0 rules="none">
                      <tr>
@@ -40,43 +30,45 @@
                                  <input type="submit" name="Submit" value="<-Find">
                              </form>
                          </td>
+                         <td>
+                         <a href='<spring:url value="/depositsList" > </spring:url>' class="buttonFilter">Clean filter</a>
+                         </td>
                      </tr>
                  </table>
              <div>
-        <p>
-            <table frame="hsides" rules="cols">
-                <th>
-          	        <td align=middle><b>Id</td>
-                    <td><b>Name</td>
+            <h3><spring:message code="deposit.list" /></h3>
+            <table class="scrolling-table" >
+                <thead>
+          	        <td align=middle COLSPAN="2"><b>Id</td>
+                    <td COLSPAN="2"><b>Name</td>
                     <td><b>Min Term</td>
                     <td><b>Min Amount</td>
                     <td><b>Currency</td>
                     <td><b>Interest Rate, (%)</td>
-                    <td><b>Add Conditions</td>
+                    <td COLSPAN="2"><b>Add Conditions</td>
                     <td class="add" COLSPAN="2" align=middle><a href='<spring:url value="/inputFormDeposit" >  <spring:param name="id" value="${deposit.depositId}"/>   </spring:url>' class="buttonAdd"><b>ADD DEPOSIT</b></a></td>
-                </th>
+                </thead>
+                <tbody>
                 <c:forEach items="${deposits}" var="deposit">
                     <tr>
-                        <td/>
-                        <td><a href='<spring:url value="/inputFormDepositor" >  <spring:param name="depositorIdDeposit" value="${deposit.depositId}"/>   </spring:url>' class="buttonAdd"><b>ADD_DEPOSITOR_(${deposit.depositId})</td>
-                        <td>${deposit.depositName}</td>
+                        <td COLSPAN="2"><a href='<spring:url value="/inputFormDepositor" >  <spring:param name="depositorIdDeposit" value="${deposit.depositId}"/>   </spring:url>' class="buttonAdd"><b>ADD_DEPOSITOR_(${deposit.depositId})</td>
+                        <td COLSPAN="2">${deposit.depositName}</td>
                         <td>${deposit.depositMinTerm}</td>
                         <td>${deposit.depositMinAmount}</td>
                         <td>${deposit.depositCurrency}</td>
                         <td>${deposit.depositInterestRate}</td>
-                        <td>${deposit.depositAddConditions}</td>
+                        <td COLSPAN="2">${deposit.depositAddConditions}</td>
 
                         <td class="upd"><a href='<spring:url value="/updateFormDeposit" >  <spring:param name="depositId" value="${deposit.depositId}"/>   </spring:url>' class="buttonUpd"><b>UPDATE</b></a></td>
                         <td class="del"><a href='<spring:url value="/deleteDeposit" >  <spring:param name="depositId" value="${deposit.depositId}"/>   </spring:url>' class="buttonDel"><b>DELETE</b></a></td>
                     </tr>
                 </c:forEach>
+                </tbody>
             </table>
-        </p>
-        </div>
-     </ul>
-
-     <h2><spring:message code="depositor.list" /></h2>
-     <ul>
+    </div>
+</fieldset>
+<fieldset style="width: 60% " >
+	<legend style="font-weight: bold">DEPOSITORS. </legend>
         <a href='<spring:url value="/depositsList" > </spring:url>' class="buttonFilter">Clean filter</a>
         <div>
             <table style="width: 90%" border=0 rules="none">
@@ -95,11 +87,9 @@
                             <input type="submit" name="Submit" value="<-Find">
                         </form>
                     </td>
-                </tr>
-                <tr>
-                    <td COLSPAN="2">
+                    <td>
                         <form action="/filterByIdDepositDepositor" method="POST">
-                             <label path="depositorByIdDeposit">Find depositor by id deposit:</label>
+                             <label path="depositorByIdDeposit">Find by id deposit:</label>
                              <input  id="depositorByIdDeposit" type="text" name="depositorByIdDeposit" />
                              <input type="submit" name="Submit" value="<-Find">
                         </form>
@@ -108,8 +98,8 @@
                 <tr>
                     <td>
                         <form action="/filterBetweenDateDeposit" method="POST">
-                              <label path="depositorDateDeposit">Date deposit, (yyyy-mm-dd)- from :</label>
-                                 <input  id="MyDate1" type="text" name="StartDateDeposit"
+                              <label path="depositorDateDeposit">Date deposit,(yyyy-mm-dd)</label></br>
+                                 from :<input  id="MyDate1" type="text" name="StartDateDeposit"
                                         pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size=10/>
                               <label path="depositorDateDeposit"> to :</label>
                                  <input id="MyDate2" type="text" name="EndDateDeposit"
@@ -119,8 +109,8 @@
                     </td>
                     <td>
                         <form action="/filterBetweenDateReturnDeposit" method="POST">
-                            <label path="depositorDateReturnDeposit">Date Return deposit, (yyyy-mm-dd)- from :</label>
-                               <input id="MyDate3" type="text" name="StartDateReturnDeposit"
+                            <label path="depositorDateReturnDeposit">Date Return deposit,(yyyy-mm-dd)</label></br>
+                               from :<input id="MyDate3" type="text" name="StartDateReturnDeposit"
                                         pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size=10/>
                             <label path="depositorDateReturnDeposit"> to :</label>
                                <input id="MyDate4" type="text" name="EndDateReturnDeposit"
@@ -131,23 +121,22 @@
                 </tr>
             </table>
         </div>
-        <p>
-            <table frame="hsides" rules="cols">
-                <th>
+        <h3><spring:message code="depositor.list" /></h3>
+            <table class="scrolling-table" >
+                <thead>
                     <td align=middle><b>Id</td>
                     <td><b>Name</td>
                     <td><b>Id Deposit</td>
-                    <td><b>Date_Deposit</td>
+                    <td><b>Date Deposit</td>
                     <td><b>Amount Deposit</td>
                     <td><b>Amount Plus</td>
                     <td><b>Amount Minus</td>
-                    <td><b>Date_Return Deposit</td>
+                    <td><b>Date Return Deposit</td>
                     <td><b>Mark Return</td>
                     <td class="add" COLSPAN="2"></td>
-                </th>
+                </thead><tbody>
                 <c:forEach items="${depositors}" var="depositor">
                     <tr>
-                        <td/>
                         <td>${depositor.depositorId}</td>
                         <td>${depositor.depositorName}</td>
                         <td>${depositor.depositorIdDeposit}</td>
@@ -161,20 +150,24 @@
                         <td class="del"><a href='<spring:url value="/delete" >  <spring:param name="depositorId" value="${depositor.depositorId}"/>   </spring:url>' class="buttonDel"><b>DELETE</b></a></td>
                     </tr>
                 </c:forEach>
+                </tbody>
                 <TFOOT>
-                    <td/>
-                    <td>Summ:</td>
-                    <td COLSPAN="3"></td>
-                    <td class="summ1"></td>
-                    <td class="summ2"></td>
-                    <td class="summ3"></td>
-                    <td COLSPAN="4"></td>
+
+                    <c:forEach items="${depositorSum}" var="depositor">
+                                    <tr>
+                                                        <td>Summ:</td>
+                                                        <td COLSPAN="3"></td>
+                                                        <td>${depositor.depositorAmountDeposit}</td>
+                                                        <td>${depositor.depositorAmountPlusDeposit}</td>
+                                                        <td>${depositor.depositorAmountMinusDeposit}</td>
+                                                        <td COLSPAN="4"></td>
+                                    </tr>
+                                                    </c:forEach>
                 </TFOOT>
             </table>
-        </p>
-        </ul>
-  </form:form>
-</div>
+
+        </form:form>
+</fieldset>
 <script src="/resources/js/jquery-1.11.1.js"></script>
 <script src="/resources/js/jquery.maskedinput.js"></script>
 <script src="/resources/js/bankDeposit.js"></script>
