@@ -10,7 +10,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import org.springframework.util.Assert;
 
 import java.util.Date;
@@ -120,6 +119,7 @@ public class BankDepositorServiceImpl implements BankDepositorService {
         }
         return depositor;
     }
+
     @Override
     @Transactional
 	public BankDepositor getBankDepositorSummAmountDepositBetweenDateDeposit(Date startDate, Date endDate){
@@ -133,6 +133,7 @@ public class BankDepositorServiceImpl implements BankDepositorService {
     	Assert.notNull(depositor, ERROR_DB_EMPTY);
     	return depositor;
 	}
+
     @Override
     @Transactional
     public BankDepositor getBankDepositorSummAmountDepositBetweenDateReturnDeposit(Date startDate, Date endDate){

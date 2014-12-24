@@ -13,7 +13,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import org.springframework.util.Assert;
 
 import java.util.List;
@@ -33,19 +32,11 @@ public class BankDepositServiceImpl implements BankDepositService {
     private BankDepositDao bankDepositDao;
 
     @Autowired
-    private BankDepositorDao bankDepositorDao;
-
-    @Autowired
     private BankDepositorService bankDepositorService;
 
     @Autowired
     public void setBankDepositDao(BankDepositDao bankDepositDao) {
         this.bankDepositDao = bankDepositDao;
-    }
-
-    @Autowired
-    public void setBankDepositorDao(BankDepositorDao bankDepositorDao) {
-	    this.bankDepositorDao = bankDepositorDao;
     }
 
     @Autowired
@@ -107,7 +98,7 @@ public class BankDepositServiceImpl implements BankDepositService {
             throw new IllegalArgumentException(ERROR_DEPOSIT);
         }
         List<BankDepositor> depositors = bankDepositorService.getBankDepositorByIdDeposit(depositId);
-        if ((depositors.isEmpty())|(depositors.size()==0)|(depositors==null)) {
+        if (depositors.isEmpty()) {
             bankDepositDao.removeBankDeposit(depositId);
         } else {
             Assert.isTrue(bankDepositorService.removeBankDepositorByIdDeposit(depositId));

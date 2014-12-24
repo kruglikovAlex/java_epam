@@ -43,15 +43,15 @@ public class DepositServiceImplMockTest {
     @Autowired
     private BankDepositorDao depositorDao;
 
-    
-   // @Before
-   // public void setUp() throws Exception {
-   // 	depositorService = EasyMock.createMock(BankDepositorService.class);
-//	}
+
+   @Before
+   public void setUp() throws Exception {
+    	depositorService = EasyMock.createMock(BankDepositorService.class);
+	}
 
     @After
     public void clean() {
-        reset(depositDao);
+        reset(depositDao); reset(depositorDao); reset(depositorService);
     }
 
     @Test()
@@ -205,7 +205,7 @@ public class DepositServiceImplMockTest {
         verify(depositDao);
     }
     
-    //@Test//(expected = IllegalArgumentException.class)
+    @Test//(expected = IllegalArgumentException.class)
     public void RemoveDeposit() throws ParseException{
         //depositorService = EasyMock.createMock(BankDepositorService.class);
         BankDeposit deposit = DataFixture.getExistDeposit(1L);
@@ -218,7 +218,7 @@ public class DepositServiceImplMockTest {
         expectLastCall();
 
         depositorDao.getBankDepositorByIdDeposit(depositors.get(1).getDepositorIdDeposit());
-        expectLastCall().andReturn(depositors);
+        expectLastCall().andReturn(depositors).times(2);
 
         depositorDao.removeBankDepositorByIdDeposit(depositors.get(1).getDepositorIdDeposit());
         expectLastCall();

@@ -210,14 +210,13 @@ public class DepositorServiceImplMockTest {
     }
 
     @Test
-    public void getBankDepositorSummAmountDepositBetweenDateDeposi() throws ParseException{
+    public void getBankDepositorSummAmountDepositBetweenDateDeposit() throws ParseException{
         BankDepositor depositor = DataFixture.getExistDepositor(1L);
+        expect(depositorDao.getBankDepositorSummAmountDepositBetweenDateDeposit(dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-02"))).andReturn(depositor);
 
-        depositorDao.getBankDepositorSummAmountDepositBetweenDateDeposit(dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
-        expectLastCall().andReturn(depositor);
         replay(depositorDao);
 
-        BankDepositor depositorResult = depositorService.getBankDepositorSummAmountDepositBetweenDateDeposit(dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
+        BankDepositor depositorResult = depositorService.getBankDepositorSummAmountDepositBetweenDateDeposit(dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-02"));
         verify(depositorDao);
 
         assertEquals(depositor, depositorResult); //????
@@ -228,7 +227,7 @@ public class DepositorServiceImplMockTest {
     }
 
     @Test
-    public void getBankDepositorSummAmountDepositBetweenDateReturnDeposi() throws ParseException{
+    public void getBankDepositorSummAmountDepositBetweenDateReturnDeposit() throws ParseException{
         BankDepositor depositor = DataFixture.getExistDepositor(1L);
 
         depositorDao.getBankDepositorSummAmountDepositBetweenDateReturnDeposit(dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
