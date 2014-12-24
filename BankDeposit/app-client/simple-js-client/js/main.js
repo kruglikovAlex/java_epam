@@ -10,8 +10,9 @@ findAllDepositors();
 $(document).ready(function(){
     jQuery(function($){
             $("#MyDate1,#MyDate2,#MyDate3,#MyDate4,#depositorDateDeposit,#depositorDateReturnDeposit")
-            .mask("9999-99-99",{completed:function(){alert("You typed the following: "+this.val());}});
+            .mask("9999-99-99",{completed:function(){}});
         });
+        //alert("You typed the following: "+this.val());
 });
 // Register listeners
 $('#btnSearchByIdDeposit').click(function () {

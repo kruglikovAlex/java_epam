@@ -4,7 +4,7 @@
 
 <html>
 <body>
- 	<form action="/updateFormDeposit" method="POST">
+ 	<form action='<spring:url value="/deposits/updateFormDeposit" > </spring:url>' method="POST">
     	<form:form method="get" modelAttribute="deposit">
 			<h1><spring:message code="update.deposit" /></h1>
         	<ul>

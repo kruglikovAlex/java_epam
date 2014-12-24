@@ -20,7 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@RequestMapping("/deposits")
 @Controller
 public class DepositController {
 
@@ -34,10 +34,6 @@ public class DepositController {
     @Autowired
     private BankDepositorService depositorService;
 
-    //    @RequestMapping("/")
-//    public String init() {
-//        return "redirect:/depositsList";
-//    }
 
     @RequestMapping("/inputFormDeposit")
     public ModelAndView launchInputForm() {
@@ -62,7 +58,7 @@ public class DepositController {
         deposit.setDepositAddConditions(depositAddConditions);
         
         depositService.addBankDeposit(deposit);
-        return "redirect:/depositsList";
+        return "redirect:/deposits/";
         
     }
 
@@ -108,7 +104,7 @@ public class DepositController {
         }catch(Exception e) {
             LOGGER.debug(e);
             redirectAttributes.addFlashAttribute( "message", e.getMessage());
-            return new ModelAndView("redirect:/depositsList");
+            return new ModelAndView("redirect:/deposits/");
         }
     }
 
@@ -134,7 +130,7 @@ public class DepositController {
 
         try {
             depositService.updateBankDeposit(deposit);
-            return new ModelAndView("redirect:/depositsList");
+            return new ModelAndView("redirect:/deposits/");
         }catch(Exception e) {
             LOGGER.debug(e);
             redirectAttributes.addFlashAttribute( "message", e.getMessage());
@@ -149,15 +145,15 @@ public class DepositController {
 
         try {
             depositService.removeBankDeposit(depositId);
-            return new ModelAndView("redirect:/depositsList");
+            return new ModelAndView("redirect:/deposits/");
         }catch(Exception e) {
             LOGGER.debug(e);
             redirectAttributes.addFlashAttribute( "message", e.getMessage());
-            return new ModelAndView("redirect:/depositsList");
+            return new ModelAndView("redirect:/deposits/");
         }
     }
 
-    @RequestMapping("/depositsList")
+    @RequestMapping("/")
     public ModelAndView getListDepositsView() throws ParseException{
         List<BankDeposit> deposits = null;
         List<BankDepositor> depositors = null;

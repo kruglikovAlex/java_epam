@@ -52,7 +52,7 @@ $(document).ready(function(){
     });
     jQuery(function($){
         $("#MyDate1,#MyDate2,#MyDate3,#MyDate4,#MyDate5,#MyDate6,#MyDate7,#MyDate8")
-        .mask("9999-99-99",{completed:function(){alert("You typed the following: "+this.val());}});
+        .mask("9999-99-99",{completed:function(){}});
     });
 
 });

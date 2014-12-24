@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.text.SimpleDateFormat;
 
-
+@RequestMapping("/depositors")
 @Controller
 public class DepositorController {
 
@@ -50,7 +50,7 @@ public class DepositorController {
         }catch(Exception e) {
             LOGGER.debug(e);
             redirectAttributes.addFlashAttribute( "message", e.getMessage());
-            return new ModelAndView("redirect:/depositorsList");
+            return new ModelAndView("redirect:/deposits/");
         }
     }
 
@@ -168,7 +168,7 @@ public class DepositorController {
         depositor.setDepositorMarkReturnDeposit(depositorMarkReturnDeposit);
         
         depositorService.addBankDepositor(depositor);
-        return "redirect:/depositorsList";
+        return "redirect:/deposits/";
         
     }
 
@@ -183,7 +183,7 @@ public class DepositorController {
         }catch(Exception e) {
             LOGGER.debug(e);
             redirectAttributes.addFlashAttribute( "message", e.getMessage());
-            return new ModelAndView("redirect:/depositorsList");
+            return new ModelAndView("redirect:/deposits/");
         }
     }
 
@@ -214,11 +214,11 @@ public class DepositorController {
 
         try {
             depositorService.updateBankDepositor(depositor);
-            return new ModelAndView("redirect:/depositorsList");
+            return new ModelAndView("redirect:/deposits/");
         }catch(Exception e) {
             LOGGER.debug(e);
             redirectAttributes.addFlashAttribute( "message", e.getMessage());
-            return new ModelAndView("redirect:/updateFormDepositor", "depositorId", depositorId);
+            return new ModelAndView("redirect:/depositors/updateFormDepositor", "depositorId", depositorId);
         }
     }
 
@@ -229,15 +229,15 @@ public class DepositorController {
 
         try {
             depositorService.removeBankDepositor(depositorId);
-            return new ModelAndView("redirect:depositorsList");
+            return new ModelAndView("redirect:/deposits/");
         }catch(Exception e) {
             LOGGER.debug(e);
             redirectAttributes.addFlashAttribute( "message", e.getMessage());
-            return new ModelAndView("redirect:depositorsList");
+            return new ModelAndView("redirect:/deposits/");
         }
     }
 
-    @RequestMapping("/depositorsList")
+    /*@RequestMapping("/deposit/depositsList")
     public ModelAndView getListDepositorsView() {
         List<BankDepositor> depositors = depositorService.getBankDepositors();
         List<BankDeposit> deposits = depositService.getBankDeposits();
@@ -249,5 +249,5 @@ public class DepositorController {
         view.addObject("deposits",deposits);
         view.addObject("depositorSum",depositorsSum);
         return view;
-    }
+    }*/
 }

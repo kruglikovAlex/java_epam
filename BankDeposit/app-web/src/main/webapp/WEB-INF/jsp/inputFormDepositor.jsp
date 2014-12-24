@@ -7,7 +7,7 @@
 </head>
 <body>
 
-<form action="/inputFormDepositor" method="POST">
+<form action='<spring:url value="/depositors/inputFormDepositor" > </spring:url>' method="POST">
     	<form:form method="get" modelAttribute="depositor">
 			<h1><spring:message code="depositor.create" /></h1>
         	<ul>

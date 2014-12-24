@@ -3,7 +3,7 @@
 
 <html>
 <body>
-<form action="/submitDataDeposit" method="post">
+<form action='<spring:url value="/deposits/submitDataDeposit" > </spring:url>' method="post">
     <h1><spring:message code="deposit.create" /></h1>
         <ul>
             <label path="depositName">Deposit Name :</label><input type="text" name="depositName" size=30/><br/>
