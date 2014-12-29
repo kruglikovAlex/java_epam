@@ -1,5 +1,4 @@
 
-
 .scrolling-table th {
 color: #E90E8B;
 border-bottom: 1px solid #E90E8B;
@@ -43,7 +42,7 @@ background: none;
     color: rgb(68,68,68);
     text-decoration: none;
     user-select: none;
-    padding: .5em 1.2em;
+    padding: .8em 0.5em;
     outline: none;
     border: 1px solid rgba(0,0,0,.1);
     border-radius: 2px;
@@ -71,7 +70,7 @@ background: none;
       color: rgb(68,68,68);
       text-decoration: none;
       user-select: none;
-      padding: .5em 1.2em;
+      padding: .8em 1.2em;
       outline: none;
       border: 1px solid rgba(0,0,0,.1);
       border-radius: 2px;
@@ -98,7 +97,7 @@ a.buttonAdd {
     color: rgb(68,68,68);
     text-decoration: none;
     user-select: none;
-    padding: .5em 1.2em;
+    padding: .8em 0.5em;
     outline: none;
     border: 1px solid rgba(0,0,0,.1);
     border-radius: 2px;
@@ -126,7 +125,7 @@ a.buttonUpd {
     color: rgb(68,68,68);
     text-decoration: none;
     user-select: none;
-    padding: .5em 1.2em;
+    padding: .8em 0.5em;
     outline: none;
     border: 1px solid rgba(0,0,0,.1);
     border-radius: 2px;

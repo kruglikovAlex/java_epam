@@ -2,7 +2,6 @@ package com.brest.bank.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import com.brest.bank.dao.BankDepositorDao;
@@ -169,10 +168,40 @@ public class DepositorServiceImplMockTest {
     	List<BankDepositor> depositorsResult = depositorService.getBankDepositorByIdDeposit(depositors.get(1).getDepositorIdDeposit());
     	verify(depositorDao);
     	
-    	assertEquals(depositors, depositorsResult); //????
-    	assertSame(depositors, depositorsResult); //????
+    	assertEquals(depositors, depositorsResult);
+    	assertSame(depositors, depositorsResult);
     }
-    //====================
+
+    @Test
+    public void getDepositorByIdDepositBetweenDateDeposit() throws ParseException{
+        List<BankDepositor> depositors = DataFixture.getExistDepositors();
+
+        depositorDao.getBankDepositorByIdDepositBetweenDateDeposit(depositors.get(1).getDepositorIdDeposit(),dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
+        expectLastCall().andReturn(depositors);
+        replay(depositorDao);
+
+        List<BankDepositor> depositorsResult = depositorService.getBankDepositorByIdDepositBetweenDateDeposit(depositors.get(1).getDepositorIdDeposit(),dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
+        verify(depositorDao);
+
+        assertEquals(depositors, depositorsResult);
+        assertSame(depositors, depositorsResult);
+    }
+
+    @Test
+    public void getDepositorByIdDepositBetweenDateReturnDeposit() throws ParseException{
+        List<BankDepositor> depositors = DataFixture.getExistDepositors();
+
+        depositorDao.getBankDepositorByIdDepositBetweenDateReturnDeposit(depositors.get(1).getDepositorIdDeposit(), dateFormat.parse("2014-12-02"), dateFormat.parse("2014-12-04"));
+        expectLastCall().andReturn(depositors);
+        replay(depositorDao);
+
+        List<BankDepositor> depositorsResult = depositorService.getBankDepositorByIdDepositBetweenDateReturnDeposit(depositors.get(1).getDepositorIdDeposit(), dateFormat.parse("2014-12-02"), dateFormat.parse("2014-12-04"));
+        verify(depositorDao);
+
+        assertEquals(depositors, depositorsResult);
+        assertSame(depositors, depositorsResult);
+    }
+
     @Test()
     public void getBankDepositorsAllSummAmount() throws ParseException{
         BankDepositor depositor = DataFixture.getExistDepositor(1L);
@@ -219,8 +248,25 @@ public class DepositorServiceImplMockTest {
         BankDepositor depositorResult = depositorService.getBankDepositorSummAmountDepositBetweenDateDeposit(dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-02"));
         verify(depositorDao);
 
-        assertEquals(depositor, depositorResult); //????
-        assertSame(depositor, depositorResult); //????
+        assertEquals(depositor, depositorResult);
+        assertSame(depositor, depositorResult);
+        assertTrue(depositor.getDepositorAmountDeposit()==depositorResult.getDepositorAmountDeposit());
+        assertTrue(depositor.getDepositorAmountPlusDeposit()==depositorResult.getDepositorAmountPlusDeposit());
+        assertTrue(depositor.getDepositorAmountMinusDeposit()==depositorResult.getDepositorAmountMinusDeposit());
+    }
+
+    @Test
+    public void getBankDepositorSummAmountByIdDepositBetweenDateDeposit() throws ParseException{
+        BankDepositor depositor = DataFixture.getExistDepositor(1L);
+        expect(depositorDao.getBankDepositorsSummAmountByIdDepositBetweenDateDeposit(1L,dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-02"))).andReturn(depositor);
+
+        replay(depositorDao);
+
+        BankDepositor depositorResult = depositorService.getBankDepositorsSummAmountByIdDepositBetweenDateDeposit(1L,dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-02"));
+        verify(depositorDao);
+
+        assertEquals(depositor, depositorResult);
+        assertSame(depositor, depositorResult);
         assertTrue(depositor.getDepositorAmountDeposit()==depositorResult.getDepositorAmountDeposit());
         assertTrue(depositor.getDepositorAmountPlusDeposit()==depositorResult.getDepositorAmountPlusDeposit());
         assertTrue(depositor.getDepositorAmountMinusDeposit()==depositorResult.getDepositorAmountMinusDeposit());
@@ -237,13 +283,13 @@ public class DepositorServiceImplMockTest {
         BankDepositor depositorResult = depositorService.getBankDepositorSummAmountDepositBetweenDateReturnDeposit(dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
         verify(depositorDao);
 
-        assertEquals(depositor, depositorResult); //????
-        assertSame(depositor, depositorResult); //????
+        assertEquals(depositor, depositorResult);
+        assertSame(depositor, depositorResult);
         assertTrue(depositor.getDepositorAmountDeposit()==depositorResult.getDepositorAmountDeposit());
         assertTrue(depositor.getDepositorAmountPlusDeposit()==depositorResult.getDepositorAmountPlusDeposit());
         assertTrue(depositor.getDepositorAmountMinusDeposit()==depositorResult.getDepositorAmountMinusDeposit());
     }
-    //====================
+
     @Test
     public void getDepositorBetweenDateDeposit() throws ParseException{
     	List<BankDepositor> depositors = DataFixture.getExistDepositors();
@@ -255,8 +301,8 @@ public class DepositorServiceImplMockTest {
     	List<BankDepositor> depositorsResult = depositorService.getBankDepositorBetweenDateDeposit(dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
     	verify(depositorDao);
     	
-    	assertEquals(depositors, depositorsResult); //????
-    	assertSame(depositors, depositorsResult); //????
+    	assertEquals(depositors, depositorsResult);
+    	assertSame(depositors, depositorsResult);
     }
 
     @Test
@@ -270,8 +316,8 @@ public class DepositorServiceImplMockTest {
     	List<BankDepositor> depositorsResult = depositorService.getBankDepositorBetweenDateReturnDeposit(dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
     	verify(depositorDao);
     	
-    	assertEquals(depositors, depositorsResult); //????
-    	assertSame(depositors, depositorsResult); //????
+    	assertEquals(depositors, depositorsResult);
+    	assertSame(depositors, depositorsResult);
     }
 
     @Test//(expected = IllegalArgumentException.class)

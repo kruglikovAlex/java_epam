@@ -3,13 +3,13 @@ package com.brest.bank.domain;
 import org.junit.Test;
 
 import org.junit.Before;
-import org.junit.Test;
 import java.lang.Math;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 public class BankDepositTest{
+
 	BankDeposit bankDeposit;
 	
 	//--- ������������� (�������������)
@@ -47,7 +47,7 @@ public class BankDepositTest{
 	@Test //--- ������ ������
 	public void testGetDepositCurrency() throws Exception{
 		bankDeposit.setDepositCurrency("eur");
-		assertEquals("eur",bankDeposit.getDepositCurrency());
+		assertEquals("eur", bankDeposit.getDepositCurrency());
 		
 		bankDeposit.setDepositCurrency("usd");
 		assertFalse("eur".equals(bankDeposit.getDepositCurrency()));

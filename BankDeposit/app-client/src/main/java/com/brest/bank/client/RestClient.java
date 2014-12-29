@@ -41,8 +41,8 @@ public class RestClient {
     //--- show version 
     //--- http://<host:port>/version/
     //--- request method - GET -> .getForObject()
-    public String getRestVesrsion() {
-        LOGGER.debug("getRestVesrsion {}", host);
+    public String getRestVersion() {
+        LOGGER.debug("getRestVersion {}", host);
         return restTemplate.getForObject(host + "/version", String.class);
     }
 

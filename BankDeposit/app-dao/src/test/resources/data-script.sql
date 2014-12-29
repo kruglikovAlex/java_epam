@@ -28,3 +28,8 @@ INSERT INTO BANKDEPOSITOR (depositorId,depositorName,depositorIdDeposit,
 						depositorAmountPlusDeposit,depositorAmountMinusDeposit,
 						depositorDateReturnDeposit,depositorMarkReturnDeposit)
 VALUES (4,'depositorName2',2,'2014-12-03',10000,100,1000,'2014-12-04',0);
+INSERT INTO BANKDEPOSITOR (depositorId,depositorName,depositorIdDeposit,
+						depositorDateDeposit,depositorAmountDeposit,
+						depositorAmountPlusDeposit,depositorAmountMinusDeposit,
+						depositorDateReturnDeposit,depositorMarkReturnDeposit)
+VALUES (5,'depositorName2',3,'2014-12-03',10000,100,1000,'2014-12-05',0);

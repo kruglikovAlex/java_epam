@@ -1,5 +1,3 @@
-var REST_URL = "http://localhost:8080/depositsList";
-
 function changeFunc() {
     var pattern=/['A-z']/;
     if(!pattern.test(this.value)) alert('Check the correct fields - Find by name ');

@@ -14,7 +14,7 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="com.epam.brest.courses" level="DEBUG">
+        <Logger name="com.brest.bank.web" level="DEBUG">
             <AppenderRef ref="Console"/>
         </Logger>
 

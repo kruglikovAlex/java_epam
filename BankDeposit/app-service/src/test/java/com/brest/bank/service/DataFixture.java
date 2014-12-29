@@ -1,11 +1,12 @@
 package com.brest.bank.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.text.SimpleDateFormat;
 
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
@@ -58,7 +59,34 @@ public class DataFixture {
     	deposits.add(new BankDeposit());
     	return deposits;
     }
-    
+
+    public static Map getExistDepositAllDepositors(Long id, Long idd) throws ParseException{
+        BankDeposit deposit =  getExistDeposit(id);
+        BankDepositor depositor = getExistDepositorIdDeposit(id, idd);
+
+        Map<String, Object> list = new HashMap<String, Object>(12);
+
+        list.put("depositId", deposit.getDepositId());
+        list.put("depositName", deposit.getDepositName());
+        list.put("depositMinTerm", deposit.getDepositMinTerm());
+        list.put("depositMinAmount", deposit.getDepositMinAmount());
+        list.put("depositCurrency", deposit.getDepositCurrency());
+        list.put("depositInterestRate", deposit.getDepositInterestRate());
+        list.put("depositAddConditions", deposit.getDepositAddConditions());
+        list.put("depId", depositor.getDepositorIdDeposit());
+        list.put("sumAmount", depositor.getDepositorAmountDeposit());
+        list.put("sumPlusAmount", depositor.getDepositorAmountPlusDeposit());
+        list.put("sumMinusAmount", depositor.getDepositorAmountMinusDeposit());
+        list.put("numDepositors", 1);
+        return list;
+    }
+
+    public static List<Map> getExistAllDepositsAllDepositors() throws ParseException{
+        List<Map> deposits = new ArrayList<Map>();
+        deposits.add(getExistDepositAllDepositors(1L, 1L));
+        return deposits;
+    }
+
     //--- BankDepositor
     public static BankDepositor getNewDepositor() throws ParseException {
         BankDepositor depositor = new BankDepositor();

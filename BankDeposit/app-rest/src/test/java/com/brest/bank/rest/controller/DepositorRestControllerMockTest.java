@@ -2,7 +2,6 @@ package com.brest.bank.rest.controller;
 
 import com.brest.bank.domain.BankDepositor;
 import com.brest.bank.rest.DepositorRestController;
-import com.brest.bank.rest.VersionRestController;
 import com.brest.bank.rest.exception.NotFoundException;
 import com.brest.bank.service.BankDepositorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +22,6 @@ import javax.annotation.Resource;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static org.easymock.EasyMock.*;
@@ -137,7 +135,7 @@ public class DepositorRestControllerMockTest {
         verify(depositorService);
     }
 
-    @Test //--- search by ID Deposit
+    @Test //--- search Depositor between dates of deposit from -> to
     public void getBankDepositorBetweenDateDepositRestTest() throws Exception {
         expect(depositorService.getBankDepositorBetweenDateDeposit(dateFormat.parse("2014-12-01"),dateFormat.parse("2014-12-02")))
                 .andReturn(DataFixture.getSampleDepositorList());
@@ -154,7 +152,7 @@ public class DepositorRestControllerMockTest {
         verify(depositorService);
     }
 
-    @Test //--- search by ID Deposit
+    @Test //--- search Depositor between dates Return of deposit from -> to
     public void getBankDepositorBetweenDateReturnDepositRestTest() throws Exception {
         expect(depositorService.getBankDepositorBetweenDateReturnDeposit(dateFormat.parse("2014-12-01"),dateFormat.parse("2014-12-02")))
                 .andReturn(DataFixture.getSampleDepositorList());

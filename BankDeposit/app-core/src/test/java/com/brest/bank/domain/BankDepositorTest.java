@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 public class BankDepositorTest {
 
 	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	
+
 	BankDepositor bankDepositor;
 	
 	@Before
@@ -31,7 +31,7 @@ public class BankDepositorTest {
 		bankDepositor.setDepositorId(idDepositor);
 		assertEquals(idDepositor,bankDepositor.getDepositorId());
 	}
-	
+
 	@Test //--- ��� ���������
 	public void testGetDepositorName() throws Exception{
 		bankDepositor.setDepositorName("Ivan Ivanov");

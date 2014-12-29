@@ -1,7 +1,9 @@
 package com.brest.bank.service;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 
 import com.brest.bank.dao.BankDepositDao;
 import com.brest.bank.dao.BankDepositorDao;
@@ -9,27 +11,25 @@ import com.brest.bank.service.BankDepositorService;
 import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
 
-import junit.framework.Assert;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.TestCase.assertNotNull;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertSame;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath*:/spring-services-mock-test.xml"})
 public class DepositServiceImplMockTest {
+
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
     private BankDepositService depositService;
@@ -44,8 +44,8 @@ public class DepositServiceImplMockTest {
     private BankDepositorDao depositorDao;
 
 
-   @Before
-   public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
     	depositorService = EasyMock.createMock(BankDepositorService.class);
 	}
 
@@ -68,7 +68,142 @@ public class DepositServiceImplMockTest {
     	assertEquals(deposits, depositsResult);
     	assertSame(deposits, depositsResult); 
     }
-    
+
+    @Test()
+    public void getBankDepositsAllDepositors() throws ParseException{
+        List<Map> deposits = DataFixture.getExistAllDepositsAllDepositors();
+
+        depositDao.getBankDepositsAllDepositors();
+        expectLastCall().andReturn(deposits);
+        replay(depositDao);
+
+        List<Map> depositsResult = depositService.getBankDepositsAllDepositors();
+        verify(depositDao);
+
+        assertEquals(deposits, depositsResult);
+        assertSame(deposits, depositsResult);
+    }
+
+    @Test
+    public void getBankDepositsAllDepositorsBetweenDateDeposit() throws ParseException{
+        List<Map> deposits = DataFixture.getExistAllDepositsAllDepositors();
+
+        depositDao.getBankDepositsAllDepositorsBetweenDateDeposit(dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
+        expectLastCall().andReturn(deposits);
+        replay(depositDao);
+
+        List<Map> depositsResult = depositService.getBankDepositsAllDepositorsBetweenDateDeposit(dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
+        verify(depositDao);
+
+        assertEquals(deposits, depositsResult);
+        assertSame(deposits, depositsResult);
+    }
+
+    @Test
+    public void getBankDepositsAllDepositorsBetweenDateReturnDeposit() throws ParseException{
+        List<Map> deposits = DataFixture.getExistAllDepositsAllDepositors();
+
+        depositDao.getBankDepositsAllDepositorsBetweenDateReturnDeposit(dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
+        expectLastCall().andReturn(deposits);
+        replay(depositDao);
+
+        List<Map> depositsResult = depositService.getBankDepositsAllDepositorsBetweenDateReturnDeposit(dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
+        verify(depositDao);
+
+        assertEquals(deposits, depositsResult);
+        assertSame(deposits, depositsResult);
+    }
+
+    @Test
+    public void getBankDepositByIdAllDepositors() throws ParseException{
+        List<Map> deposits = DataFixture.getExistAllDepositsAllDepositors();
+
+        depositDao.getBankDepositByIdAllDepositors(1L);
+        expectLastCall().andReturn(deposits);
+        replay(depositDao);
+
+        List<Map> depositsResult = depositService.getBankDepositByIdAllDepositors(1L);
+        verify(depositDao);
+
+        assertEquals(deposits, depositsResult);
+        assertSame(deposits, depositsResult);
+    }
+
+    @Test
+    public void getBankDepositByIdAllDepositorsBetweenDateDeposit() throws ParseException{
+        List<Map> deposits = DataFixture.getExistAllDepositsAllDepositors();
+
+        depositDao.getBankDepositByIdWithAllDepositorsBetweenDateDeposit(1L, dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
+        expectLastCall().andReturn(deposits);
+        replay(depositDao);
+
+        List<Map> depositsResult = depositService.getBankDepositByIdWithAllDepositorsBetweenDateDeposit(1L, dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
+        verify(depositDao);
+
+        assertEquals(deposits, depositsResult);
+        assertSame(deposits, depositsResult);
+    }
+
+    @Test
+    public void getBankDepositByIdAllDepositorsBetweenDateReturnDeposit() throws ParseException{
+        List<Map> deposits = DataFixture.getExistAllDepositsAllDepositors();
+
+        depositDao.getBankDepositByIdWithAllDepositorsBetweenDateReturnDeposit(1L, dateFormat.parse("2014-12-02"), dateFormat.parse("2014-12-04"));
+        expectLastCall().andReturn(deposits);
+        replay(depositDao);
+
+        List<Map> depositsResult = depositService.getBankDepositByIdWithAllDepositorsBetweenDateReturnDeposit(1L, dateFormat.parse("2014-12-02"), dateFormat.parse("2014-12-04"));
+        verify(depositDao);
+
+        assertEquals(deposits, depositsResult);
+        assertSame(deposits, depositsResult);
+    }
+
+    @Test
+    public void getBankDepositByNameAllDepositors() throws ParseException{
+        List<Map> deposits = DataFixture.getExistAllDepositsAllDepositors();
+
+        depositDao.getBankDepositByNameAllDepositors("depositName1");
+        expectLastCall().andReturn(deposits);
+        replay(depositDao);
+
+        List<Map> depositsResult = depositService.getBankDepositByNameAllDepositors("depositName1");
+        verify(depositDao);
+
+        assertEquals(deposits, depositsResult);
+        assertSame(deposits, depositsResult);
+    }
+
+    @Test
+    public void getBankDepositByNameAllDepositorsBetweenDateDeposit() throws ParseException{
+        List<Map> deposits = DataFixture.getExistAllDepositsAllDepositors();
+
+        depositDao.getBankDepositByNameWithAllDepositorsBetweenDateDeposit("depositName1", dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
+        expectLastCall().andReturn(deposits);
+        replay(depositDao);
+
+        List<Map> depositsResult = depositService.getBankDepositByNameWithAllDepositorsBetweenDateDeposit("depositName1", dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
+        verify(depositDao);
+
+        assertEquals(deposits, depositsResult);
+        assertSame(deposits, depositsResult);
+    }
+
+    @Test
+    public void getBankDepositByNameAllDepositorsBetweenDateReturnDeposit() throws ParseException{
+        List<Map> deposits = DataFixture.getExistAllDepositsAllDepositors();
+
+        depositDao.getBankDepositByNameWithAllDepositorsBetweenDateReturnDeposit("depositName1", dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
+        expectLastCall().andReturn(deposits);
+        replay(depositDao);
+
+        List<Map> depositsResult = depositService.getBankDepositByNameWithAllDepositorsBetweenDateReturnDeposit("depositName1", dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
+        verify(depositDao);
+
+        assertEquals(deposits, depositsResult);
+        assertSame(deposits, depositsResult);
+    }
+
     @Test
     public void addDeposit() {
         BankDeposit deposit = DataFixture.getNewDeposit();
@@ -207,7 +342,7 @@ public class DepositServiceImplMockTest {
     
     @Test//(expected = IllegalArgumentException.class)
     public void RemoveDeposit() throws ParseException{
-        //depositorService = EasyMock.createMock(BankDepositorService.class);
+
         BankDeposit deposit = DataFixture.getExistDeposit(1L);
         List<BankDepositor> depositors = DataFixture.getExistDepositors();
 

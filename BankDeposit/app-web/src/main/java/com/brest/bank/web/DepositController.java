@@ -19,6 +19,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Date;
 
 @RequestMapping("/deposits")
 @Controller
@@ -48,6 +50,7 @@ public class DepositController {
     							@RequestParam("depositInterestRate")Integer depositInterestRate,
     							@RequestParam("depositAddConditions")String depositAddConditions
                                 ) {
+        LOGGER.debug("getInputForm({},{},{},{},{},{})",depositName,depositMinTerm,depositMinAmount,depositCurrency,depositInterestRate,depositAddConditions);
         BankDeposit deposit = new BankDeposit();
         
         deposit.setDepositName(depositName);
@@ -64,45 +67,220 @@ public class DepositController {
 
     @RequestMapping("/filterByIdDeposit")
     public ModelAndView getFilterDepositById(@RequestParam("depositById")Long depositById
-    ){
+                                            ){
+        LOGGER.debug("getFilterDepositById{}",depositById);
+
         BankDeposit deposit = depositService.getBankDepositById(depositById);
         List<BankDeposit> deposits = new ArrayList<BankDeposit>();
-        deposits.add(deposit);
         LOGGER.debug("deposits.size = " + deposits.size());
-        List<BankDepositor> depositors = depositorService.getBankDepositors();
+
+        List<Map> depositsAllDepositors = depositService.getBankDepositByIdAllDepositors(depositById);
+        deposits.add(deposit);
+        LOGGER.debug("depositsAllDepositors.size = " + depositsAllDepositors.size());
+
+        List<BankDepositor> depositors = depositorService.getBankDepositorByIdDeposit(depositById);
         LOGGER.debug("depositors.size = " + depositors.size());
 
-        ModelAndView view = new ModelAndView("depositsList", "deposits", deposits);
+        List<BankDepositor> depositorsSum = new ArrayList<BankDepositor>();
+        BankDepositor depositor = depositorService.getBankDepositorsSummAmountByIdDeposit(depositById);
+        depositorsSum.add(depositor);
+        LOGGER.debug("depositorsSum.size = " + depositorsSum.size());
+
+        ModelAndView view = new ModelAndView("depositsList", "deposits", depositsAllDepositors);
         view.addObject("depositors",depositors);
+        view.addObject("depositorSum",depositorsSum);
+
+        return  view;
+    }
+
+    @RequestMapping("/filterByIdDepositBetweenDateDeposit")
+    public ModelAndView getFilterDepositByIdBetweenDateDeposit(@RequestParam("depositById")Long depositById,
+                                                               @RequestParam("StartDateDeposit")String StartDateDeposit,
+                                                               @RequestParam("EndDateDeposit")String EndDateDeposit
+                                                            ) throws ParseException{
+        LOGGER.debug("getFilterDepositByIdBetweenDateDeposit({}, {},{})",depositById, StartDateDeposit, EndDateDeposit);
+
+        List<Map> depositsAllDepositors = depositService.getBankDepositByIdWithAllDepositorsBetweenDateDeposit(depositById, dateFormat.parse(StartDateDeposit), dateFormat.parse(EndDateDeposit));
+        LOGGER.debug("depositsAllDepositors.size = " + depositsAllDepositors.size());
+
+        List<BankDepositor> depositors = depositorService.getBankDepositorByIdDepositBetweenDateDeposit(depositById, dateFormat.parse(StartDateDeposit), dateFormat.parse(EndDateDeposit));
+        LOGGER.debug("depositors.size = " + depositors.size());
+
+        List<BankDepositor> depositorsSum = new ArrayList<BankDepositor>();
+        BankDepositor depositor = depositorService.getBankDepositorsSummAmountByIdDepositBetweenDateDeposit(depositById, dateFormat.parse(StartDateDeposit), dateFormat.parse(EndDateDeposit));
+        depositorsSum.add(depositor);
+        LOGGER.debug("depositorsSum.size = " + depositorsSum.size());
+
+        ModelAndView view = new ModelAndView("depositsList", "deposits", depositsAllDepositors);
+        view.addObject("depositors",depositors);
+        view.addObject("depositorSum",depositorsSum);
+
+        return  view;
+    }
+
+    @RequestMapping("/filterByIdDepositBetweenDateReturnDeposit")
+    public ModelAndView getFilterDepositByIdBetweenDateReturnDeposit(@RequestParam("depositById")Long depositById,
+                                                                    @RequestParam("StartDateDeposit")String StartDateDeposit,
+                                                                    @RequestParam("EndDateDeposit")String EndDateDeposit
+                                                                    ) throws ParseException{
+        LOGGER.debug("getFilterDepositByIdBetweenDateReturnDeposit({}, {},{})",depositById, StartDateDeposit, EndDateDeposit);
+
+        List<Map> depositsAllDepositors = depositService.getBankDepositByIdWithAllDepositorsBetweenDateReturnDeposit(depositById, dateFormat.parse(StartDateDeposit), dateFormat.parse(EndDateDeposit));
+        LOGGER.debug("depositsAllDepositors.size = " + depositsAllDepositors.size());
+
+        List<BankDepositor> depositors = depositorService.getBankDepositorByIdDepositBetweenDateReturnDeposit(depositById, dateFormat.parse(StartDateDeposit), dateFormat.parse(EndDateDeposit));
+        LOGGER.debug("depositors.size = " + depositors.size());
+        // TODO sum
+        List<BankDepositor> depositorsSum = new ArrayList<BankDepositor>();
+        BankDepositor depositor = depositorService.getBankDepositorsSummAmountByIdDeposit(depositById);
+        depositorsSum.add(depositor);
+        LOGGER.debug("depositorsSum.size = " + depositorsSum.size());
+
+        ModelAndView view = new ModelAndView("depositsList", "deposits", depositsAllDepositors);
+        view.addObject("depositors",depositors);
+        view.addObject("depositorSum",depositorsSum);
 
         return  view;
     }
 
     @RequestMapping("/filterByNameDeposit")
     public ModelAndView getFilterDepositByName(@RequestParam("depositByName")String depositByName
-    ){
+                                            ){
+        //--- ??? add try and Summ
+        LOGGER.debug("getFilterDepositByName({})", depositByName);
+
         BankDeposit deposit = depositService.getBankDepositByName(depositByName);
-        List<BankDeposit> deposits = new ArrayList<BankDeposit>();
-        deposits.add(deposit);
-        LOGGER.debug("deposits.size = " + deposits.size());
-        List<BankDepositor> depositors = depositorService.getBankDepositors();
+        List<Map> depositList = depositService.getBankDepositByNameAllDepositors(depositByName);
+        LOGGER.debug("depositList.size = " + depositList.size());
+
+        List<BankDepositor> depositors = depositorService.getBankDepositorByIdDeposit(deposit.getDepositId());
         LOGGER.debug("depositors.size = " + depositors.size());
 
-        ModelAndView view = new ModelAndView("depositsList", "deposits", deposits);
+        BankDepositor depositorSum = depositorService.getBankDepositorsSummAmountByIdDeposit(deposit.getDepositId());
+        List<BankDepositor> depositorsSum = new ArrayList<BankDepositor>();
+        depositorsSum.add(depositorSum);
+
+        ModelAndView view = new ModelAndView("depositsList", "deposits", depositList);
         view.addObject("depositors",depositors);
+        view.addObject("depositorSum",depositorsSum);
+        return  view;
+    }
+
+ @RequestMapping("/filterByNameDepositBetweenDateDeposit")
+    public ModelAndView getFilterDepositByNameBetweenDateDeposit(@RequestParam("depositByName")String depositByName,
+                                                               @RequestParam("StartDateDeposit")String StartDateDeposit,
+                                                               @RequestParam("EndDateDeposit")String EndDateDeposit
+                                                            ) throws ParseException{
+        LOGGER.debug("getFilterDepositByNameBetweenDateDeposit({}, {},{})",depositByName, StartDateDeposit, EndDateDeposit);
+
+        List<Map> depositsAllDepositors = depositService.getBankDepositByNameWithAllDepositorsBetweenDateDeposit(depositByName, dateFormat.parse(StartDateDeposit), dateFormat.parse(EndDateDeposit));
+        LOGGER.debug("depositsAllDepositors.size = " + depositsAllDepositors.size());
+
+        List<BankDepositor> depositors = depositorService.getBankDepositorByIdDepositBetweenDateDeposit((Long)depositsAllDepositors.get(0).get("depositId"), dateFormat.
+                parse(StartDateDeposit), dateFormat.parse(EndDateDeposit));
+        LOGGER.debug("depositors.size = " + depositors.size());
+
+        List<BankDepositor> depositorsSum = new ArrayList<BankDepositor>();
+        BankDepositor depositor = depositorService.getBankDepositorsSummAmountByIdDepositBetweenDateDeposit((Long)depositsAllDepositors.get(0).get("depositId"), dateFormat.
+                parse(StartDateDeposit), dateFormat.parse(EndDateDeposit));
+        depositorsSum.add(depositor);
+        LOGGER.debug("depositorsSum.size = " + depositorsSum.size());
+
+        ModelAndView view = new ModelAndView("depositsList", "deposits", depositsAllDepositors);
+        view.addObject("depositors",depositors);
+        view.addObject("depositorSum",depositorsSum);
 
         return  view;
     }
+
+    @RequestMapping("/filterByNameDepositBetweenDateReturnDeposit")
+    public ModelAndView getFilterDepositByNameBetweenDateReturnDeposit(@RequestParam("depositByName")String depositByName,
+                                                                        @RequestParam("StartDateDeposit")String StartDateDeposit,
+                                                                        @RequestParam("EndDateDeposit")String EndDateDeposit
+                                                                        ) throws ParseException{
+        LOGGER.debug("getFilterDepositByNameBetweenDateReturnDeposit({}, {},{})",depositByName, StartDateDeposit, EndDateDeposit);
+
+        List<Map> depositsAllDepositors = depositService.getBankDepositByNameWithAllDepositorsBetweenDateReturnDeposit(depositByName, dateFormat.parse(StartDateDeposit), dateFormat.parse(EndDateDeposit));
+        LOGGER.debug("depositsAllDepositors.size = " + depositsAllDepositors.size());
+
+        List<BankDepositor> depositors = depositorService.getBankDepositorByIdDepositBetweenDateReturnDeposit((Long) depositsAllDepositors.get(0).get("depositId"), dateFormat.
+                parse(StartDateDeposit), dateFormat.parse(EndDateDeposit));
+        LOGGER.debug("depositors.size = " + depositors.size());
+        // TODO sum
+        List<BankDepositor> depositorsSum = new ArrayList<BankDepositor>();
+        BankDepositor depositor = depositorService.getBankDepositorsSummAmountByIdDeposit((Long)depositsAllDepositors.get(0).get("depositId"));
+        depositorsSum.add(depositor);
+        LOGGER.debug("depositorsSum.size = " + depositorsSum.size());
+
+        ModelAndView view = new ModelAndView("depositsList", "deposits", depositsAllDepositors);
+        view.addObject("depositors",depositors);
+        view.addObject("depositorSum",depositorsSum);
+
+        return  view;
+    }
+
+    @RequestMapping("/filterBetweenDateDeposit")
+    public ModelAndView getFilterBetweenDate(@RequestParam("StartDateDeposit")String StartDateDeposit,
+                                             @RequestParam("EndDateDeposit")String EndDateDeposit
+                                            )throws ParseException{
+        LOGGER.debug("getFilterBetweenDate({},{})",StartDateDeposit, EndDateDeposit);
+
+        Date startDate = dateFormat.parse(StartDateDeposit);
+        Date endDate = dateFormat.parse(EndDateDeposit);
+        List<BankDepositor> depositors = depositorService.getBankDepositorBetweenDateDeposit(startDate, endDate);
+        LOGGER.debug("depositors.size = " + depositors.size());
+
+        List<Map> deposits = depositService.getBankDepositsAllDepositorsBetweenDateDeposit(startDate, endDate);
+        LOGGER.debug("deposits.size = " + deposits.size());
+
+        BankDepositor depositorSum = depositorService.getBankDepositorSummAmountDepositBetweenDateDeposit(startDate, endDate);
+        List<BankDepositor> depositorsSum = new ArrayList<BankDepositor>();
+        depositorsSum.add(depositorSum);
+        LOGGER.debug("depositorsSum.size = " + depositorsSum.size());
+
+        ModelAndView view = new ModelAndView("depositsList", "depositors", depositors);
+        view.addObject("deposits",deposits);
+        view.addObject("depositorSum",depositorsSum);
+
+        return  view;
+    }
+
+    @RequestMapping("/filterBetweenDateReturnDeposit")
+    public ModelAndView getFilterBetweenDateReturn( @RequestParam("StartDateDeposit")String StartDateDeposit,
+                                                    @RequestParam("EndDateDeposit")String EndDateDeposit
+                                                    )throws ParseException{
+        LOGGER.debug("getFilterBetweenDateReturn({},{})",StartDateDeposit, EndDateDeposit);
+
+        Date startDate = dateFormat.parse(StartDateDeposit);
+        Date endDate = dateFormat.parse(EndDateDeposit);
+        List<BankDepositor> depositors = depositorService.getBankDepositorBetweenDateReturnDeposit(startDate, endDate);
+        LOGGER.debug("depositors.size = " + depositors.size());
+
+        List<Map> deposits = depositService.getBankDepositsAllDepositorsBetweenDateReturnDeposit(startDate, endDate);
+        LOGGER.debug("deposits.size = " + deposits.size());
+
+        BankDepositor depositorSum = depositorService.getBankDepositorSummAmountDepositBetweenDateReturnDeposit(startDate, endDate);
+        List<BankDepositor> depositorsSum = new ArrayList<BankDepositor>();
+        depositorsSum.add(depositorSum);
+        LOGGER.debug("depositorsSum.size = " + depositorsSum.size());
+
+        ModelAndView view = new ModelAndView("depositsList", "depositors", depositors);
+        view.addObject("deposits",deposits);
+        view.addObject("depositorSum",depositorsSum);
+
+        return  view;
+    }
+
     @RequestMapping(value={"/updateFormDeposit"}, method = RequestMethod.GET)
     public ModelAndView launchUpdateForm(RedirectAttributes redirectAttributes,
                                          @RequestParam("depositId")Long depositId
-    ) {
-
+                                        ){
+        LOGGER.debug("launchUpdateForm({})", depositId);
         try {
             return new ModelAndView("updateFormDeposit", "deposit", depositService.getBankDepositById(depositId));
 
         }catch(Exception e) {
-            LOGGER.debug(e);
+            LOGGER.debug("launchUpdateForm({}), Exception:{}",depositId, e.toString());
             redirectAttributes.addFlashAttribute( "message", e.getMessage());
             return new ModelAndView("redirect:/deposits/");
         }
@@ -118,6 +296,7 @@ public class DepositController {
                                       @RequestParam("depositInterestRate")Integer depositInterestRate,
                                       @RequestParam("depositAddConditions")String depositAddConditions
                                      ) {
+        LOGGER.debug("getUpdateForm({},{},{},{},{},{})",depositName,depositMinTerm,depositMinAmount,depositCurrency,depositInterestRate,depositAddConditions);
         BankDeposit deposit = new BankDeposit();
 
         deposit.setDepositId(depositId);
@@ -132,8 +311,8 @@ public class DepositController {
             depositService.updateBankDeposit(deposit);
             return new ModelAndView("redirect:/deposits/");
         }catch(Exception e) {
-            LOGGER.debug(e);
-            redirectAttributes.addFlashAttribute( "message", e.getMessage());
+            LOGGER.debug("getUpdateForm(), Exception:{}",e.toString());
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
             return new ModelAndView("redirect:/updateFormDeposit", "depositId", depositId);
         }
     }
@@ -141,13 +320,13 @@ public class DepositController {
     @RequestMapping(value={"/deleteDeposit"}, method = RequestMethod.GET)
     public ModelAndView launchDeleteForm(RedirectAttributes redirectAttributes,
                                          @RequestParam("depositId")Long depositId
-    ) {
-
+                                        ) {
+        LOGGER.debug("launchDeleteForm({})",depositId);
         try {
             depositService.removeBankDeposit(depositId);
             return new ModelAndView("redirect:/deposits/");
         }catch(Exception e) {
-            LOGGER.debug(e);
+            LOGGER.debug("launchDeleteForm({}), Exception:{}", depositId,e.toString());
             redirectAttributes.addFlashAttribute( "message", e.getMessage());
             return new ModelAndView("redirect:/deposits/");
         }
@@ -155,34 +334,47 @@ public class DepositController {
 
     @RequestMapping("/")
     public ModelAndView getListDepositsView() throws ParseException{
-        List<BankDeposit> deposits = null;
+        LOGGER.debug("getListDepositsView()");
+        List<BankDeposit> deposits;
+        List<Map> depositsAllDepositors;
         List<BankDepositor> depositors = null;
         List<BankDepositor> depositorsSum = new ArrayList<BankDepositor>();
-        BankDepositor depositorSum = null;
+        BankDepositor depositorSum;
         ModelAndView view = new ModelAndView("depositsList");
         try {
             deposits = depositService.getBankDeposits();
-            view.addObject("deposits",deposits);
+            LOGGER.debug("deposits.size = " + deposits.size());
+            depositsAllDepositors = depositService.getBankDepositsAllDepositors();
+            LOGGER.debug("depositsAllDepositors.size = " + depositsAllDepositors.size());
+            view.addObject("deposits",depositsAllDepositors);
         } catch(IllegalArgumentException e) {
+            LOGGER.debug("getListDepositsView(), Exception:{}", e.toString());
             return new ModelAndView("inputFormDeposit", "deposit", new BankDeposit());
         } catch(NullPointerException e) {
+            LOGGER.debug("getListDepositsView(), Exception:{}", e.toString());
             return new ModelAndView("inputFormDeposit", "deposit", new BankDeposit());
         }
         try {
             depositors = depositorService.getBankDepositors();
+            LOGGER.debug("depositors.size = " + depositors.size());
             view.addObject("depositors", depositors);
         } catch(IllegalArgumentException e) {
+            LOGGER.debug("getListDepositsView({}), Exception:{}",depositors, e.toString());
             return view;
         } catch(NullPointerException e) {
+            LOGGER.debug("getListDepositsView({}), Exception:{}", depositors, e.toString());
             return view;
         }
         try {
             depositorSum = depositorService.getBankDepositorsAllSummAmount();
             depositorsSum.add(depositorSum);
+            LOGGER.debug("depositorsSum.size = " + depositorsSum.size());
             view.addObject("depositorSum", depositorsSum);
         } catch(IllegalArgumentException e) {
+            LOGGER.debug("getListDepositsView({}), Exception:{}", depositorsSum, e.toString());
             return view;
         } catch(NullPointerException e) {
+            LOGGER.debug("getListDepositsView({}), Exception:{}", depositorsSum, e.toString());
             return view;
         }
         return view;

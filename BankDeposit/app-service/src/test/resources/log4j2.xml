@@ -14,7 +14,7 @@
 
     <Loggers>
 
-        <Logger name="com.epam.brest.courses" level="trace">
+        <Logger name="com.brest.bank.service" level="trace">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="File"/>
         </Logger>
@@ -24,4 +24,5 @@
         </Root>
 
     </Loggers>
+
 </Configuration>

@@ -2,8 +2,7 @@ package com.brest.bank.client;
 
 import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
-import junit.framework.Assert;
-import junit.framework.TestCase;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,18 +10,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.match.MockRestRequestMatchers;
-
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.TestCase.assertEquals;
-//import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
-//import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-//import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class RestClientTest {
 
@@ -72,7 +67,7 @@ public class RestClientTest {
             .andExpect(MockRestRequestMatchers.method(HttpMethod.GET))
             .andRespond(withSuccess("123", MediaType.APPLICATION_JSON));
 
-        String version = client.getRestVesrsion();
+        String version = client.getRestVersion();
         assertEquals("123",version);
     }
 
@@ -128,7 +123,7 @@ public class RestClientTest {
         mockServer.expect(requestTo(HOST+"/deposits/name/depositName1"))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess("{\"depositId\":1,\"depositName\":\"depositName1\",\"depositMinTerm\":12,\"depositMinAmount\":100,\"depositCurrency\":\"usd\",\"depositInterestRate\":4,\"depositAddConditions\":\"condition1\"}",MediaType.APPLICATION_JSON));
-// проверить со строковой переменной
+
 
         BankDeposit deposit = client.getBankDepositByName("depositName1");
 

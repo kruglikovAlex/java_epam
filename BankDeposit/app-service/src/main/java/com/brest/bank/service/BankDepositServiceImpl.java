@@ -15,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.util.Assert;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class BankDepositServiceImpl implements BankDepositService {
@@ -47,6 +49,7 @@ public class BankDepositServiceImpl implements BankDepositService {
     @Override
     @Transactional
     public Long addBankDeposit(BankDeposit deposit) {
+        LOGGER.debug("addBankDeposit({}) ", deposit);
         Assert.notNull(deposit);
         Assert.isNull(deposit.getDepositId());
         Assert.notNull(deposit.getDepositName(), ERROR_METHOD_PARAM + ": DepositName");
@@ -135,6 +138,126 @@ public class BankDepositServiceImpl implements BankDepositService {
         List<BankDeposit> deposits = bankDepositDao.getBankDeposits();
         Assert.notEmpty(deposits, ERROR_DB_EMPTY);
         return deposits;
+    }
+
+    @Override
+    @Transactional
+    public List<Map> getBankDepositsAllDepositors() {
+        LOGGER.debug("getBankDepositsAllDepositors()");
+        List<Map> listDeposits = bankDepositDao.getBankDepositsAllDepositors();
+        Assert.notEmpty(listDeposits, ERROR_DB_EMPTY);
+        return listDeposits;
+    }
+
+    @Override
+    @Transactional
+    public List<Map> getBankDepositsAllDepositorsBetweenDateDeposit(Date startDate, Date endDate) {
+        LOGGER.debug("getBankDepositsAllDepositorsBetweenDateDeposit(Dates:{},{})", startDate, endDate);
+        List<Map> depositsList = null;
+        try {
+            depositsList = bankDepositDao.getBankDepositsAllDepositorsBetweenDateDeposit(startDate, endDate);
+        } catch (EmptyResultDataAccessException e) {
+            LOGGER.error("getBankDepositsAllDepositorsBetweenDateDeposit({}{}), Exception:{}",startDate, endDate, e.toString());
+        }
+        Assert.notEmpty(depositsList, ERROR_DB_EMPTY);
+        return depositsList;
+    }
+
+    @Override
+    @Transactional
+    public List<Map> getBankDepositsAllDepositorsBetweenDateReturnDeposit(Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositsAllDepositorsBetweenDateReturnDeposit(Date:{}{}) ", startDate, endDate);
+        List<Map> depositsList = null;
+        try {
+            depositsList = bankDepositDao.getBankDepositsAllDepositorsBetweenDateReturnDeposit(startDate, endDate);
+        } catch (EmptyResultDataAccessException e) {
+            LOGGER.error("getBankDepositsAllDepositorsBetweenDateReturnDeposit({}{}), Exception:{}",startDate, endDate, e.toString());
+        }
+        Assert.notEmpty(depositsList, ERROR_DB_EMPTY);
+        return depositsList;
+    }
+
+    @Override
+    @Transactional
+    public List<Map> getBankDepositByIdAllDepositors(Long depositId) {
+        LOGGER.debug("getBankDepositByIdAllDepositors({})", depositId);
+        List<Map> depositsList = null;
+        try {
+            depositsList = bankDepositDao.getBankDepositByIdAllDepositors(depositId);
+        } catch (EmptyResultDataAccessException e) {
+            LOGGER.error("getBankDepositByIdAllDepositors({}), Exception:{}",depositId, e.toString());
+        }
+        Assert.notEmpty(depositsList, ERROR_DB_EMPTY);
+        return depositsList;
+    }
+
+    @Override
+    @Transactional
+    public List<Map> getBankDepositByIdWithAllDepositorsBetweenDateDeposit(Long depositId, Date startDate, Date endDate) {
+        LOGGER.debug("getBankDepositByIdWithAllDepositorsBetweenDateDeposit(depositId={}, Dates={},{})", depositId, startDate, endDate);
+        List<Map> depositsList = null;
+        try {
+            depositsList = bankDepositDao.getBankDepositByIdWithAllDepositorsBetweenDateDeposit(depositId, startDate, endDate);
+        } catch (EmptyResultDataAccessException e) {
+            LOGGER.error("getBankDepositByIdWithAllDepositorsBetweenDateDeposit(depositId={}, Dates={},{}), Exception:{}",depositId, startDate, endDate, e.toString());
+        }
+        Assert.notEmpty(depositsList, ERROR_DB_EMPTY);
+        return depositsList;
+    }
+
+    @Override
+    @Transactional
+    public List<Map> getBankDepositByIdWithAllDepositorsBetweenDateReturnDeposit(Long depositId, Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositByIdWithAllDepositorsBetweenDateReturnDeposit(depositId={}, Dates={},{})", depositId, startDate, endDate);
+        List<Map> depositsList = null;
+        try {
+            depositsList = bankDepositDao.getBankDepositByIdWithAllDepositorsBetweenDateReturnDeposit(depositId, startDate, endDate);
+        } catch (EmptyResultDataAccessException e) {
+            LOGGER.error("getBankDepositByIdWithAllDepositorsBetweenDateReturnDeposit(depositId={}, Dates={},{}), Exception:{}",depositId, startDate, endDate, e.toString());
+        }
+        Assert.notEmpty(depositsList, ERROR_DB_EMPTY);
+        return depositsList;
+    }
+
+    @Override
+    @Transactional
+    public List<Map> getBankDepositByNameAllDepositors(String depositName){
+        LOGGER.debug("getBankDepositByNameAllDepositors(depositName={}) ", depositName);
+        List<Map> depositList = null;
+        try {
+            depositList = bankDepositDao.getBankDepositByNameAllDepositors(depositName);
+        } catch (EmptyResultDataAccessException e) {
+            LOGGER.error("getBankDepositByNameAllDepositors({}), Exception:{}", depositName, e.toString());
+        }
+        return depositList;
+    }
+
+    @Override
+    @Transactional
+    public List<Map> getBankDepositByNameWithAllDepositorsBetweenDateDeposit(String depositName, Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositByNameWithAllDepositorsBetweenDateDeposit(depositName={}, Dates={},{})", depositName, startDate, endDate);
+        List<Map> depositsList = null;
+        try {
+            depositsList = bankDepositDao.getBankDepositByNameWithAllDepositorsBetweenDateDeposit(depositName, startDate, endDate);
+        } catch (EmptyResultDataAccessException e) {
+            LOGGER.error("getBankDepositByNameWithAllDepositorsBetweenDateDeposit(depositName={}, Dates={},{}), Exception:{}",depositName, startDate, endDate, e.toString());
+        }
+        Assert.notEmpty(depositsList, ERROR_DB_EMPTY);
+        return depositsList;
+    }
+
+    @Override
+    @Transactional
+    public List<Map> getBankDepositByNameWithAllDepositorsBetweenDateReturnDeposit(String depositName, Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositByNameWithAllDepositorsBetweenDateReturnDeposit(depositName={}, Dates={},{})", depositName, startDate, endDate);
+        List<Map> depositsList = null;
+        try {
+            depositsList = bankDepositDao.getBankDepositByNameWithAllDepositorsBetweenDateReturnDeposit(depositName, startDate, endDate);
+        } catch (EmptyResultDataAccessException e) {
+            LOGGER.error("getBankDepositByNameWithAllDepositorsBetweenDateReturnDeposit(depositName={}, Dates={},{}), Exception:{}",depositName, startDate, endDate, e.toString());
+        }
+        Assert.notEmpty(depositsList, ERROR_DB_EMPTY);
+        return depositsList;
     }
 }
 

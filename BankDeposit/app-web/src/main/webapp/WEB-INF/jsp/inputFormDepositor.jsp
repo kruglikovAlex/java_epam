@@ -32,8 +32,8 @@
             <input type="submit" name="Submit">
 </form>
 
-<script src="/resources/js/jquery-1.11.1.js"></script>
-<script src="/resources/js/jquery.maskedinput.js"></script>
-<script src="/resources/js/bankDeposit.js"></script>
+<script src='<c:url value="/resources/js/jquery-1.11.1.js"/>'></script>
+<script src='<c:url value="/resources/js/jquery.maskedinput.js"/>'></script>
+<script src='<c:url value="/resources/js/bankDeposit.js"/>'></script>
 </body>
 </html>
