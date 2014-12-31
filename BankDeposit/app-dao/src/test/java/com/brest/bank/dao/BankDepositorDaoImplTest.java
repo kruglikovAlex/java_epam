@@ -240,6 +240,33 @@ public class BankDepositorDaoImplTest {
 	}
 
 	@Test
+	public void testGetBankDepositorSummAmountByIdDepositDepositBetweenDateReturnDeposit() throws ParseException{
+		Date start = dateFormat.parse("2014-12-02");
+		Date end = dateFormat.parse("2014-12-05");
+		Integer Summ1=0, Summ2=0, Summ3=0;
+		sizeBefore = bankDepositors.size();
+		int indexDep = (int)(Math.random()*sizeBefore);
+		Long testId = bankDepositors.get(indexDep).getDepositorIdDeposit();
+
+		List<BankDepositor> depositors = bankDepositorDao.getBankDepositorByIdDepositBetweenDateReturnDeposit(testId,start,end);
+		BankDepositor depositorSum = bankDepositorDao.getBankDepositorsSummAmountByIdDepositBetweenDateReturnDeposit(testId,start, end);
+
+		assertNotNull(depositors);
+		assertFalse(depositors.isEmpty());
+		assertNotNull(depositorSum);
+
+		for (int i=0; i<depositors.size(); i++){
+			Summ1 += depositors.get(i).getDepositorAmountDeposit();
+			Summ2 += depositors.get(i).getDepositorAmountPlusDeposit();
+			Summ3 += depositors.get(i).getDepositorAmountMinusDeposit();
+		}
+
+		assertTrue(Summ1 == depositorSum.getDepositorAmountDeposit());
+		assertTrue(Summ2 == depositorSum.getDepositorAmountPlusDeposit());
+		assertTrue(Summ3 == depositorSum.getDepositorAmountMinusDeposit());
+	}
+
+	@Test
 	public void testGetBankDepositorSummAmountDepositBetweenDateReturnDeposit() throws ParseException{
 		Date start = dateFormat.parse("2014-12-02");
 		Date end = dateFormat.parse("2014-12-04");

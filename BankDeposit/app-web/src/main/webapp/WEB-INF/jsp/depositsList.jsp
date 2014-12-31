@@ -17,12 +17,25 @@
                  <table style="width: 80%" border=0 rules="none">
                      <tr>
                          <td>
-                             <form action='<spring:url value="/deposits/filterByIdDeposit" > </spring:url>' method="POST">
+                             <form id="form_id" action='<spring:url value="/deposits/filterByIdDeposit" > </spring:url>' method="POST">
                                  <label path="depositById">Find by id :</label>
                                     <input  id="depositById" type="text" name="depositById" />
                                  <input type="submit" name="Submit" value="<-Find">
                              </form>
                          </td>
+                         <td ROWSPAN="2">
+                             <a href="#" id="linkId" class="buttonFilterBig">&#8656;</br>Find</br>&#8656;</a></br>
+                         </td>
+                         <td ROWSPAN="2">
+                             <a href="#" id="linkIdReturn" class="buttonFilterBig">&#8656;</br>Find</br>&#8195;&#8658;</a></br>
+                         </td>
+                         <td ROWSPAN="2" >
+                             <a href="#" id="linkName" class="buttonFilterBig">&#8195;&#8658;</br>Find</br>&#8656;</a></br>
+                         </td>
+                         <td ROWSPAN="2" >
+                             <a href="#" id="linkNameReturn" class="buttonFilterBig">&#8195;&#8658;</br>Find</br>&#8195;&#8658;</a></br>
+                         </td>
+                         <td ROWSPAN="2">&#8195;</td>
                          <td>
                              <form action='<spring:url value="/deposits/filterByNameDeposit" > </spring:url>' method="POST">
                                  <label path="depositByName">Find by name :</label>
@@ -30,34 +43,34 @@
                                  <input type="submit" name="Submit" value="<-Find">
                              </form>
                          </td>
-                         <td>
-                         <a href='<spring:url value="/deposits/" > </spring:url>' class="buttonFilter">Clean filter</a>
+                         <td ROWSPAN="2">
+                             <a href='<spring:url value="/deposits/" > </spring:url>' class="buttonFilter">Clean filter</a>
                          </td>
                      </tr>
                      <tr>
-                                         <td>
-                                             <form action='<spring:url value="/deposits/filterBetweenDateDeposit" > </spring:url>' method="POST">
-                                                   <label path="depositorDateDeposit">Date deposit,(yyyy-mm-dd)</label></br>
-                                                      from :<input  id="MyDate1" type="text" name="StartDateDeposit"
-                                                             pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size=10/>
-                                                   <label path="depositorDateDeposit"> to :</label>
-                                                      <input id="MyDate2" type="text" name="EndDateDeposit"
-                                                             pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size=10/>
-                                                   <input type="submit" name="Submit" value="<-Find">
-                                                 </form>
-                                         </td>
-                                         <td>
-                                             <form action='<spring:url value="/deposits/filterBetweenDateReturnDeposit" > </spring:url>' method="POST">
-                                                 <label path="depositorDateReturnDeposit">Date Return deposit,(yyyy-mm-dd)</label></br>
-                                                    from :<input id="MyDate3" type="text" name="StartDateDeposit"
-                                                             pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size=10/>
-                                                 <label path="depositorDateReturnDeposit"> to :</label>
-                                                    <input id="MyDate4" type="text" name="EndDateDeposit"
-                                                             pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size=10/>
-                                                 <input type="submit" name="Submit" value="<-Find">
-                                             </form>
-                                         </td>
-                                     </tr>
+                         <td>
+                              <form action='<spring:url value="/deposits/filterBetweenDateDeposit" > </spring:url>' method="POST">
+                                  <label path="depositorDateDeposit">Date deposit,(yyyy-mm-dd)</label></br>
+                                       from :<input  id="StartDateDeposit" type="text" name="StartDateDeposit"
+                                             pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size=10/>
+                                  <label path="depositorDateDeposit"> to :</label>
+                                       <input id="EndDateDeposit" type="text" name="EndDateDeposit"
+                                             pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size=10/>
+                                  <input type="submit" name="Submit" value="<-Find">
+                              </form>
+                         </td>
+                         <td>
+                              <form action='<spring:url value="/deposits/filterBetweenDateReturnDeposit" > </spring:url>' method="POST">
+                                  <label path="depositorDateReturnDeposit">Date Return deposit,(yyyy-mm-dd)</label></br>
+                                        from :<input id="StartDateReturnDeposit" type="text" name="StartDateReturnDeposit"
+                                              pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size=10/>
+                                  <label path="depositorDateReturnDeposit"> to :</label>
+                                        <input id="EndDateReturnDeposit" type="text" name="EndDateReturnDeposit"
+                                              pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size=10/>
+                                  <input type="submit" name="Submit" value="<-Find">
+                              </form>
+                         </td>
+                     </tr>
                  </table>
              <div>
             <h3><spring:message code="deposit.list" /></h3>
@@ -185,17 +198,16 @@
                 </c:forEach>
                 </tbody>
                 <TFOOT>
-
-                    <c:forEach items="${depositorSum}" var="depositor">
-                                    <tr>
-                                                        <td>Summ:</td>
-                                                        <td COLSPAN="3"></td>
-                                                        <td>${depositor.depositorAmountDeposit}</td>
-                                                        <td>${depositor.depositorAmountPlusDeposit}</td>
-                                                        <td>${depositor.depositorAmountMinusDeposit}</td>
-                                                        <td COLSPAN="4"></td>
-                                    </tr>
-                                                    </c:forEach>
+                <c:forEach items="${depositorSum}" var="depositor">
+                    <tr>
+                         <td>Summ:</td>
+                         <td COLSPAN="3"></td>
+                         <td>${depositor.depositorAmountDeposit}</td>
+                         <td>${depositor.depositorAmountPlusDeposit}</td>
+                         <td>${depositor.depositorAmountMinusDeposit}</td>
+                         <td COLSPAN="4"></td>
+                    </tr>
+                </c:forEach>
                 </TFOOT>
             </table>
 
@@ -205,5 +217,28 @@
 <script src='<c:url value="/resources/js/jquery-1.11.1.js"/>'></script>
 <script src='<c:url value="/resources/js/jquery.maskedinput.js"/>'></script>
 <script src='<c:url value="/resources/js/bankDeposit.js"/>'></script>
+<script>
+    var ntext = function () {
+        var sh1 = '<spring:url value="';
+        var sh2 = +'"></spring:url>';
+        linkId.href = sh1+"/deposits/filterByIdDepositBetweenDateDeposit?depositById="+depositById.value+"&StartDateDeposit="+StartDateDeposit.value+"&EndDateDeposit="+this.value+sh2;
+        linkName.href = sh1+"/deposits/filterByNameDepositBetweenDateDeposit?depositByName="+depositByName.value+"&StartDateDeposit="+StartDateDeposit.value+"&EndDateDeposit="+this.value+sh2;
+        }
+    EndDateDeposit.onchange = ntext;
+    EndDateDeposit.onkeyup = ntext;
+
+</script>
+<script>
+    var rtext = function () {
+        var sh1 = '<spring:url value="';
+        var sh2 = +'"></spring:url>';
+        linkIdReturn.href = sh1+"/deposits/filterByIdDepositBetweenDateReturnDeposit?depositById="+depositById.value+"&StartDateReturnDeposit="+StartDateReturnDeposit.value+"&EndDateReturnDeposit="+this.value+sh2;
+        linkNameReturn.href = sh1+"/deposits/filterByNameDepositBetweenDateReturnDeposit?depositByName="+depositByName.value+"&StartDateReturnDeposit="+StartDateReturnDeposit.value+"&EndDateReturnDeposit="+this.value+sh2;
+        }
+    EndDateReturnDeposit.onchange = rtext;
+    EndDateReturnDeposit.onkeyup = rtext;
+
+</script>
+
 </body>
 </html>

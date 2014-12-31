@@ -120,8 +120,8 @@ public class DepositController {
 
     @RequestMapping("/filterByIdDepositBetweenDateReturnDeposit")
     public ModelAndView getFilterDepositByIdBetweenDateReturnDeposit(@RequestParam("depositById")Long depositById,
-                                                                    @RequestParam("StartDateDeposit")String StartDateDeposit,
-                                                                    @RequestParam("EndDateDeposit")String EndDateDeposit
+                                                                    @RequestParam("StartDateReturnDeposit")String StartDateDeposit,
+                                                                    @RequestParam("EndDateReturnDeposit")String EndDateDeposit
                                                                     ) throws ParseException{
         LOGGER.debug("getFilterDepositByIdBetweenDateReturnDeposit({}, {},{})",depositById, StartDateDeposit, EndDateDeposit);
 
@@ -130,9 +130,9 @@ public class DepositController {
 
         List<BankDepositor> depositors = depositorService.getBankDepositorByIdDepositBetweenDateReturnDeposit(depositById, dateFormat.parse(StartDateDeposit), dateFormat.parse(EndDateDeposit));
         LOGGER.debug("depositors.size = " + depositors.size());
-        // TODO sum
+
         List<BankDepositor> depositorsSum = new ArrayList<BankDepositor>();
-        BankDepositor depositor = depositorService.getBankDepositorsSummAmountByIdDeposit(depositById);
+        BankDepositor depositor = depositorService.getBankDepositorsSummAmountByIdDepositBetweenDateReturnDeposit(depositById, dateFormat.parse(StartDateDeposit), dateFormat.parse(EndDateDeposit));
         depositorsSum.add(depositor);
         LOGGER.debug("depositorsSum.size = " + depositorsSum.size());
 
@@ -195,8 +195,8 @@ public class DepositController {
 
     @RequestMapping("/filterByNameDepositBetweenDateReturnDeposit")
     public ModelAndView getFilterDepositByNameBetweenDateReturnDeposit(@RequestParam("depositByName")String depositByName,
-                                                                        @RequestParam("StartDateDeposit")String StartDateDeposit,
-                                                                        @RequestParam("EndDateDeposit")String EndDateDeposit
+                                                                        @RequestParam("StartDateReturnDeposit")String StartDateDeposit,
+                                                                        @RequestParam("EndDateReturnDeposit")String EndDateDeposit
                                                                         ) throws ParseException{
         LOGGER.debug("getFilterDepositByNameBetweenDateReturnDeposit({}, {},{})",depositByName, StartDateDeposit, EndDateDeposit);
 
@@ -206,9 +206,10 @@ public class DepositController {
         List<BankDepositor> depositors = depositorService.getBankDepositorByIdDepositBetweenDateReturnDeposit((Long) depositsAllDepositors.get(0).get("depositId"), dateFormat.
                 parse(StartDateDeposit), dateFormat.parse(EndDateDeposit));
         LOGGER.debug("depositors.size = " + depositors.size());
-        // TODO sum
+
         List<BankDepositor> depositorsSum = new ArrayList<BankDepositor>();
-        BankDepositor depositor = depositorService.getBankDepositorsSummAmountByIdDeposit((Long)depositsAllDepositors.get(0).get("depositId"));
+        BankDepositor depositor = depositorService.getBankDepositorsSummAmountByIdDepositBetweenDateReturnDeposit((Long)depositsAllDepositors.get(0).get("depositId"),dateFormat.
+                parse(StartDateDeposit), dateFormat.parse(EndDateDeposit));
         depositorsSum.add(depositor);
         LOGGER.debug("depositorsSum.size = " + depositorsSum.size());
 
@@ -246,8 +247,8 @@ public class DepositController {
     }
 
     @RequestMapping("/filterBetweenDateReturnDeposit")
-    public ModelAndView getFilterBetweenDateReturn( @RequestParam("StartDateDeposit")String StartDateDeposit,
-                                                    @RequestParam("EndDateDeposit")String EndDateDeposit
+    public ModelAndView getFilterBetweenDateReturn( @RequestParam("StartDateReturnDeposit")String StartDateDeposit,
+                                                    @RequestParam("EndDateReturnDeposit")String EndDateDeposit
                                                     )throws ParseException{
         LOGGER.debug("getFilterBetweenDateReturn({},{})",StartDateDeposit, EndDateDeposit);
 

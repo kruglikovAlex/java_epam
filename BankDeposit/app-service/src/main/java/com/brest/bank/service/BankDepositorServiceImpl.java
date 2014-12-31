@@ -113,6 +113,19 @@ public class BankDepositorServiceImpl implements BankDepositorService {
 
     @Override
     @Transactional
+    public BankDepositor getBankDepositorsSummAmountByIdDepositBetweenDateReturnDeposit(Long depositorIdDeposit, Date startDate, Date endDate) {
+        LOGGER.debug("getBankDepositorsSummAmountByIdDepositBetweenDateReturnDeposit(depositorIdDeposit={}, Dates={},{}) ", depositorIdDeposit, startDate, endDate);
+        BankDepositor depositor = null;
+        try {
+            depositor = bankDepositorDao.getBankDepositorsSummAmountByIdDepositBetweenDateReturnDeposit(depositorIdDeposit, startDate, endDate);
+        } catch (EmptyResultDataAccessException e) {
+            LOGGER.error("getBankDepositorsSummAmountByIdDepositBetweenDateReturnDeposit({}, Dates={},{}), Exception:{}", depositorIdDeposit, startDate, endDate, e.toString());
+        }
+        return depositor;
+    }
+
+    @Override
+    @Transactional
     public List<BankDepositor> getBankDepositorByIdDepositBetweenDateReturnDeposit(Long depositorIdDeposit, Date startDate, Date endDate){
         LOGGER.debug("getBankDepositorByIdDepositBetweenDateReturnDeposit(depositorIdDeposit={}, Dates={},{}) ", depositorIdDeposit, startDate, endDate);
         List<BankDepositor> depositors = null;

@@ -64,6 +64,9 @@ public class BankDepositorDaoImpl implements BankDepositorDao{
     @Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${select_bankDepositor_summ_by_id_deposit_between_date_deposit_path}')).inputStream)}")
     public String selectBankDepositorSummByIdDepositBetweenDateDepositSql;
 
+    @Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${select_bankDepositor_summ_by_id_deposit_between_date_return_deposit_path}')).inputStream)}")
+    public String selectBankDepositorSummByIdDepositBetweenDateReturnDepositSql;
+
     @Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${select_bankDepositor_by_id_deposit_between_date_return_deposit_path}')).inputStream)}")
     public String selectBankDepositorByIdDepositBetweenDateReturnDepositSql;
 
@@ -171,6 +174,12 @@ public class BankDepositorDaoImpl implements BankDepositorDao{
     public BankDepositor getBankDepositorsSummAmountByIdDepositBetweenDateDeposit(Long depositorIdDeposit, Date startDate, Date endDate) {
         LOGGER.debug("getBankDepositorsSummAmountByIdDepositBetweenDateDeposit(depositorIdDeposit={}, Dates={},{})", depositorIdDeposit, dateFormat.format(startDate), dateFormat.format(endDate));
         return jdbcTemplate.queryForObject(selectBankDepositorSummByIdDepositBetweenDateDepositSql, new BankDepositorMapper(),depositorIdDeposit, dateFormat.format(startDate), dateFormat.format(endDate));
+    }
+
+    @Override
+    public BankDepositor getBankDepositorsSummAmountByIdDepositBetweenDateReturnDeposit(Long depositorIdDeposit, Date startDate, Date endDate) {
+        LOGGER.debug("getBankDepositorsSummAmountByIdDepositBetweenDateReturnDeposit(depositorIdDeposit={}, Dates={},{})", depositorIdDeposit, dateFormat.format(startDate), dateFormat.format(endDate));
+        return jdbcTemplate.queryForObject(selectBankDepositorSummByIdDepositBetweenDateReturnDepositSql, new BankDepositorMapper(),depositorIdDeposit, dateFormat.format(startDate), dateFormat.format(endDate));
     }
 
     @Override

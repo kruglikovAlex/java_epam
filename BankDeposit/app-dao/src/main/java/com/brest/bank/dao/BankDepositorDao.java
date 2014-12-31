@@ -23,6 +23,7 @@ public interface BankDepositorDao {
 	public List<BankDepositor> getBankDepositorByIdDepositBetweenDateDeposit(Long depositorIdDeposit, Date startDate, Date endDate);
 	public BankDepositor getBankDepositorsSummAmountByIdDepositBetweenDateDeposit(Long depositorIdDeposit, Date startDate, Date endDate);
 	public List<BankDepositor> getBankDepositorByIdDepositBetweenDateReturnDeposit(Long depositorIdDeposit, Date startDate, Date endDate);
+	public BankDepositor getBankDepositorsSummAmountByIdDepositBetweenDateReturnDeposit(Long depositorIdDeposit, Date startDate, Date endDate);
 
 	//--- change data
 	public Long addBankDepositor(BankDepositor bankDepositor);
