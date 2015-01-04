@@ -88,7 +88,7 @@
                     <td>Summ plus</td>
                     <td>Summ minus</td>
                     <td>Count depositors</td>
-                    <td class="add" COLSPAN="2" align=middle><a href='<spring:url value="/deposits/inputFormDeposit" >  <spring:param name="id" value="${deposit.depositId}"/>   </spring:url>' class="buttonAdd"><b>ADD DEPOSIT</b></a></td>
+                    <td class="add" COLSPAN="2" align=middle><a href='<spring:url value="/deposits/inputFormDeposit" > </spring:url>' class="buttonAdd"><b>ADD DEPOSIT</b></a></td>
                 </thead>
                 <tbody>
                 <c:forEach items="${deposits}" var="deposit">
