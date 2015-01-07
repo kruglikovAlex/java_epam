@@ -1,18 +1,24 @@
 package com.brest.bank.web;
 
-import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
 import com.brest.bank.service.BankDepositorService;
 import com.brest.bank.service.BankDepositService;
+import com.brest.bank.validator.BankDepositorValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.beans.propertyeditors.CustomNumberEditor;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.ui.ModelMap;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -30,34 +36,73 @@ public class DepositorController {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Autowired
+    private BankDepositorValidator depositorValidator;
+
+    @Autowired
     private BankDepositorService depositorService;
 
     @Autowired
     private BankDepositService depositService;
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder)
+    {
+        String datePattern="yyyy-MM-dd";
+        SimpleDateFormat dateFormat=new SimpleDateFormat(datePattern);
+        dateFormat.setLenient(false);
+        binder.registerCustomEditor(Date.class,new CustomDateEditor(dateFormat,true,datePattern.length()));
+        binder.registerCustomEditor(String.class,new StringTrimmerEditor(true));
+        binder.registerCustomEditor(Integer.class,null,new CustomNumberEditor(Integer.class,null,true));
+    }
+
+
     @RequestMapping("/inputDepositor")
-    public ModelAndView InputForm() {
+    public ModelAndView InputForm(ModelMap model) {
+        model.put("depositor", new BankDepositor());
         return new ModelAndView("inputFormDepositor", "depositor", new BankDepositor());
     }
 
     @RequestMapping(value={"/inputFormDepositor"}, method = RequestMethod.GET)
-    public ModelAndView launchAddForm(RedirectAttributes redirectAttributes,
-                                         @RequestParam("depositorIdDeposit")Long depositorIdDeposit
+    public ModelAndView launchAddForm(ModelMap model,
+                                      RedirectAttributes redirectAttributes,
+                                      @RequestParam("depositorIdDeposit")Long depositorIdDeposit
                                      ){
+        //model.put("depositor", new BankDepositor());
         LOGGER.debug("launchAddForm({})",depositorIdDeposit);
         try {
-            BankDepositor depositor = new BankDepositor();
+            BankDepositor depositor = new BankDepositor(null, null, 0L, null, 0, 0, 0, null, 0);
             depositor.setDepositorIdDeposit(depositorIdDeposit);
             return new ModelAndView("inputFormDepositor", "depositor", depositor);
         }catch(Exception e) {
             LOGGER.debug("launchAddForm({}), Exception:{}", depositorIdDeposit,e.toString());
             redirectAttributes.addFlashAttribute( "message", e.getMessage());
-
             return new ModelAndView("redirect:/deposits/");
         }
     }
 
-    //====
+    @RequestMapping(value={"/submitDataDepositor"}, method=RequestMethod.POST)
+    public String getInputForm( ModelMap model,@ModelAttribute("depositor")
+                                BankDepositor depositor,
+                                BindingResult result,
+                                SessionStatus status
+                                ) throws ParseException {
+        LOGGER.debug("getInputForm({})", depositor);
+        LOGGER.debug("depositorValidator.validate({},{})",depositor, result);
+
+        depositorValidator.validate(depositor, result);
+
+        if (result.hasErrors()) {
+            LOGGER.debug("depositorValidator.validate({},{})",depositor, result);
+            return  "inputFormDepositor";
+        } else {
+            status.setComplete();
+        }
+
+        LOGGER.debug("addBankDepositor({})",depositor);
+        depositorService.addBankDepositor(depositor);
+        return "redirect:/deposits/";
+    }
+
     @RequestMapping("/filterBetweenDateDeposit")
     public ModelAndView getFilterBetweenDate(@RequestParam("StartDateDeposit")String StartDateDeposit,
                                              @RequestParam("EndDateDeposit")String EndDateDeposit
@@ -174,34 +219,6 @@ public class DepositorController {
 
         return  view;
     }
-    //====
-
-    @RequestMapping(value={"/inputFormDepositor"}, method=RequestMethod.POST)
-    public String getInputForm( @RequestParam("depositorName")String depositorName,
-    							@RequestParam("depositorIdDeposit")Long depositorIdDeposit,
-    							@RequestParam("depositorDateDeposit")String depositorDateDeposit,
-    							@RequestParam("depositorAmountDeposit")Integer depositorAmountDeposit,
-    							@RequestParam("depositorAmountPlusDeposit")Integer depositorAmountPlusDeposit,
-    							@RequestParam("depositorAmountMinusDeposit")Integer depositorAmountMinusDeposit,
-    							@RequestParam("depositorDateReturnDeposit")String depositorDateReturnDeposit,
-    							@RequestParam("depositorMarkReturnDeposit")Integer depositorMarkReturnDeposit
-                                ) throws ParseException {
-        LOGGER.debug("getInputForm()");
-        BankDepositor depositor = new BankDepositor();
-        
-        depositor.setDepositorName(depositorName);
-        depositor.setDepositorIdDeposit(depositorIdDeposit);
-        depositor.setDepositorDateDeposit(dateFormat.parse(depositorDateDeposit));
-        depositor.setDepositorAmountDeposit(depositorAmountDeposit);
-        depositor.setDepositorAmountPlusDeposit(depositorAmountPlusDeposit);
-        depositor.setDepositorAmountMinusDeposit(depositorAmountMinusDeposit);
-        depositor.setDepositorDateReturnDeposit(dateFormat.parse(depositorDateReturnDeposit));
-        depositor.setDepositorMarkReturnDeposit(depositorMarkReturnDeposit);
-        
-        depositorService.addBankDepositor(depositor);
-        return "redirect:/deposits/";
-        
-    }
 
     @RequestMapping(value={"/updateFormDepositor"}, method = RequestMethod.GET)
     public ModelAndView launchUpdateForm(RedirectAttributes redirectAttributes,
@@ -218,36 +235,28 @@ public class DepositorController {
     }
 
     @RequestMapping(value={"/updateFormDepositor"}, method = RequestMethod.POST)
-    public ModelAndView getUpdateForm(RedirectAttributes redirectAttributes,
-                                      @RequestParam("depositorId") Long depositorId,
-                                      @RequestParam("depositorName")String depositorName,
-                                      @RequestParam("depositorIdDeposit")Long depositorIdDeposit,
-                                      @RequestParam("depositorDateDeposit")String depositorDateDeposit,
-                                      @RequestParam("depositorAmountDeposit")Integer depositorAmountDeposit,
-                                      @RequestParam("depositorAmountPlusDeposit")Integer depositorAmountPlusDeposit,
-                                      @RequestParam("depositorAmountMinusDeposit")Integer depositorAmountMinusDeposit,
-                                      @RequestParam("depositorDateReturnDeposit")String depositorDateReturnDeposit,
-                                      @RequestParam("depositorMarkReturnDeposit")Integer depositorMarkReturnDeposit
+    public String getUpdateForm(ModelMap model,@ModelAttribute("depositor")
+                                      BankDepositor depositor,
+                                      BindingResult result,
+                                      SessionStatus status
                                     ) throws ParseException {
-        LOGGER.debug("getUpdateForm(All parameters of depositor)");
-        BankDepositor depositor = new BankDepositor();
+        LOGGER.debug("depositorValidator.validate({},{})",depositor, result);
+        depositorValidator.validate(depositor, result);
 
-        depositor.setDepositorId(depositorId);
-        depositor.setDepositorName(depositorName);
-        depositor.setDepositorIdDeposit(depositorIdDeposit);
-        depositor.setDepositorDateDeposit(dateFormat.parse(depositorDateDeposit));
-        depositor.setDepositorAmountDeposit(depositorAmountDeposit);
-        depositor.setDepositorAmountPlusDeposit(depositorAmountPlusDeposit);
-        depositor.setDepositorAmountMinusDeposit(depositorAmountMinusDeposit);
-        depositor.setDepositorDateReturnDeposit(dateFormat.parse(depositorDateReturnDeposit));
-        depositor.setDepositorMarkReturnDeposit(depositorMarkReturnDeposit);
+        if (result.hasErrors()) {
+            LOGGER.debug("depositorValidator.validate({},{})",depositor, result);
+
+            return "updateFormDepositor";
+        } else {
+            status.setComplete();
+        }
+
         try {
             depositorService.updateBankDepositor(depositor);
-            return new ModelAndView("redirect:/deposits/");
+            return "redirect:/deposits/";
         }catch(Exception e) {
-            LOGGER.debug("getUpdateForm(All parameters of depositor), Exception:{}",e.toString());
-            redirectAttributes.addFlashAttribute( "message", e.getMessage());
-            return new ModelAndView("redirect:/depositors/updateFormDepositor", "depositorId", depositorId);
+            LOGGER.debug("getUpdateForm({}), Exception:{}",depositor,e.toString());
+            return "redirect:/updateFormDepositor?depositorId="+depositor.getDepositorId();
         }
     }
 

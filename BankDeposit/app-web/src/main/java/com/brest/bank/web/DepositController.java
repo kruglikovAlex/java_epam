@@ -5,21 +5,30 @@ import com.brest.bank.domain.BankDepositor;
 import com.brest.bank.service.BankDepositService;
 import com.brest.bank.service.BankDepositorService;
 import com.brest.bank.validator.BankDepositValidator;
+import com.brest.bank.validator.BankDepositTypeEditor;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.ui.ModelMap;
+
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.bind.WebDataBinder;
+
+import org.springframework.beans.propertyeditors.CustomNumberEditor;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -45,34 +54,26 @@ public class DepositController {
     @Autowired
     private BankDepositorService depositorService;
 
+    @InitBinder
+    protected void initBinder(WebDataBinder binder) throws Exception {
+        binder.registerCustomEditor(BankDeposit.class, new BankDepositTypeEditor());
+        binder.registerCustomEditor(Integer.class,null,new CustomNumberEditor(Integer.class,null,true));
+    }
 
     @RequestMapping("/inputFormDeposit")
     public ModelAndView launchInputForm(ModelMap model) {
+        model.put("deposit",new BankDeposit());
         return new ModelAndView("inputFormDeposit", "deposit", new BankDeposit(null,null,0,0,null,0,null));
     }
 
-    @RequestMapping("/submitDataDeposit")
+    @RequestMapping(value={"/submitDataDeposit"}, method=RequestMethod.POST)
     public String getInputForm( ModelMap model,@ModelAttribute("deposit")
                                 BankDeposit deposit,
                                 BindingResult result,
                                 SessionStatus status
-                                /*@RequestParam("depositName")String depositName,
-    							@RequestParam("depositMinTerm")Integer depositMinTerm,
-    							@RequestParam("depositMinAmount")Integer depositMinAmount,
-    							@RequestParam("depositCurrency")String depositCurrency,
-    							@RequestParam("depositInterestRate")Integer depositInterestRate,
-    							@RequestParam("depositAddConditions")String depositAddConditions*/
                                 ) {
-       /* LOGGER.debug("getInputForm({},{},{},{},{},{})",depositName,depositMinTerm,depositMinAmount,depositCurrency,depositInterestRate,depositAddConditions);
-        BankDeposit deposit = new BankDeposit();
-        
-        deposit.setDepositName(depositName);
-        deposit.setDepositMinTerm(depositMinTerm);
-        deposit.setDepositMinAmount(depositMinAmount);
-        deposit.setDepositCurrency(depositCurrency);
-        deposit.setDepositInterestRate(depositInterestRate);
-        deposit.setDepositAddConditions(depositAddConditions);*/
         LOGGER.debug("depositValidator.validate({},{})",deposit, result);
+
         depositValidator.validate(deposit, result);
 
         if (result.hasErrors()) {
@@ -169,7 +170,7 @@ public class DepositController {
     @RequestMapping("/filterByNameDeposit")
     public ModelAndView getFilterDepositByName(@RequestParam("depositByName")String depositByName
                                             ){
-        //--- ??? add try and Summ
+        //--- ??? add try
         LOGGER.debug("getFilterDepositByName({})", depositByName);
 
         BankDeposit deposit = depositService.getBankDepositByName(depositByName);
@@ -315,32 +316,13 @@ public class DepositController {
                                         BankDeposit deposit,
                                         BindingResult result,
                                         SessionStatus status
-                                      /*RedirectAttributes redirectAttributes,
-                                      @RequestParam("depositId") Long depositId,
-                                      @RequestParam("depositName")String depositName,
-                                      @RequestParam("depositMinTerm")Integer depositMinTerm,
-                                      @RequestParam("depositMinAmount")Integer depositMinAmount,
-                                      @RequestParam("depositCurrency")String depositCurrency,
-                                      @RequestParam("depositInterestRate")Integer depositInterestRate,
-                                      @RequestParam("depositAddConditions")String depositAddConditions*/
                                      ) {
-        /*LOGGER.debug("getUpdateForm({},{},{},{},{},{})",depositName,depositMinTerm,depositMinAmount,depositCurrency,depositInterestRate,depositAddConditions);
-        BankDeposit deposit = new BankDeposit();
-
-        deposit.setDepositId(depositId);
-        deposit.setDepositName(depositName);
-        deposit.setDepositMinTerm(depositMinTerm);
-        deposit.setDepositMinAmount(depositMinAmount);
-        deposit.setDepositCurrency(depositCurrency);
-        deposit.setDepositInterestRate(depositInterestRate);
-        deposit.setDepositAddConditions(depositAddConditions);*/
 
         LOGGER.debug("depositValidator.validate({},{})",deposit, result);
         depositValidator.validate(deposit, result);
 
         if (result.hasErrors()) {
             LOGGER.debug("depositValidator.validate({},{})",deposit, result);
-
             return "updateFormDeposit";
         } else {
             status.setComplete();
@@ -351,7 +333,6 @@ public class DepositController {
             return "redirect:/deposits/";
         }catch(Exception e) {
             LOGGER.debug("getUpdateForm(), Exception:{}",e.toString());
-            //redirectAttributes.addFlashAttribute("message", e.getMessage());
             return "redirect:/updateFormDeposit?depositId="+deposit.getDepositId();
         }
     }
