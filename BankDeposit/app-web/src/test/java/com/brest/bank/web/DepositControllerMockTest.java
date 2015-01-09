@@ -115,6 +115,7 @@ public class DepositControllerMockTest {
 	public void testGetFilterDepositByIdBetweenDateDeposit() throws Exception{
 		List<Map> depositsAllDepositors = DataFixture.getDepositWithAllDepositors();
 		List<BankDepositor> depositors = DataFixture.getExistDepositors();
+
 		when(depositService.getBankDepositByIdWithAllDepositorsBetweenDateDeposit(1L, dateFormat.parse("2014-02-02"), dateFormat.parse("2014-09-09"))).thenReturn(depositsAllDepositors);
 		when(depositorService.getBankDepositorByIdDepositBetweenDateDeposit(1L, dateFormat.parse("2014-02-02"), dateFormat.parse("2014-09-09"))).thenReturn(depositors);
 
@@ -133,6 +134,7 @@ public class DepositControllerMockTest {
 	public void testGetFilterDepositByIdBetweenDateReturnDeposit() throws Exception{
 		List<Map> depositsAllDepositors = DataFixture.getDepositWithAllDepositors();
 		List<BankDepositor> depositors = DataFixture.getExistDepositors();
+
 		when(depositService.getBankDepositByIdWithAllDepositorsBetweenDateReturnDeposit(1L, dateFormat.parse("2014-02-02"), dateFormat.parse("2014-09-09"))).thenReturn(depositsAllDepositors);
 		when(depositorService.getBankDepositorByIdDepositBetweenDateReturnDeposit(1L, dateFormat.parse("2014-02-02"), dateFormat.parse("2014-09-09"))).thenReturn(depositors);
 
@@ -151,9 +153,11 @@ public class DepositControllerMockTest {
 	public void testGetFilterDepositByName() throws Exception {
 		List<Map> depositsAllDepositors = DataFixture.getDepositWithAllDepositors();
 		List<BankDepositor> depositors = DataFixture.getExistDepositors();
+
 		when(depositService.getBankDepositByName("name1")).thenReturn(new BankDeposit(1L,"name1",12,100,"usd",4,"condition1"));
 		when(depositService.getBankDepositByNameAllDepositors("name1")).thenReturn(depositsAllDepositors);
 		when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(depositors);
+
 		mvc.perform(get("/deposits/filterByNameDeposit?depositByName={name}","name1"))
 				.andExpect(view().name("depositsList"))
 				.andExpect(model().attributeExists("deposits"))
@@ -208,6 +212,7 @@ public class DepositControllerMockTest {
 		when(depositService.getBankDepositsAllDepositorsBetweenDateDeposit( dateFormat.parse("2014-02-02"), dateFormat.parse("2014-09-09"))).thenReturn(depositsAllDepositors);
 		when(depositorService.getBankDepositorBetweenDateDeposit(dateFormat.parse("2014-02-02"), dateFormat.parse("2014-09-09"))).thenReturn(depositors);
 		when(depositorService.getBankDepositorSummAmountDepositBetweenDateDeposit(dateFormat.parse("2014-02-02"), dateFormat.parse("2014-09-09"))).thenReturn(depositorsSum);
+
 		mvc.perform(get("/deposits/filterBetweenDateDeposit?StartDateDeposit={StartDate}&EndDateDeposit={EndDate}","2014-02-02","2014-09-09"))
 				.andExpect(status().isOk())
 				.andExpect(view().name("depositsList"));
@@ -225,6 +230,7 @@ public class DepositControllerMockTest {
 		when(depositService.getBankDepositsAllDepositorsBetweenDateReturnDeposit(dateFormat.parse("2014-02-02"), dateFormat.parse("2014-09-09"))).thenReturn(depositsAllDepositors);
 		when(depositorService.getBankDepositorBetweenDateReturnDeposit(dateFormat.parse("2014-02-02"), dateFormat.parse("2014-09-09"))).thenReturn(depositors);
 		when(depositorService.getBankDepositorSummAmountDepositBetweenDateReturnDeposit(dateFormat.parse("2014-02-02"), dateFormat.parse("2014-09-09"))).thenReturn(depositorsSum);
+
 		mvc.perform(get("/deposits/filterBetweenDateReturnDeposit?StartDateReturnDeposit={StartDate}&EndDateReturnDeposit={EndDate}","2014-02-02","2014-09-09"))
 				.andExpect(status().isOk())
 				.andExpect(view().name("depositsList"));

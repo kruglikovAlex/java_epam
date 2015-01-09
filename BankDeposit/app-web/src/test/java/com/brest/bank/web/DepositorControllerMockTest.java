@@ -137,6 +137,7 @@ public class DepositorControllerMockTest {
 	public void testGetFilterBetweenDateDeposit() throws Exception{
 		List<Map> depositsAllDepositors = DataFixture.getDepositWithAllDepositors();
 		List<BankDepositor> depositors = DataFixture.getExistDepositors();
+
 		when(depositService.getBankDepositsAllDepositorsBetweenDateDeposit(dateFormat.parse("2014-02-02"), dateFormat.parse("2014-09-09"))).thenReturn(depositsAllDepositors);
 		when(depositorService.getBankDepositorBetweenDateDeposit(dateFormat.parse("2014-02-02"), dateFormat.parse("2014-09-09"))).thenReturn(depositors);
 
@@ -154,6 +155,7 @@ public class DepositorControllerMockTest {
 	public void testGetFilterBetweenDateReturnDeposit() throws Exception{
 		List<Map> depositsAllDepositors = DataFixture.getDepositWithAllDepositors();
 		List<BankDepositor> depositors = DataFixture.getExistDepositors();
+
 		when(depositService.getBankDepositsAllDepositorsBetweenDateReturnDeposit(dateFormat.parse("2014-02-02"), dateFormat.parse("2014-09-09"))).thenReturn(depositsAllDepositors);
 		when(depositorService.getBankDepositorBetweenDateReturnDeposit(dateFormat.parse("2014-02-02"), dateFormat.parse("2014-09-09"))).thenReturn(depositors);
 
