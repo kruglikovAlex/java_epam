@@ -221,8 +221,8 @@
     var ntext = function () {
         var sh1 = '<spring:url value="';
         var sh2 = +'"></spring:url>';
-        linkId.href = sh1+"/deposits/filterByIdDepositBetweenDateDeposit?depositById="+depositById.value+"&StartDateDeposit="+StartDateDeposit.value+"&EndDateDeposit="+this.value+sh2;
-        linkName.href = sh1+"/deposits/filterByNameDepositBetweenDateDeposit?depositByName="+depositByName.value+"&StartDateDeposit="+StartDateDeposit.value+"&EndDateDeposit="+this.value+sh2;
+        linkId.href = sh1+"filterByIdDepositBetweenDateDeposit?depositById="+depositById.value+"&StartDateDeposit="+StartDateDeposit.value+"&EndDateDeposit="+this.value+sh2;
+        linkName.href = sh1+"filterByNameDepositBetweenDateDeposit?depositByName="+depositByName.value+"&StartDateDeposit="+StartDateDeposit.value+"&EndDateDeposit="+this.value+sh2;
         }
     EndDateDeposit.onchange = ntext;
     EndDateDeposit.onkeyup = ntext;
@@ -232,8 +232,8 @@
     var rtext = function () {
         var sh1 = '<spring:url value="';
         var sh2 = +'"></spring:url>';
-        linkIdReturn.href = sh1+"/deposits/filterByIdDepositBetweenDateReturnDeposit?depositById="+depositById.value+"&StartDateReturnDeposit="+StartDateReturnDeposit.value+"&EndDateReturnDeposit="+this.value+sh2;
-        linkNameReturn.href = sh1+"/deposits/filterByNameDepositBetweenDateReturnDeposit?depositByName="+depositByName.value+"&StartDateReturnDeposit="+StartDateReturnDeposit.value+"&EndDateReturnDeposit="+this.value+sh2;
+        linkIdReturn.href = sh1+"filterByIdDepositBetweenDateReturnDeposit?depositById="+depositById.value+"&StartDateReturnDeposit="+StartDateReturnDeposit.value+"&EndDateReturnDeposit="+this.value+sh2;
+        linkNameReturn.href = sh1+"filterByNameDepositBetweenDateReturnDeposit?depositByName="+depositByName.value+"&StartDateReturnDeposit="+StartDateReturnDeposit.value+"&EndDateReturnDeposit="+this.value+sh2;
         }
     EndDateReturnDeposit.onchange = rtext;
     EndDateReturnDeposit.onkeyup = rtext;
