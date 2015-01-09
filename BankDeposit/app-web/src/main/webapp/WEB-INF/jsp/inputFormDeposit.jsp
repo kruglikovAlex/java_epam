@@ -40,8 +40,8 @@
                         <span class="error">
                             <form:errors id="errordepositInterestRate" path="depositInterestRate"/>
                         </span><br/>
-                <label path="depositAddConditions:">Deposit Add Conditions :</label>
-                    <input type="text" name="depositAddConditions" value='<c:out value="${deposit.depositAddConditions}"/>'/>
+                <label path="depositAddConditions:">Deposit Add Conditions :</label></br>
+                    <textarea id="depositAddConditions" name="depositAddConditions" rows="10" cols="70" ><c:out value="${deposit.depositAddConditions}"/></textarea>
                         <span class="error">
                             <form:errors path="depositAddConditions"/>
                         </span><br/>

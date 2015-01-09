@@ -67,7 +67,7 @@ public class DepositorController {
                                       RedirectAttributes redirectAttributes,
                                       @RequestParam("depositorIdDeposit")Long depositorIdDeposit
                                      ){
-        //model.put("depositor", new BankDepositor());
+
         LOGGER.debug("launchAddForm({})",depositorIdDeposit);
         try {
             BankDepositor depositor = new BankDepositor(null, null, 0L, null, 0, 0, 0, null, 0);
@@ -252,6 +252,7 @@ public class DepositorController {
         }
 
         try {
+            LOGGER.debug("updateBankDepositor({})",depositor);
             depositorService.updateBankDepositor(depositor);
             return "redirect:/deposits/";
         }catch(Exception e) {
@@ -266,6 +267,7 @@ public class DepositorController {
                                         ) {
         LOGGER.debug("launchDeleteForm({})",depositorId);
         try {
+            LOGGER.debug("removeBankDepositor({})",depositorId);
             depositorService.removeBankDepositor(depositorId);
             return new ModelAndView("redirect:/deposits/");
         }catch(Exception e) {

@@ -83,16 +83,18 @@ public class DepositController {
         } else {
             status.setComplete();
         }
-        
+        LOGGER.debug("depositService.addBankDeposit({})",deposit);
         depositService.addBankDeposit(deposit);
         return "redirect:/deposits/";
         
     }
 
-    @RequestMapping("/filterByIdDeposit")
-    public ModelAndView getFilterDepositById(@RequestParam("depositById")Long depositById
+    @RequestMapping(value={"/filterByIdDeposit"}, method=RequestMethod.GET)
+    public ModelAndView getFilterDepositById(@RequestParam("depositById") Long depositById
                                             ){
         LOGGER.debug("getFilterDepositById{}",depositById);
+
+        ModelAndView view = new ModelAndView("depositsList");
 
         BankDeposit deposit = depositService.getBankDepositById(depositById);
         List<BankDeposit> deposits = new ArrayList<BankDeposit>();
@@ -110,7 +112,7 @@ public class DepositController {
         depositorsSum.add(depositor);
         LOGGER.debug("depositorsSum.size = " + depositorsSum.size());
 
-        ModelAndView view = new ModelAndView("depositsList", "deposits", depositsAllDepositors);
+        view.addObject("deposits",depositsAllDepositors);
         view.addObject("depositors",depositors);
         view.addObject("depositorSum",depositorsSum);
 
@@ -174,6 +176,7 @@ public class DepositController {
         LOGGER.debug("getFilterDepositByName({})", depositByName);
 
         BankDeposit deposit = depositService.getBankDepositByName(depositByName);
+        LOGGER.debug("getBankDepositByName({})", deposit);
         List<Map> depositList = depositService.getBankDepositByNameAllDepositors(depositByName);
         LOGGER.debug("depositList.size = " + depositList.size());
 
@@ -183,6 +186,7 @@ public class DepositController {
         BankDepositor depositorSum = depositorService.getBankDepositorsSummAmountByIdDeposit(deposit.getDepositId());
         List<BankDepositor> depositorsSum = new ArrayList<BankDepositor>();
         depositorsSum.add(depositorSum);
+        LOGGER.debug("depositorsSum.size = " + depositorsSum.size());
 
         ModelAndView view = new ModelAndView("depositsList", "deposits", depositList);
         view.addObject("depositors",depositors);
@@ -302,7 +306,10 @@ public class DepositController {
                                         ){
         LOGGER.debug("launchUpdateForm({})", depositId);
         try {
-            return new ModelAndView("updateFormDeposit", "deposit", depositService.getBankDepositById(depositId));
+            BankDeposit deposit = depositService.getBankDepositById(depositId);
+            LOGGER.debug("getBankDepositById({})={}", depositId, deposit);
+
+            return new ModelAndView("updateFormDeposit", "deposit", deposit);
 
         }catch(Exception e) {
             LOGGER.debug("launchUpdateForm({}), Exception:{}",depositId, e.toString());
@@ -318,7 +325,7 @@ public class DepositController {
                                         SessionStatus status
                                      ) {
 
-        LOGGER.debug("depositValidator.validate({},{})",deposit, result);
+        LOGGER.debug("getUpdateForm({},{},{})",deposit, result, status);
         depositValidator.validate(deposit, result);
 
         if (result.hasErrors()) {
@@ -329,7 +336,9 @@ public class DepositController {
         }
 
         try {
+            LOGGER.debug("updateBankDeposit({})",deposit);
             depositService.updateBankDeposit(deposit);
+
             return "redirect:/deposits/";
         }catch(Exception e) {
             LOGGER.debug("getUpdateForm(), Exception:{}",e.toString());
@@ -343,6 +352,7 @@ public class DepositController {
                                         ) {
         LOGGER.debug("launchDeleteForm({})",depositId);
         try {
+            LOGGER.debug("removeBankDeposit({})",depositId);
             depositService.removeBankDeposit(depositId);
             return new ModelAndView("redirect:/deposits/");
         }catch(Exception e) {

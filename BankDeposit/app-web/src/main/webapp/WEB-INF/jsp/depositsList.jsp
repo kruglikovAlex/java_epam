@@ -17,7 +17,7 @@
                  <table style="width: 80%" border=0 rules="none">
                      <tr>
                          <td>
-                             <form id="form_id" action='<spring:url value="/deposits/filterByIdDeposit" > </spring:url>' method="POST">
+                             <form id="form_id" action='<spring:url value="/deposits/filterByIdDeposit" > </spring:url>' method="GET">
                                  <label path="depositById">Find by id :</label>
                                     <input  id="depositById" type="text" name="depositById" />
                                  <input type="submit" name="Submit" value="<-Find">
