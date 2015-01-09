@@ -38,7 +38,7 @@ public class BankDepositorServiceImpl implements BankDepositorService {
         LOGGER.debug("addBankDepositor({}) ", depositor);
         Assert.notNull(depositor);
         Assert.isNull(depositor.getDepositorId());
-        Assert.notNull(depositor.getDepositorName(), ERROR_METHOD_PARAM + ": DepositorName");
+       // Assert.notNull(depositor.getDepositorName(), ERROR_METHOD_PARAM + ": DepositorName");
         BankDepositor existingDepositor = getBankDepositorByName(depositor.getDepositorName());
         if (existingDepositor != null) {
             throw new IllegalArgumentException(ERROR_ADD);
@@ -263,7 +263,7 @@ public class BankDepositorServiceImpl implements BankDepositorService {
         LOGGER.debug("updateBankDepositor(depositor={}) ", depositor);
         Assert.notNull(depositor);
         Assert.notNull(depositor.getDepositorId());
-        Assert.notNull(depositor.getDepositorName(), ERROR_METHOD_PARAM + ": DepositorName");
+        //Assert.notNull(depositor.getDepositorName(), ERROR_METHOD_PARAM + ": DepositorName");
 
         BankDepositor existingDepositor = null;
         try {

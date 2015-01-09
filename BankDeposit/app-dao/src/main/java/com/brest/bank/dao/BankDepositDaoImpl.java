@@ -115,8 +115,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
         LOGGER.debug("addBankDeposit({})", bankDeposit);
         Assert.notNull(bankDeposit);
         Assert.isNull(bankDeposit.getDepositId());
-        Assert.notNull(bankDeposit.getDepositName(), "Deposit name should be specified.");
-        Assert.notNull(bankDeposit.getDepositMinTerm(), "Deposit MinTerm should be specified.");
+        //Assert.notNull(bankDeposit.getDepositName(), "Deposit name should be specified.");
+        //Assert.notNull(bankDeposit.getDepositMinTerm(), "Deposit MinTerm should be specified.");
 
         Map<String, Object> parameters = new HashMap(7);
 

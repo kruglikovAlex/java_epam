@@ -1,17 +1,17 @@
 package com.brest.bank.domain;
 
-//package com.brest.bank.domain;
 
 public class BankDeposit{
+
 	private Long 	depositId;				//�������������
 	private String 	depositName;			//������������ ������
-	private Integer	depositMinTerm;			//����������� ���� ������
-	private Integer	depositMinAmount;		//����������� ����� ������
+	private Integer	depositMinTerm = null;			//����������� ���� ������
+	private Integer	depositMinAmount = null;		//����������� ����� ������
 	private String 	depositCurrency;		//������ ������
-	private Integer	depositInterestRate;	//���������� ������
+	private Integer	depositInterestRate = null;	//���������� ������
 	private String 	depositAddConditions;	//�������������� �������
 
-	//--- ����������� � �����������
+	//--- конструктор с параметрами
 	public BankDeposit(Long      	depositId,
 					   String 	    depositName,
 					   Integer 		depositMinTerm,
@@ -28,10 +28,10 @@ public class BankDeposit{
 		this.depositAddConditions = depositAddConditions; 
 	}
 
-    //--- ����������� ��� ����������
+    //--- конструктор без параметров
     public BankDeposit(){
     }
-	//--- get/set Id (������������� ������)
+	//--- get/set Id (идентификатор фклада)
 	public Long getDepositId(){
 		return depositId;
 	}
@@ -39,7 +39,7 @@ public class BankDeposit{
 	public void setDepositId(Long depositId){
 		this.depositId = depositId;	
 	}
-	//--- get/set Name (������������ ������)
+	//--- get/set Name (наименование вклада)
 	public String getDepositName(){
 		return depositName;	
 	}
@@ -47,7 +47,7 @@ public class BankDeposit{
 	public void setDepositName(String depositName){
 		this.depositName = depositName;
 	}
-	//--- get/set depositMinTerm (����������� ���� ������)
+	//--- get/set depositMinTerm (минимальный срок вклада)
 	public int getDepositMinTerm(){
 		return depositMinTerm;	
 	}
@@ -55,7 +55,7 @@ public class BankDeposit{
 	public void setDepositMinTerm(int depositMinTerm){
 		this.depositMinTerm = depositMinTerm;	
 	}
-	//--- get/set depositMinAmount (����������� ����� ������)
+	//--- get/set depositMinAmount (минимальная суииа вклада)
 	public int getDepositMinAmount(){
 		return depositMinAmount;	
 	}
@@ -63,7 +63,7 @@ public class BankDeposit{
 	public void setDepositMinAmount(int depositMinAmount){
 		this.depositMinAmount = depositMinAmount;	
 	}
-	//--- get/set depositCurrency (������ ������)
+	//--- get/set depositCurrency (валюта вклада)
 	public String getDepositCurrency(){
 		return depositCurrency;	
 	}
@@ -71,7 +71,7 @@ public class BankDeposit{
 	public void setDepositCurrency(String depositCurrency){
 		this.depositCurrency = depositCurrency;	
 	}
-	//--- get/set depositInterestRate (% ������)
+	//--- get/set depositInterestRate (% ставка)
 	public int getDepositInterestRate(){
 		return depositInterestRate;	
 	}
@@ -79,7 +79,7 @@ public class BankDeposit{
 	public void setDepositInterestRate(int depositInterestRate){
 		this.depositInterestRate = depositInterestRate;	
 	}
-	//--- get/set depositAddConditions (�������������� �������)
+	//--- get/set depositAddConditions (дополнительные услович)
 	public String getDepositAddConditions(){
 		return depositAddConditions;	
 	}

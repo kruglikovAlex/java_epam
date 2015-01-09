@@ -4,20 +4,23 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class BankDepositor {
+
+	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
 	private Long 		depositorId; 				//�������������
 	private String 		depositorName;				//��� ���������
 	private Long		depositorIdDeposit;			//������������� ������
-	private Date 		depositorDateDeposit = null;		//���� ������
+	private Date 		depositorDateDeposit;		//���� ������
 	private Integer		depositorAmountDeposit;		//����� ������
 	private Integer		depositorAmountPlusDeposit;	//����� ���������� ������
 	private Integer		depositorAmountMinusDeposit;//����� �������� ������
-	private Date		depositorDateReturnDeposit = null;//���� �������� ������
+	private Date		depositorDateReturnDeposit;//���� �������� ������
 	private Integer		depositorMarkReturnDeposit;	//������� � �������� ������
 	
-	//--- ����������� ��� ����������
+	//--- конструктор без параметров
 	public BankDepositor(){
 	}
-	//--- ����������� � �����������
+	//--- конструктор с параметрами
 	public BankDepositor(Long 		depositorId, 
 						 String		depositorName, 
 						 Long		depositorIdDeposit, 
@@ -107,8 +110,6 @@ public class BankDepositor {
 			this.depositorMarkReturnDeposit = 1;
 		} else this.depositorMarkReturnDeposit = 0;
 	}
-
-    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Override
     public String toString() {

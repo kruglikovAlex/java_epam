@@ -18,6 +18,7 @@ import static junit.framework.Assert.assertTrue;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -50,6 +51,7 @@ public class DepositorServiceImplMockTest {
     	
     	assertEquals(depositors, depositorsResult);
     	assertSame(depositors, depositorsResult);
+
     }
     
     @Test

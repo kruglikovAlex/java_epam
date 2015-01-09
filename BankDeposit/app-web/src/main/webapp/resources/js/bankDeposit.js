@@ -49,8 +49,10 @@ $(document).ready(function(){
         summ = 0;
     });
     jQuery(function($){
-        $("#StartDateDeposit,#EndDateDeposit,#StartDateReturnDeposit,#EndDateReturnDeposit,#MyDate1, #MyDate2,#MyDate3,#MyDate4,#MyDate5,#MyDate6,#MyDate7,#MyDate8")
+        $("#StartDateDeposit,#EndDateDeposit,#StartDateReturnDeposit,#EndDateReturnDeposit,#MyDate1, #MyDate2,#MyDate3,#MyDate4,#MyDate5,#MyDate6,#depositorDateDeposit,#depositorDateReturnDeposit")
         .mask("9999-99-99",{completed:function(){}});
     });
+
+
 
 });

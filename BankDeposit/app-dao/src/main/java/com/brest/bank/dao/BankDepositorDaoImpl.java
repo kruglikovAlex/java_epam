@@ -121,7 +121,7 @@ public class BankDepositorDaoImpl implements BankDepositorDao{
         Assert.notNull(bankDepositor);
 
         Assert.isNull(bankDepositor.getDepositorId());
-        Assert.notNull(bankDepositor.getDepositorName(), "Deposit name should be specified.");
+        //Assert.notNull(bankDepositor.getDepositorName(), "Deposit name should be specified.");
 
         Map<String, Object> parameters = new HashMap(9);
 
@@ -243,7 +243,7 @@ public class BankDepositorDaoImpl implements BankDepositorDao{
         KeyHolder keyholder = new GeneratedKeyHolder();
         LOGGER.debug("updateBankDepositor({})", bankDepositor);
         Assert.notNull(bankDepositor.getDepositorId());
-        Assert.notNull(bankDepositor.getDepositorAmountDeposit());
+        //Assert.notNull(bankDepositor.getDepositorAmountDeposit());
         Map<String, Object> parameters = new HashMap(9);
 
         parameters.put(DEPOSITOR_ID, bankDepositor.getDepositorId());

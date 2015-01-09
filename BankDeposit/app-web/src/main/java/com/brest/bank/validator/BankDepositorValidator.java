@@ -3,6 +3,7 @@ package com.brest.bank.validator;
 import com.brest.bank.domain.BankDepositor;
 import com.brest.bank.service.BankDepositorService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import org.springframework.validation.Errors;
@@ -18,6 +19,7 @@ public class BankDepositorValidator implements Validator {
 
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+    @Autowired
     private BankDepositorService depositorService;
 
     @Override
@@ -29,19 +31,25 @@ public class BankDepositorValidator implements Validator {
     public void validate(Object target, Errors errors) {
         BankDepositor depositor = (BankDepositor) target;
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "depositorName", "depositorName.empty", "Depositor name must not be empty.");
+        //--- validation depositorName
         ValidationUtils.rejectIfEmpty(errors, "depositorName", "depositorName.empty", "Depositor name must not be empty.");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "depositorName", "depositorName.empty", "Depositor name must not be empty.");
+
         if (depositor.getDepositorName().length() > 255) {
             errors.rejectValue("depositorName", "depositorName.tooLong", "Depositor name must not more than 255 characters.");
         }
-
         if (depositor.getDepositorName().length() == 0) {
             errors.rejectValue("depositorName", "depositorName.validation.negative", "Name depositor is required - length must be > 0");
         }
 
+
+        //--- validation depositorDateDeposit
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "depositorDateDeposit", "label.validate.depositorDateDepositEmpty");
+
+        //--- validation depositorDateReturnDeposit
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "depositorDateReturnDeposit", "label.validate.depositorDateReturnDepositEmpty");
 
+        //--- validation depositorAmountDeposit
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "depositorAmountDeposit", "label.validate.depositorAmountDepositEmpty");
 
         if (depositor.getDepositorAmountDeposit() == 0) {
@@ -51,20 +59,24 @@ public class BankDepositorValidator implements Validator {
             errors.rejectValue("depositorAmountDeposit", "depositorAmountDeposit_validation.negative", "must be > 0");
         }
 
+        //--- validation depositorAmountPlusDeposit
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "depositorAmountPlusDeposit", "label.validate.depositorAmountPlusDepositEmpty");
 
         if (depositor.getDepositorAmountPlusDeposit() < 0) {
             errors.rejectValue("depositorAmountPlusDeposit", "depositorAmountPlusDeposit_validation.negative", "must be > 0");
         }
 
+        //--- validation depositorAmountMinusDeposit
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "depositorAmountMinusDeposit", "label.validate.depositorAmountMinusDepositEmpty");
 
         if (depositor.getDepositorAmountMinusDeposit() < 0) {
             errors.rejectValue("depositorAmountMinusDeposit", "depositorAmountMinusDeposit_validation.negative", "must be > 0");
         }
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "depositorMarkReturnDeposit", "label.validate.depositorMarkReturnDepositEmpty");
+        //--- validation depositorMarkReturnDeposit
         ValidationUtils.rejectIfEmpty(errors, "depositorMarkReturnDeposit", "label.validate.depositorMarkReturnDepositEmpty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "depositorMarkReturnDeposit", "label.validate.depositorMarkReturnDepositEmpty");
+
         if (depositor.getDepositorMarkReturnDeposit() < 0 || depositor.getDepositorMarkReturnDeposit() > 1) {
             errors.rejectValue("depositorMarkReturnDeposit", "depositorMarkReturnDeposit_validation.negative", "must be 0 or 1");
         }

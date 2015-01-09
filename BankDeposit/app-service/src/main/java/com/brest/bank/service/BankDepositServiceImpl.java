@@ -52,8 +52,8 @@ public class BankDepositServiceImpl implements BankDepositService {
         LOGGER.debug("addBankDeposit({}) ", deposit);
         Assert.notNull(deposit);
         Assert.isNull(deposit.getDepositId());
-        Assert.notNull(deposit.getDepositName(), ERROR_METHOD_PARAM + ": DepositName");
-        Assert.notNull(deposit.getDepositMinTerm(), ERROR_METHOD_PARAM + ": DepositMinTerm");
+        //Assert.notNull(deposit.getDepositName(), ERROR_METHOD_PARAM + ": DepositName");
+        //Assert.notNull(deposit.getDepositMinTerm(), ERROR_METHOD_PARAM + ": DepositMinTerm");
         BankDeposit existingDeposit = getBankDepositByName(deposit.getDepositName());
         if (existingDeposit != null) {
             throw new IllegalArgumentException(ERROR_ADD);
@@ -115,7 +115,7 @@ public class BankDepositServiceImpl implements BankDepositService {
         LOGGER.debug("updateBankDeposit(deposit={}) ", deposit);
         Assert.notNull(deposit);
         Assert.notNull(deposit.getDepositId());
-        Assert.notNull(deposit.getDepositName(), ERROR_METHOD_PARAM + ": DepositName");
+        //Assert.notNull(deposit.getDepositName(), ERROR_METHOD_PARAM + ": DepositName");
         BankDeposit existingDeposit = null;
         try {
             existingDeposit = bankDepositDao.getBankDepositById(deposit.getDepositId());
