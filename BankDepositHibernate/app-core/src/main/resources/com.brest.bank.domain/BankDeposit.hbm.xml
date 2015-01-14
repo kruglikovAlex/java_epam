@@ -1,0 +1,26 @@
+<?xml version='1.0'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.brest.bank.domain">
+
+    <class name="BankDeposit" table="BANKDEPOSIT">
+        <id name="depositId" column="depositId">
+            <generator class="native"/>
+        </id>
+        <property name="depositName" type="String" column="depositName"/>
+        <property name="depositMinTerm" type="Integer" column="depositMinTerm"/>
+        <property name="depositMinAmount" type="Integer" column="depositMinAmount"/>
+        <property name="depositCurrency" type="String" column="depositCurrency"/>
+        <property name="depositInterestRate" type="Integer" column="depositInterestRate"/>
+        <property name="depositAddConditions" type="String" column="depositAddConditions"/>
+
+        <set name="depositors" table="BANKDEPOSITORS" cascade="all">
+            <key column="depositId"/>
+            <one-to-many class="BankDepositors"/>
+        </set>
+
+    </class>
+
+</hibernate-mapping>
