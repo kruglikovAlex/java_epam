@@ -116,14 +116,19 @@ public class BankDepositor {
 
 	@Override
     public String toString() {
+		String date, dateReturn;
+		if (depositorDateDeposit!=null) date = dateFormat.format(depositorDateDeposit);
+		else date = "null";
+		if (depositorDateReturnDeposit!=null) dateReturn = dateFormat.format(depositorDateReturnDeposit);
+		else dateReturn = "null";
         return "BankDepositor: { depositorId ="+depositorId+
 		", depositorName ="+ depositorName+
 		", depositorIdDeposit ="+ depositorIdDeposit+
-		", depositorDateDeposit ="+ dateFormat.format(depositorDateDeposit)+
+		", depositorDateDeposit ="+ date +
 		", depositorAmountDeposit ="+ depositorAmountDeposit+
 		", depositorAmountPlusDeposit ="+ depositorAmountPlusDeposit+
 		", depositorAmountMinusDeposit ="+ depositorAmountMinusDeposit+
-		", depositorDateReturnDeposit ="+ dateFormat.format(depositorDateReturnDeposit)+
+		", depositorDateReturnDeposit ="+ dateReturn +
 		", depositorMarkReturnDeposit ="+ depositorMarkReturnDeposit  + '}';
     }
 }
