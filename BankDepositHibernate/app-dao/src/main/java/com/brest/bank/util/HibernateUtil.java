@@ -19,7 +19,7 @@ public class HibernateUtil {
             return new Configuration().configure().buildSessionFactory(
                     new StandardServiceRegistryBuilder().build());
         } catch (Throwable ex){
-            LOGGER.error("Initial SessionFactory creation ", ex.toString());
+            LOGGER.error("Initial SessionFactory creation ", ex);
             throw new ExceptionInInitializerError(ex);
         }
     }

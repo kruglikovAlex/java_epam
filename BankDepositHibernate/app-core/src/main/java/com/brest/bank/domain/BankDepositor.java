@@ -9,7 +9,7 @@ public class BankDepositor {
 
 	private Long 		depositorId; 				//идентификатор
 	private String 		depositorName;				//Ф.И.О. вкладчика
-	private Long		depositorIdDeposit;			//идентификатор вклада
+
 	private Date 		depositorDateDeposit;		//Дата вклада
 	private Integer		depositorAmountDeposit;		//суммма вклада
 	private Integer		depositorAmountPlusDeposit;	//сумма процентов
@@ -25,7 +25,7 @@ public class BankDepositor {
 	//--- конструктор с параметрами
 	public BankDepositor(Long 		depositorId, 
 						 String		depositorName, 
-						 Long		depositorIdDeposit, 
+
 						 Date	 	depositorDateDeposit, 
 						 Integer	depositorAmountDeposit,
 						 Integer	depositorAmountPlusDeposit,
@@ -34,7 +34,7 @@ public class BankDepositor {
 						 Integer	depositorMarkReturnDeposit) {
 		this.depositorId = depositorId;
 		this.depositorName = depositorName;
-		this.depositorIdDeposit = depositorIdDeposit;
+
 		this.depositorDateDeposit = depositorDateDeposit;
 		this.depositorAmountDeposit = depositorAmountDeposit;
 		this.depositorAmountPlusDeposit = depositorAmountPlusDeposit;
@@ -56,13 +56,7 @@ public class BankDepositor {
 	public void setDepositorName(String depositorName){
 		this.depositorName = depositorName;
 	}
-	//--- get/set depositorIdDeposit (идентификатор вклада)
-	public Long getDepositorIdDeposit(){
-		return this.depositorIdDeposit;
-	}
-	public void setDepositorIdDeposit(Long depositorIdDeposit){
-		this.depositorIdDeposit = depositorIdDeposit;
-	}
+
 	//--- get/set depositorDateDeposit (Дата вклада)
 	public Date getDepositorDateDeposit(){
 		return this.depositorDateDeposit;
@@ -123,7 +117,6 @@ public class BankDepositor {
 		else dateReturn = "null";
         return "BankDepositor: { depositorId ="+depositorId+
 		", depositorName ="+ depositorName+
-		", depositorIdDeposit ="+ depositorIdDeposit+
 		", depositorDateDeposit ="+ date +
 		", depositorAmountDeposit ="+ depositorAmountDeposit+
 		", depositorAmountPlusDeposit ="+ depositorAmountPlusDeposit+
