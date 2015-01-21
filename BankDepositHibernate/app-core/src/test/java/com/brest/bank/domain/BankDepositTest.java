@@ -84,7 +84,7 @@ public class BankDepositTest {
     @Test
     public void testGetDepositors() throws Exception {
         Set depositors = new HashSet<BankDepositor>();
-        depositors.add(new BankDepositor(1L,"name",1L,dateFormat.parse("2015-01-01"),100,10,10,dateFormat.parse("2015-10-10"),0));
+        depositors.add(new BankDepositor(1L,"name",dateFormat.parse("2015-01-01"),100,10,10,dateFormat.parse("2015-10-10"),0));
 
         LOGGER.debug("testGetDepositors({})",depositors);
         deposit.setDepositors(depositors);

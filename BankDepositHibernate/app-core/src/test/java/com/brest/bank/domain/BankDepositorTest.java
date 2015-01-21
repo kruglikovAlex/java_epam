@@ -40,15 +40,6 @@ public class BankDepositorTest {
     }
 
     @Test
-    public void testGetDepositorIdDeposit() throws Exception {
-        Long id = (long)(Math.random()*10);
-        LOGGER.debug("testGetDepositorIdDeposit({})", id);
-        depositors.setDepositorIdDeposit(id);
-
-        assertEquals(id, depositors.getDepositorIdDeposit());
-    }
-
-    @Test
     public void testGetDepositorDateDeposit() throws Exception {
         LOGGER.debug("testGetDepositorDateDeposit({})","2015-01-01");
         depositors.setDepositorDateDeposit(dateFormat.parse("2015-01-01"));
@@ -114,7 +105,7 @@ public class BankDepositorTest {
         LOGGER.debug("testToString({})",depositors.toString());
 
         assertEquals("BankDepositor: { depositorId =null, depositorName =null, " +
-                "depositorIdDeposit =null, depositorDateDeposit =null, " +
+                "depositorDateDeposit =null, " +
                 "depositorAmountDeposit =null, depositorAmountPlusDeposit =null, " +
                 "depositorAmountMinusDeposit =null, depositorDateReturnDeposit =null, " +
                 "depositorMarkReturnDeposit =null}",depositors.toString());
@@ -122,11 +113,11 @@ public class BankDepositorTest {
 
     @Test
     public void testToString() throws Exception {
-        depositors = new BankDepositor(1L,"name",1L,dateFormat.parse("2015-01-01"),100,10,30,dateFormat.parse("2015-10-10"),0);
+        depositors = new BankDepositor(1L,"name",dateFormat.parse("2015-01-01"),100,10,30,dateFormat.parse("2015-10-10"),0);
         LOGGER.debug("testToString({})", depositors.toString());
 
         assertEquals("BankDepositor: { depositorId =1, depositorName =name, " +
-                "depositorIdDeposit =1, depositorDateDeposit =2015-01-01, " +
+                "depositorDateDeposit =2015-01-01, " +
                 "depositorAmountDeposit =100, depositorAmountPlusDeposit =10, " +
                 "depositorAmountMinusDeposit =30, depositorDateReturnDeposit =2015-10-10, " +
                 "depositorMarkReturnDeposit =0}",depositors.toString());
