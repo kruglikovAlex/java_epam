@@ -7,6 +7,8 @@ import com.brest.bank.util.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.hibernate.criterion.Restrictions;
@@ -15,11 +17,12 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
-public class BankDepositDaoImpl implements BankDepositDao {
+public class BankDepositorDaoImpl implements BankDepositorDao {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     private BankDeposit deposit;
+    private BankDepositor depositor;
     private List<BankDeposit> deposits = new ArrayList<BankDeposit>();
     private List<BankDepositor> depositors = new ArrayList<BankDepositor>();
     private Session session;
@@ -32,129 +35,133 @@ public class BankDepositDaoImpl implements BankDepositDao {
 
     //---- get all deposits with SQL
     @Override
-    public List<BankDeposit> getBankDepositsSQL() {
-        LOGGER.debug("getBankDepositsSQL()");
+    public List<BankDepositor> getBankDepositorsSQL() {
+        LOGGER.debug("getBankDepositorsSQL()");
         //--- соединение
         session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
         //--- query
-        for (Object d : session.createQuery("from BankDeposit").list()) {
-            deposits.add((BankDeposit)d);
+        for (Object d : session.createQuery("from BankDepositor").list()) {
+            depositors.add((BankDepositor)d);
         }
         //--- завершение сессии
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
-        LOGGER.debug("deposits:{}", deposits);
-        return deposits;
+        LOGGER.debug("depositors:{}", depositors);
+        return depositors;
     }
     //---- get all deposits with Criteria
     @Override
-    public List<BankDeposit> getBankDepositsCriteria() {
-        LOGGER.debug("getBankDepositsCriteria()");
+    public List<BankDepositor> getBankDepositorsCriteria() {
+        LOGGER.debug("getBankDepositorsCriteria()");
         //--- соединение
         session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
         //--- query
-        for(Object d: session.createCriteria(BankDeposit.class).list()){
-            deposits.add((BankDeposit)d);
+        for(Object d: session.createCriteria(BankDepositor.class).list()){
+            depositors.add((BankDepositor)d);
         }
         //--- завершение сессии
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
-        LOGGER.debug("deposits:{}", deposits);
-        return deposits;
+        LOGGER.debug("depositors:{}", depositors);
+        return depositors;
     }
     //---- get by depositId with get
     @Override
-    public BankDeposit getBankDepositByIdGet(Long id){
-        LOGGER.debug("getBankDepositByIdGet({})", id);
+    public BankDepositor getBankDepositorByIdGet(Long id){
+        LOGGER.debug("getBankDepositorByIdGet({})", id);
         //--- соединение
         session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
         //--- GET
-        deposit = (BankDeposit)session.get(BankDeposit.class, id);
+        depositor = (BankDepositor)session.get(BankDepositor.class, id);
         //--- завершение сессии
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
-        LOGGER.debug("deposit: {}", deposit);
-        return deposit;
+        LOGGER.debug("depositor: {}", depositor);
+        return depositor;
     }
     //---- get by depositId with load
     @Override
-    public BankDeposit getBankDepositByIdLoad(Long id){
-        LOGGER.debug("getBankDepositByIdLoad({})", id);
+    public BankDepositor getBankDepositorByIdLoad(Long id){
+        LOGGER.debug("getBankDepositorByIdLoad({})", id);
         //--- соединение
         session = HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
         //--- LOAD
-        deposit = (BankDeposit)session.load(BankDeposit.class, id);
+        depositor = (BankDepositor)session.load(BankDepositor.class, id);
         //--- завершение сессии
         session.getTransaction().commit();
 
-        LOGGER.debug("deposit: {}", deposit);
-        return deposit;
+        LOGGER.debug("depositor: {}", depositor);
+        return depositor;
     }
     //---- get by depositId with Criteria
     @Override
-    public BankDeposit getBankDepositByIdCriteria(Long id){
-        LOGGER.debug("getBankDepositByIdCriteria({})", id);
+    public BankDepositor getBankDepositorByIdCriteria(Long id){
+        LOGGER.debug("getBankDepositorByIdCriteria({})", id);
         //--- соединение
         session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
         //--- query
-        deposit = (BankDeposit)session.createCriteria(BankDeposit.class)
-                    .add(Restrictions.eq("depositId", id)).uniqueResult();
+        depositor = (BankDepositor)session.createCriteria(BankDepositor.class)
+                .add(Restrictions.eq("depositorId", id)).uniqueResult();
         //--- завершение сессии
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
-        LOGGER.debug("deposit:{}", deposit);
-        return deposit;
+        LOGGER.debug("depositor:{}", depositor);
+        return depositor;
     }
     //---- get by depositName SQL
     @Override
-    public BankDeposit getBankDepositByNameSQL(String name){
-        LOGGER.debug("getBankDepositByNameSQL({})",name);
+    public BankDepositor getBankDepositorByNameSQL(String name){
+        LOGGER.debug("getBankDepositorByNameSQL({})",name);
         //--- соединение
         session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
         //--- query
-        String q = "from BankDeposit d WHERE d.depositName=:findName";
+        String q = "from BankDepositor d WHERE d.depositorName=:findName";
         Query query = session.createQuery(q).setString("findName",name);
-        deposit = (BankDeposit)query.uniqueResult();
+        depositor = (BankDepositor)query.uniqueResult();
         //--- завершение сессии
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
-        LOGGER.debug("deposit:{}", deposit);
-        return deposit;
+        LOGGER.debug("depositor:{}", depositor);
+        return depositor;
     }
-
     //---- get by depositName createCriteria
     @Override
-    public BankDeposit getBankDepositByNameCriteria(String name){
-        LOGGER.debug("getBankDepositByNameCriteria({})",name);
+    public BankDepositor getBankDepositorByNameCriteria(String name){
+        LOGGER.debug("getBankDepositorByNameCriteria({})",name);
         //--- соединение
         session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
         //--- query
-        deposit = (BankDeposit)session.createCriteria(BankDeposit.class)
-                                .add(Restrictions.eq("depositName", name)).uniqueResult();
+        depositor = (BankDepositor)session.createCriteria(BankDepositor.class)
+                    .add(Restrictions.eq("depositorName", name)).uniqueResult();
         //--- завершение сессии
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
-        LOGGER.debug("deposit:{}", deposit);
-        return deposit;
+        LOGGER.debug("depositor:{}", depositor);
+        return depositor;
     }
-    //---- create
+    //---- add BankDepositor to BankDeposit
     @Override
-    public void addBankDeposit(BankDeposit deposit) {
-        LOGGER.debug("addBankDeposit({})",deposit);
-        assertNotNull(deposit);
+    public void addBankDepositor(Long depositId, BankDepositor depositor){
+        LOGGER.debug("addBankDepositor({},{})",depositId, depositor);
+        assertNotNull(depositor);
         //--- соединение
         session = HibernateUtil.getSessionFactory().getCurrentSession();
         try {
             session.beginTransaction();
             //--- add
-            session.save(deposit);
+            deposit = (BankDeposit)session.load(BankDeposit.class, depositId);
+            LOGGER.debug("deposit-id{}: {}", depositId, deposit);
+            deposit.getDepositors().add(depositor);
+
+            session.update(deposit);
+            session.save(depositor);
             //--- завершение сессии
             HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
         } catch (Exception e){
@@ -167,53 +174,44 @@ public class BankDepositDaoImpl implements BankDepositDao {
     }
     //---- update
     @Override
-    public void updateBankDeposit(BankDeposit deposit){
-        LOGGER.debug("updateBankDeposit({})",deposit);
-        assertNotNull(deposit);
+    public void updateBankDepositor(BankDepositor depositor){
+        LOGGER.debug("updateBankDepositor({})",depositor);
+        assertNotNull(depositor);
         //--- соединение
         session = HibernateUtil.getSessionFactory().getCurrentSession();
         try {
             session.beginTransaction();
             //--- update
-            session.update(deposit);
+            session.update(depositor);
             //--- завершение сессии
             HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
         } catch (Exception e){
-            LOGGER.error("error - updateBankDeposit({}) - {}", deposit, e.toString());
+            LOGGER.error("error - updateBankDepositor({}) - {}", depositor, e.toString());
             if (session != null) {
                 session.flush();
                 session.close();
             }
         }
     }
-
     //---- delete
     @Override
-    public void removeBankDeposit(Long id){
-        LOGGER.debug("removeBankDeposit({})",id);
+    public void removeBankDepositor(Long id){
+        LOGGER.debug("removeBankDepositor({})",id);
         //--- соединение
         session = HibernateUtil.getSessionFactory().getCurrentSession();
         try {
             session.beginTransaction();
             //--- query
-            BankDeposit deposit = (BankDeposit)session.load(BankDeposit.class,id);
-            LOGGER.debug("deposit: {}", deposit);
-            LOGGER.debug("depositors.size: {}", deposit.getDepositors().size());
+            depositor = (BankDepositor)session.load(BankDepositor.class,id);
+            deposit = depositor.getDeposit();
+            deposit.getDepositors().remove(depositor);
 
-            if (!deposit.getDepositors().isEmpty()) {
-                for(Object d: deposit.getDepositors()){
-                    //--- delete depend events
-                    session.delete((BankDepositor)d);
-                }//--- delete main event
-                session.delete(deposit);
-            } else {
-                //--- delete main event
-                session.delete(deposit);
-            }
+            session.saveOrUpdate(deposit);
+            session.delete(depositor);
             //--- завершение сессии
             HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
         } catch (Exception e){
-            LOGGER.error("error - removeBankDeposit({}) - {}", deposit, e.toString());
+            LOGGER.error("error - removeBankDepositor({}) - {}", depositor, e.toString());
             if (session != null) {
                 session.flush();
                 session.close();

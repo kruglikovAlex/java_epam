@@ -1,24 +1,20 @@
 package com.brest.bank.dao;
 
 import com.brest.bank.domain.BankDeposit;
-import org.hibernate.Session;
+import com.brest.bank.domain.BankDepositor;
 
 import java.util.List;
 
 public interface BankDepositDao {
-
-    //---- init
-    public void startConnection();
     public void closeConnection();
-    public Session getCurrentSession();
     //---- get
     public List<BankDeposit> getBankDepositsSQL();
     public List<BankDeposit> getBankDepositsCriteria();
     public BankDeposit getBankDepositByIdGet(Long depositId);
     public BankDeposit getBankDepositByIdLoad(Long depositId);
     public BankDeposit getBankDepositByIdCriteria(Long id);
-    public BankDeposit getBankDepositByNameObject(String depositName);
-    public BankDeposit getBankDepositByNameList(String depositName);
+    public BankDeposit getBankDepositByNameSQL(String depositName);
+    public BankDeposit getBankDepositByNameCriteria(String depositName);
 
     //---- CRUD:
         //---- create

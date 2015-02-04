@@ -1,15 +1,14 @@
 package com.brest.bank.dao;
 
 import com.brest.bank.domain.BankDeposit;
+import com.brest.bank.domain.BankDepositor;
+import com.brest.bank.util.HibernateUtil;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.criterion.Projection;
+import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.List;
 
@@ -17,30 +16,33 @@ import static org.junit.Assert.*;
 
 public class BankDepositDaoImplTest {
 
+    public BankDepositDao depositDao = new BankDepositDaoImpl();
+
     private static final Logger LOGGER = LogManager.getLogger();
 
-    BankDeposit deposit = new BankDeposit();
-    BankDepositDao depositDao = new BankDepositDaoImpl();
-    List<BankDeposit> deposits;
-    Object result;
-    Integer sizeBefore = 0;
+    public Session session;
 
-    @Before
-    public void setUp() throws Exception {
-        depositDao.startConnection();
-        //depositDao.getCurrentSession().getTransaction().begin();
-        DateFixture.init(depositDao);
+    private BankDeposit deposit = new BankDeposit();
+    private List<BankDeposit> deposits;
+
+    public Object result;
+    public Integer sizeBefore = 0, sizeAfter = 0, sizeDepositorsBefore = 0, sizeDepositorsAfter = 0;
+
+    @BeforeClass
+    public static void setUp() throws Exception {
+        LOGGER.debug("setUp() - run method setUp() for BankDepositDaoImplTest: ");
+        DataFixture.init();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        depositDao.closeConnection();
+    @AfterClass
+    public static void tearDown() throws Exception {
+        LOGGER.debug("tearDown() - run method tearDown() for BankDepositDaoImplTest: ");
+        HibernateUtil.getSessionFactory().getCurrentSession().close();
+        HibernateUtil.getSessionFactory().close();
     }
 
     @Test
     public void testGetBankDepositsSQL() throws Exception {
-        depositDao.getCurrentSession().getTransaction().begin();
-
         deposits = depositDao.getBankDepositsSQL();
         LOGGER.debug("deposits.size()= {}", deposits.size());
 
@@ -50,8 +52,6 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositsCriteria() throws Exception {
-        depositDao.getCurrentSession().getTransaction().begin();
-
         deposits = depositDao.getBankDepositsCriteria();
         LOGGER.debug("deposits.size()= {}", deposits.size());
 
@@ -61,126 +61,128 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositByIdGet() throws Exception {
-        depositDao.getCurrentSession().getTransaction().begin();
-
         deposit = depositDao.getBankDepositByIdGet(4L);
         LOGGER.debug("deposit = {}", deposit);
 
-        assertEquals("BankDeposit: { depositId=4, depositName=depositName4, depositMinTerm=9, " +
-                "depositMinAmount=100, depositCurrency=eur, depositInterestRate=5, " +
-                "depositAddConditions=condition4}",deposit.toString());
+        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=12, " +
+                "depositMinAmount=100, depositCurrency=usd, depositInterestRate=4, " +
+                "depositAddConditions=condition3}",deposit.toString());
     }
 
     @Test
     public void testGetBankDepositByIdLoad() throws Exception {
-        depositDao.getCurrentSession().getTransaction().begin();
-
         deposit = depositDao.getBankDepositByIdLoad(4L);
         LOGGER.debug("deposit = {}", deposit);
 
-        assertEquals("BankDeposit: { depositId=4, depositName=depositName4, depositMinTerm=9, " +
-                "depositMinAmount=100, depositCurrency=eur, depositInterestRate=5, " +
-                "depositAddConditions=condition4}",deposit.toString());
+        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=12, " +
+                "depositMinAmount=100, depositCurrency=usd, depositInterestRate=4, " +
+                "depositAddConditions=condition3}",deposit.toString());
     }
 
-   @Test
+    @Test
     public void testGetBankDepositByIdCriteria() throws Exception {
-        depositDao.getCurrentSession().getTransaction().begin();
-
         deposit = depositDao.getBankDepositByIdCriteria(4L);
         LOGGER.debug("deposit = {}", deposit);
 
-        assertEquals("BankDeposit: { depositId=4, depositName=depositName4, depositMinTerm=9, " +
-                "depositMinAmount=100, depositCurrency=eur, depositInterestRate=5, " +
-                "depositAddConditions=condition4}",deposit.toString());
+        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=12, " +
+                "depositMinAmount=100, depositCurrency=usd, depositInterestRate=4, " +
+                "depositAddConditions=condition3}",deposit.toString());
     }
 
     @Test
-    public void testGetBankDepositByNameObject() throws Exception {
-        depositDao.getCurrentSession().getTransaction().begin();
-
-        deposit = depositDao.getBankDepositByNameObject("depositName4");
+    public void testGetBankDepositByNameSQL() throws Exception {
+        deposit = depositDao.getBankDepositByNameSQL("depositName3");
         LOGGER.debug("deposit = {}", deposit);
 
-        assertEquals("BankDeposit: { depositId=4, depositName=depositName4, depositMinTerm=9, " +
-                "depositMinAmount=100, depositCurrency=eur, depositInterestRate=5, " +
-                "depositAddConditions=condition4}",deposit.toString());
+        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=12, " +
+                "depositMinAmount=100, depositCurrency=usd, depositInterestRate=4, " +
+                "depositAddConditions=condition3}",deposit.toString());
     }
 
     @Test
-    public void testGetBankDepositByNameList() throws Exception {
-        depositDao.getCurrentSession().getTransaction().begin();
-
-        deposit = depositDao.getBankDepositByNameList("depositName4");
+    public void testGetBankDepositByNameCriteria() throws Exception {
+        deposit = depositDao.getBankDepositByNameCriteria("depositName3");
         LOGGER.debug("deposit = {}", deposit);
 
-        assertEquals("BankDeposit: { depositId=4, depositName=depositName4, depositMinTerm=9, " +
-                "depositMinAmount=100, depositCurrency=eur, depositInterestRate=5, " +
-                "depositAddConditions=condition4}",deposit.toString());
+        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=12, " +
+                "depositMinAmount=100, depositCurrency=usd, depositInterestRate=4, " +
+                "depositAddConditions=condition3}",deposit.toString());
     }
 
     @Test
     public void testAddBankDeposit() throws Exception {
-        depositDao.getCurrentSession().getTransaction().begin();
-        result = depositDao.getCurrentSession().createCriteria(BankDeposit.class)
-                .setProjection(Projections.rowCount()).uniqueResult();
-        sizeBefore = Integer.parseInt(result.toString());
-
         deposit = new BankDeposit();
-        deposit.setDepositName("name");
-        deposit.setDepositMinTerm(24);
-        deposit.setDepositMinAmount(1000);
-        deposit.setDepositCurrency("grb");
-        deposit.setDepositInterestRate(4);
-        deposit.setDepositAddConditions("condition");
+            deposit.setDepositName("name");
+            deposit.setDepositMinTerm(24);
+            deposit.setDepositMinAmount(1000);
+            deposit.setDepositCurrency("grb");
+            deposit.setDepositInterestRate(4);
+            deposit.setDepositAddConditions("condition");
+        LOGGER.debug("new deposit - {}",deposit);
 
-        LOGGER.debug("added new deposit - {}",deposit);
+        sizeBefore = rowCount(BankDeposit.class);
+        LOGGER.debug("size before add = {}",sizeBefore);
+
+        LOGGER.debug("start added new deposit - {}",deposit);
         depositDao.addBankDeposit(deposit);
+        LOGGER.debug("new deposit was added - {}",deposit);
 
         assertTrue(deposit.getDepositId()!= null);
+        assertEquals(deposit.toString(),depositDao.getBankDepositByIdGet(deposit.getDepositId()).toString());
 
-        result = depositDao.getCurrentSession().createCriteria(BankDeposit.class)
-                .setProjection(Projections.rowCount()).uniqueResult();
-        Integer count = Integer.parseInt(result.toString());
+        sizeAfter = rowCount(BankDeposit.class);
+        LOGGER.debug("size after add = {}",sizeAfter);
 
-        assertTrue(count == sizeBefore+1);
-
-        assertEquals(deposit.toString(),depositDao.getCurrentSession().createCriteria(BankDeposit.class)
-                .add(Restrictions.eq("depositId", deposit.getDepositId())).uniqueResult().toString());
+        assertTrue(sizeAfter == sizeBefore+1);
     }
 
-    //@Test
+    @Test
     public void testUpdateBankDeposit() throws Exception {
-        depositDao.getCurrentSession().getTransaction().begin();
-        deposit = depositDao.getBankDepositByIdLoad(1L);
+        deposit = depositDao.getBankDepositByIdCriteria(1L);
         LOGGER.debug("deposit before update - {}",deposit);
         deposit.setDepositName("name");
 
         depositDao.updateBankDeposit(deposit);
-        LOGGER.debug("deposit after update - {}",depositDao.getBankDepositByIdCriteria(1L));
 
-        assertEquals(deposit.toString(),depositDao.getBankDepositByIdCriteria(1L).toString());
+        BankDeposit testDeposit = depositDao.getBankDepositByIdCriteria(1L);
+        LOGGER.debug("deposit after update - {}",testDeposit);
+
+        assertEquals(deposit.toString(),testDeposit.toString());
     }
 
     @Test
-    public void testRemoveBankDeposit() throws Exception {
-        depositDao.getCurrentSession().getTransaction().begin();
-        result = depositDao.getCurrentSession().createCriteria(BankDeposit.class)
-                .setProjection(Projections.rowCount()).uniqueResult();
-        sizeBefore = Integer.parseInt(result.toString());
+    public void testRemoveBankDeposit() throws Exception{
+        sizeBefore = rowCount(BankDeposit.class);
         LOGGER.debug("sizeBefore = {}", sizeBefore);
+
+        sizeDepositorsBefore = rowCount(BankDepositor.class);
+        LOGGER.debug("sizeDepositorsBefore = {}", sizeDepositorsBefore);
 
         depositDao.removeBankDeposit(2L);
 
-        result = depositDao.getCurrentSession().createCriteria(BankDeposit.class)
-                .setProjection(Projections.rowCount()).uniqueResult();
-        Integer sizeAfter = Integer.parseInt(result.toString());
+        assertNull(depositDao.getBankDepositByIdCriteria(2L));
+
+        sizeAfter = rowCount(BankDeposit.class);
         LOGGER.debug("sizeAfter = {}", sizeAfter);
 
-        assertTrue(sizeAfter == sizeBefore - 1);
+        sizeDepositorsAfter = rowCount(BankDepositor.class);
+        LOGGER.debug("sizeDepositorsAfter = {}", sizeDepositorsAfter);
 
-        assertNull(depositDao.getCurrentSession().createCriteria(BankDeposit.class)
-                .add(Restrictions.eq("depositId", 2L)).uniqueResult());
+        assertTrue(sizeAfter == sizeBefore - 1);
+        assertTrue(sizeDepositorsAfter == sizeDepositorsBefore - 1);
+    }
+
+    public Integer rowCount(Class<?> name) throws ClassNotFoundException{
+        //--- соединение
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        //--- query
+        result = session.createCriteria(name)
+                .setProjection(Projections.rowCount()).uniqueResult();
+        //--- завершение сессии
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+
+        return Integer.parseInt(result.toString());
     }
 
 }

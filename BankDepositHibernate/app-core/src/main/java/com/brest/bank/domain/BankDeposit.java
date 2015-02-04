@@ -93,11 +93,18 @@ public class BankDeposit{
 		this.depositAddConditions = depositAddConditions;	
 	}
 
+	//--- get/set one-to-many link
 	public Set getDepositors(){
 		return depositors;
 	}
+
 	public void setDepositors(Set depositors){
 		this.depositors = depositors;
+	}
+
+	public void setToDepositors(BankDepositor depositor){
+		this.getDepositors().add(depositor);
+		depositor.setDeposit(this);
 	}
 
 	@Override

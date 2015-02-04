@@ -100,12 +100,18 @@ public class BankDepositor {
 		this.depositorMarkReturnDeposit = depositorMarkReturnDeposit;
 	}
 
-	public BankDeposit getBankDeposit(){
+	//--- get/set many-to-one link
+	public BankDeposit getDeposit(){
 		return this.bankDeposit;
 	}
 
-	public void setBankDeposit(BankDeposit bankDeposit){
+	public void setDeposit(BankDeposit bankDeposit){
 		this.bankDeposit = bankDeposit;
+	}
+
+	public void setToDeposit(BankDeposit deposit){
+		this.setDeposit(deposit);
+		deposit.getDepositors().add(this);
 	}
 
 	@Override
@@ -115,13 +121,13 @@ public class BankDepositor {
 		else date = "null";
 		if (depositorDateReturnDeposit!=null) dateReturn = dateFormat.format(depositorDateReturnDeposit);
 		else dateReturn = "null";
-        return "BankDepositor: { depositorId ="+depositorId+
-		", depositorName ="+ depositorName+
-		", depositorDateDeposit ="+ date +
-		", depositorAmountDeposit ="+ depositorAmountDeposit+
-		", depositorAmountPlusDeposit ="+ depositorAmountPlusDeposit+
-		", depositorAmountMinusDeposit ="+ depositorAmountMinusDeposit+
-		", depositorDateReturnDeposit ="+ dateReturn +
-		", depositorMarkReturnDeposit ="+ depositorMarkReturnDeposit  + '}';
+        return "BankDepositor: { depositorId="+depositorId+
+		", depositorName="+ depositorName+
+		", depositorDateDeposit="+ date +
+		", depositorAmountDeposit="+ depositorAmountDeposit+
+		", depositorAmountPlusDeposit="+ depositorAmountPlusDeposit+
+		", depositorAmountMinusDeposit="+ depositorAmountMinusDeposit+
+		", depositorDateReturnDeposit="+ dateReturn +
+		", depositorMarkReturnDeposit="+ depositorMarkReturnDeposit  + '}';
     }
 }

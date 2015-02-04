@@ -95,20 +95,19 @@ public class BankDepositorTest {
     public void testGetBankDeposit() throws Exception {
         BankDeposit deposit = new BankDeposit();
         LOGGER.debug("testGetBankDeposit({})", deposit);
-        depositors.setBankDeposit(deposit);
+        depositors.setDeposit(deposit);
 
-        assertEquals(deposit, depositors.getBankDeposit()) ;
+        assertEquals(deposit, depositors.getDeposit()) ;
     }
 
     @Test
     public void testToStringNullDepositor() throws Exception {
         LOGGER.debug("testToString({})",depositors.toString());
 
-        assertEquals("BankDepositor: { depositorId =null, depositorName =null, " +
-                "depositorDateDeposit =null, " +
-                "depositorAmountDeposit =null, depositorAmountPlusDeposit =null, " +
-                "depositorAmountMinusDeposit =null, depositorDateReturnDeposit =null, " +
-                "depositorMarkReturnDeposit =null}",depositors.toString());
+        assertEquals("BankDepositor: { depositorId=null, depositorName=null, " +
+                "depositorDateDeposit=null, depositorAmountDeposit=null, " +
+                "depositorAmountPlusDeposit=null, depositorAmountMinusDeposit=null, " +
+                "depositorDateReturnDeposit=null, depositorMarkReturnDeposit=null}",depositors.toString());
     }
 
     @Test
@@ -116,10 +115,9 @@ public class BankDepositorTest {
         depositors = new BankDepositor(1L,"name",dateFormat.parse("2015-01-01"),100,10,30,dateFormat.parse("2015-10-10"),0);
         LOGGER.debug("testToString({})", depositors.toString());
 
-        assertEquals("BankDepositor: { depositorId =1, depositorName =name, " +
-                "depositorDateDeposit =2015-01-01, " +
-                "depositorAmountDeposit =100, depositorAmountPlusDeposit =10, " +
-                "depositorAmountMinusDeposit =30, depositorDateReturnDeposit =2015-10-10, " +
-                "depositorMarkReturnDeposit =0}",depositors.toString());
+        assertEquals("BankDepositor: { depositorId=1, depositorName=name, " +
+                "depositorDateDeposit=2015-01-01, depositorAmountDeposit=100, " +
+                "depositorAmountPlusDeposit=10, depositorAmountMinusDeposit=30, " +
+                "depositorDateReturnDeposit=2015-10-10, depositorMarkReturnDeposit=0}",depositors.toString());
     }
 }
