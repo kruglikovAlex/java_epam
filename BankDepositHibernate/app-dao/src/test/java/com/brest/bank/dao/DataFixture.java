@@ -7,8 +7,11 @@ import com.brest.bank.util.HibernateUtil;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
+import org.hibernate.service.UnknownServiceException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,6 +22,7 @@ public class DataFixture {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    public SessionFactory sessionFactory;
     public Session session;
     public Object result;
 
@@ -29,12 +33,13 @@ public class DataFixture {
         BankDeposit deposit;
         BankDepositor depositor;
         Set depositors;
+        try{
 
         df.session = HibernateUtil.getSessionFactory().getCurrentSession();
         df.session.beginTransaction();
 
         df.result = df.session.createCriteria(BankDeposit.class)
-                .setProjection(Projections.rowCount()).uniqueResult();
+                    .setProjection(Projections.rowCount()).uniqueResult();
 
         if (Integer.parseInt(df.result.toString()) == 0) {
 
@@ -52,7 +57,7 @@ public class DataFixture {
 
             for (int i = 1; i < 5; i++) {
                 depositors = new HashSet();
-                deposit = (BankDeposit)df.session.load(BankDeposit.class, (long) i);
+                deposit = (BankDeposit) df.session.load(BankDeposit.class, (long) i);
                 LOGGER.debug("deposit: {}", deposit);
 
                 depositor = new BankDepositor();
@@ -78,5 +83,8 @@ public class DataFixture {
             }
         }
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        } catch (UnknownServiceException e) {
+            LOGGER.debug("UnknownServiceException: ", e);
+        }
     }
 }
