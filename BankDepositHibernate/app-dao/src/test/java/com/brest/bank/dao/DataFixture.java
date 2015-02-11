@@ -46,8 +46,8 @@ public class DataFixture {
             for (int i = 0; i < 4; i++) {
                 deposit = new BankDeposit();
                 deposit.setDepositName("depositName" + i);
-                deposit.setDepositMinTerm(12);
-                deposit.setDepositMinAmount(100);
+                deposit.setDepositMinTerm(12+i);
+                deposit.setDepositMinAmount(100+100*i);
                 deposit.setDepositCurrency("usd");
                 deposit.setDepositInterestRate(4);
                 deposit.setDepositAddConditions("condition" + i);

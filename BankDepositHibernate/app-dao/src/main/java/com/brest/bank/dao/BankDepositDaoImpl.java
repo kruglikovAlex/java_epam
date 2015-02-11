@@ -144,6 +144,42 @@ public class BankDepositDaoImpl implements BankDepositDao {
         LOGGER.debug("deposit:{}", deposit);
         return deposit;
     }
+
+    //---- get by depositName where depositName mapped as a natural id - createCriteria
+    @Override
+    public BankDeposit getBankDepositByNameByNaturalIdCriteria(String name){
+        LOGGER.debug("getBankDepositByNameCriteria({})",name);
+        //--- соединение
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        //--- query
+        deposit = (BankDeposit)session.createCriteria(BankDeposit.class)
+                .add(Restrictions.naturalId()
+                        .set("depositName", name))
+                .setCacheable(true)
+                .uniqueResult();
+        //--- завершение сессии
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+
+        LOGGER.debug("deposit:{}", deposit);
+        return deposit;
+    }
+    //---- get deposit with max value of depositMinTerm
+    @Override
+    public List<BankDeposit> getBankDepositBetweenMinTermCriteria(Integer minValue, Integer maxValue){
+        LOGGER.debug("getBankDepositByMaxMinTermCriteria() - start");
+        //---- connection
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        //---- query
+        deposits = session.createCriteria(BankDeposit.class)
+                .add(Restrictions.between("depositMinTerm",minValue, maxValue)).list();
+        //---- end session
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        LOGGER.debug("depposits.size = {}", deposits.size());
+
+        return deposits;
+    }
     //---- create
     @Override
     public void addBankDeposit(BankDeposit deposit) {
@@ -160,7 +196,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
         } catch (Exception e){
             LOGGER.error("error - addBankDeposit({}) - {}", deposit, e.toString());
             if (session != null) {
-                session.flush();
                 session.close();
             }
         }
@@ -181,7 +216,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
         } catch (Exception e){
             LOGGER.error("error - updateBankDeposit({}) - {}", deposit, e.toString());
             if (session != null) {
-                session.flush();
                 session.close();
             }
         }
@@ -215,7 +249,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
         } catch (Exception e){
             LOGGER.error("error - removeBankDeposit({}) - {}", deposit, e.toString());
             if (session != null) {
-                session.flush();
                 session.close();
             }
         }

@@ -163,15 +163,31 @@ public class BankDepositDaoImplDBUnitTest extends DBUnitConfig{
     }
 
     @Test
+    public void testGetBankDepositByNameByNaturalIdCriteria() throws Exception{
+        LOGGER.debug("testGetBankDepositByNameSQL() - run");
+        deposit = depositDao.getBankDepositByNameByNaturalIdCriteria("depositName3");
+
+        expectedData = new FlatXmlDataSetBuilder().build(getClass().getResourceAsStream("/com/brest/bank/dao/depositFind-data.xml"));
+        expectedTable = expectedData.getTable("bankdeposit");
+
+        Assert.assertEquals(expectedTable.getValue(0,"depositName").toString(),deposit.getDepositName());
+        Assert.assertTrue(Integer.parseInt(expectedTable.getValue(0,"depositMinTerm").toString()) == deposit.getDepositMinTerm());
+        Assert.assertTrue(Integer.parseInt(expectedTable.getValue(0,"depositMinAmount").toString()) == deposit.getDepositMinAmount());
+        Assert.assertEquals(expectedTable.getValue(0,"depositCurrency").toString(), deposit.getDepositCurrency());
+        Assert.assertTrue(Integer.parseInt(expectedTable.getValue(0,"depositInterestRate").toString()) == deposit.getDepositInterestRate());
+        Assert.assertEquals(expectedTable.getValue(0,"depositAddConditions").toString(), deposit.getDepositAddConditions());
+    }
+
+    @Test
     public void testAddBankDeposit() throws Exception{
         LOGGER.debug("testAddBankDeposit() - run");
         deposit = new BankDeposit();
-            deposit.setDepositName("name");
-            deposit.setDepositMinTerm(24);
-            deposit.setDepositMinAmount(1000);
-            deposit.setDepositCurrency("grb");
-            deposit.setDepositInterestRate(4);
-            deposit.setDepositAddConditions("condition");
+        deposit.setDepositName("name1");
+        deposit.setDepositMinTerm(24);
+        deposit.setDepositMinAmount(1000);
+        deposit.setDepositCurrency("grb");
+        deposit.setDepositInterestRate(4);
+        deposit.setDepositAddConditions("condition");
         LOGGER.debug("new deposit - {}",deposit);
 
         depositDao.addBankDeposit(deposit);
@@ -190,14 +206,10 @@ public class BankDepositDaoImplDBUnitTest extends DBUnitConfig{
     @Test
     public void testUpdateBankDeposit() throws Exception {
         LOGGER.debug("testUpdateBankDeposit() - run");
-        deposit = new BankDeposit();
-            deposit.setDepositId(4L);
-            deposit.setDepositName("UpdateName");
-            deposit.setDepositMinTerm(12);
-            deposit.setDepositMinAmount(100);
-            deposit.setDepositCurrency("usd");
-            deposit.setDepositInterestRate(4);
-            deposit.setDepositAddConditions("condition4");
+        deposit = depositDao.getBankDepositByIdCriteria(2L);
+            deposit.setDepositMinTerm(24);
+            deposit.setDepositMinAmount(1000);
+
         LOGGER.debug("deposit to update: {}",deposit);
 
         depositDao.updateBankDeposit(deposit);

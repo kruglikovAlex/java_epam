@@ -15,6 +15,8 @@ public interface BankDepositDao {
     public BankDeposit getBankDepositByIdCriteria(Long id);
     public BankDeposit getBankDepositByNameSQL(String depositName);
     public BankDeposit getBankDepositByNameCriteria(String depositName);
+    public BankDeposit getBankDepositByNameByNaturalIdCriteria(String name);
+    public List<BankDeposit> getBankDepositBetweenMinTermCriteria(Integer minTerm, Integer maxTerm);
 
     //---- CRUD:
         //---- create

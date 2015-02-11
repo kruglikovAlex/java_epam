@@ -76,8 +76,8 @@ public class BankDepositDaoImplTest {
         deposit = depositDao.getBankDepositByIdGet(4L);
         LOGGER.debug("deposit = {}", deposit);
 
-        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=12, " +
-                "depositMinAmount=100, depositCurrency=usd, depositInterestRate=4, " +
+        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=15, " +
+                "depositMinAmount=400, depositCurrency=usd, depositInterestRate=4, " +
                 "depositAddConditions=condition3}",deposit.toString());
     }
 
@@ -86,8 +86,8 @@ public class BankDepositDaoImplTest {
         deposit = depositDao.getBankDepositByIdLoad(4L);
         LOGGER.debug("deposit = {}", deposit);
 
-        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=12, " +
-                "depositMinAmount=100, depositCurrency=usd, depositInterestRate=4, " +
+        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=15, " +
+                "depositMinAmount=400, depositCurrency=usd, depositInterestRate=4, " +
                 "depositAddConditions=condition3}",deposit.toString());
     }
 
@@ -96,8 +96,8 @@ public class BankDepositDaoImplTest {
         deposit = depositDao.getBankDepositByIdCriteria(4L);
         LOGGER.debug("deposit = {}", deposit);
 
-        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=12, " +
-                "depositMinAmount=100, depositCurrency=usd, depositInterestRate=4, " +
+        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=15, " +
+                "depositMinAmount=400, depositCurrency=usd, depositInterestRate=4, " +
                 "depositAddConditions=condition3}",deposit.toString());
     }
 
@@ -106,8 +106,8 @@ public class BankDepositDaoImplTest {
         deposit = depositDao.getBankDepositByNameSQL("depositName3");
         LOGGER.debug("deposit = {}", deposit);
 
-        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=12, " +
-                "depositMinAmount=100, depositCurrency=usd, depositInterestRate=4, " +
+        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=15, " +
+                "depositMinAmount=400, depositCurrency=usd, depositInterestRate=4, " +
                 "depositAddConditions=condition3}",deposit.toString());
     }
 
@@ -116,9 +116,30 @@ public class BankDepositDaoImplTest {
         deposit = depositDao.getBankDepositByNameCriteria("depositName3");
         LOGGER.debug("deposit = {}", deposit);
 
-        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=12, " +
-                "depositMinAmount=100, depositCurrency=usd, depositInterestRate=4, " +
+        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=15, " +
+                "depositMinAmount=400, depositCurrency=usd, depositInterestRate=4, " +
                 "depositAddConditions=condition3}",deposit.toString());
+    }
+
+    @Test
+    public void testGetBankDepositByNameByNaturalIdCriteria() throws Exception {
+        deposit = depositDao.getBankDepositByNameByNaturalIdCriteria("depositName3");
+        LOGGER.debug("deposit = {}", deposit);
+
+        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=15, " +
+                "depositMinAmount=400, depositCurrency=usd, depositInterestRate=4, " +
+                "depositAddConditions=condition3}",deposit.toString());
+    }
+
+    @Test
+    public void getBankDepositBetweenMaxMinTermCriteria() throws Exception {
+        deposits = depositDao.getBankDepositBetweenMinTermCriteria(14, 15);
+        LOGGER.debug("deposits = {}", deposits);
+
+        assertEquals("[BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300," +
+                " depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition2}, " +
+                "BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=15, depositMinAmount=400," +
+                " depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition3}]",deposits.toString());
     }
 
     @Test
@@ -152,7 +173,8 @@ public class BankDepositDaoImplTest {
     public void testUpdateBankDeposit() throws Exception {
         deposit = depositDao.getBankDepositByIdCriteria(1L);
         LOGGER.debug("deposit before update - {}",deposit);
-        deposit.setDepositName("name");
+        deposit.setDepositMinTerm(9);
+        deposit.setDepositMinAmount(10000);
 
         depositDao.updateBankDeposit(deposit);
 
