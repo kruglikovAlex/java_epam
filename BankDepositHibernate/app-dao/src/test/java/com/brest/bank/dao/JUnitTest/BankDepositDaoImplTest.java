@@ -15,6 +15,8 @@ import org.hibernate.criterion.Projections;
 import org.junit.*;
 import org.junit.rules.ExternalResource;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
@@ -26,6 +28,7 @@ public class BankDepositDaoImplTest {
     public BankDepositDao depositDao = new BankDepositDaoImpl();
 
     private static final Logger LOGGER = LogManager.getLogger();
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public Session session;
 
@@ -132,7 +135,7 @@ public class BankDepositDaoImplTest {
     }
 
     @Test
-    public void getBankDepositBetweenMaxMinTermCriteria() throws Exception {
+    public void testGetBankDepositBetweenMaxMinTermCriteria() throws Exception {
         deposits = depositDao.getBankDepositBetweenMinTermCriteria(14, 15);
         LOGGER.debug("deposits = {}", deposits);
 
@@ -140,6 +143,19 @@ public class BankDepositDaoImplTest {
                 " depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition2}, " +
                 "BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=15, depositMinAmount=400," +
                 " depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition3}]",deposits.toString());
+    }
+
+    @Test
+    public void testGetBankDepositsAllDepositorsBetweenDateDeposit() throws Exception {
+        Date startDate = dateFormat.parse("2014-12-02");
+        Date endDate = dateFormat.parse("2014-12-03");
+        deposits = depositDao.getBankDepositsAllDepositorsBetweenDateDeposit(startDate,endDate);
+        LOGGER.debug("deposits = {}", deposits);
+
+        assertEquals("[BankDeposit: { depositId=2, depositName=depositName1, depositMinTerm=13, depositMinAmount=200," +
+                " depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition1}, " +
+                "BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300," +
+                " depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition2}]",deposits.toString());
     }
 
     @Test

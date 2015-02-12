@@ -11,6 +11,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.hibernate.criterion.Restrictions;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -18,6 +20,7 @@ import static org.junit.Assert.*;
 public class BankDepositDaoImpl implements BankDepositDao {
 
     private static final Logger LOGGER = LogManager.getLogger();
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     private BankDeposit deposit;
     private List<BankDeposit> deposits = new ArrayList<BankDeposit>();
@@ -178,6 +181,27 @@ public class BankDepositDaoImpl implements BankDepositDao {
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
         LOGGER.debug("depposits.size = {}", deposits.size());
 
+        return deposits;
+    }
+    //---- get deposit where depositorDateDeposit between days
+    @Override
+    public List<BankDeposit> getBankDepositsAllDepositorsBetweenDateDeposit(Date startDate, Date endDate) {
+        LOGGER.debug("getBankDepositsAllDepositorsBetweenDateDeposit({},{})",dateFormat.format(startDate),dateFormat.format(endDate));
+        //---- connection
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        //---- query
+        for(Object d: session.createCriteria(BankDeposit.class)
+                                .createCriteria("depositors")
+                                .add(Restrictions.between("depositorDateDeposit", startDate, endDate))
+                                .list()) {
+            deposits.add((BankDeposit) d);
+        }
+        //---- end session
+
+        LOGGER.debug("deposits.size = {}", deposits.size());
+        LOGGER.debug("depositors.size = {}", deposits.get(0).getDepositors().size());
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
         return deposits;
     }
     //---- create

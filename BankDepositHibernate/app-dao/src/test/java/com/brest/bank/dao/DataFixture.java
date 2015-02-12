@@ -33,6 +33,7 @@ public class DataFixture {
         BankDeposit deposit;
         BankDepositor depositor;
         Set depositors;
+        String date;
         try{
 
         df.session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -56,13 +57,14 @@ public class DataFixture {
             }
 
             for (int i = 1; i < 5; i++) {
+                date = "2014-12-0"+i;
                 depositors = new HashSet();
                 deposit = (BankDeposit) df.session.load(BankDeposit.class, (long) i);
                 LOGGER.debug("deposit: {}", deposit);
 
                 depositor = new BankDepositor();
                 depositor.setDepositorName("depositorName" + i);
-                depositor.setDepositorDateDeposit(dateFormat.parse("2014-12-02"));
+                depositor.setDepositorDateDeposit(dateFormat.parse(date));
                 depositor.setDepositorAmountDeposit(1000);
                 depositor.setDepositorAmountPlusDeposit(10 * (i + 1));
                 depositor.setDepositorAmountMinusDeposit(10 * (i + 1));
