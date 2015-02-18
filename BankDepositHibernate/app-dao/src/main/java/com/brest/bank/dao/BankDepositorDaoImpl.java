@@ -146,6 +146,26 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         LOGGER.debug("depositor:{}", depositor);
         return depositor;
     }
+
+    //---- get Depositors between Date Deposit
+    @Override
+    public List<BankDepositor> getBankDepositorBetweenDateDeposit(Long id, Date startDate, Date endDate) {
+        LOGGER.debug("getBankDepositorBetweenDateDeposit({},{},{})",id,startDate,endDate);
+        //--- соединение
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        //--- query
+        depositors = session.createCriteria(BankDepositor.class, "depositor")
+                    .add(Restrictions.between("depositorDateDeposit",startDate,endDate))
+                    .createAlias("deposit", "deposit")
+                    .add(Restrictions.eq("deposit.depositId", id))
+                .list();
+        //--- завершение сессии
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+
+        LOGGER.debug("depositor:{}", depositor);
+        return depositors;
+    }
     //---- add BankDepositor to BankDeposit
     @Override
     public void addBankDepositor(Long depositId, BankDepositor depositor){

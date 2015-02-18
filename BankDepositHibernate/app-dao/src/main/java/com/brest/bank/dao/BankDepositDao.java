@@ -22,6 +22,7 @@ public interface BankDepositDao {
     public List<BankDeposit> getBankDepositsBetweenDateDeposit(Date startDate, Date endDate);
     public List<BankDeposit> getBankDepositsBetweenDateReturnDeposit(Date startDate, Date endDate);
     public List<Map> getBankDepositsBetweenDateDepositWithDepositors(Date startDate, Date endDate);
+    public List<Map> getBankDepositByNameBetweenDateDepositWithDepositors(String name,Date startDate, Date endDate);
     public List<Map> getBankDepositsBetweenDateReturnDepositWithDepositors(Date startDate, Date endDate);
     //---- CRUD:
         //---- create

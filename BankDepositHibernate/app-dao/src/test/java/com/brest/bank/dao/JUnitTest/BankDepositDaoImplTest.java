@@ -1,9 +1,6 @@
 package com.brest.bank.dao.JUnitTest;
 
-import com.brest.bank.dao.BankDepositDao;
-import com.brest.bank.dao.BankDepositDaoImpl;
-import com.brest.bank.dao.DataFixture;
-import com.brest.bank.dao.JUnitRule;
+import com.brest.bank.dao.*;
 import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
 import com.brest.bank.util.HibernateUtil;
@@ -27,6 +24,7 @@ import static org.junit.Assert.*;
 public class BankDepositDaoImplTest {
 
     public BankDepositDao depositDao = new BankDepositDaoImpl();
+    public BankDepositorDao depositorDao = new BankDepositorDaoImpl();
 
     private static final Logger LOGGER = LogManager.getLogger();
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -35,6 +33,7 @@ public class BankDepositDaoImplTest {
 
     private BankDeposit deposit = new BankDeposit();
     private List<BankDeposit> deposits;
+    private List<BankDepositor> depositors;
 
     public Object result;
     public Integer sizeBefore = 0, sizeAfter = 0, sizeDepositorsBefore = 0, sizeDepositorsAfter = 0;
@@ -190,6 +189,45 @@ public class BankDepositDaoImplTest {
             assertEquals(deposits.get(i).getDepositCurrency(), list.get(i).get("depositCurrency"));
             assertEquals(deposits.get(i).getDepositInterestRate(), list.get(i).get("depositInterestRate"));
             assertEquals(deposits.get(i).getDepositAddConditions(), list.get(i).get("depositAddConditions"));
+        }
+    }
+
+    @Test
+    public void testGetBankDepositByNameBetweenDateDepositWithDepositors() throws Exception {
+        Date startDate = dateFormat.parse("2014-12-01");
+        Date endDate = dateFormat.parse("2014-12-06");
+        String name = "depositName0";
+        Integer sumAmountDeposit=0, sumAmountPlusDeposit=0, sumAmountMinusDeposit=0;
+
+        List<Map> list = depositDao.getBankDepositByNameBetweenDateDepositWithDepositors(name,startDate,endDate);
+        LOGGER.debug("deposits = {}", list);
+
+        assertTrue(list.size()==1);
+
+        deposit = depositDao.getBankDepositByNameCriteria(name);
+        LOGGER.debug("deposit = {}", deposit);
+
+        depositors = depositorDao.getBankDepositorBetweenDateDeposit(deposit.getDepositId(),startDate,endDate);
+        LOGGER.debug("depositors = {}", depositors);
+        for(BankDepositor aDepositors: depositors){
+            sumAmountDeposit += aDepositors.getDepositorAmountDeposit();
+            sumAmountPlusDeposit += aDepositors.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit += aDepositors.getDepositorAmountMinusDeposit();
+        }
+        LOGGER.debug("sumAmountDeposit = {}", sumAmountDeposit);
+        LOGGER.debug("sumAmountPlusDeposit = {}", sumAmountPlusDeposit);
+        LOGGER.debug("sumAmountMinusDepositt = {}", sumAmountMinusDeposit);
+        for (Map aList: list) {
+            assertEquals(deposit.getDepositId(), aList.get("depositId"));
+            assertEquals(deposit.getDepositName(), aList.get("depositName"));
+            assertEquals(deposit.getDepositMinTerm(), aList.get("depositMinTerm"));
+            assertEquals(deposit.getDepositMinAmount(), aList.get("depositMinAmount"));
+            assertEquals(deposit.getDepositCurrency(), aList.get("depositCurrency"));
+            assertEquals(deposit.getDepositInterestRate(), aList.get("depositInterestRate"));
+            assertEquals(deposit.getDepositAddConditions(), aList.get("depositAddConditions"));
+            assertTrue("sum all amount", sumAmountDeposit==Integer.parseInt(aList.get("depositorAmountSum").toString()));
+            assertTrue("sum all plus amount", sumAmountPlusDeposit==Integer.parseInt(aList.get("depositorAmountPlusSum").toString()));
+            assertTrue("sum all minus amount", sumAmountMinusDeposit==Integer.parseInt(aList.get("depositorAmountMinusSum").toString()));
         }
     }
 

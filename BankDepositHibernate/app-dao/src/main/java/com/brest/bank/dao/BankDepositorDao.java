@@ -1,6 +1,8 @@
 package com.brest.bank.dao;
 
 import com.brest.bank.domain.BankDepositor;
+
+import java.util.Date;
 import java.util.List;
 
 public interface BankDepositorDao {
@@ -14,6 +16,7 @@ public interface BankDepositorDao {
     public BankDepositor getBankDepositorByIdCriteria(Long depositorId);
     public BankDepositor getBankDepositorByNameSQL(String depositorName);
     public BankDepositor getBankDepositorByNameCriteria(String depositorName);
+    public List<BankDepositor> getBankDepositorBetweenDateDeposit(Long id, Date startDate, Date endDate);
     //---- CRUD:
         //---- create
     public void addBankDepositor(Long depositId, BankDepositor depositor);

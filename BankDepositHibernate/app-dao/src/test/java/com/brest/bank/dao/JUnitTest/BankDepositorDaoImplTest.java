@@ -15,6 +15,7 @@ import org.hibernate.criterion.Projections;
 import org.junit.*;
 import org.junit.rules.ExternalResource;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -117,6 +118,18 @@ public class BankDepositorDaoImplTest {
         assertEquals("BankDepositor: { depositorId=4, depositorName=depositorName7, depositorDateDeposit=2014-12-07, " +
                 "depositorAmountDeposit=1000, depositorAmountPlusDeposit=70, depositorAmountMinusDeposit=70, " +
                 "depositorDateReturnDeposit=2014-12-08, depositorMarkReturnDeposit=0}",depositor.toString());
+    }
+
+    @Test
+    public void testGetBankDepositorBetweenDateDeposit() throws Exception {
+        Date startDate = dateFormat.parse("2014-12-01");
+        Date endDate = dateFormat.parse("2014-12-05");
+        depositors = depositorDao.getBankDepositorBetweenDateDeposit(3L,startDate,endDate);
+        LOGGER.debug("depositors = {}", depositors);
+
+        assertEquals("[BankDepositor: { depositorId=5, depositorName=depositorName3, depositorDateDeposit=2014-12-03, " +
+                "depositorAmountDeposit=1000, depositorAmountPlusDeposit=40, depositorAmountMinusDeposit=40, " +
+                "depositorDateReturnDeposit=2014-12-04, depositorMarkReturnDeposit=0}]",depositors.toString());
     }
 
     @Test
