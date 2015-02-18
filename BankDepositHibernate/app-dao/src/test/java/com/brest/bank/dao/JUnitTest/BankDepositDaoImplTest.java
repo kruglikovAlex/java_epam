@@ -160,12 +160,48 @@ public class BankDepositDaoImplTest {
     }
 
     @Test
+    public void testGetBankDepositsBetweenDateReturnDeposit() throws Exception {
+        Date startDate = dateFormat.parse("2014-12-04");
+        Date endDate = dateFormat.parse("2014-12-05");
+        deposits = depositDao.getBankDepositsBetweenDateReturnDeposit(startDate, endDate);
+        LOGGER.debug("deposits = {}", deposits);
+
+        assertEquals("[BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
+                "depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition2}, " +
+                "BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=15, depositMinAmount=400, " +
+                "depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition3}]",deposits.toString());
+    }
+
+    @Test
     public void testGetBankDepositsBetweenDateDepositWithDepositors() throws Exception {
         Date startDate = dateFormat.parse("2014-12-01");
         Date endDate = dateFormat.parse("2014-12-06");
         List<Map> list = depositDao.getBankDepositsBetweenDateDepositWithDepositors(startDate,endDate);
         LOGGER.debug("deposits = {}", list);
         deposits = depositDao.getBankDepositsBetweenDateDeposit(startDate, endDate);
+
+        assertTrue(list.size()==deposits.size());
+
+        for (int i=0; i<list.size(); i++) {
+            assertEquals(deposits.get(i).getDepositId(), list.get(i).get("depositId"));
+            assertEquals(deposits.get(i).getDepositName(), list.get(i).get("depositName"));
+            assertEquals(deposits.get(i).getDepositMinTerm(), list.get(i).get("depositMinTerm"));
+            assertEquals(deposits.get(i).getDepositMinAmount(), list.get(i).get("depositMinAmount"));
+            assertEquals(deposits.get(i).getDepositCurrency(), list.get(i).get("depositCurrency"));
+            assertEquals(deposits.get(i).getDepositInterestRate(), list.get(i).get("depositInterestRate"));
+            assertEquals(deposits.get(i).getDepositAddConditions(), list.get(i).get("depositAddConditions"));
+        }
+    }
+
+    @Test
+    public void testGetBankDepositsBetweenDateReturnDepositWithDepositors() throws Exception {
+        Date startDate = dateFormat.parse("2014-12-03");
+        Date endDate = dateFormat.parse("2014-12-05");
+        List<Map> list = depositDao.getBankDepositsBetweenDateReturnDepositWithDepositors(startDate, endDate);
+        LOGGER.debug("deposits = {}", list);
+        deposits = depositDao.getBankDepositsBetweenDateReturnDeposit(startDate, endDate);
+
+        assertTrue(list.size()==deposits.size());
 
         for (int i=0; i<list.size(); i++) {
             assertEquals(deposits.get(i).getDepositId(), list.get(i).get("depositId"));

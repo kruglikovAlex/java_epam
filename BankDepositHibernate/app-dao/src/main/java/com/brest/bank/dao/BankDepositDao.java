@@ -20,7 +20,9 @@ public interface BankDepositDao {
     public BankDeposit getBankDepositByNameByNaturalIdCriteria(String name);
     public List<BankDeposit> getBankDepositBetweenMinTermCriteria(Integer minTerm, Integer maxTerm);
     public List<BankDeposit> getBankDepositsBetweenDateDeposit(Date startDate, Date endDate);
+    public List<BankDeposit> getBankDepositsBetweenDateReturnDeposit(Date startDate, Date endDate);
     public List<Map> getBankDepositsBetweenDateDepositWithDepositors(Date startDate, Date endDate);
+    public List<Map> getBankDepositsBetweenDateReturnDepositWithDepositors(Date startDate, Date endDate);
     //---- CRUD:
         //---- create
     public void addBankDeposit(BankDeposit deposit);

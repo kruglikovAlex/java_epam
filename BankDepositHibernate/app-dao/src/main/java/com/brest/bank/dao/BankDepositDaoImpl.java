@@ -191,7 +191,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
 
         return deposits;
     }
-    //---- get deposit where depositorDateDeposit between days
+    //---- get deposit where Date Deposit between days
     @Override
     public List<BankDeposit> getBankDepositsBetweenDateDeposit(Date startDate, Date endDate) {
         LOGGER.debug("getBankDepositsBetweenDateDeposit({},{})",dateFormat.format(startDate),dateFormat.format(endDate));
@@ -217,6 +217,32 @@ public class BankDepositDaoImpl implements BankDepositDao {
         return deposits;
     }
 
+    //---- get deposit where Date Return Deposit between days
+    @Override
+    public List<BankDeposit> getBankDepositsBetweenDateReturnDeposit(Date startDate, Date endDate) {
+        LOGGER.debug("getBankDepositsBetweenDateReturnDeposit({},{})",dateFormat.format(startDate),dateFormat.format(endDate));
+        //---- connection
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        //---- query
+        String[] properties = session.getSessionFactory().getClassMetadata(BankDeposit.class).getPropertyNames();
+        for(Object d:session.createCriteria(BankDeposit.class)
+                .createAlias("depositors", "depositor")
+                .add(Restrictions.between("depositor.depositorDateReturnDeposit", startDate, endDate))
+                .setProjection(Projections.distinct(Projections.projectionList()
+                                .add(Projections.property("depositId"),"depositId")
+                                .add(formProjection(properties)))
+                )
+                .setResultTransformer(new AliasToBeanResultTransformer(BankDeposit.class))
+                .list()) {
+            deposits.add((BankDeposit)d);
+        }
+        //---- end session
+        LOGGER.debug("deposits.size = {}", deposits.size());
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        return deposits;
+    }
+    //---- get deposit where Date Deposit between days with aggregation and grouping Depositors
     @Override
     public List<Map> getBankDepositsBetweenDateDepositWithDepositors(Date startDate, Date endDate){
         LOGGER.debug("getBankDepositsBetweenDateDepositWithDepositors({},{})",dateFormat.format(startDate),dateFormat.format(endDate));
@@ -244,8 +270,34 @@ public class BankDepositDaoImpl implements BankDepositDao {
         LOGGER.debug("list = {}", list);
         return mapRow(list);
     }
-
-
+    //---- get deposit where Date Return Deposit between days with aggregation and grouping Depositors
+    @Override
+    public List<Map> getBankDepositsBetweenDateReturnDepositWithDepositors(Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositsBetweenDateReturnDepositWithDepositors({},{})",dateFormat.format(startDate),dateFormat.format(endDate));
+        //---- connection
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        //---- query
+        String[] properties = session.getSessionFactory().getClassMetadata(BankDeposit.class).getPropertyNames();
+        List list = session.createCriteria(BankDeposit.class, "deposit")
+                .createAlias("depositors", "depositor")
+                .add(Restrictions.between("depositor.depositorDateReturnDeposit", startDate, endDate))
+                .setProjection(Projections.distinct(Projections.projectionList()
+                                .add(Projections.property("deposit.depositId"), "depositId")
+                                .add(formProjection(properties))
+                                .add(Projections.count("depositor.depositorId").as("depositorCount"))
+                                .add(Projections.sum("depositor.depositorAmountDeposit").as("depositorAmountSum"))
+                                .add(Projections.sum("depositor.depositorAmountPlusDeposit").as("depositorAmountPlusSum"))
+                                .add(Projections.sum("depositor.depositorAmountMinusDeposit").as("depositorAmountMinusSum"))
+                                .add(Projections.groupProperty("deposit.depositId"))
+                ))
+                .setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
+                .list();
+        //---- end session
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        LOGGER.debug("list = {}", list);
+        return mapRow(list);
+    }
     //---- create
     @Override
     public void addBankDeposit(BankDeposit deposit) {
