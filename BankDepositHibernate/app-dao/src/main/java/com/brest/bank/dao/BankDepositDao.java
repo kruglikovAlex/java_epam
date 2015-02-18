@@ -1,12 +1,13 @@
 package com.brest.bank.dao;
 
 import com.brest.bank.domain.BankDeposit;
-import com.brest.bank.domain.BankDepositor;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface BankDepositDao {
+    //--- close connection
     public void closeConnection();
     //---- get
     public List<BankDeposit> getBankDepositsSQL();
@@ -18,7 +19,8 @@ public interface BankDepositDao {
     public BankDeposit getBankDepositByNameCriteria(String depositName);
     public BankDeposit getBankDepositByNameByNaturalIdCriteria(String name);
     public List<BankDeposit> getBankDepositBetweenMinTermCriteria(Integer minTerm, Integer maxTerm);
-    public List<BankDeposit> getBankDepositsAllDepositorsBetweenDateDeposit(Date startDate, Date endDate);
+    public List<BankDeposit> getBankDepositsBetweenDateDeposit(Date startDate, Date endDate);
+    public List<Map> getBankDepositsBetweenDateDepositWithDepositors(Date startDate, Date endDate);
     //---- CRUD:
         //---- create
     public void addBankDeposit(BankDeposit deposit);

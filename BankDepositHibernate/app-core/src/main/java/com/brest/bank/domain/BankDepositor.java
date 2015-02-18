@@ -9,7 +9,6 @@ public class BankDepositor {
 
 	private Long 		depositorId; 				//идентификатор
 	private String 		depositorName;				//Ф.И.О. вкладчика
-
 	private Date 		depositorDateDeposit;		//Дата вклада
 	private Integer		depositorAmountDeposit;		//суммма вклада
 	private Integer		depositorAmountPlusDeposit;	//сумма процентов
@@ -25,8 +24,7 @@ public class BankDepositor {
 	//--- конструктор с параметрами
 	public BankDepositor(Long 		depositorId, 
 						 String		depositorName, 
-
-						 Date	 	depositorDateDeposit, 
+						 Date	 	depositorDateDeposit,
 						 Integer	depositorAmountDeposit,
 						 Integer	depositorAmountPlusDeposit,
 						 Integer	depositorAmountMinusDeposit,

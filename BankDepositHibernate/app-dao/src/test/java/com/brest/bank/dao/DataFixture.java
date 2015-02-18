@@ -33,7 +33,7 @@ public class DataFixture {
         BankDeposit deposit;
         BankDepositor depositor;
         Set depositors;
-        String date;
+        String date, returnDate;
         try{
 
         df.session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -58,17 +58,45 @@ public class DataFixture {
 
             for (int i = 1; i < 5; i++) {
                 date = "2014-12-0"+i;
+                returnDate = "2014-12-0"+(i+1);
                 depositors = new HashSet();
+
                 deposit = (BankDeposit) df.session.load(BankDeposit.class, (long) i);
                 LOGGER.debug("deposit: {}", deposit);
 
+                //---- first
                 depositor = new BankDepositor();
                 depositor.setDepositorName("depositorName" + i);
                 depositor.setDepositorDateDeposit(dateFormat.parse(date));
                 depositor.setDepositorAmountDeposit(1000);
                 depositor.setDepositorAmountPlusDeposit(10 * (i + 1));
                 depositor.setDepositorAmountMinusDeposit(10 * (i + 1));
-                depositor.setDepositorDateReturnDeposit(dateFormat.parse("2014-12-03"));
+                depositor.setDepositorDateReturnDeposit(dateFormat.parse(returnDate));
+                depositor.setDepositorMarkReturnDeposit(0);
+
+                depositors.add(depositor);
+
+                deposit.setDepositors(depositors);
+                LOGGER.debug("depositors1: {}", deposit.getDepositors());
+                deposit.getDepositors().addAll(depositors);
+                LOGGER.debug("depositors2: {}", deposit.getDepositors());
+
+                df.session.update(deposit);
+                for (Object d : deposit.getDepositors()) {
+                    df.session.save((BankDepositor) d);
+                }
+
+                //---- second
+                date = "2014-12-0"+(5+i);
+                returnDate = "2014-12-0"+(6+i);
+
+                depositor = new BankDepositor();
+                depositor.setDepositorName("depositorName" + (5+i));
+                depositor.setDepositorDateDeposit(dateFormat.parse(date));
+                depositor.setDepositorAmountDeposit(1000);
+                depositor.setDepositorAmountPlusDeposit(10 * (i + 5));
+                depositor.setDepositorAmountMinusDeposit(10 * (i + 5));
+                depositor.setDepositorDateReturnDeposit(dateFormat.parse(returnDate));
                 depositor.setDepositorMarkReturnDeposit(0);
 
                 depositors.add(depositor);

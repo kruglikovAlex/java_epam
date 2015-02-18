@@ -4,16 +4,22 @@ import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
 import com.brest.bank.util.HibernateUtil;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
+import org.hibernate.mapping.*;
+import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -175,8 +181,10 @@ public class BankDepositDaoImpl implements BankDepositDao {
         session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
         //---- query
-        deposits = session.createCriteria(BankDeposit.class)
-                .add(Restrictions.between("depositMinTerm",minValue, maxValue)).list();
+        for(Object d: session.createCriteria(BankDeposit.class)
+                .add(Restrictions.between("depositMinTerm", minValue, maxValue)).list()){
+            deposits.add((BankDeposit)d);
+        }
         //---- end session
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
         LOGGER.debug("depposits.size = {}", deposits.size());
@@ -185,25 +193,59 @@ public class BankDepositDaoImpl implements BankDepositDao {
     }
     //---- get deposit where depositorDateDeposit between days
     @Override
-    public List<BankDeposit> getBankDepositsAllDepositorsBetweenDateDeposit(Date startDate, Date endDate) {
-        LOGGER.debug("getBankDepositsAllDepositorsBetweenDateDeposit({},{})",dateFormat.format(startDate),dateFormat.format(endDate));
+    public List<BankDeposit> getBankDepositsBetweenDateDeposit(Date startDate, Date endDate) {
+        LOGGER.debug("getBankDepositsBetweenDateDeposit({},{})",dateFormat.format(startDate),dateFormat.format(endDate));
         //---- connection
         session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
         //---- query
-        for(Object d: session.createCriteria(BankDeposit.class)
-                                .createCriteria("depositors")
-                                .add(Restrictions.between("depositorDateDeposit", startDate, endDate))
+        String[] properties = session.getSessionFactory().getClassMetadata(BankDeposit.class).getPropertyNames();
+        for(Object d:session.createCriteria(BankDeposit.class)
+                                .createAlias("depositors", "depositor")
+                                .add(Restrictions.between("depositor.depositorDateDeposit", startDate, endDate))
+                                .setProjection(Projections.distinct(Projections.projectionList()
+                                    .add(Projections.property("depositId"),"depositId")
+                                    .add(formProjection(properties)))
+                                )
+                                .setResultTransformer(new AliasToBeanResultTransformer(BankDeposit.class))
                                 .list()) {
-            deposits.add((BankDeposit) d);
+            deposits.add((BankDeposit)d);
         }
         //---- end session
-
         LOGGER.debug("deposits.size = {}", deposits.size());
-        LOGGER.debug("depositors.size = {}", deposits.get(0).getDepositors().size());
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
         return deposits;
     }
+
+    @Override
+    public List<Map> getBankDepositsBetweenDateDepositWithDepositors(Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositsBetweenDateDepositWithDepositors({},{})",dateFormat.format(startDate),dateFormat.format(endDate));
+        //---- connection
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        //---- query
+        String[] properties = session.getSessionFactory().getClassMetadata(BankDeposit.class).getPropertyNames();
+        List list = session.createCriteria(BankDeposit.class, "deposit")
+                            .createAlias("depositors", "depositor")
+                            .add(Restrictions.between("depositor.depositorDateDeposit", startDate, endDate))
+                            .setProjection(Projections.distinct(Projections.projectionList()
+                                 .add(Projections.property("deposit.depositId"), "depositId")
+                                 .add(formProjection(properties))
+                                 .add(Projections.count("depositor.depositorId").as("depositorCount"))
+                                 .add(Projections.sum("depositor.depositorAmountDeposit").as("depositorAmountSum"))
+                                 .add(Projections.sum("depositor.depositorAmountPlusDeposit").as("depositorAmountPlusSum"))
+                                 .add(Projections.sum("depositor.depositorAmountMinusDeposit").as("depositorAmountMinusSum"))
+                                 .add(Projections.groupProperty("deposit.depositId"))
+                            ))
+                            .setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
+                            .list();
+        //---- end session
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        LOGGER.debug("list = {}", list);
+        return mapRow(list);
+    }
+
+
     //---- create
     @Override
     public void addBankDeposit(BankDeposit deposit) {
@@ -276,5 +318,23 @@ public class BankDepositDaoImpl implements BankDepositDao {
                 session.close();
             }
         }
+    }
+    //---- List to List<Map>
+    public List<Map> mapRow(List list) {
+        List<Map> depositAgrDepositor = new ArrayList<Map>(list.size());
+        for (Object aList : list) {
+            Map map = (Map) aList;
+            LOGGER.debug("map = {}", map);
+            depositAgrDepositor.add(map);
+        }
+        return depositAgrDepositor;
+    }
+    //---- list properties for guery output
+    public Projection formProjection(String[] properties) {
+        ProjectionList list = Projections.projectionList();
+        for (int i=0; i<properties.length-1; i++){
+            list.add(Projections.property(properties[i]),properties[i]);
+        }
+        return list;
     }
 }

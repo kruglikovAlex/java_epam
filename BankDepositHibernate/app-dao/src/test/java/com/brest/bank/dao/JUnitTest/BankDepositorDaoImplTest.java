@@ -74,9 +74,9 @@ public class BankDepositorDaoImplTest {
         depositor = depositorDao.getBankDepositorByIdGet(4L);
         LOGGER.debug("depositor = {}", depositor);
 
-        assertEquals("BankDepositor: { depositorId=4, depositorName=depositorName4, depositorDateDeposit=2014-12-02, " +
-                "depositorAmountDeposit=1000, depositorAmountPlusDeposit=50, depositorAmountMinusDeposit=50, " +
-                "depositorDateReturnDeposit=2014-12-03, depositorMarkReturnDeposit=0}",depositor.toString());
+        assertEquals("BankDepositor: { depositorId=4, depositorName=depositorName7, depositorDateDeposit=2014-12-07, " +
+                "depositorAmountDeposit=1000, depositorAmountPlusDeposit=70, depositorAmountMinusDeposit=70, " +
+                "depositorDateReturnDeposit=2014-12-08, depositorMarkReturnDeposit=0}",depositor.toString());
     }
 
     @Test
@@ -84,9 +84,9 @@ public class BankDepositorDaoImplTest {
         depositor = depositorDao.getBankDepositorByIdLoad(4L);
         LOGGER.debug("depositor = {}", depositor);
 
-        assertEquals("BankDepositor: { depositorId=4, depositorName=depositorName4, depositorDateDeposit=2014-12-02, " +
-                "depositorAmountDeposit=1000, depositorAmountPlusDeposit=50, depositorAmountMinusDeposit=50, " +
-                "depositorDateReturnDeposit=2014-12-03, depositorMarkReturnDeposit=0}",depositor.toString());
+        assertEquals("BankDepositor: { depositorId=4, depositorName=depositorName7, depositorDateDeposit=2014-12-07, " +
+                "depositorAmountDeposit=1000, depositorAmountPlusDeposit=70, depositorAmountMinusDeposit=70, " +
+                "depositorDateReturnDeposit=2014-12-08, depositorMarkReturnDeposit=0}",depositor.toString());
     }
 
     @Test
@@ -94,29 +94,29 @@ public class BankDepositorDaoImplTest {
         depositor = depositorDao.getBankDepositorByIdCriteria(4L);
         LOGGER.debug("depositor = {}", depositor);
 
-        assertEquals("BankDepositor: { depositorId=4, depositorName=depositorName4, depositorDateDeposit=2014-12-02, " +
-                "depositorAmountDeposit=1000, depositorAmountPlusDeposit=50, depositorAmountMinusDeposit=50, " +
-                "depositorDateReturnDeposit=2014-12-03, depositorMarkReturnDeposit=0}",depositor.toString());
+        assertEquals("BankDepositor: { depositorId=4, depositorName=depositorName7, depositorDateDeposit=2014-12-07, " +
+                "depositorAmountDeposit=1000, depositorAmountPlusDeposit=70, depositorAmountMinusDeposit=70, " +
+                "depositorDateReturnDeposit=2014-12-08, depositorMarkReturnDeposit=0}",depositor.toString());
     }
 
     @Test
     public void testGetBankDepositorByNameSQL() throws Exception {
-        depositor = depositorDao.getBankDepositorByNameSQL("depositorName4");
+        depositor = depositorDao.getBankDepositorByNameSQL("depositorName7");
         LOGGER.debug("depositor = {}", depositor);
 
-        assertEquals("BankDepositor: { depositorId=4, depositorName=depositorName4, depositorDateDeposit=2014-12-02, " +
-                "depositorAmountDeposit=1000, depositorAmountPlusDeposit=50, depositorAmountMinusDeposit=50, " +
-                "depositorDateReturnDeposit=2014-12-03, depositorMarkReturnDeposit=0}",depositor.toString());
+        assertEquals("BankDepositor: { depositorId=4, depositorName=depositorName7, depositorDateDeposit=2014-12-07, " +
+                "depositorAmountDeposit=1000, depositorAmountPlusDeposit=70, depositorAmountMinusDeposit=70, " +
+                "depositorDateReturnDeposit=2014-12-08, depositorMarkReturnDeposit=0}",depositor.toString());
     }
 
     @Test
     public void testGetBankDepositorByNameCriteria() throws Exception {
-        depositor = depositorDao.getBankDepositorByNameCriteria("depositorName4");
+        depositor = depositorDao.getBankDepositorByNameCriteria("depositorName7");
         LOGGER.debug("depositor = {}", depositor);
 
-        assertEquals("BankDepositor: { depositorId=4, depositorName=depositorName4, depositorDateDeposit=2014-12-02, " +
-                "depositorAmountDeposit=1000, depositorAmountPlusDeposit=50, depositorAmountMinusDeposit=50, " +
-                "depositorDateReturnDeposit=2014-12-03, depositorMarkReturnDeposit=0}",depositor.toString());
+        assertEquals("BankDepositor: { depositorId=4, depositorName=depositorName7, depositorDateDeposit=2014-12-07, " +
+                "depositorAmountDeposit=1000, depositorAmountPlusDeposit=70, depositorAmountMinusDeposit=70, " +
+                "depositorDateReturnDeposit=2014-12-08, depositorMarkReturnDeposit=0}",depositor.toString());
     }
 
     @Test

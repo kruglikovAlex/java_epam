@@ -18,6 +18,7 @@ import org.junit.rules.ExternalResource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
@@ -146,16 +147,35 @@ public class BankDepositDaoImplTest {
     }
 
     @Test
-    public void testGetBankDepositsAllDepositorsBetweenDateDeposit() throws Exception {
-        Date startDate = dateFormat.parse("2014-12-02");
-        Date endDate = dateFormat.parse("2014-12-03");
-        deposits = depositDao.getBankDepositsAllDepositorsBetweenDateDeposit(startDate,endDate);
+    public void testGetBankDepositsBetweenDateDeposit() throws Exception {
+        Date startDate = dateFormat.parse("2014-12-03");
+        Date endDate = dateFormat.parse("2014-12-04");
+        deposits = depositDao.getBankDepositsBetweenDateDeposit(startDate, endDate);
         LOGGER.debug("deposits = {}", deposits);
 
-        assertEquals("[BankDeposit: { depositId=2, depositName=depositName1, depositMinTerm=13, depositMinAmount=200," +
-                " depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition1}, " +
-                "BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300," +
-                " depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition2}]",deposits.toString());
+        assertEquals("[BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
+                "depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition2}, " +
+                "BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=15, depositMinAmount=400, " +
+                "depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition3}]",deposits.toString());
+    }
+
+    @Test
+    public void testGetBankDepositsBetweenDateDepositWithDepositors() throws Exception {
+        Date startDate = dateFormat.parse("2014-12-01");
+        Date endDate = dateFormat.parse("2014-12-06");
+        List<Map> list = depositDao.getBankDepositsBetweenDateDepositWithDepositors(startDate,endDate);
+        LOGGER.debug("deposits = {}", list);
+        deposits = depositDao.getBankDepositsBetweenDateDeposit(startDate, endDate);
+
+        for (int i=0; i<list.size(); i++) {
+            assertEquals(deposits.get(i).getDepositId(), list.get(i).get("depositId"));
+            assertEquals(deposits.get(i).getDepositName(), list.get(i).get("depositName"));
+            assertEquals(deposits.get(i).getDepositMinTerm(), list.get(i).get("depositMinTerm"));
+            assertEquals(deposits.get(i).getDepositMinAmount(), list.get(i).get("depositMinAmount"));
+            assertEquals(deposits.get(i).getDepositCurrency(), list.get(i).get("depositCurrency"));
+            assertEquals(deposits.get(i).getDepositInterestRate(), list.get(i).get("depositInterestRate"));
+            assertEquals(deposits.get(i).getDepositAddConditions(), list.get(i).get("depositAddConditions"));
+        }
     }
 
     @Test
@@ -219,7 +239,7 @@ public class BankDepositDaoImplTest {
         LOGGER.debug("sizeDepositorsAfter = {}", sizeDepositorsAfter);
 
         assertTrue(sizeAfter == sizeBefore - 1);
-        assertTrue(sizeDepositorsAfter == sizeDepositorsBefore - 1);
+        assertTrue(sizeDepositorsAfter == sizeDepositorsBefore - 2);
     }
 
     public Integer rowCount(Class<?> name) throws ClassNotFoundException{
