@@ -121,6 +121,19 @@ public class BankDepositorDaoImplTest {
     }
 
     @Test
+    public void testGetBankDepositorByIdDepositCriteria() throws Exception {
+        depositors = depositorDao.getBankDepositorByIdDepositCriteria(3L);
+        LOGGER.debug("depositors = {}", depositors);
+
+        assertEquals("[BankDepositor: { depositorId=5, depositorName=depositorName3, depositorDateDeposit=2014-12-03, " +
+                "depositorAmountDeposit=1000, depositorAmountPlusDeposit=40, depositorAmountMinusDeposit=40, " +
+                "depositorDateReturnDeposit=2014-12-04, depositorMarkReturnDeposit=0}, " +
+                "BankDepositor: { depositorId=6, depositorName=depositorName8, depositorDateDeposit=2014-12-08, " +
+                "depositorAmountDeposit=1000, depositorAmountPlusDeposit=80, depositorAmountMinusDeposit=80, " +
+                "depositorDateReturnDeposit=2014-12-09, depositorMarkReturnDeposit=0}]",depositors.toString());
+    }
+
+    @Test
     public void testGetBankDepositorBetweenDateDeposit() throws Exception {
         Date startDate = dateFormat.parse("2014-12-01");
         Date endDate = dateFormat.parse("2014-12-05");
@@ -130,6 +143,21 @@ public class BankDepositorDaoImplTest {
         assertEquals("[BankDepositor: { depositorId=5, depositorName=depositorName3, depositorDateDeposit=2014-12-03, " +
                 "depositorAmountDeposit=1000, depositorAmountPlusDeposit=40, depositorAmountMinusDeposit=40, " +
                 "depositorDateReturnDeposit=2014-12-04, depositorMarkReturnDeposit=0}]",depositors.toString());
+    }
+
+    @Test
+    public void testGetBankDepositorBetweenDateReturnDeposit() throws Exception {
+        Date startDate = dateFormat.parse("2014-12-01");
+        Date endDate = dateFormat.parse("2014-12-09");
+        depositors = depositorDao.getBankDepositorBetweenDateReturnDeposit(3L, startDate, endDate);
+        LOGGER.debug("depositors = {}", depositors);
+
+        assertEquals("[BankDepositor: { depositorId=5, depositorName=depositorName3, depositorDateDeposit=2014-12-03, " +
+                "depositorAmountDeposit=1000, depositorAmountPlusDeposit=40, depositorAmountMinusDeposit=40, " +
+                "depositorDateReturnDeposit=2014-12-04, depositorMarkReturnDeposit=0}, " +
+                "BankDepositor: { depositorId=6, depositorName=depositorName8, depositorDateDeposit=2014-12-08, " +
+                "depositorAmountDeposit=1000, depositorAmountPlusDeposit=80, depositorAmountMinusDeposit=80, " +
+                "depositorDateReturnDeposit=2014-12-09, depositorMarkReturnDeposit=0}]",depositors.toString());
     }
 
     @Test

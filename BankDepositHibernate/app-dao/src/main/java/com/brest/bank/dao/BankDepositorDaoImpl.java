@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 import java.util.*;
@@ -50,6 +51,7 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         LOGGER.debug("depositors:{}", depositors);
         return depositors;
     }
+
     //---- get all deposits with Criteria
     @Override
     public List<BankDepositor> getBankDepositorsCriteria() {
@@ -67,7 +69,8 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         LOGGER.debug("depositors:{}", depositors);
         return depositors;
     }
-    //---- get by depositId with get
+
+    //---- get by depositorId with get
     @Override
     public BankDepositor getBankDepositorByIdGet(Long id){
         LOGGER.debug("getBankDepositorByIdGet({})", id);
@@ -82,7 +85,8 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         LOGGER.debug("depositor: {}", depositor);
         return depositor;
     }
-    //---- get by depositId with load
+
+    //---- get by depositorId with load
     @Override
     public BankDepositor getBankDepositorByIdLoad(Long id){
         LOGGER.debug("getBankDepositorByIdLoad({})", id);
@@ -97,7 +101,8 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         LOGGER.debug("depositor: {}", depositor);
         return depositor;
     }
-    //---- get by depositId with Criteria
+
+    //---- get by depositorId with Criteria
     @Override
     public BankDepositor getBankDepositorByIdCriteria(Long id){
         LOGGER.debug("getBankDepositorByIdCriteria({})", id);
@@ -113,7 +118,8 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         LOGGER.debug("depositor:{}", depositor);
         return depositor;
     }
-    //---- get by depositName SQL
+
+    //---- get by depositorName SQL
     @Override
     public BankDepositor getBankDepositorByNameSQL(String name){
         LOGGER.debug("getBankDepositorByNameSQL({})",name);
@@ -130,7 +136,8 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         LOGGER.debug("depositor:{}", depositor);
         return depositor;
     }
-    //---- get by depositName createCriteria
+
+    //---- get by depositorName createCriteria
     @Override
     public BankDepositor getBankDepositorByNameCriteria(String name){
         LOGGER.debug("getBankDepositorByNameCriteria({})",name);
@@ -147,6 +154,29 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         return depositor;
     }
 
+    //---- get by depositId createCriteria
+    @Override
+    public List<BankDepositor> getBankDepositorByIdDepositCriteria(Long id){
+        LOGGER.debug("getBankDepositorByIdDepositCriteria({})",id);
+        List<BankDepositor> dep = new ArrayList<BankDepositor>();
+        //--- соединение
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        //--- query
+        for(Object aDepositor: session.createCriteria(BankDepositor.class, "depositor")
+                .createCriteria("deposit", "deposit")
+                .add(Restrictions.eq("deposit.depositId", id))
+                .addOrder(Order.asc("depositor.depositorId"))
+                .list()){
+            dep.add((BankDepositor)aDepositor);
+        }
+        //--- завершение сессии
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+
+        LOGGER.debug("depositors:{}", dep);
+        return dep;
+    }
+
     //---- get Depositors between Date Deposit
     @Override
     public List<BankDepositor> getBankDepositorBetweenDateDeposit(Long id, Date startDate, Date endDate) {
@@ -155,17 +185,44 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
         //--- query
-        depositors = session.createCriteria(BankDepositor.class, "depositor")
+        for(Object aDepositor: session.createCriteria(BankDepositor.class, "depositor")
                     .add(Restrictions.between("depositorDateDeposit",startDate,endDate))
                     .createAlias("deposit", "deposit")
                     .add(Restrictions.eq("deposit.depositId", id))
-                .list();
+                    .addOrder(Order.asc("depositor.depositorId"))
+                .list()){
+            depositors.add((BankDepositor)aDepositor);
+        }
         //--- завершение сессии
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
         LOGGER.debug("depositor:{}", depositor);
         return depositors;
     }
+
+    //---- get Depositors between Date Return Deposit
+    @Override
+    public List<BankDepositor> getBankDepositorBetweenDateReturnDeposit(Long id, Date startDate, Date endDate) {
+        LOGGER.debug("getBankDepositorBetweenDateReturnDeposit({},{},{})",id,startDate,endDate);
+        //--- соединение
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        //--- query
+        for(Object aDepositor: session.createCriteria(BankDepositor.class, "depositor")
+                .add(Restrictions.between("depositorDateReturnDeposit",startDate,endDate))
+                .createAlias("deposit", "deposit")
+                .add(Restrictions.eq("deposit.depositId", id))
+                .addOrder(Order.asc("depositor.depositorId"))
+                .list()){
+            depositors.add((BankDepositor)aDepositor);
+        }
+        //--- завершение сессии
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+
+        LOGGER.debug("depositor:{}", depositor);
+        return depositors;
+    }
+
     //---- add BankDepositor to BankDeposit
     @Override
     public void addBankDepositor(Long depositId, BankDepositor depositor){
@@ -192,6 +249,7 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
             }
         }
     }
+
     //---- update
     @Override
     public void updateBankDepositor(BankDepositor depositor){
@@ -213,6 +271,7 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
             }
         }
     }
+
     //---- delete
     @Override
     public void removeBankDepositor(Long id){

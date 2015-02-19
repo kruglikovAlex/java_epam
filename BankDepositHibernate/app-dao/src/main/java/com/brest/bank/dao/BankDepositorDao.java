@@ -16,7 +16,9 @@ public interface BankDepositorDao {
     public BankDepositor getBankDepositorByIdCriteria(Long depositorId);
     public BankDepositor getBankDepositorByNameSQL(String depositorName);
     public BankDepositor getBankDepositorByNameCriteria(String depositorName);
+    public List<BankDepositor> getBankDepositorByIdDepositCriteria(Long id);
     public List<BankDepositor> getBankDepositorBetweenDateDeposit(Long id, Date startDate, Date endDate);
+    public List<BankDepositor> getBankDepositorBetweenDateReturnDeposit(Long id, Date startDate, Date endDate);
     //---- CRUD:
         //---- create
     public void addBankDepositor(Long depositId, BankDepositor depositor);

@@ -17,13 +17,16 @@ public interface BankDepositDao {
     public BankDeposit getBankDepositByIdCriteria(Long id);
     public BankDeposit getBankDepositByNameSQL(String depositName);
     public BankDeposit getBankDepositByNameCriteria(String depositName);
+    public List<BankDeposit> getBankDepositByCurrencyCriteria(String currency);
     public BankDeposit getBankDepositByNameByNaturalIdCriteria(String name);
     public List<BankDeposit> getBankDepositBetweenMinTermCriteria(Integer minTerm, Integer maxTerm);
     public List<BankDeposit> getBankDepositsBetweenDateDeposit(Date startDate, Date endDate);
     public List<BankDeposit> getBankDepositsBetweenDateReturnDeposit(Date startDate, Date endDate);
+    public List<Map> getBankDepositByCurrencyWithDepositors(String currency);
     public List<Map> getBankDepositsBetweenDateDepositWithDepositors(Date startDate, Date endDate);
     public List<Map> getBankDepositByNameBetweenDateDepositWithDepositors(String name,Date startDate, Date endDate);
     public List<Map> getBankDepositsBetweenDateReturnDepositWithDepositors(Date startDate, Date endDate);
+    public List<Map> getBankDepositByNameBetweenDateReturnDepositWithDepositors(String name,Date startDate, Date endDate);
     //---- CRUD:
         //---- create
     public void addBankDeposit(BankDeposit deposit);
