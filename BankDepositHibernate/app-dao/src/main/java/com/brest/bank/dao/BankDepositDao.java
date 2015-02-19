@@ -10,19 +10,27 @@ public interface BankDepositDao {
     //--- close connection
     public void closeConnection();
     //---- get
+        //---- all
     public List<BankDeposit> getBankDepositsSQL();
     public List<BankDeposit> getBankDepositsCriteria();
+        //---- single
     public BankDeposit getBankDepositByIdGet(Long depositId);
     public BankDeposit getBankDepositByIdLoad(Long depositId);
     public BankDeposit getBankDepositByIdCriteria(Long id);
     public BankDeposit getBankDepositByNameSQL(String depositName);
     public BankDeposit getBankDepositByNameCriteria(String depositName);
-    public List<BankDeposit> getBankDepositByCurrencyCriteria(String currency);
     public BankDeposit getBankDepositByNameByNaturalIdCriteria(String name);
+        //---- list of entity
+    public List<BankDeposit> getBankDepositByCurrencyCriteria(String currency);
+    public List<BankDeposit> getBankDepositByInterestRateCriteria(Integer rate);
     public List<BankDeposit> getBankDepositBetweenMinTermCriteria(Integer minTerm, Integer maxTerm);
+    public List<BankDeposit> getBankDepositBetweenInterestRateCriteria(Integer startRate, Integer endRate);
     public List<BankDeposit> getBankDepositsBetweenDateDeposit(Date startDate, Date endDate);
     public List<BankDeposit> getBankDepositsBetweenDateReturnDeposit(Date startDate, Date endDate);
+        //---- list object aggregation and grouping
     public List<Map> getBankDepositByCurrencyWithDepositors(String currency);
+    public List<Map> getBankDepositByInterestRateWithDepositors(Integer rate);
+    public List<Map> getBankDepositBetweenInterestRateWithDepositors(Integer startRate, Integer endRate);
     public List<Map> getBankDepositsBetweenDateDepositWithDepositors(Date startDate, Date endDate);
     public List<Map> getBankDepositByNameBetweenDateDepositWithDepositors(String name,Date startDate, Date endDate);
     public List<Map> getBankDepositsBetweenDateReturnDepositWithDepositors(Date startDate, Date endDate);

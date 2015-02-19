@@ -77,52 +77,47 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositByIdGet() throws Exception {
-        deposit = depositDao.getBankDepositByIdGet(4L);
+        deposit = depositDao.getBankDepositByIdGet(3L);
         LOGGER.debug("deposit = {}", deposit);
 
-        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=15, " +
-                "depositMinAmount=400, depositCurrency=usd, depositInterestRate=4, " +
-                "depositAddConditions=condition3}",deposit.toString());
+        assertEquals("BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
+                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}",deposit.toString());
     }
 
     @Test
     public void testGetBankDepositByIdLoad() throws Exception {
-        deposit = depositDao.getBankDepositByIdLoad(4L);
+        deposit = depositDao.getBankDepositByIdLoad(3L);
         LOGGER.debug("deposit = {}", deposit);
 
-        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=15, " +
-                "depositMinAmount=400, depositCurrency=usd, depositInterestRate=4, " +
-                "depositAddConditions=condition3}",deposit.toString());
+        assertEquals("BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
+                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}",deposit.toString());
     }
 
     @Test
     public void testGetBankDepositByIdCriteria() throws Exception {
-        deposit = depositDao.getBankDepositByIdCriteria(4L);
+        deposit = depositDao.getBankDepositByIdCriteria(3L);
         LOGGER.debug("deposit = {}", deposit);
 
-        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=15, " +
-                "depositMinAmount=400, depositCurrency=usd, depositInterestRate=4, " +
-                "depositAddConditions=condition3}",deposit.toString());
+        assertEquals("BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
+                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}",deposit.toString());
     }
 
     @Test
     public void testGetBankDepositByNameSQL() throws Exception {
-        deposit = depositDao.getBankDepositByNameSQL("depositName3");
+        deposit = depositDao.getBankDepositByNameSQL("depositName2");
         LOGGER.debug("deposit = {}", deposit);
 
-        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=15, " +
-                "depositMinAmount=400, depositCurrency=usd, depositInterestRate=4, " +
-                "depositAddConditions=condition3}",deposit.toString());
+        assertEquals("BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
+                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}",deposit.toString());
     }
 
     @Test
     public void testGetBankDepositByNameCriteria() throws Exception {
-        deposit = depositDao.getBankDepositByNameCriteria("depositName3");
+        deposit = depositDao.getBankDepositByNameCriteria("depositName2");
         LOGGER.debug("deposit = {}", deposit);
 
-        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=15, " +
-                "depositMinAmount=400, depositCurrency=usd, depositInterestRate=4, " +
-                "depositAddConditions=condition3}",deposit.toString());
+        assertEquals("BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
+                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}",deposit.toString());
     }
 
     @Test
@@ -138,24 +133,48 @@ public class BankDepositDaoImplTest {
     }
 
     @Test
-    public void testGetBankDepositByNameByNaturalIdCriteria() throws Exception {
-        deposit = depositDao.getBankDepositByNameByNaturalIdCriteria("depositName3");
-        LOGGER.debug("deposit = {}", deposit);
+    public void testGetBankDepositByInterestRateCriteria() throws Exception {
+        deposits = depositDao.getBankDepositByInterestRateCriteria(4);
+        LOGGER.debug("deposit = {}", deposits);
 
-        assertEquals("BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=15, " +
-                "depositMinAmount=400, depositCurrency=usd, depositInterestRate=4, " +
-                "depositAddConditions=condition3}",deposit.toString());
+        assertNotNull(deposits);
+        assertTrue(deposits.size()!=0);
+        for(BankDeposit aDeposit: deposits){
+            assertTrue(4==aDeposit.getDepositInterestRate());
+        }
     }
 
     @Test
-    public void testGetBankDepositBetweenMaxMinTermCriteria() throws Exception {
+    public void testGetBankDepositByNameByNaturalIdCriteria() throws Exception {
+        deposit = depositDao.getBankDepositByNameByNaturalIdCriteria("depositName2");
+        LOGGER.debug("deposit = {}", deposit);
+
+        assertEquals("BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
+                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}",deposit.toString());
+    }
+
+    @Test
+    public void testGetBankDepositBetweenMinTermCriteria() throws Exception {
         deposits = depositDao.getBankDepositBetweenMinTermCriteria(14, 15);
         LOGGER.debug("deposits = {}", deposits);
 
         assertEquals("[BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300," +
-                " depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition2}, " +
+                " depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}, " +
                 "BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=15, depositMinAmount=400," +
-                " depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition3}]",deposits.toString());
+                " depositCurrency=usd, depositInterestRate=7, depositAddConditions=condition3}]",deposits.toString());
+    }
+
+    @Test
+    public void testGetBankDepositBetweenInterestRateCriteria() throws Exception {
+        deposits = depositDao.getBankDepositBetweenInterestRateCriteria(4,6);
+        LOGGER.debug("deposits = {}", deposits);
+
+        assertEquals("[BankDeposit: { depositId=1, depositName=depositName0, depositMinTerm=9, depositMinAmount=10000, " +
+                "depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition0}, " +
+                "BankDeposit: { depositId=2, depositName=depositName1, depositMinTerm=13, depositMinAmount=200, " +
+                "depositCurrency=usd, depositInterestRate=5, depositAddConditions=condition1}, " +
+                "BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
+                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}]",deposits.toString());
     }
 
     @Test
@@ -166,9 +185,9 @@ public class BankDepositDaoImplTest {
         LOGGER.debug("deposits = {}", deposits);
 
         assertEquals("[BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
-                "depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition2}, " +
+                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}, " +
                 "BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=15, depositMinAmount=400, " +
-                "depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition3}]",deposits.toString());
+                "depositCurrency=usd, depositInterestRate=7, depositAddConditions=condition3}]",deposits.toString());
     }
 
     @Test
@@ -179,9 +198,9 @@ public class BankDepositDaoImplTest {
         LOGGER.debug("deposits = {}", deposits);
 
         assertEquals("[BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
-                "depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition2}, " +
+                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}, " +
                 "BankDeposit: { depositId=4, depositName=depositName3, depositMinTerm=15, depositMinAmount=400, " +
-                "depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition3}]",deposits.toString());
+                "depositCurrency=usd, depositInterestRate=7, depositAddConditions=condition3}]",deposits.toString());
     }
 
     @Test
@@ -190,6 +209,84 @@ public class BankDepositDaoImplTest {
         LOGGER.debug("deposits = {}", list);
 
         deposits = depositDao.getBankDepositByCurrencyCriteria("usd");
+        LOGGER.debug("deposits = {}", deposits);
+
+        assertTrue(list.size()==deposits.size());
+
+        Integer[] sumAmountDeposit= new Integer[deposits.size()];
+        Integer[] sumAmountPlusDeposit= new Integer[deposits.size()];
+        Integer[] sumAmountMinusDeposit= new Integer[deposits.size()];
+
+        for (int i=0; i<deposits.size(); i++){
+            sumAmountDeposit[i] = 0;
+            sumAmountPlusDeposit[i] = 0;
+            sumAmountMinusDeposit[i] = 0;
+            for(BankDepositor aDeposit:depositorDao.getBankDepositorByIdDepositCriteria(deposits.get(i).getDepositId())) {
+                sumAmountDeposit[i] += aDeposit.getDepositorAmountDeposit();
+                sumAmountPlusDeposit[i] += aDeposit.getDepositorAmountPlusDeposit();
+                sumAmountMinusDeposit[i] += aDeposit.getDepositorAmountMinusDeposit();
+            }
+        }
+
+        for (int j=0; j<list.size(); j++) {
+            assertEquals(deposits.get(j).getDepositId(), list.get(j).get("depositId"));
+            assertEquals(deposits.get(j).getDepositName(), list.get(j).get("depositName"));
+            assertEquals(deposits.get(j).getDepositMinTerm(), list.get(j).get("depositMinTerm"));
+            assertEquals(deposits.get(j).getDepositMinAmount(), list.get(j).get("depositMinAmount"));
+            assertEquals(deposits.get(j).getDepositCurrency(), list.get(j).get("depositCurrency"));
+            assertEquals(deposits.get(j).getDepositInterestRate(), list.get(j).get("depositInterestRate"));
+            assertEquals(deposits.get(j).getDepositAddConditions(), list.get(j).get("depositAddConditions"));
+            assertTrue("sum all amount", sumAmountDeposit[j]==Integer.parseInt(list.get(j).get("depositorAmountSum").toString()));
+            assertTrue("sum all plus amount", sumAmountPlusDeposit[j]==Integer.parseInt(list.get(j).get("depositorAmountPlusSum").toString()));
+            assertTrue("sum all minus amount", sumAmountMinusDeposit[j]==Integer.parseInt(list.get(j).get("depositorAmountMinusSum").toString()));
+        }
+    }
+
+    @Test
+    public void testGetBankDepositByInterestRateWithDepositors() throws Exception {
+        List<Map> list = depositDao.getBankDepositByInterestRateWithDepositors(4);
+        LOGGER.debug("deposits = {}", list);
+
+        deposits = depositDao.getBankDepositByInterestRateCriteria(4);
+        LOGGER.debug("deposits = {}", deposits);
+
+        assertTrue(list.size()==deposits.size());
+
+        Integer[] sumAmountDeposit= new Integer[deposits.size()];
+        Integer[] sumAmountPlusDeposit= new Integer[deposits.size()];
+        Integer[] sumAmountMinusDeposit= new Integer[deposits.size()];
+
+        for (int i=0; i<deposits.size(); i++){
+            sumAmountDeposit[i] = 0;
+            sumAmountPlusDeposit[i] = 0;
+            sumAmountMinusDeposit[i] = 0;
+            for(BankDepositor aDeposit:depositorDao.getBankDepositorByIdDepositCriteria(deposits.get(i).getDepositId())) {
+                sumAmountDeposit[i] += aDeposit.getDepositorAmountDeposit();
+                sumAmountPlusDeposit[i] += aDeposit.getDepositorAmountPlusDeposit();
+                sumAmountMinusDeposit[i] += aDeposit.getDepositorAmountMinusDeposit();
+            }
+        }
+
+        for (int j=0; j<list.size(); j++) {
+            assertEquals(deposits.get(j).getDepositId(), list.get(j).get("depositId"));
+            assertEquals(deposits.get(j).getDepositName(), list.get(j).get("depositName"));
+            assertEquals(deposits.get(j).getDepositMinTerm(), list.get(j).get("depositMinTerm"));
+            assertEquals(deposits.get(j).getDepositMinAmount(), list.get(j).get("depositMinAmount"));
+            assertEquals(deposits.get(j).getDepositCurrency(), list.get(j).get("depositCurrency"));
+            assertEquals(deposits.get(j).getDepositInterestRate(), list.get(j).get("depositInterestRate"));
+            assertEquals(deposits.get(j).getDepositAddConditions(), list.get(j).get("depositAddConditions"));
+            assertTrue("sum all amount", sumAmountDeposit[j]==Integer.parseInt(list.get(j).get("depositorAmountSum").toString()));
+            assertTrue("sum all plus amount", sumAmountPlusDeposit[j]==Integer.parseInt(list.get(j).get("depositorAmountPlusSum").toString()));
+            assertTrue("sum all minus amount", sumAmountMinusDeposit[j]==Integer.parseInt(list.get(j).get("depositorAmountMinusSum").toString()));
+        }
+    }
+
+    @Test
+    public void testGetBankDepositBetweenInterestRateWithDepositors() throws Exception {
+        List<Map> list = depositDao.getBankDepositBetweenInterestRateWithDepositors(4,6);
+        LOGGER.debug("deposits = {}", list);
+
+        deposits = depositDao.getBankDepositBetweenInterestRateCriteria(4,6);
         LOGGER.debug("deposits = {}", deposits);
 
         assertTrue(list.size()==deposits.size());

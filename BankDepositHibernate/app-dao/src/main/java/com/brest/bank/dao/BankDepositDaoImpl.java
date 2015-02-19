@@ -171,6 +171,27 @@ public class BankDepositDaoImpl implements BankDepositDao {
         LOGGER.debug("deposits:{}", deposits);
         return deposits;
     }
+
+    //---- get by depositCurrency createCriteria
+    @Override
+    public List<BankDeposit> getBankDepositByInterestRateCriteria(Integer rate){
+        LOGGER.debug("getBankDepositByInterestRateCriteria({})",rate);
+        //--- соединение
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        //--- query
+        for(Object aDeposits: session.createCriteria(BankDeposit.class)
+                .add(Restrictions.eq("depositInterestRate", rate))
+                .list()){
+            deposits.add((BankDeposit)aDeposits);
+        }
+        //--- завершение сессии
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+
+        LOGGER.debug("deposits:{}", deposits);
+        return deposits;
+    }
+
     //---- get by depositName where depositName mapped as a natural id - createCriteria
     @Override
     public BankDeposit getBankDepositByNameByNaturalIdCriteria(String name){
@@ -218,16 +239,94 @@ public class BankDepositDaoImpl implements BankDepositDao {
         LOGGER.debug("list = {}", list);
         return mapRow(list);
     }
+
+    //---- get deposit by InterestRate with aggregation and grouping Depositors
+    @Override
+    public List<Map> getBankDepositByInterestRateWithDepositors(Integer rate){
+        LOGGER.debug("getBankDepositByInterestRateWithDepositors({})",rate);
+        //---- connection
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        //---- query
+        String[] properties = session.getSessionFactory().getClassMetadata(BankDeposit.class).getPropertyNames();
+        List list = session.createCriteria(BankDeposit.class, "deposit")
+                .add(Restrictions.eq("deposit.depositInterestRate", rate))
+                .createAlias("depositors", "depositor")
+                .setProjection(Projections.distinct(Projections.projectionList()
+                                .add(Projections.property("deposit.depositId"), "depositId")
+                                .add(formProjection(properties))
+                                .add(Projections.count("depositor.depositorId").as("depositorCount"))
+                                .add(Projections.sum("depositor.depositorAmountDeposit").as("depositorAmountSum"))
+                                .add(Projections.sum("depositor.depositorAmountPlusDeposit").as("depositorAmountPlusSum"))
+                                .add(Projections.sum("depositor.depositorAmountMinusDeposit").as("depositorAmountMinusSum"))
+                                .add(Projections.groupProperty("deposit.depositId"))
+                ))
+                .setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
+                .list();
+        //---- end session
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        LOGGER.debug("list = {}", list);
+        return mapRow(list);
+    }
+
+    //---- get deposit between InterestRate with aggregation and grouping Depositors
+    @Override
+    public List<Map> getBankDepositBetweenInterestRateWithDepositors(Integer startRate, Integer endRate){
+        LOGGER.debug("getBankDepositBetweenInterestRateWithDepositors({},{})",startRate, endRate);
+        //---- connection
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        //---- query
+        String[] properties = session.getSessionFactory().getClassMetadata(BankDeposit.class).getPropertyNames();
+        List list = session.createCriteria(BankDeposit.class, "deposit")
+                .add(Restrictions.between("deposit.depositInterestRate", startRate, endRate))
+                .createAlias("depositors", "depositor")
+                .setProjection(Projections.distinct(Projections.projectionList()
+                                .add(Projections.property("deposit.depositId"), "depositId")
+                                .add(formProjection(properties))
+                                .add(Projections.count("depositor.depositorId").as("depositorCount"))
+                                .add(Projections.sum("depositor.depositorAmountDeposit").as("depositorAmountSum"))
+                                .add(Projections.sum("depositor.depositorAmountPlusDeposit").as("depositorAmountPlusSum"))
+                                .add(Projections.sum("depositor.depositorAmountMinusDeposit").as("depositorAmountMinusSum"))
+                                .add(Projections.groupProperty("deposit.depositId"))
+                ))
+                .setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
+                .list();
+        //---- end session
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        LOGGER.debug("list = {}", list);
+        return mapRow(list);
+    }
+
     //---- get deposit with max value of depositMinTerm
     @Override
     public List<BankDeposit> getBankDepositBetweenMinTermCriteria(Integer minValue, Integer maxValue){
-        LOGGER.debug("getBankDepositByMaxMinTermCriteria() - start");
+        LOGGER.debug("getBankDepositBetweenMinTermCriteria({},{})",minValue,maxValue);
         //---- connection
         session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
         //---- query
         for(Object d: session.createCriteria(BankDeposit.class)
                 .add(Restrictions.between("depositMinTerm", minValue, maxValue)).list()){
+            deposits.add((BankDeposit)d);
+        }
+        //---- end session
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        LOGGER.debug("depposits.size = {}", deposits.size());
+
+        return deposits;
+    }
+
+    //---- get deposit with max value of depositMinTerm
+    @Override
+    public List<BankDeposit> getBankDepositBetweenInterestRateCriteria(Integer startRate, Integer endRate){
+        LOGGER.debug("getBankDepositBetweenInterestRateCriteria({},{})",startRate, endRate);
+        //---- connection
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        //---- query
+        for(Object d: session.createCriteria(BankDeposit.class)
+                .add(Restrictions.between("depositInterestRate", startRate, endRate)).list()){
             deposits.add((BankDeposit)d);
         }
         //---- end session
