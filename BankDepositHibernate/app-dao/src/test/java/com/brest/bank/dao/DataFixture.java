@@ -50,7 +50,7 @@ public class DataFixture {
                 deposit.setDepositMinTerm(12+i);
                 deposit.setDepositMinAmount(100+100*i);
                 deposit.setDepositCurrency("usd");
-                deposit.setDepositInterestRate(4);
+                deposit.setDepositInterestRate(4+i);
                 deposit.setDepositAddConditions("condition" + i);
 
                 df.session.save(deposit);
