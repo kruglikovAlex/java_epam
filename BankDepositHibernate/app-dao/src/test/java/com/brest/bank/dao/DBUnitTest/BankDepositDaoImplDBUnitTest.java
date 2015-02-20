@@ -12,11 +12,15 @@ import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 
 import org.junit.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class BankDepositDaoImplDBUnitTest extends DBUnitConfig{
 
     private static final Logger LOGGER = LogManager.getLogger();
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     IDataSet expectedData, actualData;
     ITable expectedTable, actualTable;
 
@@ -179,6 +183,41 @@ public class BankDepositDaoImplDBUnitTest extends DBUnitConfig{
     }
 
     @Test
+    public void testGetBankDepositBetweenInterestRateBetweenDateDepositWithDepositors() throws Exception{
+        LOGGER.debug("testGetBankDepositBetweenInterestRateBetweenDateDepositWithDepositors() - run");
+        Date startDate = dateFormat.parse("2014-12-01");
+        Date endDate = dateFormat.parse("2014-12-06");
+        List<Map> list = depositDao.getBankDepositBetweenInterestRateBetweenDateDepositWithDepositors(4,6,startDate,endDate);
+        LOGGER.debug("list.size = {}", list.size());
+
+        Assert.assertTrue(list.size()!=0);
+
+        expectedData = new FlatXmlDataSetBuilder().build(getClass().getResourceAsStream("/com/brest/bank/dao/depositBetweenIntRateDepositDate-data.xml"));
+        expectedTable = expectedData.getTable("bankdeposit");
+
+        for (int i=0; i<list.size(); i++){
+            Assert.assertEquals(expectedTable.getValue(i,"depositName").toString(),list.get(i).get("depositName"));
+            Assert.assertTrue(Integer.parseInt(expectedTable.getValue(i, "depositMinTerm").toString()) == Integer.parseInt(list.get(i).get("depositMinTerm").toString()));
+            Assert.assertTrue(Integer.parseInt(expectedTable.getValue(i, "depositMinAmount").toString()) == Integer.parseInt(list.get(i).get("depositMinAmount").toString()));
+            Assert.assertEquals(expectedTable.getValue(i, "depositCurrency").toString(), list.get(i).get("depositCurrency"));
+            Assert.assertTrue(Integer.parseInt(expectedTable.getValue(i, "depositInterestRate").toString()) == Integer.parseInt(list.get(i).get("depositInterestRate").toString()));
+            Assert.assertEquals(expectedTable.getValue(i,"depositAddConditions").toString(), list.get(i).get("depositAddConditions"));
+        }
+
+        Assert.assertTrue(Integer.parseInt(list.get(0).get("depositorCount").toString())==2);
+        Assert.assertTrue(Integer.parseInt(list.get(1).get("depositorCount").toString())==1);
+        Assert.assertTrue(Integer.parseInt(list.get(2).get("depositorCount").toString())==1);
+
+        expectedTable = expectedData.getTable("bankdepositor");
+        Assert.assertTrue((Integer.parseInt(expectedTable.getValue(0,"depositorAmountDeposit").toString())+
+                    Integer.parseInt(expectedTable.getValue(1,"depositorAmountDeposit").toString()))==Integer.parseInt(list.get(0).get("depositorAmountSum").toString()));
+        Assert.assertTrue((Integer.parseInt(expectedTable.getValue(0,"depositorAmountPlusDeposit").toString())+
+                    Integer.parseInt(expectedTable.getValue(1,"depositorAmountPlusDeposit").toString()))==Integer.parseInt(list.get(0).get("depositorAmountPlusSum").toString()));
+        Assert.assertTrue((Integer.parseInt(expectedTable.getValue(0,"depositorAmountMinusDeposit").toString())+
+                    Integer.parseInt(expectedTable.getValue(1,"depositorAmountMinusDeposit").toString()))==Integer.parseInt(list.get(0).get("depositorAmountMinusSum").toString()));
+    }
+
+    @Test
     public void testAddBankDeposit() throws Exception{
         LOGGER.debug("testAddBankDeposit() - run");
         deposit = new BankDeposit();
@@ -204,7 +243,7 @@ public class BankDepositDaoImplDBUnitTest extends DBUnitConfig{
     }
 
     @Test
-    public void testUpdateBankDeposit() throws Exception {
+    public void testUpdateBankDepositDBUnit() throws Exception {
         LOGGER.debug("testUpdateBankDeposit() - run");
         deposit = depositDao.getBankDepositByIdCriteria(2L);
             deposit.setDepositMinTerm(24);
