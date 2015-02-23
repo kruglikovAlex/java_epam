@@ -23,19 +23,28 @@ public interface BankDepositDao {
         //---- list of entity
     public List<BankDeposit> getBankDepositsByCurrencyCriteria(String currency);
     public List<BankDeposit> getBankDepositsByInterestRateCriteria(Integer rate);
-    public List<BankDeposit> getBankDepositsBetweenMinTermCriteria(Integer minTerm, Integer maxTerm);
+    public List<BankDeposit> getBankDepositsBetweenMinTermCriteria(Integer fromTerm, Integer toTerm);
     public List<BankDeposit> getBankDepositsBetweenInterestRateCriteria(Integer startRate, Integer endRate);
     public List<BankDeposit> getBankDepositsBetweenDateDeposit(Date startDate, Date endDate);
     public List<BankDeposit> getBankDepositsBetweenDateReturnDeposit(Date startDate, Date endDate);
         //---- list object aggregation and grouping
     public List<Map> getBankDepositByCurrencyWithDepositors(String currency);
+    public List<Map> getBankDepositByCurrencyBetweenDateDepositWithDepositors(String currency,Date startDate, Date endDate);
+    public List<Map> getBankDepositByCurrencyBetweenDateReturnDepositWithDepositors(String currency,Date startDate, Date endDate);
+
+    // TODO DBUnit test
+    public List<Map> getBankDepositByNameWithDepositors(String name);
+    public List<Map> getBankDepositByNameBetweenDateDepositWithDepositors(String name,Date startDate, Date endDate);
+    public List<Map> getBankDepositByNameBetweenDateReturnDepositWithDepositors(String name,Date startDate, Date endDate);
+
     public List<Map> getBankDepositByInterestRateWithDepositors(Integer rate);
     public List<Map> getBankDepositBetweenInterestRateWithDepositors(Integer startRate, Integer endRate);
     public List<Map> getBankDepositBetweenInterestRateBetweenDateDepositWithDepositors(Integer startRate, Integer endRate,Date startDate, Date endDate);
+    // TODO DBUnit test
+    public List<Map> getBankDepositBetweenInterestRateBetweenDateReturnDepositWithDepositors(Integer startRate, Integer endRate,Date startDate, Date endDate);
+
     public List<Map> getBankDepositsBetweenDateDepositWithDepositors(Date startDate, Date endDate);
     public List<Map> getBankDepositsBetweenDateReturnDepositWithDepositors(Date startDate, Date endDate);
-    public List<Map> getBankDepositByNameBetweenDateDepositWithDepositors(String name,Date startDate, Date endDate);
-    public List<Map> getBankDepositByNameBetweenDateReturnDepositWithDepositors(String name,Date startDate, Date endDate);
     //---- CRUD:
         //---- create
     public void addBankDeposit(BankDeposit deposit);
