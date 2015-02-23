@@ -218,6 +218,73 @@ public class BankDepositDaoImplDBUnitTest extends DBUnitConfig{
     }
 
     @Test
+    public void testGetBankDepositByCurrencyBetweenDateDepositWithDepositors() throws Exception{
+        LOGGER.debug("testGetBankDepositByCurrencyBetweenDateDepositWithDepositors() - run");
+        Date startDate = dateFormat.parse("2014-12-01");
+        Date endDate = dateFormat.parse("2014-12-03");
+        List<Map> list = depositDao.getBankDepositByCurrencyBetweenDateDepositWithDepositors("usd",startDate,endDate);
+        LOGGER.debug("list.size = {}", list.size());
+
+        Assert.assertTrue(list.size()!=0);
+
+        expectedData = new FlatXmlDataSetBuilder().build(getClass().getResourceAsStream("/com/brest/bank/dao/depositCurrencyBetweenDate-data.xml"));
+        expectedTable = expectedData.getTable("bankdeposit");
+
+        for (int i=0; i<list.size(); i++){
+            Assert.assertEquals(expectedTable.getValue(i,"depositName").toString(),list.get(i).get("depositName"));
+            Assert.assertTrue(Integer.parseInt(expectedTable.getValue(i, "depositMinTerm").toString()) == Integer.parseInt(list.get(i).get("depositMinTerm").toString()));
+            Assert.assertTrue(Integer.parseInt(expectedTable.getValue(i, "depositMinAmount").toString()) == Integer.parseInt(list.get(i).get("depositMinAmount").toString()));
+            Assert.assertEquals(expectedTable.getValue(i, "depositCurrency").toString(), list.get(i).get("depositCurrency"));
+            Assert.assertTrue(Integer.parseInt(expectedTable.getValue(i, "depositInterestRate").toString()) == Integer.parseInt(list.get(i).get("depositInterestRate").toString()));
+            Assert.assertEquals(expectedTable.getValue(i,"depositAddConditions").toString(), list.get(i).get("depositAddConditions"));
+        }
+
+        Assert.assertTrue(Integer.parseInt(list.get(0).get("depositorCount").toString())==1);
+        Assert.assertTrue(Integer.parseInt(list.get(1).get("depositorCount").toString())==1);
+        Assert.assertTrue(Integer.parseInt(list.get(2).get("depositorCount").toString())==1);
+
+        expectedTable = expectedData.getTable("bankdepositor");
+        for (int i=0; i<list.size(); i++){
+            Assert.assertTrue((Integer.parseInt(expectedTable.getValue(i,"depositorAmountDeposit").toString()))==Integer.parseInt(list.get(i).get("depositorAmountSum").toString()));
+            Assert.assertTrue((Integer.parseInt(expectedTable.getValue(i,"depositorAmountPlusDeposit").toString()))==Integer.parseInt(list.get(i).get("depositorAmountPlusSum").toString()));
+            Assert.assertTrue((Integer.parseInt(expectedTable.getValue(i,"depositorAmountMinusDeposit").toString()))==Integer.parseInt(list.get(i).get("depositorAmountMinusSum").toString()));
+        }
+    }
+
+    @Test
+    public void testGetBankDepositByCurrencyBetweenDateReturnDepositWithDepositors() throws Exception{
+        LOGGER.debug("testGetBankDepositByCurrencyBetweenDateReturnDepositWithDepositors() - run");
+        Date startDate = dateFormat.parse("2014-12-03");
+        Date endDate = dateFormat.parse("2014-12-04");
+        List<Map> list = depositDao.getBankDepositByCurrencyBetweenDateReturnDepositWithDepositors("usd",startDate,endDate);
+        LOGGER.debug("list.size = {}", list.size());
+
+        Assert.assertTrue(list.size()!=0);
+
+        expectedData = new FlatXmlDataSetBuilder().build(getClass().getResourceAsStream("/com/brest/bank/dao/depositCurrencyBetweenDateReturn-data.xml"));
+        expectedTable = expectedData.getTable("bankdeposit");
+
+        for (int i=0; i<list.size(); i++){
+            Assert.assertEquals(expectedTable.getValue(i,"depositName").toString(),list.get(i).get("depositName"));
+            Assert.assertTrue(Integer.parseInt(expectedTable.getValue(i, "depositMinTerm").toString()) == Integer.parseInt(list.get(i).get("depositMinTerm").toString()));
+            Assert.assertTrue(Integer.parseInt(expectedTable.getValue(i, "depositMinAmount").toString()) == Integer.parseInt(list.get(i).get("depositMinAmount").toString()));
+            Assert.assertEquals(expectedTable.getValue(i, "depositCurrency").toString(), list.get(i).get("depositCurrency"));
+            Assert.assertTrue(Integer.parseInt(expectedTable.getValue(i, "depositInterestRate").toString()) == Integer.parseInt(list.get(i).get("depositInterestRate").toString()));
+            Assert.assertEquals(expectedTable.getValue(i,"depositAddConditions").toString(), list.get(i).get("depositAddConditions"));
+        }
+
+        Assert.assertTrue(Integer.parseInt(list.get(0).get("depositorCount").toString())==1);
+        Assert.assertTrue(Integer.parseInt(list.get(1).get("depositorCount").toString())==1);
+
+        expectedTable = expectedData.getTable("bankdepositor");
+        for (int i=0; i<list.size(); i++){
+            Assert.assertTrue((Integer.parseInt(expectedTable.getValue(i,"depositorAmountDeposit").toString()))==Integer.parseInt(list.get(i).get("depositorAmountSum").toString()));
+            Assert.assertTrue((Integer.parseInt(expectedTable.getValue(i,"depositorAmountPlusDeposit").toString()))==Integer.parseInt(list.get(i).get("depositorAmountPlusSum").toString()));
+            Assert.assertTrue((Integer.parseInt(expectedTable.getValue(i,"depositorAmountMinusDeposit").toString()))==Integer.parseInt(list.get(i).get("depositorAmountMinusSum").toString()));
+        }
+    }
+
+    @Test
     public void testAddBankDeposit() throws Exception{
         LOGGER.debug("testAddBankDeposit() - run");
         deposit = new BankDeposit();
