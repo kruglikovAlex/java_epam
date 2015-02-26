@@ -472,7 +472,7 @@ public class BankDepositDaoImplTest {
         deposit = depositDao.getBankDepositByNameCriteria(name);
         LOGGER.debug("deposit = {}", deposit);
 
-        depositors = depositorDao.getBankDepositorBetweenDateDeposit(deposit.getDepositId(),startDate,endDate);
+        depositors = depositorDao.getBankDepositorByIdDepositBetweenDateDeposit(deposit.getDepositId(),startDate,endDate);
         LOGGER.debug("depositors = {}", depositors);
         for(BankDepositor aDepositors: depositors){
             sumAmountDeposit += aDepositors.getDepositorAmountDeposit();
@@ -511,7 +511,7 @@ public class BankDepositDaoImplTest {
         deposit = depositDao.getBankDepositByNameCriteria(name);
         LOGGER.debug("deposit = {}", deposit);
 
-        depositors = depositorDao.getBankDepositorBetweenDateReturnDeposit(deposit.getDepositId(), startDate, endDate);
+        depositors = depositorDao.getBankDepositorByIdDepositBetweenDateReturnDeposit(deposit.getDepositId(), startDate, endDate);
         LOGGER.debug("depositors = {}", depositors);
         for(BankDepositor aDepositors: depositors){
             sumAmountDeposit += aDepositors.getDepositorAmountDeposit();

@@ -32,7 +32,6 @@ public interface BankDepositDao {
     public List<Map> getBankDepositByCurrencyBetweenDateDepositWithDepositors(String currency,Date startDate, Date endDate);
     public List<Map> getBankDepositByCurrencyBetweenDateReturnDepositWithDepositors(String currency,Date startDate, Date endDate);
 
-    // TODO DBUnit test
     public List<Map> getBankDepositByNameWithDepositors(String name);
     public List<Map> getBankDepositByNameBetweenDateDepositWithDepositors(String name,Date startDate, Date endDate);
     public List<Map> getBankDepositByNameBetweenDateReturnDepositWithDepositors(String name,Date startDate, Date endDate);
@@ -40,7 +39,6 @@ public interface BankDepositDao {
     public List<Map> getBankDepositByInterestRateWithDepositors(Integer rate);
     public List<Map> getBankDepositBetweenInterestRateWithDepositors(Integer startRate, Integer endRate);
     public List<Map> getBankDepositBetweenInterestRateBetweenDateDepositWithDepositors(Integer startRate, Integer endRate,Date startDate, Date endDate);
-    // TODO DBUnit test
     public List<Map> getBankDepositBetweenInterestRateBetweenDateReturnDepositWithDepositors(Integer startRate, Integer endRate,Date startDate, Date endDate);
 
     public List<Map> getBankDepositsBetweenDateDepositWithDepositors(Date startDate, Date endDate);
