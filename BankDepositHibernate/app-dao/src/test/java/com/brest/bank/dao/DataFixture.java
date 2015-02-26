@@ -68,7 +68,7 @@ public class DataFixture {
                 depositor = new BankDepositor();
                 depositor.setDepositorName("depositorName" + i);
                 depositor.setDepositorDateDeposit(dateFormat.parse(date));
-                depositor.setDepositorAmountDeposit(1000);
+                depositor.setDepositorAmountDeposit(1000+i);
                 depositor.setDepositorAmountPlusDeposit(10 * (i + 1));
                 depositor.setDepositorAmountMinusDeposit(10 * (i + 1));
                 depositor.setDepositorDateReturnDeposit(dateFormat.parse(returnDate));
@@ -93,7 +93,7 @@ public class DataFixture {
                 depositor = new BankDepositor();
                 depositor.setDepositorName("depositorName" + (5+i));
                 depositor.setDepositorDateDeposit(dateFormat.parse(date));
-                depositor.setDepositorAmountDeposit(1000);
+                depositor.setDepositorAmountDeposit(1000-i);
                 depositor.setDepositorAmountPlusDeposit(10 * (i + 5));
                 depositor.setDepositorAmountMinusDeposit(10 * (i + 5));
                 depositor.setDepositorDateReturnDeposit(dateFormat.parse(returnDate));
