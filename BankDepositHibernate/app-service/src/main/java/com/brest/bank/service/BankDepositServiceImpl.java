@@ -27,7 +27,15 @@ public class BankDepositServiceImpl implements BankDepositService{
     public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
     public static final String ERROR_DEPOSIT = "In the database there is no Deposit with such parameters";
 
-    BankDepositDao depositDao = new BankDepositDaoImpl();
+    private BankDepositDao depositDao;
+
+    public BankDepositServiceImpl() {
+        depositDao = new BankDepositDaoImpl();
+    }
+
+    public void setBankDepositDao(BankDepositDao depositDao) {
+        this.depositDao = depositDao;
+    }
 
     @Override
     public List<BankDeposit> getBankDeposits(){
@@ -45,7 +53,7 @@ public class BankDepositServiceImpl implements BankDepositService{
     public void addBankDeposit(BankDeposit deposit){
         LOGGER.debug("addBankDeposit({}) ", deposit);
         Assert.assertNotNull(deposit);
-        Assert.assertThat(deposit.getDepositId(), null);
+        Assert.assertTrue(deposit.getDepositId() == null);
         Assert.assertNotNull(deposit.getDepositName(), ERROR_METHOD_PARAM + ": DepositName");
         Assert.assertNotNull(ERROR_METHOD_PARAM + ": DepositMinTerm",deposit.getDepositMinTerm());
         BankDeposit existDeposit = getBankDepositByName(deposit.getDepositName());
