@@ -5,6 +5,7 @@ import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.dao.BankDepositDao;
 import com.brest.bank.service.BankDepositService;
 
+import com.brest.bank.util.HibernateUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.easymock.EasyMock;
@@ -16,8 +17,10 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.ExternalResource;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -30,15 +33,14 @@ public class DepositServiceImplMockTest {
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public BankDepositDao depositDao;// = new BankDepositDaoImpl();
-    private BankDepositService depositService = new BankDepositServiceImpl();
+    private BankDepositDao depositDao;
+    private BankDepositServiceImpl depositService = new BankDepositServiceImpl();
 
     @ClassRule
     public static ExternalResource resource = new ExternalResource() {
         @Override
         public void before() throws Throwable {
             LOGGER.debug("JUnit rule - before() - run method DataFixture.init() for DaoImplTest: ");
-            DataFixtureInitDB.init();
         };
         @Override
         public void after(){
@@ -48,7 +50,8 @@ public class DepositServiceImplMockTest {
 
     @Before
     public void setUp() throws Exception {
-        depositDao = EasyMock.createMock(BankDepositDao.class);
+        depositDao = EasyMock.createMock(BankDepositDaoImpl.class);
+        depositService.setBankDepositDao(depositDao);
     }
 
     @After
@@ -65,8 +68,119 @@ public class DepositServiceImplMockTest {
         replay(depositDao);
 
         List<BankDeposit> resultDeposits  = depositService.getBankDeposits();
-        //verify(depositDao);
 
-        assertEquals(deposits.toString(), resultDeposits.toString());
+        verify(depositDao);
+
+        assertEquals(deposits, resultDeposits);
+        assertSame(deposits, resultDeposits);
+    }
+
+    @Test
+    public void testGetBankDepositById(){
+        LOGGER.debug("testGetBankDepositById() - run");
+        BankDeposit deposit = DataFixture.getExistDeposit(1L);
+        LOGGER.info("deposit: {}", deposit);
+
+        expect(depositDao.getBankDepositByIdCriteria(1L)).andReturn(deposit);
+        replay(depositDao);
+
+        BankDeposit resultDeposit = depositService.getBankDepositById(1L);
+        LOGGER.info("resultDeposit: {}", resultDeposit);
+
+        verify(depositDao);
+
+        assertEquals(deposit, resultDeposit);
+        assertSame(deposit, resultDeposit);
+    }
+
+    @Test
+    public void testGetBankDepositByName(){
+        LOGGER.debug("testGetBankDepositByName() - run");
+        BankDeposit deposit = DataFixture.getExistDeposit(1L);
+        LOGGER.info("deposit: {}", deposit);
+
+        expect(depositDao.getBankDepositByNameCriteria("depositName1")).andReturn(deposit);
+        replay(depositDao);
+
+        BankDeposit resultDeposit = depositService.getBankDepositByName("depositName1");
+        LOGGER.info("resultDeposit: {}", resultDeposit);
+
+        verify(depositDao);
+
+        assertEquals(deposit, resultDeposit);
+        assertSame(deposit, resultDeposit);
+    }
+
+    @Test
+    public void testGetBankDepositsBetweenDateDeposit() throws ParseException{
+        LOGGER.debug("testGetBankDepositsBetweenDateDeposit() - run");
+        List<BankDeposit> deposits = DataFixture.getDeposits();
+        LOGGER.info("deposits: {}", deposits);
+
+        expect(depositDao.getBankDepositsBetweenDateDeposit(dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"))).andReturn(deposits);
+        replay(depositDao);
+
+        List<BankDeposit> resultDeposits = depositService.getBankDepositsBetweenDateDeposit(dateFormat.parse("2014-12-01"), dateFormat.parse("2014-12-01"));
+        LOGGER.info("resultDeposits: {}", resultDeposits);
+
+        verify(depositDao);
+
+        assertEquals(deposits, resultDeposits);
+        assertSame(deposits, resultDeposits);
+    }
+
+    @Test
+    public void testAddBankDeposit(){
+        LOGGER.debug("testAddBankDeposit() - run");
+        BankDeposit deposit = DataFixture.getNewDeposit();
+        LOGGER.info("deposit: {}", deposit);
+
+        depositDao.getBankDepositByNameCriteria(deposit.getDepositName());
+        expectLastCall().andReturn(null);
+
+        depositDao.addBankDeposit(deposit);
+        expectLastCall();
+
+        replay(depositDao);
+
+        depositService.addBankDeposit(deposit);
+
+        verify(depositDao);
+    }
+
+    @Test
+    public void testUpdateBankDeposit(){
+        LOGGER.debug("testUpdateBankDeposit() - run");
+        BankDeposit deposit = DataFixture.getExistDeposit(1L);
+        LOGGER.info("deposit: {}", deposit);
+
+        expect(depositDao.getBankDepositByIdCriteria(1L)).andReturn(deposit);
+
+        depositDao.updateBankDeposit(deposit);
+        expectLastCall();
+
+        replay(depositDao);
+
+        depositService.updateBankDeposit(deposit);
+
+        verify(depositDao);
+    }
+
+    @Test
+    public void testRemoveBankDeposit(){
+        LOGGER.debug("testUpdateBankDeposit() - run");
+        BankDeposit deposit = DataFixture.getExistDeposit(1L);
+        LOGGER.info("deposit: {}", deposit);
+
+        expect(depositDao.getBankDepositByIdCriteria(1L)).andReturn(deposit);
+
+        depositDao.removeBankDeposit(1L);
+        expectLastCall();
+
+        replay(depositDao);
+
+        depositService.removeBankDeposit(1L);
+
+        verify(depositDao);
     }
 }
