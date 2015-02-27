@@ -13,9 +13,7 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.rules.ExternalResource;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,18 +33,6 @@ public class DepositServiceImplMockTest {
 
     private BankDepositDao depositDao;
     private BankDepositServiceImpl depositService = new BankDepositServiceImpl();
-
-    @ClassRule
-    public static ExternalResource resource = new ExternalResource() {
-        @Override
-        public void before() throws Throwable {
-            LOGGER.debug("JUnit rule - before() - run method DataFixture.init() for DaoImplTest: ");
-        };
-        @Override
-        public void after(){
-            LOGGER.debug("JUnit rule - after()");
-        };
-    };
 
     @Before
     public void setUp() throws Exception {
