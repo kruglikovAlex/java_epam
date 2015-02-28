@@ -15,9 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
-
 public class BankDepositServiceImpl implements BankDepositService{
 
     private static final Logger LOGGER = LogManager.getLogger();

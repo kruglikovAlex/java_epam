@@ -1,13 +1,17 @@
 package com.brest.bank.service;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 
+import java.util.HashSet;
 import java.util.List;
 
 import com.brest.bank.domain.BankDeposit;
+import com.brest.bank.domain.BankDepositor;
 
 public class DataFixture {
+
 
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -64,5 +68,25 @@ public class DataFixture {
             deposits.add(deposit);
         }
         return deposits;
+    }
+
+    public static List<BankDepositor> getDepositors() throws ParseException{
+        String date, returnDate;
+        List<BankDepositor> depositors = new ArrayList<BankDepositor>();
+        for (int i = 1; i < 5; i++) {
+            date = "2014-12-0"+i;
+            returnDate = "2014-12-0"+(i+1);
+
+            BankDepositor depositor = new BankDepositor();
+            depositor.setDepositorName("depositorName" + i);
+            depositor.setDepositorDateDeposit(dateFormat.parse(date));
+            depositor.setDepositorAmountDeposit(1000+i);
+            depositor.setDepositorAmountPlusDeposit(10 * (i + 1));
+            depositor.setDepositorAmountMinusDeposit(10 * (i + 1));
+            depositor.setDepositorDateReturnDeposit(dateFormat.parse(returnDate));
+            depositor.setDepositorMarkReturnDeposit(0);
+            depositors.add(depositor);
+        }
+        return depositors;
     }
 }
