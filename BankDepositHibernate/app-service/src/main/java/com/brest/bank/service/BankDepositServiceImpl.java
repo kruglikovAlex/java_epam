@@ -7,13 +7,17 @@ import com.brest.bank.dao.BankDepositDao;
 import com.brest.bank.domain.BankDepositor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.exparity.hamcrest.date.DateMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 
-import org.hibernate.exception.DataException;
+import org.hibernate.HibernateException;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class BankDepositServiceImpl implements BankDepositService{
 
@@ -40,7 +44,7 @@ public class BankDepositServiceImpl implements BankDepositService{
         List<BankDeposit> deposits = null;
         try{
             deposits = depositDao.getBankDepositsCriteria();
-        }catch (DataException e){
+        }catch (HibernateException e){
             LOGGER.error("getBankDeposits(), Exception:{}",e.toString());
         }
         return deposits;
@@ -66,7 +70,7 @@ public class BankDepositServiceImpl implements BankDepositService{
         BankDeposit deposit = null;
         try{
             deposit = depositDao.getBankDepositByIdCriteria(id);
-        }catch (DataException e) {
+        }catch (HibernateException e) {
             LOGGER.error("getBankDepositById({}), Exception:{}",id, e.toString());
         }
         return deposit;
@@ -78,7 +82,7 @@ public class BankDepositServiceImpl implements BankDepositService{
         BankDeposit deposit = null;
         try{
             deposit = depositDao.getBankDepositByNameCriteria(name);
-        }catch (DataException e){
+        }catch (HibernateException e){
             LOGGER.error("getBankDepositByName({}), Exception:{}",name, e.toString());
         }
         return deposit;
@@ -90,7 +94,7 @@ public class BankDepositServiceImpl implements BankDepositService{
         List<BankDeposit> deposits = null;
         try{
             deposits = depositDao.getBankDepositsBetweenDateDeposit(startDate,endDate);
-        }catch (DataException e){
+        }catch (HibernateException e){
             LOGGER.error("getBankDepositsBetweenDateDeposit({},{}), Exception:{}",startDate, endDate, e.toString());
         }
         return deposits;
@@ -105,7 +109,7 @@ public class BankDepositServiceImpl implements BankDepositService{
         BankDeposit exitsDeposit = null;
         try{
             exitsDeposit = depositDao.getBankDepositByIdCriteria(deposit.getDepositId());
-        }catch (DataException e){
+        }catch (HibernateException e){
             LOGGER.warn("Error method dao.getBankDepositByIdCriteria() in service.updateBankDeposit(), Exception:{}", e.toString());
             throw new   IllegalArgumentException(ERROR_DEPOSIT);
         }
@@ -121,13 +125,126 @@ public class BankDepositServiceImpl implements BankDepositService{
     public void removeBankDeposit(Long id){
         LOGGER.debug("removeBankDeposit({})",id);
         Assert.assertNotNull(ERROR_METHOD_PARAM,id);
-        BankDeposit deposit = null;
+        BankDeposit exitsDeposit = null;
         try{
-            deposit = depositDao.getBankDepositByIdCriteria(id);
-        }catch (DataException e){
+            exitsDeposit = depositDao.getBankDepositByIdCriteria(id);
+        }catch (HibernateException e){
             LOGGER.warn("removeBankDeposit({}), Exception:{}",id, e.toString());
             throw new IllegalArgumentException(ERROR_DEPOSIT);
         }
-        depositDao.removeBankDeposit(id);
+        if(exitsDeposit!=null){
+            depositDao.removeBankDeposit(id);
+        }else {
+            LOGGER.warn(ERROR_DEPOSIT + "- method: removeBankDeposit("+id+")");
+            throw new IllegalArgumentException(ERROR_DEPOSIT);
+        }
+    }
+
+    @Override
+    public List<Map> getBankDepositByCurrencyAll(String currency){
+        LOGGER.debug("getBankDepositByCurrencyAll({})", currency);
+        Assert.assertNotNull(ERROR_METHOD_PARAM,currency);
+        List<Map> deposits = new ArrayList<Map>();
+        try{
+            depositDao.getBankDepositByCurrencyWithDepositors(currency);
+        }catch(HibernateException e){
+            LOGGER.warn("getBankDepositByCurrencyAll({}), Exception:{}",currency, e.toString());
+            throw new IllegalArgumentException(ERROR_DEPOSIT);
+        }
+        return deposits;
+    }
+
+    @Override
+    public List<Map> getBankDepositByCurrencyBetweenDateDepositAll(String currency,Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositByCurrencyBetweenDateDepositAll({},{},{})", currency,startDate,endDate);
+        Assert.assertNotNull(ERROR_METHOD_PARAM, currency);
+        MatcherAssert.assertThat(endDate, DateMatchers.after(startDate));
+        MatcherAssert.assertThat(startDate, DateMatchers.before(endDate));
+        List<Map> deposits = new ArrayList<Map>();
+        try{
+            depositDao.getBankDepositByCurrencyBetweenDateDepositWithDepositors(currency, startDate, endDate);
+        }catch(HibernateException e){
+            LOGGER.warn("getBankDepositByCurrencyBetweenDateDepositAll({}), Exception:{}",currency, startDate,endDate,e.toString());
+            throw new IllegalArgumentException(ERROR_DEPOSIT);
+        }
+        return deposits;
+    }
+
+    @Override
+    public List<Map> getBankDepositByCurrencyBetweenDateReturnDepositAll(String currency,Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositByCurrencyBetweenDateReturnDepositAll({},{},{})", currency,startDate,endDate);
+        Assert.assertNotNull(ERROR_METHOD_PARAM, currency);
+        MatcherAssert.assertThat(endDate, DateMatchers.after(startDate));
+        MatcherAssert.assertThat(startDate, DateMatchers.before(endDate));
+        List<Map> deposits = new ArrayList<Map>();
+        try{
+            depositDao.getBankDepositByCurrencyBetweenDateReturnDepositWithDepositors(currency, startDate, endDate);
+        }catch(HibernateException e){
+            LOGGER.warn("getBankDepositByCurrencyBetweenDateReturnDepositAll({}), Exception:{}",currency, startDate,endDate,e.toString());
+            throw new IllegalArgumentException(ERROR_DEPOSIT);
+        }
+        return deposits;
+    }
+
+    @Override
+    public List<Map> getBankDepositByNameAll(String name){
+        //TODO
+        List<Map> deposits = new ArrayList<Map>();
+        return deposits;
+    }
+
+    @Override
+    public List<Map> getBankDepositByNameBetweenDateDepositAll(String name,Date startDate, Date endDate){
+        //TODO
+        List<Map> deposits = new ArrayList<Map>();
+        return deposits;
+    }
+
+    @Override
+    public List<Map> getBankDepositByNameBetweenDateReturnDepositAll(String name,Date startDate, Date endDate){
+        //TODO
+        List<Map> deposits = new ArrayList<Map>();
+        return deposits;
+    }
+
+    @Override
+    public List<Map> getBankDepositByInterestRateAll(Integer rate){
+        //TODO
+        List<Map> deposits = new ArrayList<Map>();
+        return deposits;
+    }
+
+    @Override
+    public List<Map> getBankDepositBetweenInterestRateAll(Integer startRate, Integer endRate){
+        //TODO
+        List<Map> deposits = new ArrayList<Map>();
+        return deposits;
+    }
+
+    @Override
+    public List<Map> getBankDepositBetweenInterestRateBetweenDateDepositAll(Integer startRate, Integer endRate,Date startDate, Date endDate){
+        //TODO
+        List<Map> deposits = new ArrayList<Map>();
+        return deposits;
+    }
+
+    @Override
+    public List<Map> getBankDepositBetweenInterestRateBetweenDateReturnDepositAll(Integer startRate, Integer endRate,Date startDate, Date endDate){
+        //TODO
+        List<Map> deposits = new ArrayList<Map>();
+        return deposits;
+    }
+
+
+    public List<Map> getBankDepositsBetweenDateDepositAll(Date startDate, Date endDate){
+        //TODO
+        List<Map> deposits = new ArrayList<Map>();
+        return deposits;
+    }
+
+    public List<Map> getBankDepositsBetweenDateReturnDepositAll(Date startDate, Date endDate){
+        //TODO
+        List<Map> deposits = new ArrayList<Map>();
+        return deposits;
     }
 }

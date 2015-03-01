@@ -8,18 +8,18 @@ import java.util.Map;
 
 public interface BankDepositorService {
     //--- get:
-    //--- all
+        //--- all
     public List<BankDepositor> getBankDepositors();
-    //--- single
-    //public BankDepositor getBankDepositorById(Long id);
-    //public BankDepositor getBankDepositorByName(String depositorName);
-    //--- list of entity
-    //public List<BankDepositor> getBankDepositorsBetweenDateDeposit(Date startDate, Date endDate);
+        //--- single
+    public BankDepositor getBankDepositorById(Long id);
+    public BankDepositor getBankDepositorByName(String depositorName);
+        //--- list of entity
+    public List<BankDepositor> getBankDepositorsBetweenDateDeposit(Date startDate, Date endDate);
     //--- CRUD:
-    //--- create
-    //public void addBankDepositor(BankDepositor depositor);
-    //--- update
-    //public void updateBankDeposit(BankDepositor depositor);
-    //--- delete
-    //public void removeBankDepositor(Long id);
+        //--- create
+    public void addBankDepositor(Long depositId, BankDepositor depositor);
+        //--- update
+    public void updateBankDepositor(BankDepositor depositor);
+        //--- delete
+    public void removeBankDepositor(Long id);
 }
