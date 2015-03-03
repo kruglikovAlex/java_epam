@@ -106,7 +106,7 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.assertNotNull(deposit);
         Assert.assertNotNull(deposit.getDepositId());
         Assert.assertNotNull(deposit.getDepositName());
-        BankDeposit exitsDeposit = null;
+        BankDeposit exitsDeposit;
         try{
             exitsDeposit = depositDao.getBankDepositByIdCriteria(deposit.getDepositId());
         }catch (HibernateException e){
@@ -144,9 +144,9 @@ public class BankDepositServiceImpl implements BankDepositService{
     public List<Map> getBankDepositByCurrencyAll(String currency){
         LOGGER.debug("getBankDepositByCurrencyAll({})", currency);
         Assert.assertNotNull(ERROR_METHOD_PARAM,currency);
-        List<Map> deposits = new ArrayList<Map>();
+        List<Map> deposits;
         try{
-            depositDao.getBankDepositByCurrencyWithDepositors(currency);
+            deposits = depositDao.getBankDepositByCurrencyWithDepositors(currency);
         }catch(HibernateException e){
             LOGGER.warn("getBankDepositByCurrencyAll({}), Exception:{}",currency, e.toString());
             throw new IllegalArgumentException(ERROR_DEPOSIT);
@@ -160,11 +160,11 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.assertNotNull(ERROR_METHOD_PARAM, currency);
         MatcherAssert.assertThat(endDate, DateMatchers.after(startDate));
         MatcherAssert.assertThat(startDate, DateMatchers.before(endDate));
-        List<Map> deposits = new ArrayList<Map>();
+        List<Map> deposits;
         try{
-            depositDao.getBankDepositByCurrencyBetweenDateDepositWithDepositors(currency, startDate, endDate);
+            deposits = depositDao.getBankDepositByCurrencyBetweenDateDepositWithDepositors(currency, startDate, endDate);
         }catch(HibernateException e){
-            LOGGER.warn("getBankDepositByCurrencyBetweenDateDepositAll({}), Exception:{}",currency, startDate,endDate,e.toString());
+            LOGGER.warn("getBankDepositByCurrencyBetweenDateDepositAll({},{},{}), Exception:{}",currency, startDate,endDate,e.toString());
             throw new IllegalArgumentException(ERROR_DEPOSIT);
         }
         return deposits;
@@ -176,11 +176,11 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.assertNotNull(ERROR_METHOD_PARAM, currency);
         MatcherAssert.assertThat(endDate, DateMatchers.after(startDate));
         MatcherAssert.assertThat(startDate, DateMatchers.before(endDate));
-        List<Map> deposits = new ArrayList<Map>();
+        List<Map> deposits;
         try{
-            depositDao.getBankDepositByCurrencyBetweenDateReturnDepositWithDepositors(currency, startDate, endDate);
+            deposits = depositDao.getBankDepositByCurrencyBetweenDateReturnDepositWithDepositors(currency, startDate, endDate);
         }catch(HibernateException e){
-            LOGGER.warn("getBankDepositByCurrencyBetweenDateReturnDepositAll({}), Exception:{}",currency, startDate,endDate,e.toString());
+            LOGGER.warn("getBankDepositByCurrencyBetweenDateReturnDepositAll({},{},{}), Exception:{}",currency, startDate,endDate,e.toString());
             throw new IllegalArgumentException(ERROR_DEPOSIT);
         }
         return deposits;
@@ -188,63 +188,149 @@ public class BankDepositServiceImpl implements BankDepositService{
 
     @Override
     public List<Map> getBankDepositByNameAll(String name){
-        //TODO
-        List<Map> deposits = new ArrayList<Map>();
+        LOGGER.debug("getBankDepositByNameAll({})", name);
+        Assert.assertNotNull(ERROR_METHOD_PARAM, name);
+        List<Map> deposits;
+        try{
+            deposits = depositDao.getBankDepositByNameWithDepositors(name);
+        }catch (HibernateException e){
+            LOGGER.warn("getBankDepositByNameAll({}), Exception:{}",name,e.toString());
+            throw new IllegalArgumentException(ERROR_DEPOSIT);
+        }
         return deposits;
     }
 
     @Override
     public List<Map> getBankDepositByNameBetweenDateDepositAll(String name,Date startDate, Date endDate){
-        //TODO
-        List<Map> deposits = new ArrayList<Map>();
-        return deposits;
+        LOGGER.debug("getBankDepositByNameBetweenDateDepositAll({},{},{})", name,startDate,endDate);
+        Assert.assertNotNull(ERROR_METHOD_PARAM+name, name);
+        Assert.assertNotNull(ERROR_METHOD_PARAM+startDate, startDate);
+        Assert.assertNotNull(ERROR_METHOD_PARAM+endDate, endDate);
+        MatcherAssert.assertThat(endDate, DateMatchers.after(startDate));
+        MatcherAssert.assertThat(startDate, DateMatchers.before(endDate));
+        List<Map> deposit;
+        try{
+            deposit = depositDao.getBankDepositByNameBetweenDateDepositWithDepositors(name,startDate,endDate);
+        }catch (HibernateException e){
+            LOGGER.warn("getBankDepositByNameBetweenDateDepositAll({},{},{}), Exception:{}",name,startDate,endDate,e.toString());
+            throw new IllegalArgumentException(ERROR_DEPOSIT);
+        }
+        return deposit;
     }
 
     @Override
     public List<Map> getBankDepositByNameBetweenDateReturnDepositAll(String name,Date startDate, Date endDate){
-        //TODO
-        List<Map> deposits = new ArrayList<Map>();
-        return deposits;
+        LOGGER.debug("getBankDepositByNameBetweenDateReturnDepositAll({},{},{})", name,startDate,endDate);
+        Assert.assertNotNull(ERROR_METHOD_PARAM+name, name);
+        Assert.assertNotNull(ERROR_METHOD_PARAM+startDate, startDate);
+        Assert.assertNotNull(ERROR_METHOD_PARAM+endDate, endDate);
+        MatcherAssert.assertThat(endDate, DateMatchers.after(startDate));
+        MatcherAssert.assertThat(startDate, DateMatchers.before(endDate));
+        List<Map> deposit;
+        try{
+            deposit = depositDao.getBankDepositByNameBetweenDateReturnDepositWithDepositors(name, startDate, endDate);
+        }catch (HibernateException e){
+            LOGGER.warn("getBankDepositByNameBetweenDateReturnDepositAll({},{},{}), Exception:{}",name,startDate,endDate,e.toString());
+            throw new IllegalArgumentException(ERROR_DEPOSIT);
+        }
+        return deposit;
     }
 
     @Override
     public List<Map> getBankDepositByInterestRateAll(Integer rate){
-        //TODO
-        List<Map> deposits = new ArrayList<Map>();
+        LOGGER.debug("getBankDepositByInterestRateAll({})", rate);
+        Assert.assertNotNull(ERROR_METHOD_PARAM, rate);
+        List<Map> deposits;
+        try{
+            deposits = depositDao.getBankDepositByInterestRateWithDepositors(rate);
+        }catch (HibernateException e){
+            LOGGER.warn("getBankDepositByInterestRateAll({}), Exception:{}",rate,e.toString());
+            throw new IllegalArgumentException(ERROR_DEPOSIT);
+        }
         return deposits;
     }
 
     @Override
     public List<Map> getBankDepositBetweenInterestRateAll(Integer startRate, Integer endRate){
-        //TODO
-        List<Map> deposits = new ArrayList<Map>();
+        LOGGER.debug("getBankDepositBetweenInterestRateAll({},{})", startRate, endRate);
+        Assert.assertNotNull(ERROR_METHOD_PARAM, startRate);
+        Assert.assertNotNull(ERROR_METHOD_PARAM, endRate);
+        Assert.assertTrue(startRate<endRate);
+        List<Map> deposits;
+        try{
+            deposits = depositDao.getBankDepositBetweenInterestRateWithDepositors(startRate, endRate);
+        }catch(HibernateException e){
+            LOGGER.warn("getBankDepositBetweenInterestRateAll({},{}), Exception:{}",startRate, endRate,e.toString());
+            throw new IllegalArgumentException(ERROR_DEPOSIT);
+        }
         return deposits;
     }
 
     @Override
     public List<Map> getBankDepositBetweenInterestRateBetweenDateDepositAll(Integer startRate, Integer endRate,Date startDate, Date endDate){
-        //TODO
-        List<Map> deposits = new ArrayList<Map>();
+        LOGGER.debug("getBankDepositBetweenInterestRateBetweenDateDepositAll({},{},{},{})", startRate, endRate,startDate,endDate);
+        Assert.assertNotNull(ERROR_METHOD_PARAM, startRate);
+        Assert.assertNotNull(ERROR_METHOD_PARAM, endRate);
+        MatcherAssert.assertThat(startDate, DateMatchers.before(endDate));
+        MatcherAssert.assertThat(endDate, DateMatchers.after(startDate));
+        Assert.assertTrue(startRate<endRate);
+        List<Map> deposits;
+        try{
+            deposits = depositDao.getBankDepositBetweenInterestRateBetweenDateDepositWithDepositors(startRate,endRate,startDate, endDate);
+        }catch(HibernateException e){
+            LOGGER.warn("getBankDepositBetweenInterestRateBetweenDateDepositAll({},{},{},{}), Exception:{}",startRate, endRate,e.toString());
+            throw new IllegalArgumentException(ERROR_DEPOSIT);
+        }
         return deposits;
     }
 
     @Override
     public List<Map> getBankDepositBetweenInterestRateBetweenDateReturnDepositAll(Integer startRate, Integer endRate,Date startDate, Date endDate){
-        //TODO
-        List<Map> deposits = new ArrayList<Map>();
+        LOGGER.debug("getBankDepositBetweenInterestRateBetweenDateReturnDepositAll({},{},{},{})", startRate, endRate,startDate,endDate);
+        Assert.assertNotNull(ERROR_METHOD_PARAM, startRate);
+        Assert.assertNotNull(ERROR_METHOD_PARAM, endRate);
+        MatcherAssert.assertThat(startDate, DateMatchers.before(endDate));
+        MatcherAssert.assertThat(endDate, DateMatchers.after(startDate));
+        Assert.assertTrue(startRate<endRate);
+        List<Map> deposits;
+        try{
+            deposits = depositDao.getBankDepositBetweenInterestRateBetweenDateReturnDepositWithDepositors(startRate, endRate, startDate, endDate);
+        }catch(HibernateException e){
+            LOGGER.warn("getBankDepositBetweenInterestRateBetweenDateReturnDepositAll({},{},{},{}), Exception:{}",startRate, endRate,e.toString());
+            throw new IllegalArgumentException(ERROR_DEPOSIT);
+        }
         return deposits;
     }
 
-
     public List<Map> getBankDepositsBetweenDateDepositAll(Date startDate, Date endDate){
-        //TODO
-        List<Map> deposits = new ArrayList<Map>();
+        LOGGER.debug("getBankDepositsBetweenDateDepositAll({},{})", startDate,endDate);
+        Assert.assertNotNull(ERROR_METHOD_PARAM, startDate);
+        Assert.assertNotNull(ERROR_METHOD_PARAM, endDate);
+        MatcherAssert.assertThat(startDate, DateMatchers.before(endDate));
+        MatcherAssert.assertThat(endDate, DateMatchers.after(startDate));
+        List<Map> deposits;
+        try{
+            deposits = depositDao.getBankDepositsBetweenDateDepositWithDepositors(startDate, endDate);
+        }catch(HibernateException e){
+            LOGGER.warn("getBankDepositsBetweenDateDepositAll({},{}), Exception:{}",startDate,endDate,e.toString());
+            throw new IllegalArgumentException(ERROR_DEPOSIT);
+        }
         return deposits;
     }
 
     public List<Map> getBankDepositsBetweenDateReturnDepositAll(Date startDate, Date endDate){
-        //TODO
-        List<Map> deposits = new ArrayList<Map>();
+        LOGGER.debug("getBankDepositsBetweenDateReturnDepositAll({},{})", startDate,endDate);
+        Assert.assertNotNull(ERROR_METHOD_PARAM, startDate);
+        Assert.assertNotNull(ERROR_METHOD_PARAM, endDate);
+        MatcherAssert.assertThat(startDate, DateMatchers.before(endDate));
+        MatcherAssert.assertThat(endDate, DateMatchers.after(startDate));
+        List<Map> deposits;
+        try{
+            deposits = depositDao.getBankDepositsBetweenDateReturnDepositWithDepositors(startDate, endDate);
+        }catch(HibernateException e){
+            LOGGER.warn("getBankDepositsBetweenDateReturnDepositAll({},{}), Exception:{}",startDate,endDate,e.toString());
+            throw new IllegalArgumentException(ERROR_DEPOSIT);
+        }
         return deposits;
     }
 }

@@ -147,9 +147,28 @@ public class DepositServiceImplMockTest {
         expect(depositDao.getBankDepositByCurrencyBetweenDateDepositWithDepositors("usd",startDate,endDate)).andReturn(deposits);
         replay(depositDao);
 
-        depositService.getBankDepositByCurrencyBetweenDateDepositAll("usd",startDate,endDate);
+        List<Map> resultDeposits = depositService.getBankDepositByCurrencyBetweenDateDepositAll("usd", startDate, endDate);
 
         verify(depositDao);
+
+        assertSame(deposits, resultDeposits);
+    }
+
+    @Test
+    public void testGetBankDepositByNameAll(){
+        LOGGER.debug("testGetBankDepositByNameAll() - run");
+
+        List<Map> deposit = DataFixture.getExitsMapDeposit();
+        LOGGER.info("deposits: {}", deposit);
+
+        expect(depositDao.getBankDepositByNameWithDepositors("depositName1")).andReturn(deposit);
+        replay(depositDao);
+
+        List<Map> resultDeposit = depositService.getBankDepositByNameAll("depositName1");
+
+        verify(depositDao);
+
+        assertSame(deposit, resultDeposit);
     }
 
     @Test
@@ -164,9 +183,182 @@ public class DepositServiceImplMockTest {
         expect(depositDao.getBankDepositByCurrencyBetweenDateReturnDepositWithDepositors("usd",startDate,endDate)).andReturn(deposits);
         replay(depositDao);
 
-        depositService.getBankDepositByCurrencyBetweenDateReturnDepositAll("usd",startDate,endDate);
+        List<Map> resultDeposits = depositService.getBankDepositByCurrencyBetweenDateReturnDepositAll("usd", startDate, endDate);
 
         verify(depositDao);
+
+        assertSame(deposits, resultDeposits);
+    }
+
+    @Test
+    public void testGetBankDepositByNameBetweenDateDepositAll() throws ParseException{
+        LOGGER.debug("testGetBankDepositByNameBetweenDateDepositAll() - run");
+        Date startDate = dateFormat.parse("2014-12-01");
+        Date endDate = dateFormat.parse("2014-12-06");
+
+        List<Map> deposit = DataFixture.getExitsMapDeposit();
+        LOGGER.info("deposits: {}", deposit);
+
+        expect(depositDao.getBankDepositByNameBetweenDateDepositWithDepositors("depositName1",startDate,endDate)).andReturn(deposit);
+        replay(depositDao);
+
+        List<Map> resultDeposit = depositService.getBankDepositByNameBetweenDateDepositAll("depositName1", startDate, endDate);
+
+        verify(depositDao);
+
+        assertSame(deposit, resultDeposit);
+    }
+
+    @Test
+    public void testGetBankDepositByNameBetweenDateReturnDepositAll() throws ParseException{
+        LOGGER.debug("testGetBankDepositByNameBetweenDateReturnDepositAll() - run");
+        Date startDate = dateFormat.parse("2014-12-01");
+        Date endDate = dateFormat.parse("2014-12-06");
+
+        List<Map> deposit = DataFixture.getExitsMapDeposit();
+        LOGGER.info("deposits: {}", deposit);
+
+        expect(depositDao.getBankDepositByNameBetweenDateReturnDepositWithDepositors("depositName1", startDate, endDate)).andReturn(deposit);
+        replay(depositDao);
+
+        List<Map> resultDeposit = depositService.getBankDepositByNameBetweenDateReturnDepositAll("depositName1", startDate, endDate);
+
+        verify(depositDao);
+
+        assertSame(deposit, resultDeposit);
+    }
+
+    @Test
+    public void testGetBankDepositBetweenInterestRateAll(){
+        LOGGER.debug("testGetBankDepositBetweenInterestRateAll() - run");
+
+        List<Map> deposits = DataFixture.getMapDeposits();
+        LOGGER.info("deposits: {}", deposits);
+
+        expect(depositDao.getBankDepositBetweenInterestRateWithDepositors(4,7)).andReturn(deposits);
+        replay(depositDao);
+
+        List<Map> resultDeposits = depositService.getBankDepositBetweenInterestRateAll(4,7);
+
+        verify(depositDao);
+
+        assertSame(deposits, resultDeposits);
+    }
+
+    @Test
+    public void testGetBankDepositByInterestRateAll(){
+        LOGGER.debug("testGetBankDepositByInterestRateAll() - run");
+
+        List<Map> deposits = DataFixture.getMapDeposits();
+        LOGGER.info("deposits: {}", deposits);
+
+        expect(depositDao.getBankDepositByInterestRateWithDepositors(4)).andReturn(deposits);
+        replay(depositDao);
+
+        List<Map> resultDeposits = depositService.getBankDepositByInterestRateAll(4);
+        LOGGER.info("resultDeposit: {}", resultDeposits);
+
+        verify(depositDao);
+
+        assertSame(deposits, resultDeposits);
+    }
+
+    @Test
+    public void testGetBankDepositBitweenInterestRateAll(){
+        LOGGER.debug("testGetBankDepositByInterestRateAll() - run");
+
+        List<Map> deposits = DataFixture.getMapDeposits();
+        LOGGER.info("deposits: {}", deposits);
+
+        expect(depositDao.getBankDepositByInterestRateWithDepositors(4)).andReturn(deposits);
+        replay(depositDao);
+
+        List<Map> resultDeposits = depositService.getBankDepositByInterestRateAll(4);
+        LOGGER.info("resultDeposit: {}", resultDeposits);
+
+        verify(depositDao);
+
+        assertSame(deposits, resultDeposits);
+    }
+
+    @Test
+    public void testGetBankDepositBetweenInterestRateBetweenDateDepositAll() throws ParseException{
+        LOGGER.debug("testGetBankDepositBetweenInterestRateBetweenDateDepositAll()");
+        Date startDate = dateFormat.parse("2014-12-01");
+        Date endDate = dateFormat.parse("2014-12-06");
+
+        List<Map> deposits = DataFixture.getMapDeposits();
+        LOGGER.info("deposits: {}", deposits);
+
+        expect(depositDao.getBankDepositBetweenInterestRateBetweenDateDepositWithDepositors(4,6,startDate,endDate)).andReturn(deposits);
+        replay(depositDao);
+
+        List<Map> resultDeposits = depositService.getBankDepositBetweenInterestRateBetweenDateDepositAll(4,6,startDate,endDate);
+        LOGGER.info("resultDeposit: {}", resultDeposits);
+
+        verify(depositDao);
+
+        assertSame(deposits, resultDeposits);
+    }
+
+    @Test
+    public void testGetBankDepositBetweenInterestRateBetweenDateReturnDepositAll() throws ParseException{
+        LOGGER.debug("testGetBankDepositBetweenInterestRateBetweenDateReturnDepositAll()");
+        Date startDate = dateFormat.parse("2014-12-01");
+        Date endDate = dateFormat.parse("2014-12-06");
+
+        List<Map> deposits = DataFixture.getMapDeposits();
+        LOGGER.info("deposits: {}", deposits);
+
+        expect(depositDao.getBankDepositBetweenInterestRateBetweenDateReturnDepositWithDepositors(4, 6, startDate, endDate)).andReturn(deposits);
+        replay(depositDao);
+
+        List<Map> resultDeposits = depositService.getBankDepositBetweenInterestRateBetweenDateReturnDepositAll(4, 6, startDate, endDate);
+        LOGGER.info("resultDeposit: {}", resultDeposits);
+
+        verify(depositDao);
+
+        assertSame(deposits, resultDeposits);
+    }
+
+    @Test
+    public void testGetBankDepositBetweenDateDepositAll() throws ParseException{
+        LOGGER.debug("testGetBankDepositBetweenDateDepositAll()");
+        Date startDate = dateFormat.parse("2014-12-01");
+        Date endDate = dateFormat.parse("2014-12-06");
+
+        List<Map> deposits = DataFixture.getMapDeposits();
+        LOGGER.info("deposits: {}", deposits);
+
+        expect(depositDao.getBankDepositsBetweenDateDepositWithDepositors(startDate,endDate)).andReturn(deposits);
+        replay(depositDao);
+
+        List<Map> resultDeposits = depositService.getBankDepositsBetweenDateDepositAll(startDate,endDate);
+        LOGGER.info("resultDeposit: {}", resultDeposits);
+
+        verify(depositDao);
+
+        assertSame(deposits, resultDeposits);
+    }
+
+    @Test
+    public void testGetBankDepositBetweenDateReturnDepositAll() throws ParseException{
+        LOGGER.debug("testGetBankDepositBetweenDateReturnDepositAll()");
+        Date startDate = dateFormat.parse("2014-12-01");
+        Date endDate = dateFormat.parse("2014-12-06");
+
+        List<Map> deposits = DataFixture.getMapDeposits();
+        LOGGER.info("deposits: {}", deposits);
+
+        expect(depositDao.getBankDepositsBetweenDateReturnDepositWithDepositors(startDate,endDate)).andReturn(deposits);
+        replay(depositDao);
+
+        List<Map> resultDeposits = depositService.getBankDepositsBetweenDateReturnDepositAll(startDate,endDate);
+        LOGGER.info("resultDeposit: {}", resultDeposits);
+
+        verify(depositDao);
+
+        assertSame(deposits, resultDeposits);
     }
 
     @Test

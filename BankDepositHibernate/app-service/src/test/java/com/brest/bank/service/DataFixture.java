@@ -88,6 +88,26 @@ public class DataFixture {
         return deposits;
     }
 
+    public static List<Map> getExitsMapDeposit() {
+        List<Map> deposit = new ArrayList<Map>();
+            Map<String, Object> list = new HashMap<String, Object>(11);
+
+            list.put("depositId", 1L);
+            list.put("depositName", "depositName1");
+            list.put("depositMinTerm", 12);
+            list.put("depositMinAmount", 100);
+            list.put("depositCurrency", "usd");
+            list.put("depositInterestRate", 4);
+            list.put("depositAddConditions", "condition1");
+            list.put("depositorCount", 2);
+            list.put("depositorAmountSum", 200);
+            list.put("depositorAmountPlusSum", 20);
+            list.put("depositorAmountMinusSum", 10);
+            deposit.add(list);
+
+        return deposit;
+    }
+
     public static List<BankDepositor> getDepositors() throws ParseException{
         String date, returnDate;
         List<BankDepositor> depositors = new ArrayList<BankDepositor>();

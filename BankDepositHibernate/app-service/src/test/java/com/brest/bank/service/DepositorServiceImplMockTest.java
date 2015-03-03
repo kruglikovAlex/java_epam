@@ -123,6 +123,164 @@ public class DepositorServiceImplMockTest {
     }
 
     @Test
+    public void testGetBankDepositorBetweenDateReturnDeposit() throws ParseException{
+        LOGGER.debug("testGetBankDepositorBetweenDateReturnDeposit() - run");
+
+        Date startDate = dateFormat.parse("2014-12-01");
+        Date endDate = dateFormat.parse("2014-12-05");
+        List<BankDepositor> depositors = DataFixture.getDepositors();
+        LOGGER.info("depositors: {}", depositors);
+
+        expect(depositorDao.getBankDepositorBetweenDateReturnDeposit(startDate, endDate)).andReturn(depositors);
+        replay(depositorDao);
+
+        List<BankDepositor> resultDepositors = depositorService.getBankDepositorsBetweenDateReturnDeposit(startDate, endDate);
+        LOGGER.info("resultDepositors: {}", resultDepositors);
+
+        verify(depositorDao);
+
+        assertEquals(depositors,resultDepositors);
+        assertSame(depositors,resultDepositors);
+    }
+
+    @Test
+    public void testGetBankDepositorByIdDepositMinAmount() throws ParseException{
+        LOGGER.debug("testGetBankDepositorByIdDepositMinAmount() - run");
+
+        BankDepositor depositor = DataFixture.getExistDepositor(1L);
+        LOGGER.info("depositor: {}", depositor);
+
+        expect(depositorDao.getBankDepositorByIdDepositMinAmount(1L)).andReturn(depositor);
+        replay(depositorDao);
+
+        BankDepositor resultDepositor = depositorService.getBankDepositorByIdDepositMinAmount(1L);
+        LOGGER.info("resultDepositor: {}", resultDepositor);
+
+        verify(depositorDao);
+
+        assertEquals(depositor,resultDepositor);
+        assertSame(depositor,resultDepositor);
+    }
+
+    @Test
+    public void testGetBankDepositorsByIdDeposit() throws ParseException{
+        LOGGER.debug("testGetBankDepositorsByIdDeposit() - run");
+
+        List<BankDepositor> depositors = DataFixture.getDepositors();
+        LOGGER.info("depositors: {}", depositors);
+
+        expect(depositorDao.getBankDepositorByIdDepositCriteria(1L)).andReturn(depositors);
+        replay(depositorDao);
+
+        List<BankDepositor> resultDepositors = depositorService.getBankDepositorsByIdDeposit(1L);
+        LOGGER.info("resultDepositors: {}", resultDepositors);
+
+        verify(depositorDao);
+
+        assertEquals(depositors,resultDepositors);
+        assertSame(depositors,resultDepositors);
+    }
+
+    @Test
+    public void testGetBankDepositorByIdDepositMaxAmount() throws ParseException{
+        LOGGER.debug("testGetBankDepositorByIdDepositMaxAmount() - run");
+
+        BankDepositor depositor = DataFixture.getExistDepositor(1L);
+        LOGGER.info("depositor: {}", depositor);
+
+        expect(depositorDao.getBankDepositorByIdDepositMaxAmount(1L)).andReturn(depositor);
+        replay(depositorDao);
+
+        BankDepositor resultDepositor = depositorService.getBankDepositorByIdDepositMaxAmount(1L);
+        LOGGER.info("resultDepositor: {}", resultDepositor);
+
+        verify(depositorDao);
+
+        assertEquals(depositor,resultDepositor);
+        assertSame(depositor,resultDepositor);
+    }
+
+    @Test
+    public void testGetBankDepositorsByIdDepositBetweenDateDeposit() throws ParseException{
+        LOGGER.debug("testGetBankDepositorsByIdDepositBetweenDateDeposit() - run");
+
+        Date startDate = dateFormat.parse("2014-12-01");
+        Date endDate = dateFormat.parse("2014-12-05");
+        List<BankDepositor> depositors = DataFixture.getDepositors();
+        LOGGER.info("depositors: {}", depositors);
+
+        expect(depositorDao.getBankDepositorByIdDepositBetweenDateDeposit(1L,startDate, endDate)).andReturn(depositors);
+        replay(depositorDao);
+
+        List<BankDepositor> resultDepositors = depositorService.getBankDepositorsByIdDepositBetweenDateDeposit(1L,startDate, endDate);
+        LOGGER.info("resultDepositors: {}", resultDepositors);
+
+        verify(depositorDao);
+
+        assertEquals(depositors,resultDepositors);
+        assertSame(depositors,resultDepositors);
+    }
+
+    @Test
+    public void testGetBankDepositorsByIdDepositBetweenDateReturnDeposit() throws ParseException{
+        LOGGER.debug("testGetBankDepositorsByIdDepositBetweenDateReturnDeposit() - run");
+
+        Date startDate = dateFormat.parse("2014-12-01");
+        Date endDate = dateFormat.parse("2014-12-05");
+        List<BankDepositor> depositors = DataFixture.getDepositors();
+        LOGGER.info("depositors: {}", depositors);
+
+        expect(depositorDao.getBankDepositorByIdDepositBetweenDateReturnDeposit(1L, startDate, endDate)).andReturn(depositors);
+        replay(depositorDao);
+
+        List<BankDepositor> resultDepositors = depositorService.getBankDepositorsByIdDepositBetweenDateReturnDeposit(1L, startDate, endDate);
+        LOGGER.info("resultDepositors: {}", resultDepositors);
+
+        verify(depositorDao);
+
+        assertEquals(depositors,resultDepositors);
+        assertSame(depositors,resultDepositors);
+    }
+
+    @Test
+    public void testGetBankDepositorsByIdDepositByMarkReturn() throws ParseException{
+        LOGGER.debug("testGetBankDepositorsByIdDepositByMarkReturn() - run");
+
+        List<BankDepositor> depositors = DataFixture.getDepositors();
+        LOGGER.info("depositors: {}", depositors);
+
+        expect(depositorDao.getBankDepositorByIdDepositByMarkReturn(1L,0)).andReturn(depositors);
+        replay(depositorDao);
+
+        List<BankDepositor> resultDepositors = depositorService.getBankDepositorsByIdDepositByMarkReturn(1L,0);
+        LOGGER.info("resultDepositors: {}", resultDepositors);
+
+        verify(depositorDao);
+
+        assertEquals(depositors,resultDepositors);
+        assertSame(depositors,resultDepositors);
+    }
+
+    @Test
+    public void testGetBankDepositorsByMarkReturn() throws ParseException{
+        LOGGER.debug("testGetBankDepositorsByMarkReturn() - run");
+
+        List<BankDepositor> depositors = DataFixture.getDepositors();
+        LOGGER.info("depositors: {}", depositors);
+
+        expect(depositorDao.getBankDepositorByMarkReturn(0)).andReturn(depositors);
+        replay(depositorDao);
+
+        List<BankDepositor> resultDepositors = depositorService.getBankDepositorsByMarkReturn(0);
+        LOGGER.info("resultDepositors: {}", resultDepositors);
+
+        verify(depositorDao);
+
+        assertEquals(depositors,resultDepositors);
+        assertSame(depositors,resultDepositors);
+    }
+
+    @Test
     public void testAddBankDepositor() throws ParseException{
         LOGGER.debug("testAddBankDepositor() - run");
 
