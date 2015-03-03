@@ -141,6 +141,14 @@ public class DataFixture {
         return depositor;
     }
 
+    public static BankDepositor getDepositorSum(){
+        BankDepositor depositor = new BankDepositor();
+        depositor.setDepositorAmountDeposit(10000);
+        depositor.setDepositorAmountPlusDeposit(1000);
+        depositor.setDepositorAmountMinusDeposit(11000);
+        return depositor;
+    }
+
     public static BankDepositor getNewDepositor() throws ParseException {
         BankDepositor depositor = new BankDepositor();
         depositor.setDepositorName("depositorName2");

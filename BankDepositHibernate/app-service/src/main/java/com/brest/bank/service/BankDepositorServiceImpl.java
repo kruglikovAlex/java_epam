@@ -257,18 +257,44 @@ public class BankDepositorServiceImpl implements BankDepositorService{
 
     @Override
     public List<BankDepositor> getBankDepositorsBetweenAmountDeposit(Integer start, Integer end) {
-        LOGGER.debug("getBankDepositorBetweenAmountDeposit({})", start,end);
-        List<BankDepositor> depositors = null;
-        //TODO
+        LOGGER.debug("getBankDepositorBetweenAmountDeposit({},{})", start,end);
+        Assert.assertNotNull(ERROR_METHOD_PARAM,start);
+        Assert.assertNotNull(ERROR_METHOD_PARAM,end);
+        Assert.assertTrue(start<end);
+        List<BankDepositor> depositors;
+        try{
+            depositors = depositorDao.getBankDepositorBetweenAmountDeposit(start, end);
+        }catch (HibernateException e){
+            LOGGER.warn("getBankDepositorBetweenAmountDeposit({},{}), Exception:{}",start, end, e.toString());
+            throw new IllegalArgumentException(ERROR_DEPOSITOR);
+        }
         return depositors;
     }
 
     @Override
     public BankDepositor getBankDepositorSumAll(){
-        LOGGER.debug("getBankDepositorByIdDepositMinAmount()");
+        LOGGER.debug("getBankDepositorSumAll()");
 
-        BankDepositor depositor = null;
-        //TODO
+        BankDepositor depositor;
+        List<BankDepositor> depositors;
+        try{
+            depositors = depositorDao.getBankDepositorsCriteria();
+        }catch (HibernateException e){
+            LOGGER.warn("getBankDepositorsCriteria(), Exception:{}", e.toString());
+            throw new IllegalArgumentException(ERROR_DEPOSITOR);
+        }
+        if(depositors!=null){
+            try{
+                depositor = depositorDao.getBankDepositorSumAll();
+            }catch (HibernateException e){
+                LOGGER.warn("getBankDepositorSumAll(), Exception:{}", e.toString());
+                throw new IllegalArgumentException(ERROR_DEPOSITOR);
+            }
+        } else{
+            LOGGER.warn("depositors.size()= {}", depositors.size());
+            throw new IllegalArgumentException(ERROR_DEPOSITOR);
+        }
+
         return depositor;
     }
 
@@ -276,8 +302,25 @@ public class BankDepositorServiceImpl implements BankDepositorService{
     public BankDepositor getBankDepositorByIdDepositSum(Long id){
         LOGGER.debug("getBankDepositorByIdDepositSum({})", id);
         Assert.assertNotNull(ERROR_METHOD_PARAM,id);
-        BankDepositor depositor = null;
-        //TODO
+        BankDepositor depositor;
+        List<BankDepositor> depositors;
+        try{
+            depositors = depositorDao.getBankDepositorByIdDepositCriteria(id);
+        }catch (HibernateException e){
+            LOGGER.warn("getBankDepositorByIdDepositCriteria({}), Exception:{}", id, e.toString());
+            throw new IllegalArgumentException(ERROR_DEPOSITOR);
+        }
+        if (depositors!=null){
+            try{
+                depositor = depositorDao.getBankDepositorByIdDepositSum(id);
+            }catch (HibernateException e){
+                LOGGER.warn("getBankDepositorByIdDepositSum({}), Exception:{}", id, e.toString());
+                throw new IllegalArgumentException(ERROR_DEPOSITOR);
+            }
+        } else {
+            LOGGER.warn("depositors.size()= {}", depositors.size());
+            throw new IllegalArgumentException(ERROR_DEPOSITOR);
+        }
         return depositor;
     }
 
@@ -287,8 +330,25 @@ public class BankDepositorServiceImpl implements BankDepositorService{
         Assert.assertNotNull(ERROR_METHOD_PARAM, startDate);
         Assert.assertNotNull(ERROR_METHOD_PARAM,endDate);
         MatcherAssert.assertThat(startDate, DateMatchers.before(endDate));
-        BankDepositor depositor = null;
-        //TODO
+        BankDepositor depositor;
+        List<BankDepositor> depositors;
+        try{
+            depositors = depositorDao.getBankDepositorsCriteria();
+        }catch (HibernateException e){
+            LOGGER.warn("getBankDepositorsCriteria(), Exception:{}", e.toString());
+            throw new IllegalArgumentException(ERROR_DEPOSITOR);
+        }
+        if(depositors!=null){
+            try{
+                depositor = depositorDao.getBankDepositorBetweenDateDepositSum(startDate, endDate);
+            }catch (HibernateException e){
+                LOGGER.warn("getBankDepositorBetweenDateDepositSum({},{}), Exception:{}", startDate, endDate, e.toString());
+                throw new IllegalArgumentException(ERROR_DEPOSITOR);
+            }
+        }else{
+            LOGGER.warn("depositors.size()= {}", depositors.size());
+            throw new IllegalArgumentException(ERROR_DEPOSITOR);
+        }
         return depositor;
     }
 
@@ -298,8 +358,25 @@ public class BankDepositorServiceImpl implements BankDepositorService{
         Assert.assertNotNull(ERROR_METHOD_PARAM, startDate);
         Assert.assertNotNull(ERROR_METHOD_PARAM,endDate);
         MatcherAssert.assertThat(startDate, DateMatchers.before(endDate));
-        BankDepositor depositor = null;
-        //TODO
+        BankDepositor depositor;
+        List<BankDepositor> depositors;
+        try{
+            depositors = depositorDao.getBankDepositorsCriteria();
+        }catch (HibernateException e){
+            LOGGER.warn("getBankDepositorsCriteria(), Exception:{}", e.toString());
+            throw new IllegalArgumentException(ERROR_DEPOSITOR);
+        }
+        if(depositors!=null){
+            try{
+                depositor = depositorDao.getBankDepositorBetweenDateReturnDepositSum(startDate, endDate);
+            }catch (HibernateException e){
+                LOGGER.warn("getBankDepositorBetweenDateReturnDepositSum({},{}), Exception:{}", startDate, endDate, e.toString());
+                throw new IllegalArgumentException(ERROR_DEPOSITOR);
+            }
+        }else{
+            LOGGER.warn("depositors.size()= {}", depositors.size());
+            throw new IllegalArgumentException(ERROR_DEPOSITOR);
+        }
         return depositor;
     }
 }
