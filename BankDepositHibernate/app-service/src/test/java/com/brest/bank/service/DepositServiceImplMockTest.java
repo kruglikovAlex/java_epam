@@ -264,24 +264,6 @@ public class DepositServiceImplMockTest {
     }
 
     @Test
-    public void testGetBankDepositBitweenInterestRateAll(){
-        LOGGER.debug("testGetBankDepositByInterestRateAll() - run");
-
-        List<Map> deposits = DataFixture.getMapDeposits();
-        LOGGER.info("deposits: {}", deposits);
-
-        expect(depositDao.getBankDepositByInterestRateWithDepositors(4)).andReturn(deposits);
-        replay(depositDao);
-
-        List<Map> resultDeposits = depositService.getBankDepositByInterestRateAll(4);
-        LOGGER.info("resultDeposit: {}", resultDeposits);
-
-        verify(depositDao);
-
-        assertSame(deposits, resultDeposits);
-    }
-
-    @Test
     public void testGetBankDepositBetweenInterestRateBetweenDateDepositAll() throws ParseException{
         LOGGER.debug("testGetBankDepositBetweenInterestRateBetweenDateDepositAll()");
         Date startDate = dateFormat.parse("2014-12-01");
