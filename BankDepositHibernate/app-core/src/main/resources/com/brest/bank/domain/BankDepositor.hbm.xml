@@ -17,9 +17,6 @@
         <property name="depositorDateReturnDeposit" type="date" column="depositorDateReturnDeposit"/>
         <property name="depositorMarkReturnDeposit" column="depositorMarkReturnDeposit"/>
 
-        <many-to-one name="deposit" class="BankDeposit">
-            <column name="depositId"/>
-        </many-to-one>
     </class>
 
 </hibernate-mapping>

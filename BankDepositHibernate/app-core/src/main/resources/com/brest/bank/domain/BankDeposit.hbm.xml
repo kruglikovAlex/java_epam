@@ -10,10 +10,7 @@
             <generator class="native"/>
         </id>
 
-        <natural-id>
-            <property name="depositName" column="depositName"/>
-        </natural-id>
-
+        <property name="depositName" column="depositName"/>
         <property name="depositMinTerm" column="depositMinTerm"/>
         <property name="depositMinAmount" column="depositMinAmount"/>
         <property name="depositCurrency" column="depositCurrency"/>

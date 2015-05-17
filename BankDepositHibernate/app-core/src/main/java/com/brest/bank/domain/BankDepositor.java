@@ -16,6 +16,7 @@ public class BankDepositor {
 	private Date		depositorDateReturnDeposit;	//Дата предполагаемого закрытия вклада
 	private Integer		depositorMarkReturnDeposit;	//отметка о закрытии вклада
 
+    private Long        depositId;
 	private BankDeposit bankDeposit;
 	
 	//--- конструктор по умолчанию
@@ -29,16 +30,18 @@ public class BankDepositor {
 						 Integer	depositorAmountPlusDeposit,
 						 Integer	depositorAmountMinusDeposit,
 						 Date		depositorDateReturnDeposit,
-						 Integer	depositorMarkReturnDeposit) {
+						 Integer	depositorMarkReturnDeposit,
+                         BankDeposit deposit)
+    {
 		this.depositorId = depositorId;
 		this.depositorName = depositorName;
-
 		this.depositorDateDeposit = depositorDateDeposit;
 		this.depositorAmountDeposit = depositorAmountDeposit;
 		this.depositorAmountPlusDeposit = depositorAmountPlusDeposit;
 		this.depositorAmountMinusDeposit = depositorAmountMinusDeposit;
 		this.depositorDateReturnDeposit = depositorDateReturnDeposit;
-		this.depositorMarkReturnDeposit = depositorMarkReturnDeposit; 
+		this.depositorMarkReturnDeposit = depositorMarkReturnDeposit;
+        this.bankDeposit = deposit;
 	}
 	//--- get/set depositorId (идентификатор вкладчика)
 	public Long getDepositorId(){
@@ -97,6 +100,14 @@ public class BankDepositor {
 	public void setDepositorMarkReturnDeposit(int depositorMarkReturnDeposit){
 		this.depositorMarkReturnDeposit = depositorMarkReturnDeposit;
 	}
+
+    public Long getDepositId(){
+        return this.depositId;
+    }
+
+    public void setDepositId(Long depositId){
+        this.depositId = depositId;
+    }
 
 	//--- get/set many-to-one link
 	public BankDeposit getDeposit(){

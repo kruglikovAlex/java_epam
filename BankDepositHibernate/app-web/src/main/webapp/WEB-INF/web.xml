@@ -1,25 +1,61 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+<web-app >
 
+    <!-- WEB servlets-->
     <servlet>
-        <servlet-name>BankDepositServlet</servlet-name>
-        <servlet-class>com.brest.bank.web.BankDepositServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
+        <servlet-name>MainFrameServlet</servlet-name>
+        <servlet-class>com.brest.bank.web.MainFrameServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>BankDepositServlet</servlet-name>
-        <url-pattern>/deposit/depositList</url-pattern>
+        <servlet-name>MainFrameServlet</servlet-name>
+        <url-pattern>/main</url-pattern>
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>BankDepositInputServlet</servlet-name>
-        <servlet-class>com.brest.bank.web.BankDepositInputServlet</servlet-class>
+        <servlet-name>DepositorFrameServlet</servlet-name>
+        <servlet-class>com.brest.bank.web.DepositorFrameServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>BankDepositInputServlet</servlet-name>
-        <url-pattern>/deposit/inputDeposit</url-pattern>
+        <servlet-name>DepositorFrameServlet</servlet-name>
+            <url-pattern>/editDepositor</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DepositFrameServlet</servlet-name>
+        <servlet-class>com.brest.bank.web.DepositFrameServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DepositFrameServlet</servlet-name>
+        <url-pattern>/editDeposit</url-pattern>
+    </servlet-mapping>
+
+    <!-- REST servlets-->
+
+    <servlet>
+        <servlet-name>BankDepositRest</servlet-name>
+        <servlet-class>com.brest.bank.rest.BankDepositRest</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BankDepositRest</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- Test services servlets-->
+    <servlet>
+        <servlet-name>InputDepositTest</servlet-name>
+        <servlet-class>com.brest.bank.web.InputDepositTest</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>InputDepositTest</servlet-name>
+        <url-pattern>/deposit</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>InputDepositorTest</servlet-name>
+        <servlet-class>com.brest.bank.web.InputDepositorTest</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>InputDepositorTest</servlet-name>
+        <url-pattern>/depositor</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -30,5 +66,35 @@
         <servlet-name>BankDepositDeleteServlet</servlet-name>
         <url-pattern>/deposit/deleteDeposit</url-pattern>
     </servlet-mapping>
+
+    <!-- Exception servlets-->
+    <servlet>
+        <servlet-name>AppExceptionHandler</servlet-name>
+        <servlet-class>com.brest.bank.web.error.AppExceptionHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AppExceptionHandler</servlet-name>
+        <url-pattern>/AppExceptionHandler</url-pattern>
+    </servlet-mapping>
+
+    <error-page>
+        <error-code>404</error-code>
+        <location>/AppExceptionHandler</location>
+    </error-page>
+
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/AppExceptionHandler</location>
+    </error-page>
+
+    <error-page>
+        <exception-type>javax.servlet.ServletException</exception-type>
+        <location>/AppExceptionHandler</location>
+    </error-page>
+
+    <error-page>
+        <exception-type>org.hibernate.HibernateException</exception-type>
+        <location>/AppExceptionHandler</location>
+    </error-page>
 
 </web-app>

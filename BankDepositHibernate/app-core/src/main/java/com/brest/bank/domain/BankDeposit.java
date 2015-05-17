@@ -26,14 +26,16 @@ public class BankDeposit{
 					   Integer 		depositMinAmount,
 					   String 	    depositCurrency,
 					   Integer 		depositInterestRate,
-					   String 	    depositAddConditions){
+					   String 	    depositAddConditions,
+                       Set depositors){
 		this.depositId = depositId;
 		this.depositName = depositName;
 		this.depositMinTerm = depositMinTerm;
 		this.depositMinAmount = depositMinAmount;
 		this.depositCurrency = depositCurrency;
 		this.depositInterestRate = depositInterestRate;
-		this.depositAddConditions = depositAddConditions; 
+		this.depositAddConditions = depositAddConditions;
+        this.depositors = depositors;
 	}
 
 	//--- get/set Id (идентификатор фклада)
@@ -115,6 +117,6 @@ public class BankDeposit{
         		", depositMinAmount=" + depositMinAmount + 
         		", depositCurrency=" + depositCurrency + 
         		", depositInterestRate=" + depositInterestRate + 
-        		", depositAddConditions=" + depositAddConditions + '}';
+        		", depositAddConditions=" + depositAddConditions +'}';
     }
 }
