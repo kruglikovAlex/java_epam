@@ -67,6 +67,24 @@
         <url-pattern>/deposit/deleteDeposit</url-pattern>
     </servlet-mapping>
 
+    <!-- SOAP servlets-->
+    <servlet>
+        <servlet-name>BankDepositSoapClient</servlet-name>
+        <servlet-class>com.brest.bank.client.BankDepositSoapClient</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BankDepositSoapClient</servlet-name>
+        <url-pattern>/soap/client</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>BankDepositSoapServer</servlet-name>
+        <servlet-class>com.brest.bank.soap.BankDepositSoapServer</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BankDepositSoapServer</servlet-name>
+        <url-pattern>/soap/server</url-pattern>
+    </servlet-mapping>
+
     <!-- Exception servlets-->
     <servlet>
         <servlet-name>AppExceptionHandler</servlet-name>

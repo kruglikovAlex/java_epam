@@ -14,7 +14,9 @@
         <module>app-dao</module>
         <module>app-rest</module>
         <module>app-service</module>
+        <module>app-soap</module>
         <module>app-web</module>
+        <module>app-client-soap</module>
     </modules>
 
     <properties>
@@ -58,6 +60,18 @@
 
             <dependency>
                 <groupId>com.brest.bank</groupId>
+                <artifactId>app-soap</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.brest.bank</groupId>
+                <artifactId>app-client-soap</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.brest.bank</groupId>
                 <artifactId>app-web</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>
@@ -93,6 +107,7 @@
                 <artifactId>javax.servlet-api</artifactId>
                 <version>3.1.0</version>
             </dependency>
+
             <!-- JSTL librare-->
             <dependency>
                 <groupId>javax.servlet</groupId>
@@ -215,28 +230,6 @@
                 <version>2.1</version>
             </dependency>
 
-            <!-- RESTEasy JAX RS Implementation -->
-            <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-jaxrs</artifactId>
-                <version>3.0.11.Final</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-client</artifactId>
-                <version>3.0.11.Final</version>
-            </dependency>
-
-            <!-- convert the returned objects in json -->
-            <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-jackson-provider</artifactId>
-                <version>3.0.11.Final</version>
-                <scope>provided</scope>
-            </dependency>
-
             <!-- library to convert objects from json -->
             <dependency>
                 <groupId>com.google.code.gson</groupId>
@@ -267,6 +260,19 @@
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-plugin-api</artifactId>
                 <version>3.3.1</version>
+            </dependency>
+
+            <!-- for run SOAP client-->
+            <dependency>
+                <groupId>javax</groupId>
+                <artifactId>javaee-api</artifactId>
+                <version>7.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sun.messaging.mq</groupId>
+                <artifactId>jaxm-api</artifactId>
+                <version>4.4.2</version>
             </dependency>
 
         </dependencies>
