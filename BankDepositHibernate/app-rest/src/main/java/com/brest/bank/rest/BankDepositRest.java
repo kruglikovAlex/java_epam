@@ -9,23 +9,9 @@ import com.brest.bank.util.HibernateUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
-import org.apache.http.entity.StringEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.jackson.*;
-import org.codehaus.jackson.map.JsonSerializer;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializerProvider;
-import org.codehaus.jackson.map.ser.std.JsonValueSerializer;
-import org.codehaus.jackson.map.ser.std.ObjectArraySerializer;
-import org.codehaus.jackson.type.TypeReference;
-import org.codehaus.jackson.node.ObjectNode;
-
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
@@ -34,7 +20,6 @@ import java.io.*;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.http.HTTPException;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -69,14 +54,14 @@ public class BankDepositRest extends HttpServlet{
     }
 
     /**
-     * Servlet method responding to HTTP POST methods calls.
-     * add BankDeposit
+     * Servlet method responding to HTTP PUT methods calls.
+     * update BankDeposit
      *
      * @param request HTTP request.
      * @param response HTTP response.
      */
     @Override
-    public void doPost( HttpServletRequest request,
+    public void doPut( HttpServletRequest request,
                         HttpServletResponse response ) throws IOException
     {
         final PrintWriter out = response.getWriter();
@@ -88,14 +73,14 @@ public class BankDepositRest extends HttpServlet{
     }
 
     /**
-     * Servlet method responding to HTTP PUT methods calls.
-     * update BankDeposit
+     * Servlet method responding to HTTP POST methods calls.
+     * insert BankDeposit
      *
      * @param request HTTP request.
      * @param response HTTP response.
      */
     @Override
-    public void doPut( HttpServletRequest request,
+    public void doPost( HttpServletRequest request,
                        HttpServletResponse response ) throws IOException
     {
         response.setContentType("application/json");
@@ -350,7 +335,7 @@ public class BankDepositRest extends HttpServlet{
                     out.print(jsonDepositor);
                 } catch (HibernateException e) {
                     LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
-                    response.sendError(404,"Hibernate error - "+e.getMessage().toString()+"\n");
+                    response.sendError(404,"Hibernate error - "+e.getMessage()+"\n");
                     throw new IOException(e.getMessage());
                 }
             }
@@ -398,7 +383,7 @@ public class BankDepositRest extends HttpServlet{
 
             } catch (HibernateException e) {
                 LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
-                response.sendError(404, "Hibernate error - " + e.getMessage().toString() + "\n");
+                response.sendError(404, "Hibernate error - " + e.getMessage() + "\n");
                 throw new IOException(e.getMessage());
             }
         }
@@ -425,7 +410,7 @@ public class BankDepositRest extends HttpServlet{
 
             } catch (HibernateException e) {
                 LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
-                response.sendError(404, "Hibernate error - " + e.getMessage().toString() + "\n");
+                response.sendError(404, "Hibernate error - " + e.getMessage() + "\n");
                 throw new IOException(e.getMessage());
             }
         }
@@ -435,7 +420,7 @@ public class BankDepositRest extends HttpServlet{
                        HttpServletResponse response,
                        PrintWriter out) throws IOException{
 
-        if (request.getContentType().equals("application/json")){
+        //if (request.getContentType().equals("application/json")){
             Gson gson = new Gson();
             String str = request.getPathInfo();
             StringTokenizer pathInfo = new StringTokenizer(str);
@@ -480,7 +465,7 @@ public class BankDepositRest extends HttpServlet{
 
                 } catch (HibernateException e) {
                     LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
-                    response.sendError(404,"Hibernate error - "+e.getMessage().toString()+"\n");
+                    response.sendError(404,"Hibernate error - "+e.getMessage()+"\n");
                     throw new IOException(e.getMessage());
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -506,6 +491,7 @@ public class BankDepositRest extends HttpServlet{
                     }
 
                     depositor = gson.fromJson(sb.toString(), BankDepositor.class);
+                    depositor.setDepositId(depositId);
 
                     HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 
@@ -535,18 +521,18 @@ public class BankDepositRest extends HttpServlet{
                     out.close();
                 }
             }
-        } else {
-            response.setStatus(HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE);
+        //} else {
+        //    response.setStatus(HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE);
             out.flush();
             out.close();
-        }
+        //}
     }
 
     public void update(HttpServletRequest request,
                        HttpServletResponse response,
                        PrintWriter out) throws IOException {
 
-        if (request.getContentType().equals("application/json")){
+        //if (request.getContentType().equals("application/json")){
             Gson gson = new Gson();
             String str = request.getPathInfo();
             StringTokenizer pathInfo = new StringTokenizer(str);
@@ -591,7 +577,7 @@ public class BankDepositRest extends HttpServlet{
 
                 } catch (HibernateException e) {
                     LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
-                    response.sendError(404,"Hibernate error - "+e.getMessage().toString()+"\n");
+                    response.sendError(404,"Hibernate error - "+e.getMessage()+"\n");
                     throw new IOException(e.getMessage());
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -639,10 +625,10 @@ public class BankDepositRest extends HttpServlet{
                     out.close();
                 }
             }
-        } else {
-            response.setStatus(HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE);
-            out.flush();
-            out.close();
-        }
+        //} else {
+        //    response.setStatus(HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE);
+        //    out.flush();
+        //    out.close();
+        //}
     }
 }
