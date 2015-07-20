@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:c="http://www.w3.org/1999/XSL/Transform">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>BankDeposit management</title>
+</head>
+<body>
+
+<fieldset style="width: 60%" >
+	<legend style="font-weight: bold">BANK DEPOSITS. Check your REST query</legend><br>
+	<div class="header">
+
+		URL-> http://localhost:8080/BankDeposit/rest <input id="URL" name="URL" type="text" required size="70"/><br>
+		<form id="radio">
+			<input type="radio" name="httpMethod" checked>GET</input>
+			<input type="radio" name="httpMethod">PUT</input>
+			<input type="radio" name="httpMethod">POST</input>
+			<input type="radio" name="httpMethod">DELETE</input><p></p>
+		</form>
+
+			<fieldset id="depositRequest" style="width: 84%" >
+				<legend style="font-weight: bold">Request Payload</legend>
+
+				<button id="btnRequestRaw">Raw</button>
+				<button id="btnRequestForm">Form deposit</button>
+				<button id="btnRequestFormDepositor">Form depositor</button></br>
+
+				<textarea id="JsonRequest" name="JsonRequest" rows="5" cols="150" ></textarea>
+
+				<p></p>
+				<form id="depositForm">
+
+					<div class="mainDepositArea">
+						<table frame="hsides" rules="cols">
+							<th>
+								<td><label>Deposit Id:</label></td>
+								<td><label>Deposit Name:</label></td>
+								<td><label>Minimum Termin:</label></td>
+								<td><label>Minimum Amount:</label></td>
+								<td><label>Currency:</label></td>
+								<td><label>Interest Rate:</label></td>
+								<td><label>Add Conditions:</label></td>
+							</th>
+							<tr>
+								<td></td>
+								<td><input id="depositId" name="depositId" type="text" disabled size="10"/></a></td>
+								<td><input id="depositName" name="depositName" type="text" required/></td>
+								<td><input id="depositMinTerm" name="depositMinTerm" type="text" size="3"></td>
+								<td><input id="depositMinAmount" name="depositMinAmount" type="text" size="15"/></td>
+								<td><input id="depositCurrency" name="depositCurrency" type="text" size="3"/></td>
+								<td><input id="depositInterestRate" name="depositInterestRate" type="text" size="3"/></td>
+								<td><input id="depositAddConditions" name="depositAddConditions" type="text"/></td>
+							</tr>
+						</table>
+
+					</div>
+				</form>
+
+				<p></p>
+				<form id="depositorForm">
+					<div class="mainDepositorArea">
+						<table frame="hsides" rules="cols">
+							<th>
+								<td><label>Depositor Id:</label></td>
+								<td><label>Depositor Name:</label></td>
+								<td><label>Date Deposit:</label></td>
+								<td><label>Amount Deposit:</label></td>
+								<td><label>Amount Plus:</label></td>
+								<td><label>Amount Minus:</label></td>
+								<td><label>Date Return :</label></td>
+								<td><label>Return Mark:</label></td>
+							</th>
+							<tr>
+								<td></td>
+								<td><input id="depositorId" name="depositorId" type="text" disabled size="8"/></td>
+								<td><input id="depositorName" name="depositorName" type="text" required/></td>
+								<td><input id="depositorDateDeposit" name="depositorDateDeposit" type="datetime" required
+										   pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size="10"/></td>
+								<td><input id="depositorAmountDeposit" name="depositorAmountDeposit" type="text" size="8"/></td>
+								<td><input id="depositorAmountPlusDeposit" name="depositorAmountPlusDeposit" type="text" size="6"/></td>
+								<td><input id="depositorAmountMinusDeposit" name="depositorAmountMinusDeposit" type="text" size="6"/></td>
+								<td><input id="depositorDateReturnDeposit" name="depositorDateReturnDeposit" type="datetime" required
+										   pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size="10"/></td>
+								<td><input id="depositorMarkReturnDeposit" name="depositorMarkReturnDeposit" type="text" size="1"/></td>
+							</tr>
+						</table>
+
+					</div>
+				</form>
+
+			</fieldset>
+
+		<p></p>
+		<button id="btnClear">CLEAR</button>
+		<button id="btnSendMessage">SEND</button><p></p>
+
+		<fieldset style="width: 84%" >
+			<legend style="font-weight: bold">Response</legend>
+
+			<textarea class="responseHeader" id="responseHeader" name="responseHeader" rows="10" cols="150" ></textarea>
+
+			<button id="btnResponseRaw">Raw</button>
+			<button id="btnResponseJson">Json</button>
+			<textarea class="responseRaw" id="responseRaw" name="responseRaw" rows="10" cols="150" ></textarea>
+			<textarea class="responseJson" id="responseJson" name="responseJson" rows="10" cols="150" ></textarea>
+		</fieldset>
+
+	</div>
+
+	<p></p>
+	<div class="depositListArea">
+		<table id="depositList" frame="hsides" rules="cols" style="width: 80%"><td></td></table>
+	</div>
+	<p></p>
+	<div class="depositorListArea">
+		<table id="depositorList" frame="hsides" rules="cols" style="width: 80%"></table>
+	</div>
+
+</fieldset>
+
+<p></p>
+
+<script src="resources/jquery-1.11.1.js"></script>
+<script src="resources/main.js"></script>
+<script src="resources/jquery.maskedinput.js"></script>
+<script src="resources/date.format.js"></script>
+</body>
+</html>
