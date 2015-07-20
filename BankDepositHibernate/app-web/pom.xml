@@ -51,6 +51,7 @@
             <artifactId>app-client-soap</artifactId>
         </dependency>
 
+
         <dependency>
             <groupId>com.brest.bank</groupId>
             <artifactId>app-client-rest</artifactId>
