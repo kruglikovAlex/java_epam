@@ -2,12 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <packaging>pom</packaging>
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.brest.bank</groupId>
     <artifactId>BankDepositHibernate</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <modules>
         <module>app-core</module>
@@ -17,10 +18,13 @@
         <module>app-soap</module>
         <module>app-web</module>
         <module>app-client-soap</module>
+        <module>app-client-rest</module>
     </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <skip.unit.tests>false</skip.unit.tests>
+        <log4j2.version>2.1</log4j2.version>
     </properties>
 
     <repositories>
@@ -73,6 +77,12 @@
             <dependency>
                 <groupId>com.brest.bank</groupId>
                 <artifactId>app-web</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.brest.bank</groupId>
+                <artifactId>app-client-rest</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>
 
@@ -275,6 +285,13 @@
                 <version>4.4.2</version>
             </dependency>
 
+            <!--for test SOAP-->
+            <dependency>
+                <groupId>org.jboss.test</groupId>
+                <artifactId>jboss-test</artifactId>
+                <version>1.1.4.GA</version>
+            </dependency>
+
         </dependencies>
 
     </dependencyManagement>
@@ -292,9 +309,49 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.18.1</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>2.18.1</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <skipTests>false</skipTests>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.6</version>
             </plugin>
+
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <!-- here the phase you need -->
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/app-web/src/main/webapp/resources</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>app-client-rest/src/main/resources/simple-js-client/js</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 
