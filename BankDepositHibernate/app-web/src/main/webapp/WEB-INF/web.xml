@@ -28,7 +28,7 @@
         <url-pattern>/editDeposit</url-pattern>
     </servlet-mapping>
 
-    <!-- REST servlets-->
+    <!-- REST server servlet-->
 
     <servlet>
         <servlet-name>BankDepositRest</servlet-name>
@@ -37,6 +37,17 @@
     <servlet-mapping>
         <servlet-name>BankDepositRest</servlet-name>
         <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- Rest client servlet-->
+
+    <servlet>
+        <servlet-name>RestClient</servlet-name>
+        <servlet-class>com.brest.bank.client.RestClient</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RestClient</servlet-name>
+        <url-pattern>/client/rest/*</url-pattern>
     </servlet-mapping>
 
     <!-- Test services servlets-->

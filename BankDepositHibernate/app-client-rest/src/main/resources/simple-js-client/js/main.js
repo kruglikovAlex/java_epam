@@ -1,5 +1,5 @@
 // The root URL for the RESTful services
-var REST_URL = "http://localhost:8080/BankDeposit/rest";
+var REST_URL = "http://localhost:8080/BankDeposit/client/rest";
 
 var currentDeposit;
 var currentDepositor;
@@ -73,8 +73,8 @@ $('#btnSendMessage').click(function () {
     var method = Array('GET','PUT','POST','DELETE');
     var s;
 
-    for (i=0;i<$(":radio").length; i++){
-        if($(":radio").get(i).checked)
+    for (i=0;i<$(":radio[name=httpMethod]").length; i++){
+        if($(":radio[name=httpMethod]").get(i).checked)
             s=method[i];
     }
     if (s=="GET") sendMessage($('#URL').val(), s ," ","Get");
@@ -186,10 +186,46 @@ function sendMessage(url,method, data,log) {
         send(url,method, data, log);
     }
 }
+function findDepositById(depositId) {
+    console.log('findDepositById: ' + depositId);
+    $.ajax({
+        type: 'GET',
+        url: REST_URL + '/deposit/id/' + depositId,
+        dataType: "json",
+        success: function (data) {
+            console.log('findDepositById success: ' + data.depositId);
+            currentDeposit = data;
+            renderDepositDetails(currentDeposit);
+            renderDepositList(currentDeposit);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR, textStatus, errorThrown);
+            alert('findDepositById: ' + textStatus);
+        }
+    });
+}
+function findDepositorById(depositorId) {
+    console.log('findDepositorById: ' + depositorId);
+    $.ajax({
+        type: 'GET',
+        url: REST_URL + '/depositor/id/' + depositorId,
+        dataType: "json",
+        success: function (data) {
+            console.log('findDepositorById success: ' + data.depositorId);
+            currentDepositor = data;
+            renderDepositorDetails(currentDepositor);
+            renderDepositorList(currentDepositor);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR, textStatus, errorThrown);
+            alert('findDepositorById: ' + textStatus);
+        }
+    });
+}
 
 function findAllDeposits() {
     console.log('findAllDeposits');
-    $.ajax({
+    var x = $.ajax({
         type: 'GET',
         url: REST_URL+"/deposits",
         dataType: "json",
@@ -203,7 +239,7 @@ function findAllDeposits() {
 
 function findAllDepositors() {
     console.log('findAllDepositors');
-    $.ajax({
+    var x = $.ajax({
         type: 'GET',
         url: REST_URL+"/depositors",
         dataType: "json", // data type of response
@@ -217,7 +253,7 @@ function findAllDepositors() {
 
 function send(url,method,dataJson,log) {
     console.log(log);
-    $.ajax({
+    var res = $.ajax({
         url: REST_URL+url,
         type: method,
         data: dataJson,
@@ -262,6 +298,7 @@ function send(url,method,dataJson,log) {
             $('#responseRaw').val(jqXHR.responseText);
         }
     });
+    return res;
 }
 
 // Helper function to serialize all the form fields into a JSON string

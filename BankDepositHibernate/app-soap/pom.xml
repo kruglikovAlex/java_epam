@@ -73,5 +73,10 @@
             <artifactId>jaxm-api</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.jboss.test</groupId>
+            <artifactId>jboss-test</artifactId>
+        </dependency>
+
     </dependencies>
 </project>
