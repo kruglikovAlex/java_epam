@@ -16,23 +16,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.brest.bank.dao.BankDepositDao;
-import com.brest.bank.dao.BankDepositDaoImpl;
-import com.brest.bank.service.BankDepositService;
-import com.brest.bank.service.BankDepositServiceImpl;
 import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
-
+import com.brest.bank.service.BankDepositService;
+import com.brest.bank.service.BankDepositServiceImpl;
 import com.brest.bank.service.BankDepositorService;
 import com.brest.bank.service.BankDepositorServiceImpl;
+
+import org.hibernate.HibernateException;
 import com.brest.bank.util.HibernateUtil;
+
 import com.brest.bank.web.forms.MainFrameForm;
 import com.brest.bank.web.forms.DepositForm;
 import com.brest.bank.web.forms.DepositorForm;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.hibernate.criterion.Restrictions;
+
 
 public class MainFrameServlet extends HttpServlet {
 
@@ -41,10 +41,6 @@ public class MainFrameServlet extends HttpServlet {
 
     private BankDepositService depositService = new BankDepositServiceImpl();
     private BankDepositorService depositorService = new BankDepositorServiceImpl();
-    BankDepositDao depositDao = new BankDepositDaoImpl();
-
-    private Collection deposits;
-    private Collection depositors;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
@@ -84,14 +80,8 @@ public class MainFrameServlet extends HttpServlet {
              * forward to depositFrame.jsp
              */
             try{
-                HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 
-                BankDeposit deposit = (BankDeposit)HibernateUtil.getSessionFactory().getCurrentSession()
-                        .createCriteria(BankDeposit.class)
-                        .add(Restrictions.eq("depositId", Long.parseLong(request.getParameter("depositId"))))
-                        .uniqueResult();
-
-                HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+                BankDeposit deposit = depositService.getBankDepositById(Long.parseLong(request.getParameter("depositId")));
 
                 DepositForm depositForm = new DepositForm();
                 depositForm.initFormDeposit(deposit);
@@ -143,15 +133,9 @@ public class MainFrameServlet extends HttpServlet {
              */
             if (request.getParameter("depositId") != null) {
                 try {
-                    HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
-
                     Long id = Long.parseLong(request.getParameter("depositId"));
-                    BankDepositor depositor = (BankDepositor)HibernateUtil.getSessionFactory().getCurrentSession()
-                            .createCriteria(BankDepositor.class)
-                            .add(Restrictions.eq("depositorId", Long.parseLong(request.getParameter("depositorId"))))
-                            .uniqueResult();
 
-                    HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+                    BankDepositor depositor = depositorService.getBankDepositorById(Long.parseLong(request.getParameter("depositorId")));
 
                     DepositorForm depForm = new DepositorForm();
                     depForm.initFormDepositor(depositor);
@@ -172,22 +156,8 @@ public class MainFrameServlet extends HttpServlet {
              */
             if (request.getParameter("depositId") != null) {
                 try {
-                    HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 
-                    BankDepositor depositor = (BankDepositor)HibernateUtil.getSessionFactory().getCurrentSession()
-                            .createCriteria(BankDepositor.class)
-                            .add(Restrictions.eq("depositorId", Long.parseLong(request.getParameter("depositorId"))))
-                            .uniqueResult();
-
-                    BankDeposit theDeposit = (BankDeposit)HibernateUtil.getSessionFactory().getCurrentSession()
-                            .createCriteria(BankDeposit.class)
-                            .add(Restrictions.eq("depositId", Long.parseLong(request.getParameter("depositId"))))
-                            .uniqueResult();
-
-                    HibernateUtil.getSessionFactory().getCurrentSession().update(theDeposit);
-                    HibernateUtil.getSessionFactory().getCurrentSession().delete(depositor);
-
-                    HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+                    depositorService.removeBankDepositor(Long.parseLong(request.getParameter("depositorId")));
 
                 } catch (HibernateException e) {
                     LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
@@ -200,17 +170,8 @@ public class MainFrameServlet extends HttpServlet {
              * remove deposit
              */
             try{
-                HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 
-                BankDeposit deposit = (BankDeposit)HibernateUtil.getSessionFactory().getCurrentSession()
-                        .createCriteria(BankDeposit.class)
-                        .add(Restrictions.eq("depositId", Long.parseLong(request.getParameter("depositId"))))
-                        .uniqueResult();
-
-                HibernateUtil.getSessionFactory().getCurrentSession()
-                            .delete(deposit);
-
-                HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+                depositService.deleteBankDeposit(Long.parseLong(request.getParameter("depositId")));
 
             }catch (HibernateException e){
                 LOGGER.error("Hibernate error - {}", e.toString());
@@ -230,35 +191,24 @@ public class MainFrameServlet extends HttpServlet {
         MainFrameForm mainForm = new MainFrameForm();
         try {
             BankDeposit deposit;
-            deposits = new ArrayList<BankDeposit>();
-            depositors  = new ArrayList<BankDepositor>();
+            Collection deposits = new ArrayList<BankDeposit>();
+            Collection depositors = new ArrayList<BankDepositor>();
 
-            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
-
-            for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
-                    .createCriteria(BankDeposit.class).list()){
+            for(Object d: (List)depositService.getBankDeposits()){
                 deposits.add((BankDeposit)d);
             }
-
-            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
             if (deposits.size() == 0){
                 deposit = new BankDeposit(1L," ",0,0," ",0," ",null);
                 deposits.add(deposit);
             } else{
-                deposit = new BankDeposit();
                 Iterator i = deposits.iterator();
                 deposit = (BankDeposit) i.next();
             }
 
-            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
-
-            for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
-                    .createCriteria(BankDepositor.class).list()){
+            for(Object d: depositorService.getBankDepositors()){
                 depositors.add((BankDepositor)d);
             }
-
-            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
             mainForm.setDepositId(deposit.getDepositId());
             mainForm.setDeposits(deposits);

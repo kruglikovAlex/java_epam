@@ -12,6 +12,8 @@ import com.brest.bank.service.BankDepositorServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,17 +25,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 public class DepositorFrameServlet extends HttpServlet{
 
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private static final Logger LOGGER = LogManager.getLogger();
 
-    //private BankDepositService depositService = new BankDepositServiceImpl();
-    //private BankDepositorService depositorService = new BankDepositorServiceImpl();
-
-    private Collection deposits;
-    private Collection depositors;
+    private BankDepositService depositService = new BankDepositServiceImpl();
+    private BankDepositorService depositorService = new BankDepositorServiceImpl();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException,IOException
@@ -57,17 +57,12 @@ public class DepositorFrameServlet extends HttpServlet{
         MainFrameForm mainForm = new MainFrameForm();
         try {
             BankDeposit deposit;
-            deposits = new ArrayList<BankDeposit>();
-            depositors  = new ArrayList<BankDepositor>();
+            Collection deposits = new ArrayList<BankDeposit>();
+            Collection depositors = new ArrayList<BankDepositor>();
 
-            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
-
-            for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
-                    .createCriteria(BankDeposit.class).list()){
+            for(Object d: depositService.getBankDeposits()){
                 deposits.add((BankDeposit)d);
             }
-
-            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
             if (deposits.size() == 0){
                 deposit = new BankDeposit(1L," ",0,0," ",0," ",null);
@@ -77,14 +72,10 @@ public class DepositorFrameServlet extends HttpServlet{
                 deposit = (BankDeposit) i.next();
             }
 
-            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
-
-            for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
-                    .createCriteria(BankDepositor.class).list()){
+            for(Object d: depositorService.getBankDepositors()){
                 depositors.add((BankDepositor)d);
             }
 
-            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
             mainForm.setDepositId(deposit.getDepositId());
             mainForm.setDeposits(deposits);
@@ -119,31 +110,14 @@ public class DepositorFrameServlet extends HttpServlet{
         }
         depositor.setDepositorId(depId);
 
-        HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
-
-        HibernateUtil.getSessionFactory()
-                .getCurrentSession().update(depositor);
-
-        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        depositorService.updateBankDepositor(depositor);
     }
 
     private void insertDepositor(HttpServletRequest request) throws HibernateException, ParseException{
 
         BankDepositor depositor = prepareDepositor(request);
 
-        HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
-
-        HibernateUtil.getSessionFactory()
-                .getCurrentSession().save(depositor);
-
-        BankDeposit theDeposit = (BankDeposit)HibernateUtil.getSessionFactory()
-                .getCurrentSession().createQuery("select p from BankDeposit p left join fetch p.depositors where p.depositId = :pid")
-                .setParameter("pid", Long.parseLong(request.getParameter("depositId")))
-                .uniqueResult();
-
-        theDeposit.getDepositors().add(depositor);
-
-        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        depositorService.addBankDepositor(Long.parseLong(request.getParameter("depositId")),depositor);
     }
 
     private BankDepositor prepareDepositor(HttpServletRequest request) throws ParseException{

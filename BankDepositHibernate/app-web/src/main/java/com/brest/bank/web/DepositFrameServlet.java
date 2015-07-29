@@ -6,6 +6,8 @@ import com.brest.bank.service.BankDepositService;
 import com.brest.bank.service.BankDepositServiceImpl;
 import com.brest.bank.service.BankDepositorService;
 import com.brest.bank.service.BankDepositorServiceImpl;
+import com.brest.bank.dao.BankDepositDao;
+import com.brest.bank.dao.BankDepositDaoImpl;
 
 import com.brest.bank.util.HibernateUtil;
 import com.brest.bank.web.forms.MainFrameForm;
@@ -13,6 +15,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,18 +26,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 public class DepositFrameServlet extends HttpServlet{
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    //private BankDepositService depositService = new BankDepositServiceImpl();
-    //private BankDepositorService depositorService = new BankDepositorServiceImpl();
-
-    private Collection deposits;
-    private Collection depositors;
-
-    public SessionFactory sessionFactory;
+    private BankDepositService depositService = new BankDepositServiceImpl();
+    private BankDepositorService depositorService = new BankDepositorServiceImpl();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException,IOException
@@ -54,17 +54,12 @@ public class DepositFrameServlet extends HttpServlet{
         MainFrameForm mainForm = new MainFrameForm();
         try {
             BankDeposit deposit;
-            deposits = new ArrayList<BankDeposit>();
-            depositors  = new ArrayList<BankDepositor>();
+            Collection deposits = new ArrayList<BankDeposit>();
+            Collection depositors  = new ArrayList<BankDepositor>();
 
-            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
-
-            for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
-                    .createCriteria(BankDeposit.class).list()){
+            for(Object d: (List)depositService.getBankDeposits()){
                 deposits.add((BankDeposit)d);
             }
-
-            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
             if (deposits.size() == 0){
                 deposit = new BankDeposit(1L," ",0,0," ",0," ",null);
@@ -74,14 +69,9 @@ public class DepositFrameServlet extends HttpServlet{
                 deposit = (BankDeposit) i.next();
             }
 
-            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
-
-            for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
-                    .createCriteria(BankDepositor.class).list()){
+            for(Object d: depositorService.getBankDepositors()){
                 depositors.add((BankDepositor)d);
             }
-
-            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
             mainForm.setDepositId(deposit.getDepositId());
             mainForm.setDeposits(deposits);
@@ -104,24 +94,16 @@ public class DepositFrameServlet extends HttpServlet{
     }
 
     private void updateDeposit(HttpServletRequest request) throws HibernateException{
-        HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 
         BankDeposit deposit = prepareDeposit(request);
         deposit.setDepositId(Long.parseLong(request.getParameter("depositId")));
 
-        HibernateUtil.getSessionFactory()
-                .getCurrentSession().update(deposit);
-
-        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        depositService.updateBankDeposit(deposit);
     }
 
     private void insertDeposit(HttpServletRequest request) throws HibernateException{
-        HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 
-        HibernateUtil.getSessionFactory()
-                .getCurrentSession().save(prepareDeposit(request));
-
-        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        depositService.addBankDeposit(prepareDeposit(request));
     }
 
     private BankDeposit prepareDeposit(HttpServletRequest request){
