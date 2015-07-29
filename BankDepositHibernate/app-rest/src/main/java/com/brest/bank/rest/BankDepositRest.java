@@ -5,7 +5,14 @@ package com.brest.bank.rest;
  */
 import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
+
+import com.brest.bank.service.BankDepositServiceImpl;
+import com.brest.bank.service.BankDepositorService;
+import com.brest.bank.service.BankDepositService;
+
+import com.brest.bank.service.BankDepositorServiceImpl;
 import com.brest.bank.util.HibernateUtil;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -33,6 +40,9 @@ public class BankDepositRest extends HttpServlet{
     private List<BankDepositor> depositors = new ArrayList<BankDepositor>();
     private BankDeposit deposit;
     private BankDepositor depositor;
+
+    private BankDepositorService depositorService = new BankDepositorServiceImpl();
+    private BankDepositService depositService = new BankDepositServiceImpl();
 
     /**
      * Servlet method responding to HTTP GET methods calls.
@@ -148,10 +158,8 @@ public class BankDepositRest extends HttpServlet{
              */
             if(path[0].equalsIgnoreCase("deposits")){
                 try{
-                    HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 
-                    for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
-                            .createCriteria(BankDeposit.class).list()){
+                    for(Object d: depositService.getBankDeposits()){
                         deposit = (BankDeposit)d;
                         jsonDeposit= new JsonObject();
                             jsonDeposit.addProperty("depositId",deposit.getDepositId());
@@ -165,8 +173,6 @@ public class BankDepositRest extends HttpServlet{
                         jsonDeposits.add(jsonDeposit);
                         deposits.add((BankDeposit)d);
                     }
-
-                    HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
                     out.print(jsonDeposits);
 
@@ -183,10 +189,8 @@ public class BankDepositRest extends HttpServlet{
              */
             if(path[0].equalsIgnoreCase("depositors")){
                 try{
-                    HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 
-                    for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
-                            .createCriteria(BankDepositor.class).list()){
+                    for(Object d: depositorService.getBankDepositors()){
                         depositor = (BankDepositor)d;
                         jsonDepositor= new JsonObject();
                             jsonDepositor.addProperty("depositorId",depositor.getDepositorId());
@@ -201,8 +205,6 @@ public class BankDepositRest extends HttpServlet{
                         jsonDepositors.add(jsonDepositor);
                         depositors.add((BankDepositor)d);
                     }
-
-                    HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
                     out.print(jsonDepositors);
                 } catch (HibernateException e) {
@@ -219,11 +221,8 @@ public class BankDepositRest extends HttpServlet{
              */
             if(path[0].equalsIgnoreCase("deposit") & path[1].equalsIgnoreCase("id")){
                 try{
-                    HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 
-                    deposit = (BankDeposit)HibernateUtil.getSessionFactory().getCurrentSession()
-                            .createCriteria(BankDeposit.class)
-                            .add(Restrictions.eq("depositId", Long.parseLong(path[2]))).uniqueResult();
+                    deposit = depositService.getBankDepositById(Long.parseLong(path[2]));
 
                     jsonDeposit= new JsonObject();
                         jsonDeposit.addProperty("depositId",deposit.getDepositId());
@@ -233,8 +232,6 @@ public class BankDepositRest extends HttpServlet{
                         jsonDeposit.addProperty("depositCurrency",deposit.getDepositCurrency());
                         jsonDeposit.addProperty("depositInterestRate",deposit.getDepositInterestRate());
                         jsonDeposit.addProperty("depositAddConditions",deposit.getDepositAddConditions());
-
-                    HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
                     out.print(jsonDeposit);
                 } catch (HibernateException e) {
@@ -250,11 +247,8 @@ public class BankDepositRest extends HttpServlet{
              */
             if(path[0].equalsIgnoreCase("depositor") & path[1].equalsIgnoreCase("id")){
                 try{
-                    HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 
-                    depositor = (BankDepositor)HibernateUtil.getSessionFactory().getCurrentSession()
-                            .createCriteria(BankDepositor.class)
-                            .add(Restrictions.eq("depositorId", Long.parseLong(path[2]))).uniqueResult();
+                    depositor = depositorService.getBankDepositorById(Long.parseLong(path[2]));
 
                     jsonDepositor= new JsonObject();
                         jsonDepositor.addProperty("depositorId",depositor.getDepositorId());
@@ -265,8 +259,6 @@ public class BankDepositRest extends HttpServlet{
                         jsonDepositor.addProperty("depositorAmountMinusDeposit",depositor.getDepositorAmountMinusDeposit());
                         jsonDepositor.addProperty("depositorDateReturnDeposit",dateFormat.format(depositor.getDepositorDateReturnDeposit()));
                     jsonDepositor.addProperty("depositorMarkReturnDeposit", depositor.getDepositorMarkReturnDeposit());
-
-                    HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
                     out.print(jsonDepositor);
 
@@ -283,11 +275,8 @@ public class BankDepositRest extends HttpServlet{
              */
             if(path[0].equalsIgnoreCase("deposit") & path[1].equalsIgnoreCase("name")){
                 try{
-                    HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 
-                    deposit = (BankDeposit)HibernateUtil.getSessionFactory().getCurrentSession()
-                            .createCriteria(BankDeposit.class)
-                            .add(Restrictions.eq("depositName", path[2])).uniqueResult();
+                    deposit = depositService.getBankDepositByName(path[2]);
 
                     jsonDeposit= new JsonObject();
                         jsonDeposit.addProperty("depositId",deposit.getDepositId());
@@ -297,8 +286,6 @@ public class BankDepositRest extends HttpServlet{
                         jsonDeposit.addProperty("depositCurrency",deposit.getDepositCurrency());
                         jsonDeposit.addProperty("depositInterestRate",deposit.getDepositInterestRate());
                         jsonDeposit.addProperty("depositAddConditions",deposit.getDepositAddConditions());
-
-                    HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
                     out.print(jsonDeposit);
                 } catch (HibernateException e) {
@@ -314,11 +301,8 @@ public class BankDepositRest extends HttpServlet{
              */
             if(path[0].equalsIgnoreCase("depositor") & path[1].equalsIgnoreCase("name")){
                 try{
-                    HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 
-                    depositor = (BankDepositor)HibernateUtil.getSessionFactory().getCurrentSession()
-                            .createCriteria(BankDepositor.class)
-                            .add(Restrictions.eq("depositorName", path[2])).uniqueResult();
+                    depositor = depositorService.getBankDepositorByName(path[2]);
 
                     jsonDepositor= new JsonObject();
                         jsonDepositor.addProperty("depositorId",depositor.getDepositorId());
@@ -329,8 +313,6 @@ public class BankDepositRest extends HttpServlet{
                         jsonDepositor.addProperty("depositorAmountMinusDeposit",depositor.getDepositorAmountMinusDeposit());
                         jsonDepositor.addProperty("depositorDateReturnDeposit",dateFormat.format(depositor.getDepositorDateReturnDeposit()));
                         jsonDepositor.addProperty("depositorMarkReturnDeposit",depositor.getDepositorMarkReturnDeposit());
-
-                    HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
                     out.print(jsonDepositor);
                 } catch (HibernateException e) {
@@ -367,17 +349,8 @@ public class BankDepositRest extends HttpServlet{
         if((path.length==2)&(path[0].equalsIgnoreCase("deposit"))){
             Long depositId = Long.parseLong(path[1]);
             try {
-                HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 
-                BankDeposit deposit = (BankDeposit) HibernateUtil.getSessionFactory().getCurrentSession()
-                        .createCriteria(BankDeposit.class)
-                        .add(Restrictions.eq("depositId", depositId))
-                        .uniqueResult();
-
-                HibernateUtil.getSessionFactory().getCurrentSession()
-                        .delete(deposit);
-
-                HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+                depositService.deleteBankDeposit(depositId);
 
                 out.write("deposit with " + depositId + " was deleted\n");
 
@@ -395,16 +368,8 @@ public class BankDepositRest extends HttpServlet{
         if((path.length==2)&(path[0].equalsIgnoreCase("depositor"))){
             Long depositorId = Long.parseLong(path[1]);
             try {
-                HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 
-                BankDepositor depositor = (BankDepositor)HibernateUtil.getSessionFactory().getCurrentSession()
-                        .createCriteria(BankDepositor.class)
-                        .add(Restrictions.eq("depositorId", depositorId))
-                        .uniqueResult();
-
-                HibernateUtil.getSessionFactory().getCurrentSession().delete(depositor);
-
-                HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+                depositorService.removeBankDepositor(depositorId);
 
                 out.write("depositor with " + depositorId + " was deleted\n");
 
@@ -453,12 +418,7 @@ public class BankDepositRest extends HttpServlet{
 
                     deposit = gson.fromJson(sb.toString(), BankDeposit.class);
 
-                    HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
-
-                    HibernateUtil.getSessionFactory()
-                            .getCurrentSession().save(deposit);
-
-                    HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+                    depositService.addBankDeposit(deposit);
 
                     String jsonDeposit = gson.toJson(deposit);
                     out.write(jsonDeposit);
@@ -493,19 +453,7 @@ public class BankDepositRest extends HttpServlet{
                     depositor = gson.fromJson(sb.toString(), BankDepositor.class);
                     depositor.setDepositId(depositId);
 
-                    HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
-
-                    HibernateUtil.getSessionFactory()
-                            .getCurrentSession().save(depositor);
-
-                    BankDeposit theDeposit = (BankDeposit) HibernateUtil.getSessionFactory().getCurrentSession()
-                            .createCriteria(BankDeposit.class)
-                            .add(Restrictions.eq("depositId", depositId))
-                            .uniqueResult();
-
-                    theDeposit.getDepositors().add(depositor);
-
-                    HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+                    depositorService.addBankDepositor(depositId,depositor);
 
                     String jsonDepositor = gson.toJson(depositor);
                     out.write(jsonDepositor);
@@ -565,12 +513,7 @@ public class BankDepositRest extends HttpServlet{
 
                     deposit = gson.fromJson(sb.toString(), BankDeposit.class);
 
-                    HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
-
-                    HibernateUtil.getSessionFactory()
-                            .getCurrentSession().update(deposit);
-
-                    HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+                    depositService.updateBankDeposit(deposit);
 
                     String jsonDeposit = gson.toJson(deposit);
                     out.write(jsonDeposit);
@@ -604,12 +547,7 @@ public class BankDepositRest extends HttpServlet{
 
                     depositor = gson.fromJson(sb.toString(), BankDepositor.class);
 
-                    HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
-
-                    HibernateUtil.getSessionFactory()
-                            .getCurrentSession().update(depositor);
-
-                    HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+                    depositorService.updateBankDepositor(depositor);
 
                     String jsonDepositor = gson.toJson(depositor);
                     out.write(jsonDepositor);

@@ -81,7 +81,7 @@ $('#btnSendMessage').click(function () {
     else {
         if (s=="POST") {
             if ($('#JsonRequest').is(':visible'))
-                sendMessage($('#URL').val(), s ,$("#JsonRequest").val(),"Deposit create");
+                sendMessage($('#URL').val(), s ,$("#JsonRequest").val(),"Create");
             else {
                 if ($('#depositForm').is(':visible'))
                     sendMessage($('#URL').val(), s ,formDepositToJSON(),"Deposit create");
@@ -94,20 +94,14 @@ $('#btnSendMessage').click(function () {
         }
         else {
             if(s=="DELETE"){
-                if ($('#depositForm').is(':visible'))
-                   sendMessage($('#URL').val()+ '/' + $('#depositId').val(), s ," ","Deposit removed");
-                else {
-                    if ($('#depositorForm').is(':visible'))
-                        sendMessage($('#URL').val()+ '/' + $('#depositorId').val(), s ," ","Depositor removed");
-                    else alert("Form is anvisible");
-                }
+                sendMessage($('#URL').val(), s ," ","Remove");
             }
             else {
                 if ($('#depositForm').is(':visible'))
                     sendMessage($('#URL').val(), s ,formDepositToJSON(),"Deposit updated");
                 else {
                     if ($('#JsonRequest').is(':visible'))
-                       sendMessage($('#URL').val(), s ,$("#JsonRequest").val(),"Deposit update");
+                       sendMessage($('#URL').val(), s ,$("#JsonRequest").val(),"Update");
                     else {
                         if ($('#depositorForm').is(':visible'))
                             sendMessage($('#URL').val(), s ,formDepositorToJSON(),"Depositor updated");

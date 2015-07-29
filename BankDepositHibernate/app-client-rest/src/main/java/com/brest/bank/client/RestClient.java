@@ -1,12 +1,6 @@
 package com.brest.bank.client;
 
-import com.brest.bank.domain.BankDeposit;
-import com.brest.bank.domain.BankDepositor;
-
 import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -33,14 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 public class RestClient extends HttpServlet {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-    private List<BankDeposit> deposits = new ArrayList<BankDeposit>();
-    private List<BankDepositor> depositors = new ArrayList<BankDepositor>();
-    private BankDeposit deposit;
-    private BankDepositor depositor;
-
-    public static String USER_AGENT = "";
 
     /**
      * Servlet method responding to HTTP GET methods calls.
