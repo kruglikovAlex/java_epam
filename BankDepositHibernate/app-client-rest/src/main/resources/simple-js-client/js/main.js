@@ -94,6 +94,7 @@ $('#btnSendMessage').click(function () {
         }
         else {
             if(s=="DELETE"){
+
                 sendMessage($('#URL').val(), s ," ","Remove");
             }
             else {
