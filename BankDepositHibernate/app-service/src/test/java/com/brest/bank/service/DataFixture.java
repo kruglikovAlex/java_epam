@@ -37,12 +37,12 @@ public class DataFixture {
     }
 
     public static BankDeposit getNullDeposit() {
-        BankDeposit deposit = new BankDeposit(null,null,null,null,null,null,null);
+        BankDeposit deposit = new BankDeposit(null,null,null,null,null,null,null,null);
         return deposit;
     }
 
     public static BankDeposit getNotNullIdDeposit() {
-        BankDeposit deposit = new BankDeposit(7L,null,null,null,null,null,null);
+        BankDeposit deposit = new BankDeposit(7L,null,null,null,null,null,null,null);
         return deposit;
     }
 
