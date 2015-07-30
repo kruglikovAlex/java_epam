@@ -84,12 +84,23 @@ public class BankDepositTest {
     @Test
     public void testGetDepositors() throws Exception {
         Set depositors = new HashSet<BankDepositor>();
-        depositors.add(new BankDepositor(1L,"name",dateFormat.parse("2015-01-01"),100,10,10,dateFormat.parse("2015-10-10"),0));
+        depositors.add(new BankDepositor(1L,"name",dateFormat.parse("2015-01-01"),100,10,10,dateFormat.parse("2015-10-10"),0,null));
 
         LOGGER.debug("testGetDepositors({})",depositors);
         deposit.setDepositors(depositors);
 
         assertEquals(depositors, deposit.getDepositors());
+    }
+
+    @Test
+    public void testGetDepositors2() throws Exception {
+        BankDepositor depositor = new BankDepositor(1L,"name",dateFormat.parse("2015-01-01"),100,10,10,dateFormat.parse("2015-10-10"),0,null);
+
+        LOGGER.debug("testGetDepositors({})",depositor);
+        deposit.getDepositors().add(depositor);
+
+        assertTrue(deposit.getDepositors().iterator().hasNext());
+        assertEquals(depositor, deposit.getDepositors().iterator().next());
     }
 
     @Test

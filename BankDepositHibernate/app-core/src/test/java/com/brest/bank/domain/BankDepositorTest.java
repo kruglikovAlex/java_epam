@@ -112,7 +112,7 @@ public class BankDepositorTest {
 
     @Test
     public void testToString() throws Exception {
-        depositors = new BankDepositor(1L,"name",dateFormat.parse("2015-01-01"),100,10,30,dateFormat.parse("2015-10-10"),0);
+        depositors = new BankDepositor(1L,"name",dateFormat.parse("2015-01-01"),100,10,30,dateFormat.parse("2015-10-10"),0,null);
         LOGGER.debug("testToString({})", depositors.toString());
 
         assertEquals("BankDepositor: { depositorId=1, depositorName=name, " +
