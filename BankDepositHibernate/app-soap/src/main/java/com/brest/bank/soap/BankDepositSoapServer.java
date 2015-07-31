@@ -1,45 +1,83 @@
 package com.brest.bank.soap;
 
-import java.util.*;
+import java.io.*;
+import java.net.*;
 
 import javax.servlet.ServletConfig;
 import javax.xml.soap.*;
-import javax.xml.messaging.*;
-import javax.servlet.ServletException;
+import javax.activation.*;
 
-/**
- * Created by alexander on 22.5.15.
- */
-public class BankDepositSoapServer extends JAXMServlet implements ReqRespListener {
-    static MessageFactory messageFactory = null;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+public class BankDepositSoapServer extends HttpServlet {
+    private SOAPConnection connection;
 
     public void init(ServletConfig servletConfig) throws ServletException{
         super.init(servletConfig);
         try{
-            messageFactory = MessageFactory.newInstance();
-        }catch (SOAPException e){
+            SOAPConnectionFactory connectionFactory = SOAPConnectionFactory.newInstance();
+            connection = connectionFactory.createConnection();
+        }catch (Exception e){
 
         }
     }
 
-    public SOAPMessage onMessage(SOAPMessage msg){
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String outString = "<HTML><H1>Sending and reading the SOAP Message</H1><P>";
         try{
-            SOAPPart soapPart = msg.getSOAPPart();
-            SOAPEnvelope incomingEnvelope = soapPart.getEnvelope();
-            SOAPBody body = incomingEnvelope.getBody();
+            MessageFactory messageFactory = MessageFactory.newInstance();
+            SOAPMessage outGoingMessage = messageFactory.createMessage();
 
-            Iterator iterator = body.getChildElements(incomingEnvelope.createName("numberAvailable", "laptops", "http://www.XMLPowerCorp.com"));
+            SOAPPart soapPart = outGoingMessage.getSOAPPart();
+            SOAPEnvelope envelope = soapPart.getEnvelope();
+            SOAPHeader header = envelope.getHeader();
+            SOAPBody body = envelope.getBody();
 
-            SOAPElement element = (SOAPElement)iterator.next();
+            body.addBodyElement(envelope.createName("getAllDeposits","methodName","http://www.XMLPowerCorp.com")).addTextNode("testBankDeposit");
 
-            SOAPMessage message = messageFactory.createMessage();
-            SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
+            StringBuffer clientUrl = new StringBuffer();
+            clientUrl.append(request.getScheme()).append("://").append(request.getServerName());
+            clientUrl.append(":").append(request.getServerPort()).append(request.getContextPath());
 
-            envelope.getBody().addChildElement(envelope.createName("Response")).addTextNode("Got the SOAP message indicating there are " + element.getValue() + " laptops available.");
+            String baseUrl = clientUrl.toString();
+            URL url = new URL(baseUrl+"/indexSoap.html");
 
-            return message;
-        }catch (SOAPException e){
-            return null;
+            AttachmentPart attachmentPart = outGoingMessage.createAttachmentPart(new DataHandler(url));
+
+            attachmentPart.setContentType("text/html");
+            outGoingMessage.addAttachmentPart(attachmentPart);
+
+            URL server = new URL(baseUrl+"/soap/client");
+
+            FileOutputStream outGoingFile = new FileOutputStream("out.msg");
+            outGoingMessage.writeTo(outGoingFile);
+            outGoingFile.close();
+
+            outString += "SOAP outgoingMessage sent (see out.msg). <BR>";
+
+            SOAPMessage incomingMessage = connection.call(outGoingMessage, server);
+
+            if(incomingMessage != null){
+                FileOutputStream incomingFile = new FileOutputStream("in.msg");
+                incomingMessage.writeTo(incomingFile);
+                incomingFile.close();
+                outString += "SOAP outgoingMessage received (see in.msg).</HTML>";
+            }
+        }catch (Throwable e){
+
+        }
+        try{
+            OutputStream outputStream = response.getOutputStream();
+            outputStream.write(outString.getBytes());
+            outputStream.flush();
+            outputStream.close();
+        }catch (IOException e){
+
         }
     }
 }
