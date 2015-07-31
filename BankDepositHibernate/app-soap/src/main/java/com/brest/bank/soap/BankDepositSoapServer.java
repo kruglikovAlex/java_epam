@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class BankDepositSoapServer extends HttpServlet {
+
     private SOAPConnection connection;
 
     public void init(ServletConfig servletConfig) throws ServletException{
