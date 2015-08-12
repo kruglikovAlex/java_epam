@@ -1,84 +1,52 @@
 package com.brest.bank.soap;
 
-import java.io.*;
-import java.net.*;
-
 import javax.servlet.ServletConfig;
-import javax.xml.soap.*;
-import javax.activation.*;
-
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import javax.xml.messaging.JAXMServlet;
+import javax.xml.messaging.ReqRespListener;
+import javax.xml.soap.*;
+import java.util.Iterator;
 
-public class BankDepositSoapServer extends HttpServlet {
-
-    private SOAPConnection connection;
+/**
+ * Created by alexander on 22.5.15.
+ */
+public class BankDepositSoapServer extends JAXMServlet implements ReqRespListener {
+    static MessageFactory messageFactory = null;
 
     public void init(ServletConfig servletConfig) throws ServletException{
         super.init(servletConfig);
         try{
-            SOAPConnectionFactory connectionFactory = SOAPConnectionFactory.newInstance();
-            connection = connectionFactory.createConnection();
-        }catch (Exception e){
+            messageFactory = MessageFactory.newInstance();
+
+        }catch (SOAPException e){
 
         }
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String outString = "<HTML><H1>Sending and reading the SOAP Message</H1><P>";
+    public SOAPMessage onMessage(SOAPMessage msg) {
         try{
-            MessageFactory messageFactory = MessageFactory.newInstance();
-            SOAPMessage outGoingMessage = messageFactory.createMessage();
+            SOAPPart soapPart = msg.getSOAPPart();
+            SOAPEnvelope incomingEnvelope = soapPart.getEnvelope();
+            SOAPBody body = incomingEnvelope.getBody();
 
-            SOAPPart soapPart = outGoingMessage.getSOAPPart();
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            SOAPHeader header = envelope.getHeader();
-            SOAPBody body = envelope.getBody();
+            //-- TODO проверить имя метода
+            //-- и параметры
+            //-- выполнить метод сервиса
+            //-- вернуть клиенту SOAP сообщение с результатами метода сервиса
 
-            body.addBodyElement(envelope.createName("getAllDeposits","methodName","http://www.XMLPowerCorp.com")).addTextNode("testBankDeposit");
+            Iterator iterator = body.getChildElements(incomingEnvelope.createName("getAllDeposits","methodName",  "http://www.XMLPowerCorp.com"));
 
-            StringBuffer clientUrl = new StringBuffer();
-            clientUrl.append(request.getScheme()).append("://").append(request.getServerName());
-            clientUrl.append(":").append(request.getServerPort()).append(request.getContextPath());
+            SOAPElement element = (SOAPElement)iterator.next();
 
-            String baseUrl = clientUrl.toString();
-            URL url = new URL(baseUrl+"/indexSoap.html");
+            SOAPMessage message = messageFactory.createMessage();
+            SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
 
-            AttachmentPart attachmentPart = outGoingMessage.createAttachmentPart(new DataHandler(url));
+            envelope.getBody().addChildElement(envelope.createName("Response")).addTextNode("Got the SOAP message indicating there are " + element.getValue() + " getAllDeposits available.");
 
-            attachmentPart.setContentType("text/html");
-            outGoingMessage.addAttachmentPart(attachmentPart);
-
-            URL server = new URL(baseUrl+"/soap/client");
-
-            FileOutputStream outGoingFile = new FileOutputStream("out.msg");
-            outGoingMessage.writeTo(outGoingFile);
-            outGoingFile.close();
-
-            outString += "SOAP outgoingMessage sent (see out.msg). <BR>";
-
-            SOAPMessage incomingMessage = connection.call(outGoingMessage, server);
-
-            if(incomingMessage != null){
-                FileOutputStream incomingFile = new FileOutputStream("in.msg");
-                incomingMessage.writeTo(incomingFile);
-                incomingFile.close();
-                outString += "SOAP outgoingMessage received (see in.msg).</HTML>";
-            }
-        }catch (Throwable e){
-
-        }
-        try{
-            OutputStream outputStream = response.getOutputStream();
-            outputStream.write(outString.getBytes());
-            outputStream.flush();
-            outputStream.close();
-        }catch (IOException e){
-
+            return message;
+        }catch (SOAPException e){
+            return null;
         }
     }
 }
+
