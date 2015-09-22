@@ -17,7 +17,6 @@ public class BankDepositSoapServer extends JAXMServlet implements ReqRespListene
         super.init(servletConfig);
         try{
             messageFactory = MessageFactory.newInstance();
-
         }catch (SOAPException e){
 
         }

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="depositsService.xsd">
+    <addBankDeposit URI="http://localhost:8080/BankDeposit/addbankDeposit">
+        <Parameter>
+            <depositName>Name</depositName>
+            <depositMinTerm>12</depositMinTerm>
+            <depositMinAmount>1000</depositMinAmount>
+            <depositCurrency>USD</depositCurrency>
+            <depositInterestRate>4</depositInterestRate>
+            <bankDepositors></bankDepositors>
+        </Parameter>
+    </addBankDeposit>
+    <getBankDepositById URI="http://localhost:8080/BankDeposit/getBankDepositById">
+        <Parameter>1</Parameter>
+        <Result>
+            <depositId>1</depositId>
+            <depositName>Name</depositName>
+            <depositMinTerm>12</depositMinTerm>
+            <depositMinAmount>1000</depositMinAmount>
+            <depositCurrency>USD</depositCurrency>
+            <depositInterestRate>6</depositInterestRate>
+            <bankDepositors></bankDepositors>
+        </Result>
+    </getBankDepositById>
+</services>

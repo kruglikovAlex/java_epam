@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="SoapService"
+             targetNamespace="http://client.bank.brest.com/Soap/"
+             xmlns:tns="http://client.bank.brest.com/Soap/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:wsoap= "http://www.w3.org/ns/wsdl/soap"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://client.bank.brest.com/Soap/"
+                    xmlns="http://client.bank.brest.com/Soap/">
+
+            <xsd:import namespace='http://www.BankDeposit/Deposits'
+                        schemaLocation="deposits.xsd"/>
+
+            <xsd:include schemaLocation="deposits.xsd"/>
+
+        </xsd:schema>
+    </wsdl:types>
+
+    <wsdl:message name="getDepositsRequestMessage">
+        <wsdl:part name="part" element="tns:getDepositsRequest"/>
+    </wsdl:message>
+
+    <wsdl:message name="getDepositsResponseMessage">
+        <wsdl:part name="part" element="tns:getDepositsResponse"/>
+    </wsdl:message>
+
+    <wsdl:message name="getDepositByIdRequestMessage">
+        <wsdl:documentation>Request for getBankDepositById</wsdl:documentation>
+        <wsdl:part name="part" element="tns:getDepositByIdRequest"/>
+    </wsdl:message>
+    
+    <wsdl:message name="getDepositByIdResponseMessage">
+        <wsdl:documentation>Response for getBankDepositById</wsdl:documentation>
+        <wsdl:part name="part" element="tns:getDepositByIdResponse"/>
+    </wsdl:message>
+
+    <wsdl:message name="getDepositByNameRequestMessage">
+        <wsdl:part name="part" element="tns:getDepositByNameRequest"/>
+    </wsdl:message>
+
+    <wsdl:message name="getDepositByNameResponseMessage">
+        <wsdl:part name="part" element="tns:getDepositByNameResponse"/>
+    </wsdl:message>
+
+    <wsdl:message name="addDepositRequstMessage">
+        <wsdl:part name="part" element="tns:addDepositRequest"/>
+    </wsdl:message>
+    <wsdl:message name="addDepositResponseMessage">
+        <wsdl:part name="part" element="tns:addDepositResponse"/>
+    </wsdl:message>
+    <wsdl:message name="addDuplicateFault">
+        <wsdl:part name="fault" element="tns:addDuplicate"/>
+    </wsdl:message>
+
+    <wsdl:message name="updateDepositRequestMessage">
+        <wsdl:part name="part" element="tns:updateDepositRequest"/>
+    </wsdl:message>
+
+    <wsdl:message name="updateDepositResponseMessage">
+        <wsdl:part name="part" element="tns:updateDepositResponse"/>
+    </wsdl:message>
+
+    <wsdl:message name="deleteDepositRequestMessage">
+        <wsdl:part name="part" element="tns:deleteDepositRequest"/>
+    </wsdl:message>
+
+    <wsdl:message name="deleteDepositResponseMessage">
+        <wsdl:part name="part" element="deleteDepositResponse"/>
+    </wsdl:message>
+
+    <wsdl:portType name="DepositServicePortType">
+        <wsdl:documentation>
+            Во многих отношениях wsdl:portType можно считать логическим эквивалентом интерфейса Java,
+            так что элементы wsdl:operation эквивалентны методам, элементы wsdl:input - параметрам методов,
+            элементы wsdl:output - результатам методов, а элементы wsdl:fault - проверяемым исключениям.
+            Эти соответствия используются при генерировании кода Java из WSDL, как и в большинстве инструментов,
+            создающих WSDL из существующего кода Java.
+        </wsdl:documentation>
+        <wsdl:operation name="getDeposits">
+            <wsdl:input message="tns:getDepositsRequestMessage"/>
+            <wsdl:output message="tns:getDepositsResponseMessage"/>
+        </wsdl:operation>
+        
+        <wsdl:operation name="getDepositById">
+            <wsdl:input message="tns:getDepositByIdRequestMessage"/>
+            <wsdl:output message="tns:getDepositByIdResponseMessage"/>
+        </wsdl:operation>
+        
+        <wsdl:operation name="getDepositByName">
+            <wsdl:input message="tns:getDepositByNameRequestMessage"/>
+            <wsdl:output message="tns:getDepositByNameResponseMessage"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="addDeposit">
+            <wsdl:input message="tns:addDepositRequestMessage"/>
+            <wsdl:output message="tns:addDepositResponseMessage"/>
+            <wsdl:fault name="addDuplicateFault" message="addDuplicateFault"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="updateDeposit">
+            <wsdl:input message="tns:updateDepositRequestMessage"/>
+            <wsdl:output message="tns:updateResponseMessage"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="deleteDeposit">
+            <wsdl:input message="tns:deleteDepositRequestMessage"/>
+            <wsdl:output message="tns:deleteDepositResponseMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="DepositServiceBinding" type="tns:DepositServicePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="getDeposits">
+            <soap:operation soapAction="urn:getDeposits"/>
+            <wsdl:input>
+                <soap:body/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="getDepositById">
+            <soap:operation soapAction="urn:getDepositById"/>
+            <wsdl:input>
+                <soap:body/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="getDepositByName">
+            <soap:operation soapAction="urn:getDepositByName"/>
+            <wsdl:input>
+                <soap:body/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="addDeposit">
+            <soap:operation soapAction="urn:addDeposit"/>
+            <wsdl:input>
+                <soap:body/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body/>
+            </wsdl:output>
+            <wsdl:fault name="addDuplicateFault">
+                <soap:fault name="addDuplicateFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+
+        <wsdl:operation name="updateDeposit">
+            <soap:operation soapAction="urn:updateDeposit"/>
+            <wsdl:input>
+                <soap:body/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body/>
+            </wsdl:output>
+        </wsdl:operation>
+
+        <wsdl:operation name="deleteDeposit">
+            <soap:operation soapAction="urn:deleteDeposit"/>
+            <wsdl:input>
+                <soap:body/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body/>
+            </wsdl:output>
+        </wsdl:operation>
+
+    </wsdl:binding>
+
+    <wsdl:service name="DepositService">
+        <wsdl:port name="DepositServicePort" binding="tns:DepositServiceBinding">
+            <soap:address location="http://localhost:8080/BankDeposit/Soap/"/>
+        </wsdl:port>
+    </wsdl:service>
+
+</wsdl:definitions>

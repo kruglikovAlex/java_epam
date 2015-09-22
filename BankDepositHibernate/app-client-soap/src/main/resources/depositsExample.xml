@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type='text/xsl' href='deposits.xsl'?>
+<bankDeposits xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="deposits.xsd">
+    <bankDeposit>
+        <depositId>1</depositId>
+        <depositName>Name1</depositName>
+        <depositMinTerm>12</depositMinTerm>
+        <depositMinAmount>100</depositMinAmount>
+        <depositCurrency>USD</depositCurrency>
+        <depositInterestRate>100</depositInterestRate>
+        <depositAddConditions>Conditions</depositAddConditions>
+        <bankDepositors>
+            <bankDepositor>
+                <depositorId>1</depositorId>
+                <depositorName>Name11</depositorName>
+                <depositorDateDeposit>2015-01-01</depositorDateDeposit>
+                <depositorAmountDeposit>1000</depositorAmountDeposit>
+                <depositorAmountPlusDeposit>10</depositorAmountPlusDeposit>
+                <depositorAmountMinusDeposit>10</depositorAmountMinusDeposit>
+                <depositorDateReturnDeposit>2016-01-01</depositorDateReturnDeposit>
+                <depositorMarkReturnDeposit>0</depositorMarkReturnDeposit>
+            </bankDepositor>
+            <bankDepositor>
+                <depositorId>2</depositorId>
+                <depositorName>Name12</depositorName>
+                <depositorDateDeposit>2015-02-02</depositorDateDeposit>
+                <depositorAmountDeposit>100</depositorAmountDeposit>
+                <depositorAmountPlusDeposit>100</depositorAmountPlusDeposit>
+                <depositorAmountMinusDeposit>10</depositorAmountMinusDeposit>
+                <depositorDateReturnDeposit>2016-02-02</depositorDateReturnDeposit>
+                <depositorMarkReturnDeposit>1</depositorMarkReturnDeposit>
+            </bankDepositor>
+        </bankDepositors>
+    </bankDeposit>
+    <bankDeposit>
+        <depositId>2</depositId>
+        <depositName>Name2</depositName>
+        <depositMinTerm>7</depositMinTerm>
+        <depositMinAmount>1000</depositMinAmount>
+        <depositCurrency>EUR</depositCurrency>
+        <depositInterestRate>7</depositInterestRate>
+        <depositAddConditions>Conditions</depositAddConditions>
+        <bankDepositors></bankDepositors>
+    </bankDeposit>
+</bankDeposits>

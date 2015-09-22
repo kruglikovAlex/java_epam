@@ -71,5 +71,12 @@
             <artifactId>javaee-api</artifactId>
         </dependency>
 
+        <!-- for generate WSDL -->
+        <dependency>
+            <groupId>com.predic8</groupId>
+            <artifactId>soa-model-core</artifactId>
+        </dependency>
+
+
     </dependencies>
 </project>

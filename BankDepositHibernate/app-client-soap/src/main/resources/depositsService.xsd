@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xsd:import namespace='http://www.BankDeposit/Deposits'
+            schemaLocation="deposits.xsd"/>
+
+    <xsd:include schemaLocation="deposits.xsd"/>
+
+    <xsd:complexType name="getDeposits">
+        <xsd:sequence>
+            <xsd:element name="Result" type="bankDeposits_type"/>
+        </xsd:sequence>
+        <xsd:attribute name="URI" type="xsd:anyURI"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="getDepositById">
+        <xsd:sequence>
+            <xsd:element name="Parameter" type="xsd:long"/>
+            <xsd:element name="Result" type="bankDeposit_type"/>
+        </xsd:sequence>
+        <xsd:attribute name="URI" type="xsd:anyURI"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="getDepositByName">
+        <xsd:sequence>
+            <xsd:element name="Parameter" type="xsd:string"/>
+            <xsd:element name="Result" type="bankDeposit_type"/>
+        </xsd:sequence>
+        <xsd:attribute name="URI" type="xsd:anyURI"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="addDeposit">
+        <xsd:sequence>
+            <xsd:element name="Parameter" type="bankDeposit_type"/>
+        </xsd:sequence>
+        <xsd:attribute name="URI" type="xsd:anyURI"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="updateDeposit">
+        <xsd:sequence>
+            <xsd:element name="Parameter" type="bankDeposit_type"/>
+        </xsd:sequence>
+        <xsd:attribute name="URI" type="xsd:anyURI"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="deleteDeposit">
+        <xsd:sequence>
+            <xsd:element name="Parameter" type="xsd:long"/>
+        </xsd:sequence>
+        <xsd:attribute name="URI" type="xsd:anyURI"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="depositServices">
+        <xsd:all>
+            <xsd:element name="getAllBankDeposits" type="getDeposits" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="getBankDepositById" type="getDepositById" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="getBankDepositByName" type="getDepositByName" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="addBankDeposit" type="addDeposit" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="updateBankDeposit" type="updateDeposit" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="deleteBankDeposit" type="deleteDeposit" minOccurs="0" maxOccurs="1"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:element name="services" type="depositServices"/>
+
+</xsd:schema>

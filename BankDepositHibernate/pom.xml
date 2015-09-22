@@ -312,6 +312,13 @@
                 <version>20141113</version>
             </dependency>
 
+            <!-- for generate WSDL -->
+            <dependency>
+                <groupId>com.predic8</groupId>
+                <artifactId>soa-model-core</artifactId>
+                <version>1.5.1</version>
+            </dependency>
+
         </dependencies>
 
     </dependencyManagement>
@@ -364,6 +371,10 @@
                             <resources>
                                 <resource>
                                     <directory>app-client-rest/src/main/resources/simple-js-client/js</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                                <resource>
+                                    <directory>app-client-soap/src/main/resources/simple-js-client/js</directory>
                                     <filtering>true</filtering>
                                 </resource>
                             </resources>
