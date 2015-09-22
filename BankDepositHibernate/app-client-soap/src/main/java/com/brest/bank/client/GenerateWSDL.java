@@ -5,9 +5,15 @@ package com.brest.bank.client;
  */
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.brest.bank.domain.BankDeposit;
+//import com.predic8.wsdl.soap11.SOAPOperation;
+import com.predic8.wsdl.soap11.SOAPBinding;
+import com.predic8.wsdl.soap11.SOAPOperation;
+import com.predic8.wsdl.soap12.SOAPBody;
+import com.sun.org.apache.xml.internal.utils.NameSpace;
 import groovy.xml.MarkupBuilder;
 
 import com.predic8.wsdl.*;
@@ -15,6 +21,10 @@ import com.predic8.wsdl.creator.*;
 import com.predic8.schema.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import sun.plugin2.message.transport.Transport;
+
+import javax.jws.soap.SOAPBinding.Style;
+import javax.xml.soap.SOAPElement;
 
 import static com.predic8.schema.Schema.*;
 
@@ -48,6 +58,8 @@ public class GenerateWSDL {
             schema.newElement("deleteDepositResponse").newComplexType().newSequence().newElement("number", INT);
 
         Definitions wsdl = new Definitions("http://client.bank.brest.com/Soap/", "SoapService");
+        //<definitions targetNamespace='http://thomas-bayer.com/blz/' xmlns:wsdl='http://schemas.xmlsoap.org/wsdl/' xmlns='http://schemas.xmlsoap.org/wsdl/' xmlns:wsaw='http://www.w3.org/2006/05/addressing/wsdl' xmlns:tns='http://thomas-bayer.com/blz/' xmlns:http='http://schemas.xmlsoap.org/wsdl/http/' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:mime='http://schemas.xmlsoap.org/wsdl/mime/' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:soap12='http://schemas.xmlsoap.org/wsdl/soap12/'>
+
         wsdl.addSchema(schema);
 
         Element el1 = new Element();
@@ -117,6 +129,36 @@ public class GenerateWSDL {
         Operation opDel = pt.newOperation("deleteDeposit");
         opDel.newInput("deleteDepositRequestMessage").setMessage(msgDeleteIn);
         opDel.newOutput("deleteDepositResponseMessage").setMessage(msgDeleteOut);
+
+
+        //<wsdl:binding name="DepositServiceBinding" type="tns:DepositServicePortType">
+        Binding bd = wsdl.newBinding("DepositServiceBinding");
+        bd.setType(pt);
+
+        //<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        //SOAPBinding soapBinding =
+        //bd.newSOAP11Binding("http://schemas.xmlsoap.org/soap/http","document");
+
+        //soapBinding.setTransport("http://schemas.xmlsoap.org/soap/http");
+
+        BindingOperation binOp = bd.newBindingOperation("getDeposits");
+
+        SOAPOperation soapOp = binOp.newSOAP11Operation();
+        soapOp.setSoapAction("getDeposits");
+
+        BindingInput in = binOp.newInput();
+        SOAPBody soapBodyIn = in.newSOAP12Body();
+        soapBodyIn.setName("soap");
+        Part p = new Part();
+        p.setElement(el1);
+        List<Part> list = new ArrayList<Part>();
+        list.add(p);
+        p.setElement(el2);
+        list.add(p);
+        soapBodyIn.setParts(list);
+
+        BindingOutput out = binOp.newOutput();
+        SOAPBody soapBodyOut = out.newSOAP12Body();
 
         return wsdl;
     }
