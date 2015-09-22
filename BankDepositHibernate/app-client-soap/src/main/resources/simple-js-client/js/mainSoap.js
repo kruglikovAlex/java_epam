@@ -392,6 +392,7 @@ function removeDepositor() {
     });
 }
 
+
 function send(url,serviceMethod,dataJson,log) {
     console.log(log);
     var depId = $('#depositId').val();
