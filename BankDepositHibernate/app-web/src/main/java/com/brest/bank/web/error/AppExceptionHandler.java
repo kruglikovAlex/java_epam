@@ -47,7 +47,7 @@ public class AppExceptionHandler extends HttpServlet{
         response.setContentType("text/html");
 
         PrintWriter out = response.getWriter();
-        out.write("<html><head><title>Exception/Error Details</title></head><body>");
+        /*out.write("<html><head><title>Exception/Error Details</title></head><body>");
         if(statusCode != 500){
             out.write("<h3>Error Details</h3>");
             out.write("<strong>Status Code</strong>:"+statusCode+"<br>");
@@ -67,7 +67,34 @@ public class AppExceptionHandler extends HttpServlet{
 
         out.write("<br><br>");
         out.write("<a href=\"main\">Home Page</a>");
-        out.write("</body></html>");
+        out.write("</body></html>");*/
+
+        String title = "Error/Exception Information";
+        String docType =
+                "<!doctype html public \"-//w3c//dtd html 4.0 " +
+                        "transitional//en\">\n";
+        out.println(docType +
+                "<html>\n" +
+                "<head><title>" + title + "</title></head>\n" +
+                "<body bgcolor=\"#f0f0f0\">\n");
+
+        if (throwable == null && statusCode == null){
+            out.println("<h2>Error information is missing</h2>");
+            out.println("Please return to the <a href=\"" +
+                    response.encodeURL("http://localhost:8080/") +
+                    "\">Home Page</a>.");
+        }else if (statusCode != null){
+            out.println("The status code : " + statusCode);
+            out.write("<strong>Requested URI</strong>:"+requestUri);
+        }else{
+            out.println("<h2>Error information</h2>");
+            out.println("Servlet Name : " + servletName + "</br></br>");
+            out.println("Exception Type : " + throwable.getClass( ).getName( ) + "</br></br>");
+            out.println("The request URI: " + requestUri + "<br><br>");
+            out.println("The exception message: " + throwable.getMessage( ));
+        }
+        out.println("</body>");
+        out.println("</html>");
 
     }
 }
