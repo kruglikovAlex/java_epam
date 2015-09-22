@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html xmlns:c="http://www.w3.org/1999/XSL/Transform">
+<html>
 <head lang="en">
     <meta charset="UTF-8">
     <title>BankDeposit management</title>
@@ -12,10 +11,10 @@
 
 		URL-> http://localhost:8080/BankDeposit/rest <input id="URL" name="URL" type="text" required size="70"/><br>
 		<div class="radio">
-			<input type="radio" name="httpMethod" checked>GET</input>
-			<input type="radio" name="httpMethod">PUT</input>
-			<input type="radio" name="httpMethod">POST</input>
-			<input type="radio" name="httpMethod">DELETE</input><p></p>
+			<input type="radio" name="httpMethod" checked/>GET
+			<input type="radio" name="httpMethod"/>PUT
+			<input type="radio" name="httpMethod"/>POST
+			<input type="radio" name="httpMethod"/>DELETE<p></p>
 		</div>
 
 			<fieldset id="depositRequest" style="width: 84%" >
@@ -23,7 +22,7 @@
 
 				<button id="btnRequestRaw">Raw</button>
 				<button id="btnRequestForm">Form deposit</button>
-				<button id="btnRequestFormDepositor">Form depositor</button></br>
+				<button id="btnRequestFormDepositor">Form depositor</button><br>
 
 				<textarea id="JsonRequest" name="JsonRequest" rows="5" cols="150" ></textarea>
 
@@ -43,7 +42,7 @@
 							</th>
 							<tr>
 								<td></td>
-								<td><input id="depositId" name="depositId" type="text" disabled size="10"/></a></td>
+								<td><input id="depositId" name="depositId" type="text" disabled size="10"/></td>
 								<td><input id="depositName" name="depositName" type="text" required/></td>
 								<td><input id="depositMinTerm" name="depositMinTerm" type="text" size="3"></td>
 								<td><input id="depositMinAmount" name="depositMinAmount" type="text" size="15"/></td>
@@ -109,7 +108,7 @@
 
 	<p></p>
 	<div class="depositListArea">
-		<table id="depositList" frame="hsides" rules="cols" style="width: 80%"><td></td></table>
+		<table id="depositList" frame="hsides" rules="cols" style="width: 80%"></table>
 	</div>
 	<p></p>
 	<div class="depositorListArea">
