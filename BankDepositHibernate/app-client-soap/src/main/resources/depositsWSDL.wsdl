@@ -47,7 +47,7 @@
         <wsdl:part name="part" element="tns:getDepositByNameResponse"/>
     </wsdl:message>
 
-    <wsdl:message name="addDepositRequstMessage">
+    <wsdl:message name="addDepositRequestMessage">
         <wsdl:part name="part" element="tns:addDepositRequest"/>
     </wsdl:message>
     <wsdl:message name="addDepositResponseMessage">

@@ -5,7 +5,9 @@ package com.brest.bank.client;
  */
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.List;
 
+import com.brest.bank.domain.BankDeposit;
 import groovy.xml.MarkupBuilder;
 
 import com.predic8.wsdl.*;
@@ -25,31 +27,97 @@ public class GenerateWSDL {
     }
 
     public static Definitions createWSDL() {
-        Schema schema = new Schema("http://predic8.com/add/1/");
+        Schema schema = new Schema("http://client.bank.brest.com/Soap/");
 
-        schema.newElement("add").newComplexType().newSequence().newElement("summand", INT).setMaxOccurs("unbounded");
-        schema.newElement("addResponse").newComplexType().newSequence().newElement("number", INT);
+            schema.newElement("getDepositsRequest").newComplexType().newSequence().newElement("summand", INT).setMaxOccurs("unbounded");
+            schema.newElement("getDepositsResponse").newComplexType().newSequence().newElement("number", INT);
 
-        Definitions wsdl = new Definitions("http://predic8.com/wsdl/AddService/1/", "AddService");
+            schema.newElement("getDepositByIdRequest").newComplexType().newSequence().newElement("summand", INT).setMaxOccurs("unbounded");
+            schema.newElement("getDepositByIdResponse").newComplexType().newSequence().newElement("number", INT);
+
+            schema.newElement("getDepositByNameRequest").newComplexType().newSequence().newElement("summand", INT).setMaxOccurs("unbounded");
+            schema.newElement("getDepositByNameResponse").newComplexType().newSequence().newElement("number", INT);
+
+            schema.newElement("addDepositRequest").newComplexType().newSequence().newElement("summand", INT).setMaxOccurs("unbounded");
+            schema.newElement("addDepositResponse").newComplexType().newSequence().newElement("number", INT);
+
+            schema.newElement("updateDepositRequest").newComplexType().newSequence().newElement("summand", INT).setMaxOccurs("unbounded");
+            schema.newElement("updateDepositResponse").newComplexType().newSequence().newElement("number", INT);
+
+            schema.newElement("deleteDepositRequest").newComplexType().newSequence().newElement("summand", INT).setMaxOccurs("unbounded");
+            schema.newElement("deleteDepositResponse").newComplexType().newSequence().newElement("number", INT);
+
+        Definitions wsdl = new Definitions("http://client.bank.brest.com/Soap/", "SoapService");
         wsdl.addSchema(schema);
 
         Element el1 = new Element();
-        el1.setName("tns:add");
+        el1.setName("getDepositsRequest");
 
         Element el2 = new Element();
-        el2.setName("tns:addResponse");
+        el2.setName("getDepositsResponse");
 
-        Message msgIn  = wsdl.newMessage("add");
-        msgIn.newPart("parameters", schema.getElement("add"));
+        Message msgGetAllIn  = wsdl.newMessage("getDepositsRequestMessage");
+        msgGetAllIn.newPart("part", schema.getElement("getDepositsRequest"));
 
-        Message msgOut = wsdl.newMessage("addResponse");
-        msgOut.newPart("parameters",schema.getElement("addResponse"));
+        Message msgGetAllOut = wsdl.newMessage("getDepositsResponseMessage");
+        msgGetAllOut.newPart("part",schema.getElement("getDepositsResponse"));
 
-        PortType pt = wsdl.newPortType("AddPortType");
-        Operation op = pt.newOperation("add");
+        Message msgGetByIdIn  = wsdl.newMessage("getDepositByIdRequestMessage");
+        msgGetByIdIn.newPart("part", schema.getElement("getDepositByIdRequest"));
 
-        op.newInput("add").setMessage(msgIn);
-        op.newOutput("addResponse").setMessage(msgOut);
+        Message msgGetByIdOut = wsdl.newMessage("getDepositByIdResponseMessage");
+        msgGetByIdOut.newPart("part",schema.getElement("getDepositByIdResponse"));
+
+        Message msgGetByNameIn  = wsdl.newMessage("getDepositByNameRequestMessage");
+        msgGetByNameIn.newPart("part", schema.getElement("getDepositByNameRequest"));
+
+        Message msgGetByNameOut = wsdl.newMessage("getDepositByNameResponseMessage");
+        msgGetByNameOut.newPart("part",schema.getElement("getDepositByNameResponse"));
+
+        Message msgAddIn  = wsdl.newMessage("addDepositRequestMessage");
+        msgAddIn.newPart("part", schema.getElement("addDepositRequest"));
+
+        Message msgAddOut = wsdl.newMessage("addDepositResponseMessage");
+        msgAddOut.newPart("part",schema.getElement("addDepositResponse"));
+
+        Message msgUpdateIn  = wsdl.newMessage("updateDepositRequestMessage");
+        msgUpdateIn.newPart("part", schema.getElement("updateDepositRequest"));
+
+        Message msgUpdateOut = wsdl.newMessage("updateDepositResponseMessage");
+        msgUpdateOut.newPart("part",schema.getElement("updateDepositResponse"));
+
+        Message msgDeleteIn  = wsdl.newMessage("deleteDepositRequestMessage");
+        msgDeleteIn.newPart("part", schema.getElement("deleteDepositRequest"));
+
+        Message msgDeleteOut = wsdl.newMessage("deleteDepositResponseMessage");
+        msgDeleteOut.newPart("part",schema.getElement("deleteDepositResponse"));
+
+        PortType pt = wsdl.newPortType("DepositServicePortType");
+
+        Operation opGetAll = pt.newOperation("getDeposits");
+        opGetAll.newInput("getDepositsRequestMessage").setMessage(msgGetAllIn);
+        opGetAll.newOutput("getDepositsResponseMessage").setMessage(msgGetAllOut);
+
+        Operation opGetById = pt.newOperation("getDepositById");
+        opGetById.newInput("getDepositByIdRequestMessage").setMessage(msgGetAllIn);
+        opGetById.newOutput("getDepositByIdResponseMessage").setMessage(msgGetByIdOut);
+
+        Operation opGetByName = pt.newOperation("getDepositByName");
+        opGetByName.newInput("getDepositByNameRequestMessage").setMessage(msgGetByNameIn);
+        opGetByName.newOutput("getDepositByNameResponseMessage").setMessage(msgGetByNameOut);
+
+        Operation opAdd = pt.newOperation("addDeposit");
+        opAdd.newInput("addDepositRequestMessage").setMessage(msgAddIn);
+        opAdd.newOutput("addDepositResponseMessage").setMessage(msgAddOut);
+
+        Operation opUpd = pt.newOperation("updateDeposit");
+        opUpd.newInput("updateDepositRequestMessage").setMessage(msgUpdateIn);
+        opUpd.newOutput("updateDepositResponseMessage").setMessage(msgUpdateOut);
+
+        Operation opDel = pt.newOperation("deleteDeposit");
+        opDel.newInput("deleteDepositRequestMessage").setMessage(msgDeleteIn);
+        opDel.newOutput("deleteDepositResponseMessage").setMessage(msgDeleteOut);
+
         return wsdl;
     }
 
