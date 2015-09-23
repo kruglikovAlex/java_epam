@@ -9,9 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.brest.bank.domain.BankDeposit;
-//import com.predic8.wsdl.soap11.SOAPOperation;
-import com.predic8.wsdl.soap11.SOAPBinding;
-import com.predic8.wsdl.soap11.SOAPOperation;
+import com.predic8.wsdl.soap12.SOAPBinding;
+import com.predic8.wsdl.soap12.SOAPOperation;
 import com.predic8.wsdl.soap12.SOAPBody;
 import com.sun.org.apache.xml.internal.utils.NameSpace;
 import groovy.xml.MarkupBuilder;
@@ -57,8 +56,7 @@ public class GenerateWSDL {
             schema.newElement("deleteDepositRequest").newComplexType().newSequence().newElement("summand", INT).setMaxOccurs("unbounded");
             schema.newElement("deleteDepositResponse").newComplexType().newSequence().newElement("number", INT);
 
-        Definitions wsdl = new Definitions("http://client.bank.brest.com/Soap/", "SoapService");
-        //<definitions targetNamespace='http://thomas-bayer.com/blz/' xmlns:wsdl='http://schemas.xmlsoap.org/wsdl/' xmlns='http://schemas.xmlsoap.org/wsdl/' xmlns:wsaw='http://www.w3.org/2006/05/addressing/wsdl' xmlns:tns='http://thomas-bayer.com/blz/' xmlns:http='http://schemas.xmlsoap.org/wsdl/http/' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:mime='http://schemas.xmlsoap.org/wsdl/mime/' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:soap12='http://schemas.xmlsoap.org/wsdl/soap12/'>
+        Definitions wsdl = new Definitions("http://client.bank.brest.com/Soap/Services", "SoapService");
 
         wsdl.addSchema(schema);
 
@@ -130,35 +128,112 @@ public class GenerateWSDL {
         opDel.newInput("deleteDepositRequestMessage").setMessage(msgDeleteIn);
         opDel.newOutput("deleteDepositResponseMessage").setMessage(msgDeleteOut);
 
-
-        //<wsdl:binding name="DepositServiceBinding" type="tns:DepositServicePortType">
         Binding bd = wsdl.newBinding("DepositServiceBinding");
         bd.setType(pt);
 
-        //<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-        //SOAPBinding soapBinding =
-        //bd.newSOAP11Binding("http://schemas.xmlsoap.org/soap/http","document");
+        //SOAPBinding soapBinding = wsdl.getBinding("DepositServiceBinding").newSOAP12Binding();
 
-        //soapBinding.setTransport("http://schemas.xmlsoap.org/soap/http");
+        BindingOperation binOpGetAll = bd.newBindingOperation("getDeposits");
 
-        BindingOperation binOp = bd.newBindingOperation("getDeposits");
+        SOAPOperation soapOpGetAll = binOpGetAll.newSOAP12Operation();
+        soapOpGetAll.setSoapAction("http://localhost:8080/BankDeposit/soap/client/"+"getDeposits");
+        soapOpGetAll.setStyle("rpc");
 
-        SOAPOperation soapOp = binOp.newSOAP11Operation();
-        soapOp.setSoapAction("getDeposits");
+        SOAPBody inputOpBodyGetAll = binOpGetAll.newInput().newSOAP12Body();
+        inputOpBodyGetAll.setUse("encoded");
+        inputOpBodyGetAll.setNamespace(wsdl.getTargetNamespace());
+        inputOpBodyGetAll.setEncodingStyle("http://schemas.xmlsoap.org/soap/encoding/");
 
-        BindingInput in = binOp.newInput();
-        SOAPBody soapBodyIn = in.newSOAP12Body();
-        soapBodyIn.setName("soap");
-        Part p = new Part();
-        p.setElement(el1);
-        List<Part> list = new ArrayList<Part>();
-        list.add(p);
-        p.setElement(el2);
-        list.add(p);
-        soapBodyIn.setParts(list);
+        SOAPBody outputOpBodyGetAll = binOpGetAll.newOutput().newSOAP12Body();
+        outputOpBodyGetAll.setUse("encoded");
+        outputOpBodyGetAll.setNamespace(wsdl.getTargetNamespace());
+        outputOpBodyGetAll.setEncodingStyle("http://schemas.xmlsoap.org/soap/encoding/");
 
-        BindingOutput out = binOp.newOutput();
-        SOAPBody soapBodyOut = out.newSOAP12Body();
+        BindingOperation binOpGetById = bd.newBindingOperation("getDepositById");
+
+        SOAPOperation soapOpGetById = binOpGetById.newSOAP12Operation();
+        soapOpGetById.setSoapAction("http://localhost:8080/BankDeposit/soap/client/"+"getBankDepositById");
+        soapOpGetById.setStyle("rpc");
+
+        SOAPBody inputOpBodyGetById = binOpGetById.newInput().newSOAP12Body();
+        inputOpBodyGetById.setUse("encoded");
+        inputOpBodyGetById.setNamespace(wsdl.getTargetNamespace());
+        inputOpBodyGetById.setEncodingStyle("http://schemas.xmlsoap.org/soap/encoding/");
+
+        SOAPBody outputOpBodyGetById = binOpGetById.newOutput().newSOAP12Body();
+        outputOpBodyGetById.setUse("encoded");
+        outputOpBodyGetById.setNamespace(wsdl.getTargetNamespace());
+        outputOpBodyGetById.setEncodingStyle("http://schemas.xmlsoap.org/soap/encoding/");
+
+        BindingOperation binOpGetByName = bd.newBindingOperation("getDepositByName");
+
+        SOAPOperation soapOpGetByName = binOpGetByName.newSOAP12Operation();
+        soapOpGetByName.setSoapAction("http://localhost:8080/BankDeposit/soap/client/"+"getBankDepositByName");
+        soapOpGetByName.setStyle("rpc");
+
+        SOAPBody inputOpBodyGetByName = binOpGetByName.newInput().newSOAP12Body();
+        inputOpBodyGetByName.setUse("encoded");
+        inputOpBodyGetByName.setNamespace(wsdl.getTargetNamespace());
+        inputOpBodyGetByName.setEncodingStyle("http://schemas.xmlsoap.org/soap/encoding/");
+
+        SOAPBody outputOpBodyGetByName = binOpGetByName.newOutput().newSOAP12Body();
+        outputOpBodyGetByName.setUse("encoded");
+        outputOpBodyGetByName.setNamespace(wsdl.getTargetNamespace());
+        outputOpBodyGetByName.setEncodingStyle("http://schemas.xmlsoap.org/soap/encoding/");
+
+        BindingOperation binOpAdd = bd.newBindingOperation("addDeposit");
+
+        SOAPOperation soapOpAdd = binOpAdd.newSOAP12Operation();
+        soapOpAdd.setSoapAction("http://localhost:8080/BankDeposit/soap/client/"+"addBankDeposit");
+        soapOpAdd.setStyle("rpc");
+
+        SOAPBody inputOpBodyAdd = binOpAdd.newInput().newSOAP12Body();
+        inputOpBodyAdd.setUse("encoded");
+        inputOpBodyAdd.setNamespace(wsdl.getTargetNamespace());
+        inputOpBodyAdd.setEncodingStyle("http://schemas.xmlsoap.org/soap/encoding/");
+
+        SOAPBody outputOpBodyAdd = binOpAdd.newOutput().newSOAP12Body();
+        outputOpBodyAdd.setUse("encoded");
+        outputOpBodyAdd.setNamespace(wsdl.getTargetNamespace());
+        outputOpBodyAdd.setEncodingStyle("http://schemas.xmlsoap.org/soap/encoding/");
+
+        BindingOperation binOpUpdate = bd.newBindingOperation("updateDeposit");
+
+        SOAPOperation soapOpUpdate = binOpUpdate.newSOAP12Operation();
+        soapOpUpdate.setSoapAction("http://localhost:8080/BankDeposit/soap/client/"+"updateBankDeposit");
+        soapOpUpdate.setStyle("rpc");
+
+        SOAPBody inputOpBodyUpdate = binOpUpdate.newInput().newSOAP12Body();
+        inputOpBodyUpdate.setUse("encoded");
+        inputOpBodyUpdate.setNamespace(wsdl.getTargetNamespace());
+        inputOpBodyUpdate.setEncodingStyle("http://schemas.xmlsoap.org/soap/encoding/");
+
+        SOAPBody outputOpBodyUpdate = binOpUpdate.newOutput().newSOAP12Body();
+        outputOpBodyUpdate.setUse("encoded");
+        outputOpBodyUpdate.setNamespace(wsdl.getTargetNamespace());
+        outputOpBodyUpdate.setEncodingStyle("http://schemas.xmlsoap.org/soap/encoding/");
+
+        BindingOperation binOpDelete = bd.newBindingOperation("deleteDeposit");
+
+        SOAPOperation soapOpDelete = binOpDelete.newSOAP12Operation();
+        soapOpDelete.setSoapAction("http://localhost:8080/BankDeposit/soap/client/"+"deleteBankDeposit");
+        soapOpDelete.setStyle("rpc");
+
+        SOAPBody inputOpBodyDelete = binOpDelete.newInput().newSOAP12Body();
+        inputOpBodyDelete.setUse("encoded");
+        inputOpBodyDelete.setNamespace(wsdl.getTargetNamespace());
+        inputOpBodyDelete.setEncodingStyle("http://schemas.xmlsoap.org/soap/encoding/");
+
+        SOAPBody outputOpBodyDelete = binOpDelete.newOutput().newSOAP12Body();
+        outputOpBodyDelete.setUse("encoded");
+        outputOpBodyDelete.setNamespace(wsdl.getTargetNamespace());
+        outputOpBodyDelete.setEncodingStyle("http://schemas.xmlsoap.org/soap/encoding/");
+
+        Service service = wsdl.newService("DepositService");
+
+        Port port = service.newPort("DepositServicePort");
+        port.setBinding(bd);
+        port.newSOAP12Address("http://localhost:8080/BankDeposit/soap/client");
 
         return wsdl;
     }
