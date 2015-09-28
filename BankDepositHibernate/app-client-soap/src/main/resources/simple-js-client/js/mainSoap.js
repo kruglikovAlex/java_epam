@@ -272,7 +272,20 @@ function findAllDeposits() {
         method: 'getBankDeposits',
         data: {},
         success: function (soapResponse) {
-            alert("findAllDeposits:" + soapResponse);//renderDepositList, renderDepositListRequest
+            //alert("findAllDeposits:" + soapResponse);//renderDepositList, renderDepositListRequest
+            alert('findAllDeposits successfully');
+                        $('#responseHeader').val('findAllDeposits'+ ':\nStatus: '+soapResponse.status+
+                                                 "\nStatus code: "+soapResponse.httpCode+
+                                                 "\n\nHeaders: "+soapResponse.headers+
+                                                 "\nHttpText: "+soapResponse.httpText
+                                                 );
+                        $('#btnResponseRaw').show();
+                        $('#btnResponseJson').show();
+                        $('#responseJson').hide();
+                        $('#responseRaw').show();
+
+                        $('#responseJson').val(soapResponse.httpText.toJSON());
+                        $('#responseRaw').val(soapResponse);
         },
         error: function(soapResponse) {
             //console.log(soapResponse);
@@ -286,7 +299,22 @@ function findAllDepositors() {
     $.soap({
         url: REST_URL,
         method: 'getBankDepositors',
-        success: renderDepositorList,
+        success: function(soapResponse){
+            renderDepositorList,
+            alert(log+' successfully');
+            $('#responseHeader').val(log+ ':\nStatus: '+soapResponse.status+
+                                     "\nStatus code: "+soapResponse.httpCode+
+                                     "\n\nHeaders: "+soapResponse.headers+
+                                     "\nHttpText: "+soapResponse.httpText
+                                     );
+            $('#btnResponseRaw').show();
+            $('#btnResponseJson').show();
+            $('#responseJson').show();
+            $('#responseRaw').hide();
+
+            $('#responseJson').val(soapResponse.httpText.toJSON());
+            $('#responseRaw').val(soapResponse);
+        },
         error: function(soapResponse) {
             console.log(soapResponse);
             alert('findAllDepositors: ' + soapResponse);
@@ -441,10 +469,11 @@ function send(url,serviceMethod,dataJson,log) {
                                                  );
             $('#btnResponseRaw').show();
             $('#btnResponseJson').show();
-            $('#responseJson').show();
-            $('#responseRaw').hide();
-            $('#responseRaw').val(soapResponse.httpText+"\n soapResponse:\n"+soapResponse);
+            $('#responseJson').hide();
+            $('#responseRaw').show();
+
             $('#responseJson').val(soapResponse.httpText.toJSON());
+            $('#responseRaw').val(soapResponse);
 
             findAllDeposits();
             findAllDepositors();
