@@ -70,7 +70,7 @@ $('#btnResponseJson').click(function () {
     return false;
 });
 $('#btnSendMessage').click(function () {
-    var method = Array('GET','PUT','POST','DELETE');
+    var method = Array('GET','POST');
     var s;
 
     for (i=0;i<$(":radio[name=httpMethod]").length; i++){
@@ -83,30 +83,21 @@ $('#btnSendMessage').click(function () {
             if ($('#JsonRequest').is(':visible'))
                 sendMessage($('#URL').val(), s ,$("#JsonRequest").val(),"Create");
             else {
-                if ($('#depositForm').is(':visible'))
-                    sendMessage($('#URL').val(), s ,formDepositToJSON(),"Deposit create");
-                else {
-                    if ($('#depositorForm').is(':visible'))
-                        sendMessage($('#URL').val(), s ,formDepositorToJSON(),"Depositor create");
-                    else alert("Bad request");
-                }
-            }
-        }
-        else {
-            if(s=="DELETE"){
-
-                sendMessage($('#URL').val(), s ," ","Remove");
-            }
-            else {
-                if ($('#depositForm').is(':visible'))
-                    sendMessage($('#URL').val(), s ,formDepositToJSON(),"Deposit updated");
-                else {
-                    if ($('#JsonRequest').is(':visible'))
-                       sendMessage($('#URL').val(), s ,$("#JsonRequest").val(),"Update");
-                    else {
-                        if ($('#depositorForm').is(':visible'))
-                            sendMessage($('#URL').val(), s ,formDepositorToJSON(),"Depositor updated");
+                if ($('#depositForm').is(':visible')){
+                    if ($('#depositId').val() == ""){
+                        sendMessage($('#URL').val(), 'addBankDeposit' ,formDepositToSOAP(),"Deposit create");
+                    } else {
+                        sendMessage($('#URL').val(), 'updateBankDeposit' ,formDepositToSOAP(),"Deposit update");
                     }
+                }
+                else {
+                    if ($('#depositorForm').is(':visible')){
+                       if ($('#depositorId').val() == ""){
+                          sendMessage($('#URL').val(), 'addBankDepositor' ,formDepositorToJSON(),"Depositor create");
+                       } else {
+                          sendMessage($('#URL').val(), 'updateBankDepositor' ,formDepositorToJSON(),"Depositor update");
+                       }
+                    } else alert("Bad request");
                 }
             }
         }
@@ -284,7 +275,7 @@ function findAllDeposits() {
                         $('#responseJson').hide();
                         $('#responseRaw').show();
 
-                        $('#responseJson').val(soapResponse.httpText.toJSON());
+                        //$('#responseJson').val(soapResponse.httpText.toJSON());
                         $('#responseRaw').val(soapResponse);
         },
         error: function(soapResponse) {
@@ -423,25 +414,24 @@ function removeDepositor() {
 
 function send(url,serviceMethod,dataJson,log) {
     console.log(log);
-    var depId = $('#depositId').val();
     $.soap({
         url: REST_URL,
-        method: 'addBankDeposit',
-        data: {
-            depositorId: depId == "" ? null : depId,
+        method: serviceMethod,
+        /*data: {
+            depositId: depId == "" ? null : depId,
             depositName: $('#depositName').val(),
             depositMinTerm: parseInt($('#depositMinTerm').val()),
             depositMinAmount: parseInt($('#depositMinAmount').val()),
             depositCurrency: $('#depositCurrency').val(),
             depositInterestRate: parseInt($('#depositInterestRate').val()),
             depositAddConditions: $('#depositAddConditions').val()
-        },
+        },*/
         /*data: function(SOAPObject) {					// function returning an instance of the SOAPObject class
         		return new SOAPObject('soap:Envelope')
         			.addNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/')
         			.newChild('soap:Body')
-        			.newChild('addBankDeposit')
-        			.addParameter("depositorId",depId == "" ? null : depId)
+        			.newChild(serviceMethod)
+        			.addParameter("depositId",depId == "" ? null : depId)
         			.addParameter("depositName", $('#depositName').val())
         			.addParameter("depositMinTerm", parseInt($('#depositMinTerm').val()))
         			.addParameter("depositMinAmount", parseInt($('#depositMinAmount').val()))
@@ -449,7 +439,8 @@ function send(url,serviceMethod,dataJson,log) {
         			.addParameter("depositInterestRate", parseInt($('#depositInterestRate').val()))
         			.addParameter("depositAddConditions", $('#depositAddConditions').val())
         			.end()
-        	},*/
+        },*/
+        data: formDepositToSOAP(serviceMethod),
         /*<soap:Envelope
         	xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
         	<soap:Body>
@@ -472,8 +463,9 @@ function send(url,serviceMethod,dataJson,log) {
             $('#responseJson').hide();
             $('#responseRaw').show();
 
-            $('#responseJson').val(soapResponse.httpText.toJSON());
+            //$('#responseJson').val(soapResponse.httpText.toJSON());
             $('#responseRaw').val(soapResponse);
+
 
             findAllDeposits();
             findAllDepositors();
@@ -524,4 +516,49 @@ function formDepositorToJSON() {
          "depositorDateReturnDeposit":endDate.format("mmm dd, yyyy HH:MM:ss TT"),
          "depositorMarkReturnDeposit":parseInt($('#depositorMarkReturnDeposit').val())
     });
+}
+
+// Helper function to serialize all the form fields into a SOAP string
+function formDepositToSOAP(method) {
+    var depId = $('#depositId').val();
+    var s = function(SOAPObject) {					// function returning an instance of the SOAPObject class
+        return new SOAPObject('soap:Envelope')
+            .addNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/')
+            .newChild('soap:Body')
+            .newChild(method)
+            .addParameter("depositId",depId == "" ? null : depId)
+            .addParameter("depositName", $('#depositName').val())
+            .addParameter("depositMinTerm", parseInt($('#depositMinTerm').val()))
+            .addParameter("depositMinAmount", parseInt($('#depositMinAmount').val()))
+            .addParameter("depositCurrency", $('#depositCurrency').val())
+            .addParameter("depositInterestRate", parseInt($('#depositInterestRate').val()))
+            .addParameter("depositAddConditions", $('#depositAddConditions').val())
+            .end()
+        };
+    return s;
+}
+
+function formDepositorToSOAP(method) {
+    Date.prototype.format = function (mask, utc) {
+        return dateFormat(this, mask, utc);
+    };
+    var depositorId = $('#depositorId').val();
+    var stDate = new Date($('#depositorDateDeposit').val());
+    var endDate = new Date($('#depositorDateReturnDeposit').val());
+    var s = function(SOAPObject) {
+        return new SOAPObject('soap:Envelope')
+           .addNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/')
+           .newChild('soap:Body')
+           .newChild(method)
+           .addParameter("depositorId",depositorId == "" ? null : depositorId)
+           .addParameter("depositorName", $('#depositorName').val())
+           .addParameter("depositorDateDeposit", stDate.format("mmm dd, yyyy HH:MM:ss TT"))
+           .addParameter("depositorAmountDeposit", parseInt($('#depositorAmountDeposit').val()))
+           .addParameter("depositorAmountPlusDeposit", parseInt($('#depositorAmountPlusDeposit').val()))
+           .addParameter("depositorAmountMinusDeposit", parseInt($('#depositorAmountMinusDeposit').val()))
+           .addParameter("depositorDateReturnDeposit", endDate.format("mmm dd, yyyy HH:MM:ss TT"))
+           .addParameter("depositorMarkReturnDeposit", parseInt($('#depositorMarkReturnDeposit').val()))
+           .end()
+        };
+    return s;
 }
