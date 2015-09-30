@@ -263,20 +263,21 @@ function findAllDeposits() {
         method: 'getBankDeposits',
         data: {},
         success: function (soapResponse) {
-            //alert("findAllDeposits:" + soapResponse);//renderDepositList, renderDepositListRequest
             alert('findAllDeposits successfully');
-                        $('#responseHeader').val('findAllDeposits'+ ':\nStatus: '+soapResponse.status+
-                                                 "\nStatus code: "+soapResponse.httpCode+
-                                                 "\n\nHeaders: "+soapResponse.headers+
-                                                 "\nHttpText: "+soapResponse.httpText
-                                                 );
-                        $('#btnResponseRaw').show();
-                        $('#btnResponseJson').show();
-                        $('#responseJson').hide();
-                        $('#responseRaw').show();
+            $('#responseHeader').val('findAllDeposits'+ ':\nStatus: '+soapResponse.status+
+                                    "\nStatus code: "+soapResponse.httpCode+
+                                    "\n\nHeaders: "+soapResponse.headers+
+                                    "\nHttpText: "+soapResponse.httpText
+                                    );
+            $('#btnResponseRaw').show();
+            $('#btnResponseJson').show();
+            $('#responseJson').hide();
+            $('#responseRaw').show();
 
-                        //$('#responseJson').val(soapResponse.httpText.toJSON());
-                        $('#responseRaw').val(soapResponse);
+            //$('#responseJson').val(soapResponse.httpText.toJSON());
+            $('#responseRaw').val(soapResponse);
+            renderDepositList,
+            renderDepositListRequest
         },
         error: function(soapResponse) {
             //console.log(soapResponse);
@@ -354,7 +355,7 @@ function updateDeposit() {
         data: formDepositToJSON(), //???????????????
         success: function (soapResponse) {
             alert('Deposit updated successfully: '+soapResponse);
-            //findAllDeposits();
+            findAllDeposits();
         },
         error: function (soapResponse) {
             alert('updateDeposit error: ' + soapResponse);
@@ -454,21 +455,29 @@ function send(url,serviceMethod,dataJson,log) {
         success: function (soapResponse) {
             alert(log+' successfully');
             $('#responseHeader').val(log+ ':\nStatus: '+soapResponse.status+
-                                                         "\nStatus code: "+soapResponse.httpCode+
-                                                         "\n\nHeaders: "+soapResponse.headers+
-                                                         "\nHttpText: "+soapResponse.httpText
-                                                 );
+                                    "\nStatus code: "+soapResponse.httpCode+
+                                    "\n\nHeaders: "+soapResponse.headers+
+                                    "\nHttpText: "+soapResponse.httpText
+                                    );
             $('#btnResponseRaw').show();
             $('#btnResponseJson').show();
             $('#responseJson').hide();
             $('#responseRaw').show();
 
+
+
             //$('#responseJson').val(soapResponse.httpText.toJSON());
             $('#responseRaw').val(soapResponse);
 
-
+            $(soapResponse.toXML()).find('BankDeposit').each(function(){
+                var depId = $(this).find('depositId').text();
+                $('#depositId').val(depId);
+            });
             findAllDeposits();
             findAllDepositors();
+
+
+
         },
         error: function (soapResponse) {
             alert(log+' error');
