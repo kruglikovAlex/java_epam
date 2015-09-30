@@ -276,8 +276,6 @@ public class BankDepositSoapClient extends HttpServlet {
             try {
                 MessageFactory messageFactory = MessageFactory.newInstance();
                 MimeHeaders header = new MimeHeaders();
-                //header.setHeader("Content-Type", "text/xml");
-                //or
                 s = request.getHeader("Content-Type");
                 header.setHeader("Content-Type",s);
                 SOAPMessage inGoingMessage = messageFactory.createMessage(header,request.getInputStream());
