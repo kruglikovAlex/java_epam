@@ -319,7 +319,7 @@ public class BankDepositSoapClient extends HttpServlet {
                         SOAPHeader h = envelope.getHeader();
                         SOAPBody body = envelope.getBody();
 
-                        SOAPBodyElement eMethod = body.addBodyElement(envelope.createName("addBankDeposit", "method", "http://localhost:8080/BankDeposit/soap/"));
+                        SOAPBodyElement eMethod = body.addBodyElement(envelope.createName("updateBankDeposit", "method", "http://localhost:8080/BankDeposit/soap/"));
 
                         SOAPElement eDeposit = eMethod.addChildElement(envelope.createName("BankDeposit"));
                         eDeposit.addChildElement(envelope.createName("depositId")).addTextNode(deposit.getDepositId().toString());
