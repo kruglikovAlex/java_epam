@@ -301,13 +301,13 @@ public class BankDepositSoapClient extends HttpServlet {
                     }
                     if (ee.length>0) {
                         deposit = new BankDeposit();
-                        deposit.setDepositId(Long.parseLong(ee[0].getValue()));
-                        deposit.setDepositName(ee[1].getValue());
-                        deposit.setDepositMinTerm(Integer.parseInt(ee[2].getValue()));
-                        deposit.setDepositMinAmount(Integer.parseInt(ee[3].getValue()));
-                        deposit.setDepositCurrency(ee[4].getValue());
-                        deposit.setDepositInterestRate(Integer.parseInt(ee[5].getValue()));
-                        deposit.setDepositAddConditions(ee[6].getValue());
+                            deposit.setDepositId(Long.parseLong(ee[0].getValue()));
+                            deposit.setDepositName(ee[1].getValue());
+                            deposit.setDepositMinTerm(Integer.parseInt(ee[2].getValue()));
+                            deposit.setDepositMinAmount(Integer.parseInt(ee[3].getValue()));
+                            deposit.setDepositCurrency(ee[4].getValue());
+                            deposit.setDepositInterestRate(Integer.parseInt(ee[5].getValue()));
+                            deposit.setDepositAddConditions(ee[6].getValue());
 
                         depositService.updateBankDeposit(deposit);
 
