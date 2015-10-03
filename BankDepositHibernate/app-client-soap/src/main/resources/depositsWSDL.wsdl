@@ -11,12 +11,97 @@
 
     <wsdl:types>
         <xsd:schema targetNamespace="http://client.bank.brest.com/Soap/"
-                    xmlns="http://client.bank.brest.com/Soap/">
+                    xmlns:tns="http://client.bank.brest.com/Soap/">
 
             <xsd:import namespace='http://www.BankDeposit/Deposits'
                         schemaLocation="deposits.xsd"/>
 
             <xsd:include schemaLocation="deposits.xsd"/>
+
+            <xsd:element name='getDepositsRequest'>
+                <xsd:complexType>
+                    <xsd:sequence minOccurs='1' maxOccurs='1'>
+                        <xsd:element name='summand' type='xsd:int' maxOccurs='unbounded' />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name='getDepositsResponse'>
+                <xsd:complexType>
+                    <xsd:sequence minOccurs='1' maxOccurs='1'>
+                        <xsd:element name='number' type='xsd:int' />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name='getDepositByIdRequest'>
+                <xsd:complexType>
+                    <xsd:sequence minOccurs='1' maxOccurs='1'>
+                        <xsd:element name='summand' type='xsd:int' maxOccurs='unbounded' />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name='getDepositByIdResponse'>
+                <xsd:complexType>
+                    <xsd:sequence minOccurs='1' maxOccurs='1'>
+                        <xsd:element name='number' type='xsd:int' />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name='getDepositByNameRequest'>
+                <xsd:complexType>
+                    <xsd:sequence minOccurs='1' maxOccurs='1'>
+                        <xsd:element name='summand' type='xsd:int' maxOccurs='unbounded' />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name='getDepositByNameResponse'>
+                <xsd:complexType>
+                    <xsd:sequence minOccurs='1' maxOccurs='1'>
+                        <xsd:element name='number' type='xsd:int' />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name='addDepositRequest'>
+                <xsd:complexType>
+                    <xsd:sequence minOccurs='1' maxOccurs='1'>
+                        <xsd:element name='summand' type='xsd:int' maxOccurs='unbounded' />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name='addDepositResponse'>
+                <xsd:complexType>
+                    <xsd:sequence minOccurs='1' maxOccurs='1'>
+                        <xsd:element name='number' type='xsd:int' />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name='updateDepositRequest'>
+                <xsd:complexType>
+                    <xsd:sequence minOccurs='1' maxOccurs='1'>
+                        <xsd:element name='summand' type='xsd:int' maxOccurs='unbounded' />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name='updateDepositResponse'>
+                <xsd:complexType>
+                    <xsd:sequence minOccurs='1' maxOccurs='1'>
+                        <xsd:element name='number' type='xsd:int' />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name='deleteDepositRequest'>
+                <xsd:complexType>
+                    <xsd:sequence minOccurs='1' maxOccurs='1'>
+                        <xsd:element name='summand' type='xsd:int' maxOccurs='unbounded' />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name='deleteDepositResponse'>
+                <xsd:complexType>
+                    <xsd:sequence minOccurs='1' maxOccurs='1'>
+                        <xsd:element name='number' type='xsd:int' />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
 
         </xsd:schema>
     </wsdl:types>
