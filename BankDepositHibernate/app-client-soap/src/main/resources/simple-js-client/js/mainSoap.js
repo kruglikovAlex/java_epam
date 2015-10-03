@@ -274,10 +274,15 @@ function findAllDeposits() {
             $('#responseJson').hide();
             $('#responseRaw').show();
 
-            //$('#responseJson').val(soapResponse.httpText.toJSON());
+            //alert('soapResponce to Json- '+soapResponse.toJSON);
+            //alert('xml2json - '+$(soapResponse.content).find('depositId').text());
+
+            //var json = $.xml2json(soapResponse.content);
+            //alert(json.depositorId);
+
             $('#responseRaw').val(soapResponse);
-            renderDepositList,
-            renderDepositListRequest
+            $('#responseJson').val($.xml2json(soapResponse.content).depositName);
+            renderDepositList($.xml2json(soapResponse.content).BankDeposit);
         },
         error: function(soapResponse) {
             //console.log(soapResponse);
@@ -289,30 +294,33 @@ function findAllDeposits() {
 function findAllDepositors() {
     console.log('findAllDepositors');
     $.soap({
-        url: REST_URL,
-        method: 'getBankDepositors',
-        success: function(soapResponse){
-            renderDepositorList,
-            alert(log+' successfully');
-            $('#responseHeader').val(log+ ':\nStatus: '+soapResponse.status+
-                                     "\nStatus code: "+soapResponse.httpCode+
-                                     "\n\nHeaders: "+soapResponse.headers+
-                                     "\nHttpText: "+soapResponse.httpText
-                                     );
-            $('#btnResponseRaw').show();
-            $('#btnResponseJson').show();
-            $('#responseJson').show();
-            $('#responseRaw').hide();
+            url: REST_URL,
+            method: 'getBankDepositors',
+            data: {},
+            success: function (soapResponse) {
+                alert('findAllDepositors successfully');
+                $('#responseHeader').val('findAllDepositors'+ ':\nStatus: '+soapResponse.status+
+                                        "\nStatus code: "+soapResponse.httpCode+
+                                        "\n\nHeaders: "+soapResponse.headers+
+                                        "\nHttpText: "+soapResponse.httpText
+                                        );
+                $('#btnResponseRaw').show();
+                $('#btnResponseJson').show();
+                $('#responseJson').hide();
+                $('#responseRaw').show();
 
-            $('#responseJson').val(soapResponse.httpText.toJSON());
-            $('#responseRaw').val(soapResponse);
-        },
-        error: function(soapResponse) {
-            console.log(soapResponse);
-            alert('findAllDepositors: ' + soapResponse);
-        }
-    });
-}
+                //alert($(soapResponse).find('BankDepositor').text());
+
+                //var json = $.xml2json(soapResponse.content);
+                //alert(json.depositorId);
+
+                $('#responseRaw').val(soapResponse);
+                $('#responseJson').val($.xml2json(soapResponse.content).depositorName);
+
+                renderDepositList($.xml2json(soapResponse.content).BankDepositor);
+            }
+        });
+    }
 
 function addDeposit() {
     console.log('addDeposit');
@@ -413,7 +421,7 @@ function removeDepositor() {
 }
 
 
-function send(url,serviceMethod,dataJson,log) {
+function send(url,serviceMethod,dataSOAP,log) {
     console.log(log);
     $.soap({
         url: REST_URL,
@@ -441,7 +449,7 @@ function send(url,serviceMethod,dataJson,log) {
         			.addParameter("depositAddConditions", $('#depositAddConditions').val())
         			.end()
         },*/
-        data: formDepositToSOAP(serviceMethod),
+        data: dataSOAP, //formDepositToSOAP(serviceMethod),
         /*<soap:Envelope
         	xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
         	<soap:Body>
@@ -489,7 +497,7 @@ function send(url,serviceMethod,dataJson,log) {
             $('#btnResponseJson').show();
             $('#responseRaw').show();
             $('#responseRaw').val(soapResponse.content.toString());
-            $('#responseJson').val(soapResponse.content.toJSON());
+            //$('#responseJson').val(soapResponse.content.toJSON());
         }
     });
 }
@@ -561,12 +569,13 @@ function formDepositorToSOAP(method) {
            .newChild(method)
            .addParameter("depositorId",depositorId == "" ? null : depositorId)
            .addParameter("depositorName", $('#depositorName').val())
-           .addParameter("depositorDateDeposit", stDate.format("mmm dd, yyyy HH:MM:ss TT"))
+           .addParameter("depositorDateDeposit", $('#depositorDateDeposit').val())//stDate.format("mmm dd, yyyy HH:MM:ss TT"))
            .addParameter("depositorAmountDeposit", parseInt($('#depositorAmountDeposit').val()))
            .addParameter("depositorAmountPlusDeposit", parseInt($('#depositorAmountPlusDeposit').val()))
            .addParameter("depositorAmountMinusDeposit", parseInt($('#depositorAmountMinusDeposit').val()))
-           .addParameter("depositorDateReturnDeposit", endDate.format("mmm dd, yyyy HH:MM:ss TT"))
+           .addParameter("depositorDateReturnDeposit", $('#depositorDateReturnDeposit').val())//endDate.format("mmm dd, yyyy HH:MM:ss TT"))
            .addParameter("depositorMarkReturnDeposit", parseInt($('#depositorMarkReturnDeposit').val()))
+           //.addParameter("depositId",'1L')
            .end()
         };
     return s;
