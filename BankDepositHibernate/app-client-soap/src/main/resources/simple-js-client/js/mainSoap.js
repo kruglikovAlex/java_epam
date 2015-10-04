@@ -93,9 +93,9 @@ $('#btnSendMessage').click(function () {
                 else {
                     if ($('#depositorForm').is(':visible')){
                        if ($('#depositorId').val() == ""){
-                          sendMessage($('#URL').val(), 'addBankDepositor' ,formDepositorToJSON(),"Depositor create");
+                          sendMessage($('#URL').val(), 'addBankDepositor' ,formDepositorToSOAP(),"Depositor create");
                        } else {
-                          sendMessage($('#URL').val(), 'updateBankDepositor' ,formDepositorToJSON(),"Depositor update");
+                          sendMessage($('#URL').val(), 'updateBankDepositor' ,formDepositorToSOAP(),"Depositor update");
                        }
                     } else alert("Bad request");
                 }
@@ -276,10 +276,8 @@ function findAllDeposits() {
 
             //alert('soapResponce to Json- '+soapResponse.toJSON);
             //alert('xml2json - '+$(soapResponse.content).find('depositId').text());
-
             //var json = $.xml2json(soapResponse.content);
             //alert(json.depositorId);
-
             $('#responseRaw').val(soapResponse);
             $('#responseJson').val($.xml2json(soapResponse.content).depositName);
             renderDepositList($.xml2json(soapResponse.content).BankDeposit);
@@ -310,13 +308,10 @@ function findAllDepositors() {
                 $('#responseRaw').show();
 
                 //alert($(soapResponse).find('BankDepositor').text());
-
                 //var json = $.xml2json(soapResponse.content);
                 //alert(json.depositorId);
-
                 $('#responseRaw').val(soapResponse);
                 $('#responseJson').val($.xml2json(soapResponse.content).depositorName);
-
                 renderDepositList($.xml2json(soapResponse.content).BankDepositor);
             }
         });
@@ -481,11 +476,12 @@ function send(url,serviceMethod,dataSOAP,log) {
                 var depId = $(this).find('depositId').text();
                 $('#depositId').val(depId);
             });
-            findAllDeposits();
-            findAllDepositors();
-
-
-
+            $(soapResponse.toXML()).find('BankDepositor').each(function(){
+                var depId = $(this).find('depositorId').text();
+                $('#depositorId').val(depId);
+            });
+            //findAllDeposits();
+            //findAllDepositors();
         },
         error: function (soapResponse) {
             alert(log+' error');
@@ -501,6 +497,7 @@ function send(url,serviceMethod,dataSOAP,log) {
         }
     });
 }
+
 
 // Helper function to serialize all the form fields into a JSON string
 function formDepositToJSON() {
@@ -575,7 +572,6 @@ function formDepositorToSOAP(method) {
            .addParameter("depositorAmountMinusDeposit", parseInt($('#depositorAmountMinusDeposit').val()))
            .addParameter("depositorDateReturnDeposit", $('#depositorDateReturnDeposit').val())//endDate.format("mmm dd, yyyy HH:MM:ss TT"))
            .addParameter("depositorMarkReturnDeposit", parseInt($('#depositorMarkReturnDeposit').val()))
-           //.addParameter("depositId",'1L')
            .end()
         };
     return s;
