@@ -192,7 +192,8 @@ public class BankDepositSoapClient extends HttpServlet {
                 for(Object d: depositService.getBankDeposits()) {
                     deposit = (BankDeposit) d;
 
-                    SOAPElement eDeposit = eMethod.addChildElement(envelope.createName("BankDeposit")).addTextNode(deposit.getDepositId().toString());
+                    SOAPElement eDeposit = eMethod.addChildElement(envelope.createName("BankDeposit"));
+                        eDeposit.addChildElement(envelope.createName("depositId")).addTextNode(deposit.getDepositId().toString());
                         eDeposit.addChildElement(envelope.createName("depositName")).addTextNode(deposit.getDepositName());
                         eDeposit.addChildElement(envelope.createName("depositMinTerm")).addTextNode(""+deposit.getDepositMinTerm());
                         eDeposit.addChildElement(envelope.createName("depositMinAmount")).addTextNode(""+deposit.getDepositMinAmount());
@@ -382,7 +383,8 @@ public class BankDepositSoapClient extends HttpServlet {
                 for(Object d: depositorService.getBankDepositors()) {
                     depositor = (BankDepositor) d;
 
-                    SOAPElement eDepositor = eMethod.addChildElement(envelope.createName("BankDepositor")).addTextNode(Long.toString(depositor.getDepositorId()));
+                    SOAPElement eDepositor = eMethod.addChildElement(envelope.createName("BankDepositor"));
+                        eDepositor.addChildElement(envelope.createName("depositorId")).addTextNode(depositor.getDepositorId().toString());
                         eDepositor.addChildElement(envelope.createName("depositorName")).addTextNode(depositor.getDepositorName());
                         eDepositor.addChildElement(envelope.createName("depositorDateDeposit")).addTextNode(dateFormat.format(depositor.getDepositorDateDeposit()));
                         eDepositor.addChildElement(envelope.createName("depositorAmountDeposit")).addTextNode(Integer.toString(depositor.getDepositorAmountDeposit()));
