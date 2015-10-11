@@ -34,11 +34,12 @@ $('#btnClear').click(function () {
 
 $('#depositList').on('click', 'a', function () {
     var id= $(this).data('identity');
-    newDepositor();
-    $('#depositorIdDeposit').val(id);
-    findDepositById($(this).data('identity'));
+    newDeposit();
+    //$('#depositorIdDeposit').val(id);
+    findDepositById($(this).data('identity'), 'getBankDepositById');
 });
 $('#depositorList').on('click', 'a', function () {
+    newDepositor();
     findDepositorById($(this).data('identity'));
 });
 $('#btnRequestRaw').click(function () {
@@ -133,19 +134,24 @@ function newDepositor() {
     renderDepositorDetails(currentDepositor); // Display empty form
 }
 
-function renderDepositDetails(deposit) {
-    $('#depositId').val(deposit.depositId);
-    $('#depositName').val(deposit.depositName);
-    $('#depositMinTerm').val(deposit.depositMinTerm);
-    $('#depositMinAmount').val(deposit.depositMinAmount);
-    $('#depositCurrency').val(deposit.depositCurrency);
-    $('#depositInterestRate').val(deposit.depositInterestRate);
-    $('#depositAddConditions').val(deposit.depositAddConditions);
-    if (deposit.depositId == undefined) {
+function renderDepositDetails(data) {
+    var list = data == null ? [] : (data instanceof Array ? data : [data]);
+    $.each(list, function(index,deposit){
+        $('#depositId').val(deposit.depositId);
+        $('#depositName').val(deposit.depositName);
+        $('#depositMinTerm').val(deposit.depositMinTerm);
+        $('#depositMinAmount').val(deposit.depositMinAmount);
+        $('#depositCurrency').val(deposit.depositCurrency);
+        $('#depositInterestRate').val(deposit.depositInterestRate);
+        $('#depositAddConditions').val(deposit.depositAddConditions);
+    });
+
+
+    /*if (deposit.depositId == undefined) {
         $('#btnRemoveDdeposit').hide();
     } else {
         $('#btnRemoveDeposit').show();
-    }
+    }*/
 }
 
 function renderDepositorDetails(depositor) {
@@ -173,16 +179,55 @@ function sendMessage(url,method, data,log) {
     }
 }
 
-function findDepositById(depositId) {
+function findDepositById(depositId,serviceMethod) {
     console.log('findDepositById: ' + depositId);
     $.soap({
         url: REST_URL,
         method: 'getBankDepositById',
         data: {
-        		id: depositId
+        		depositId: depositId
         	},
+        data: function(SOAPObject) {					// function returning an instance of the SOAPObject class
+            return new SOAPObject('soap:Envelope')
+                    .addNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/')
+                	.newChild('soap:Body')
+                	.newChild(serviceMethod)
+                	.addParameter("depositId",depositId)
+                	.end()
+        },
         success: function (soapResponse) {
             console.log('findDepositById success: ' + soapResponse);
+
+            $('#responseHeader').val('Status: '+soapResponse.status+
+                                        "\nStatus code: "+soapResponse.httpCode+
+                                        "\n\nHeaders: "+soapResponse.headers+
+                                        "\nHttpText: "+soapResponse.httpText
+                                    );
+            $('#btnResponseRaw').show();
+            $('#btnResponseJson').show();
+            $('#responseJson').hide();
+            $('#responseRaw').show();
+
+            $('#responseJson').val(XML2jsobj(soapResponse.content.documentElement));
+
+            $('#responseRaw').val(formatXml(soapResponse));
+
+            var data = [];
+            $(soapResponse.toXML()).find('BankDeposit').each(function(){
+                var depId = $(this).find('depositId').text();
+                data.push({
+                    "depositId":depId,
+                    "depositName":$(this).find('depositName').text(),
+                    "depositMinTerm":$(this).find('depositMinTerm').text(),
+                    "depositMinAmount":$(this).find('depositMinAmount').text(),
+                    "depositCurrency":$(this).find('depositCurrency').text(),
+                    "depositInterestRate":$(this).find('depositInterestRate').text(),
+                    "depositAddConditions":$(this).find('depositAddConditions').text()
+                });
+                $('#depositId').val(depId);
+                renderDepositList(data);
+            });
+
             currentDeposit = data;
             renderDepositDetails(currentDeposit);
             renderDepositList(currentDeposit);
@@ -289,7 +334,7 @@ function findAllDeposits() {
                 renderDepositList(data);
             });
 
-            $('#responseRaw').val(soapResponse);
+            $('#responseRaw').val(formatXml(soapResponse));
         },
         error: function(soapResponse) {
             //console.log(soapResponse);
@@ -331,7 +376,7 @@ function findAllDepositors() {
                     });
                     renderDepositorList(data);
                 });
-                $('#responseRaw').val(soapResponse);
+                $('#responseRaw').val($('#responseRaw').val()+formatXml(soapResponse));
             }
         });
     }
@@ -487,7 +532,8 @@ function send(url,serviceMethod,dataSOAP,log) {
             $('#responseRaw').show();
 
             $('#responseJson').val(XML2jsobj(soapResponse.content.documentElement));
-            $('#responseRaw').val(soapResponse);
+
+            $('#responseRaw').val(formatXml(soapResponse));
 
             $(soapResponse.toXML()).find('BankDeposit').each(function(){
                 var depId = $(this).find('depositId').text();
@@ -520,8 +566,6 @@ function send(url,serviceMethod,dataSOAP,log) {
                 $('#depositorId').val(depId);
                 renderDepositorList(data);
             });
-            //findAllDeposits();
-            //findAllDepositors();
         },
         error: function (soapResponse) {
             alert(log+' error');
@@ -614,4 +658,49 @@ function formDepositorToSOAP(method) {
            .end()
         };
     return s;
+}
+
+function fromSoapXmlToText(soapResponse){
+    var text = "<?xml version = \"1.0\" encoding=\"UTF-8\"?>\n";
+    $(soapResponse.toXML()).find('BankDeposit').each(function(){
+        text += "<BankDeposit>\n"+
+                "\t<depositId>"+$(this).find('depositId').text()+"</depositId>\n"+
+                "\t<depositName>"+$(this).find('depositName').text()+"</depositName>\n"+
+                "\t<depositMinTerm>"+$(this).find('depositMinTerm').text()+"</depositMinTerm>\n"+
+                "\t<depositMinAmount>"+$(this).find('depositMinAmount').text()+"</depositMinAmount>\n"+
+                "\t<depositCurrency>"+$(this).find('depositCurrency').text()+"</depositCurrency>\n"+
+                "\t<depositInterestRate>"+$(this).find('depositInterestRate').text()+"</depositInterestRate>\n"+
+                "\t<depositAddConditions>"+$(this).find('depositAddConditions').text()+"</depositAddConditions>\n"+
+                "</BankDeposit>\n"
+    });
+    return text;
+}
+
+function formatXml(xml) {
+      var formatted = '';
+      var reg = /(>)(<)(\/*)/g;
+      xml = xml.toString().replace(reg, '$1\r\n$2$3');
+      var pad = 0;
+      jQuery.each(xml.split('\r\n'), function(index, node){
+         var indent = 0;
+         if (node.match( /.+<\/\w[^>]*>$/ )){
+            indent = 0;
+         }else if (node.match( /^<\/\w/ )){
+            if (pad != 0){
+               pad -= 1;
+            }
+         }else if (node.match( /^<\w[^>]*[^\/]>.*$/ )){
+            indent = 1;
+         }else{
+            indent = 0;
+         }
+         var padding = '';
+         for (var i = 0; i < pad; i++){
+            padding += '  ';
+         }
+         formatted += padding + node + '\r\n';
+         pad += indent;
+      });
+
+      return formatted;
 }
