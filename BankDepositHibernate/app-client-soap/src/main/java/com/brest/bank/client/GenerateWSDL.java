@@ -9,10 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.brest.bank.domain.BankDeposit;
-import com.predic8.wsdl.soap12.SOAPBinding;
 import com.predic8.wsdl.soap12.SOAPOperation;
 import com.predic8.wsdl.soap12.SOAPBody;
-import com.sun.org.apache.xml.internal.utils.NameSpace;
 import groovy.xml.MarkupBuilder;
 
 import com.predic8.wsdl.*;
@@ -20,10 +18,6 @@ import com.predic8.wsdl.creator.*;
 import com.predic8.schema.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import sun.plugin2.message.transport.Transport;
-
-import javax.jws.soap.SOAPBinding.Style;
-import javax.xml.soap.SOAPElement;
 
 import static com.predic8.schema.Schema.*;
 
@@ -131,8 +125,6 @@ public class GenerateWSDL {
         Binding bd = wsdl.newBinding("DepositServiceBinding");
         bd.setType(pt);
 
-        //SOAPBinding soapBinding = wsdl.getBinding("DepositServiceBinding").newSOAP12Binding();
-
         BindingOperation binOpGetAll = bd.newBindingOperation("getDeposits");
 
         SOAPOperation soapOpGetAll = binOpGetAll.newSOAP12Operation();
@@ -238,12 +230,12 @@ public class GenerateWSDL {
         return wsdl;
     }
 
-    public static void dumpWSDL(Definitions wsdl) {
+    public static StringWriter dumpWSDL(Definitions wsdl) {
         StringWriter writer = new StringWriter();
         WSDLCreator creator = new WSDLCreator();
         creator.setBuilder(new MarkupBuilder(writer));
         wsdl.create(creator, new WSDLCreatorContext());
         System.out.println(writer);
-        //return writer;
+        return writer;
     }
 }

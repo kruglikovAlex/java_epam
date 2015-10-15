@@ -49,8 +49,9 @@
 								<td><input id="depositAddConditions" name="depositAddConditions" type="text"/></td>
 							</tr>
 						</table>
-
+						<button id="btnRemoveDeposit" style="display:none">DELETE</button>
 					</div>
+
 				</form>
 
 				<p></p>
@@ -58,6 +59,7 @@
 					<div class="mainDepositorArea">
 						<table frame="hsides" rules="cols">
 							<th>
+								<td><label>ID deposit</label></td>
 								<td><label>Depositor Id:</label></td>
 								<td><label>Depositor Name:</label></td>
 								<td><label>Date Deposit:</label></td>
@@ -69,6 +71,7 @@
 							</th>
 							<tr>
 								<td></td>
+								<td><input id="idDeposit" name="idDeposit" type="text" size="5"/></td>
 								<td><input id="depositorId" name="depositorId" type="text" disabled size="8"/></td>
 								<td><input id="depositorName" name="depositorName" type="text" required/></td>
 								<td><input id="depositorDateDeposit" name="depositorDateDeposit" type="datetime" required
@@ -81,7 +84,7 @@
 								<td><input id="depositorMarkReturnDeposit" name="depositorMarkReturnDeposit" type="text" size="1"/></td>
 							</tr>
 						</table>
-
+						<button id="btnRemoveDepositor" style="display:none">DELETE</button>
 					</div>
 				</form>
 
@@ -94,12 +97,9 @@
 		<fieldset style="width: 84%" >
 			<legend style="font-weight: bold">Response</legend>
 
-			<textarea class="responseHeader" id="responseHeader" name="responseHeader" rows="10" cols="150" ></textarea>
+			<textarea class="responseHeader" id="responseHeader" name="responseHeader" rows="8" cols="150" ></textarea>
 
-			<button id="btnResponseRaw">Raw</button>
-			<button id="btnResponseJson">Json</button>
-			<textarea class="responseRaw" id="responseRaw" name="responseRaw" rows="10" cols="150" ></textarea>
-			<textarea class="responseJson" id="responseJson" name="responseJson" rows="10" cols="150" ></textarea>
+			<textarea class="responseRaw" id="responseRaw" name="responseRaw" rows="12" cols="150" ></textarea>
 		</fieldset>
 
 	</div>
@@ -119,6 +119,7 @@
 
 <script src="resources/jquery-1.11.1.js"></script>
 <script src="resources/jquery.soap.js"></script>
+<script src="resources/jquery.xml2json.js"></script>
 <script src="resources/xml2jsobj.js"></script>
 <script src="resources/mainSoap.js"></script>
 <script src="resources/jquery.maskedinput.js"></script>
