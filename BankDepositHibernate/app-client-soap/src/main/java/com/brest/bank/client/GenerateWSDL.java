@@ -7,8 +7,13 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.brest.bank.domain.BankDeposit;
+import com.predic8.schema.restriction.*;
+import com.predic8.schema.restriction.Restriction;
+import com.predic8.schema.restriction.facet.Facet;
+import com.predic8.schema.restriction.facet.PatternFacet;
 import com.predic8.wsdl.soap12.SOAPOperation;
 import com.predic8.wsdl.soap12.SOAPBody;
 import groovy.xml.MarkupBuilder;
@@ -32,14 +37,61 @@ public class GenerateWSDL {
     public static Definitions createWSDL() {
         Schema schema = new Schema("http://client.bank.brest.com/Soap/");
 
-            schema.newElement("getDepositsRequest").newComplexType().newSequence().newElement("summand", INT).setMaxOccurs("unbounded");
-            schema.newElement("getDepositsResponse").newComplexType().newSequence().newElement("number", INT);
+            ComplexType bankDepositType = schema.newComplexType("bankDeposit_type");
+                Sequence sequenceBDT = bankDepositType.newSequence();
+                sequenceBDT.newElement("depositId",INT).setMaxOccurs("unbounded");
+                Element depositName = sequenceBDT.newElement("depositName");
 
-            schema.newElement("getDepositByIdRequest").newComplexType().newSequence().newElement("summand", INT).setMaxOccurs("unbounded");
-            schema.newElement("getDepositByIdResponse").newComplexType().newSequence().newElement("number", INT);
+                    SimpleType simpleTypeDN = new SimpleType();
 
-            schema.newElement("getDepositByNameRequest").newComplexType().newSequence().newElement("summand", INT).setMaxOccurs("unbounded");
-            schema.newElement("getDepositByNameResponse").newComplexType().newSequence().newElement("number", INT);
+                    Restriction depositNameRestriction = new Restriction();
+                        depositNameRestriction.setBase(STRING);
+
+                    simpleTypeDN.setRestriction(depositNameRestriction);
+
+
+                    depositName.setEmbeddedType(simpleTypeDN);
+
+                sequenceBDT.newElement("depositMinTerm", INT).setMaxOccurs("unbounded");
+                sequenceBDT.newElement("depositMinAmount", INT).setMaxOccurs("unbounded");
+                Element depositCurrency = sequenceBDT.newElement("depositCurrency");
+
+                    SimpleType simpleTypeDC = new SimpleType();
+
+                    Restriction depositCurrencyRestriction = new Restriction();
+                        depositCurrencyRestriction.setBase(STRING);
+
+                    simpleTypeDC.setRestriction(depositCurrencyRestriction);
+
+                    depositCurrency.setEmbeddedType(simpleTypeDC);
+
+                sequenceBDT.newElement("depositInterestRate", INT).setMaxOccurs("unbounded");
+
+                Element depositAddConditions = sequenceBDT.newElement("depositAddConditions");
+                    SimpleType simpleTypeDAC = new SimpleType();
+
+                    Restriction depositAddConditionsRestriction = new Restriction();
+                        depositAddConditionsRestriction.setBase(STRING);
+
+                    simpleTypeDAC.setRestriction(depositAddConditionsRestriction);
+
+                    depositAddConditions.setEmbeddedType(simpleTypeDAC);
+
+        ComplexType bankDepositsType = schema.newComplexType("bankDeposits_type");
+                Sequence sequenceBDsT = bankDepositsType.newSequence();
+                Element bankDeposit = sequenceBDsT.newElement("bankDeposit", "bankDeposit_type");
+                bankDeposit.setMinOccurs("0");
+                bankDeposit.setMaxOccurs("unbounded");
+
+            schema.newElement("getDepositsRequest").setMaxOccurs("unbounded");
+
+            schema.newElement("getDepositsResponse").newComplexType().newSequence().newElement("bankDeposits", "bankDeposits_type").setMaxOccurs("unbounded");
+
+            schema.newElement("getDepositByIdRequest").newComplexType().newSequence().newElement("bankDepositId", INT).setMaxOccurs("unbounded");
+            schema.newElement("getDepositByIdResponse").newComplexType().newSequence().newElement("bankDeposit", "bankDeposit_type");
+
+            schema.newElement("getDepositByNameRequest").newComplexType().newSequence().newElement("bankDepositName", STRING).setMaxOccurs("unbounded");
+            schema.newElement("getDepositByNameResponse").newComplexType().newSequence().newElement("bankDeposit", "bankDeposit_type");
 
             schema.newElement("addDepositRequest").newComplexType().newSequence().newElement("summand", INT).setMaxOccurs("unbounded");
             schema.newElement("addDepositResponse").newComplexType().newSequence().newElement("number", INT);
