@@ -86,7 +86,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>BankDepositSoapServer</servlet-name>
-        <url-pattern>/soap/server</url-pattern>
+        <url-pattern>/soap/server/*</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>BankDepositSoapClient</servlet-name>

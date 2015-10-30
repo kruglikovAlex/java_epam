@@ -221,15 +221,20 @@ function getWSDL() {
         dataType: "html", // data type of response
         success: function (data, textStatus, jqXHR) {
             alert('getWSDL successfully');
-
+            $('#responseHeader').val("Status: "+textStatus+", Code: "+jqXHR.status+"\n"+
+                                     "\nServer: "+jqXHR.getResponseHeader("Server")+
+                                     "\nContent-Type: "+jqXHR.getResponseHeader("Content-Type")+
+                                     "\nTransfer-Encoding: "+jqXHR.getResponseHeader("Transfer-Encoding")+
+                                     "\nDate: "+jqXHR.getResponseHeader("Date")
+                                    );
             $('#responseRaw').val(formatXml(data));
         },
         error: function(jqXHR, textStatus, errorThrown) {
            $('#responseHeader').val("Status: "+textStatus+", Code: "+jqXHR.status+"\n"+
-                                        "\nServer: "+jqXHR.getResponseHeader("Server")+
-                                        "\nContent-Type: "+jqXHR.getResponseHeader("Content-Type")+
-                                        "\nTransfer-Encoding: "+jqXHR.getResponseHeader("Transfer-Encoding")+
-                                        "\nDate: "+jqXHR.getResponseHeader("Date")
+                                    "\nServer: "+jqXHR.getResponseHeader("Server")+
+                                    "\nContent-Type: "+jqXHR.getResponseHeader("Content-Type")+
+                                    "\nTransfer-Encoding: "+jqXHR.getResponseHeader("Transfer-Encoding")+
+                                    "\nDate: "+jqXHR.getResponseHeader("Date")
                                     );
            $('#responseRaw').show();
            $('#responseRaw').val(jqXHR.responseText);

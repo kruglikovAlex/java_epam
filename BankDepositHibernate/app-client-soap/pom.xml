@@ -71,12 +71,22 @@
             <artifactId>javaee-api</artifactId>
         </dependency>
 
+        <!-- apach hhtp client for Soap client-->
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+        </dependency>
+
         <!-- for generate WSDL -->
         <dependency>
             <groupId>com.predic8</groupId>
             <artifactId>soa-model-core</artifactId>
         </dependency>
-
-
+<!--
+        <dependency>
+            <groupId>com.predic8</groupId>
+            <artifactId>soa-model-parent</artifactId>
+        </dependency>
+-->
     </dependencies>
 </project>
