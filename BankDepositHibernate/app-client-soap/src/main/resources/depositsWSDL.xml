@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="SoapService"
+                  targetNamespace="http://client.bank.brest.com/soap/1/"
+                  xmlns:tns="http://client.bank.brest.com/soap/1/"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+     <wsdl:types>
+            <xsd:schema targetNamespace='http://client.bank.brest.com/soap/1/' attributeFormDefault='unqualified' elementFormDefault='unqualified' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:tns='http://client.bank.brest.com/soap/1/'>
+                <xsd:element name='getDepositsRequest'/>
+                <xsd:element name='getDepositsResponse'>
+                    <xsd:complexType>
+                        <xsd:sequence minOccurs='1' maxOccurs='1'>
+                            <xsd:element name='bankDeposits' xmlns='http://client.bank.brest.com/soap/1/' type='bankDeposits_type' />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name='getDepositByIdRequest'>
+                    <xsd:complexType>
+                        <xsd:sequence minOccurs='1' maxOccurs='1'>
+                            <xsd:element name='bankDepositId' type='xsd:long' maxOccurs='unbounded' />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name='getDepositByIdResponse'>
+                    <xsd:complexType>
+                        <xsd:sequence minOccurs='1' maxOccurs='1'>
+                            <xsd:element name='bankDeposit' xmlns='http://client.bank.brest.com/soap/1/' type='bankDeposit_type' />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name='getDepositByNameRequest'>
+                    <xsd:complexType>
+                        <xsd:sequence minOccurs='1' maxOccurs='1'>
+                            <xsd:element name='bankDepositName'>
+                                <xsd:simpleType>
+                                    <xsd:restriction base='xsd:string'>
+                                        <xsd:pattern value='[A-Z][a-z]+[0-9]*' />
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name='getDepositByNameResponse'>
+                    <xsd:complexType>
+                        <xsd:sequence minOccurs='1' maxOccurs='1'>
+                            <xsd:element name='bankDeposit' xmlns='http://client.bank.brest.com/soap/1/' type='bankDeposit_type' />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name='addDepositRequest'>
+                    <xsd:complexType>
+                        <xsd:sequence minOccurs='1' maxOccurs='1'>
+                            <xsd:element name='bankDeposit' xmlns='http://client.bank.brest.com/soap/1/' type='bankDeposit_type' />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name='addDepositResponse'>
+                    <xsd:complexType>
+                        <xsd:sequence minOccurs='1' maxOccurs='1'>
+                            <xsd:element name='bankDeposit' xmlns='http://client.bank.brest.com/soap/1/' type='bankDeposit_type' />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name='updateDepositRequest'>
+                    <xsd:complexType>
+                        <xsd:sequence minOccurs='1' maxOccurs='1'>
+                            <xsd:element name='bankDeposit' xmlns='http://client.bank.brest.com/soap/1/' type='bankDeposit_type' />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name='updateDepositResponse'>
+                    <xsd:complexType>
+                        <xsd:sequence minOccurs='1' maxOccurs='1'>
+                            <xsd:element name='bankDeposit' xmlns='http://client.bank.brest.com/soap/1/' type='bankDeposit_type' />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name='deleteDepositRequest'>
+                    <xsd:complexType>
+                        <xsd:sequence minOccurs='1' maxOccurs='1'>
+                            <xsd:element name='bankDepositId' type='xsd:long' maxOccurs='unbounded' />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name='deleteDepositResponse'>
+                    <xsd:complexType>
+                        <xsd:sequence minOccurs='1' maxOccurs='1'>
+                            <xsd:element name='result' type='xsd:string' />
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:complexType name='bankDeposit_type'>
+                    <xsd:sequence minOccurs='1' maxOccurs='1'>
+                        <xsd:element name='depositId' type='xsd:long' maxOccurs='unbounded' />
+                        <xsd:element name='depositName'>
+                            <xsd:simpleType>
+                                <xsd:restriction base='xsd:string'>
+                                    <xsd:pattern value='[A-Z][a-z]+[0-9]*' />
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name='depositMinTerm'>
+                            <xsd:simpleType>
+                                <xsd:restriction base='xsd:int'>
+                                    <xsd:minInclusive value='1' />
+                                    <xsd:maxInclusive value='480' />
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name='depositMinAmount'>
+                            <xsd:simpleType>
+                                <xsd:restriction base='xsd:int'>
+                                    <xsd:minInclusive value='100' />
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name='depositCurrency'>
+                            <xsd:simpleType>
+                                <xsd:restriction base='xsd:string'>
+                                    <xsd:pattern value='[A-Z]{3}' />
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name='depositInterestRate'>
+                            <xsd:simpleType>
+                                <xsd:restriction base='xsd:int'>
+                                    <xsd:minInclusive value='1' />
+                                    <xsd:maxInclusive value='100' />
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                        <xsd:element name='depositAddConditions'>
+                            <xsd:simpleType>
+                                <xsd:restriction base='xsd:string'>
+                                    <xsd:pattern value='[A-Z][a-z]+[0-9]*' />
+                                </xsd:restriction>
+                            </xsd:simpleType>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+                <xsd:complexType name='bankDeposits_type'>
+                    <xsd:sequence minOccurs='1' maxOccurs='1'>
+                        <xsd:element name='bankDeposit' type='tns:bankDeposit_type' minOccurs='0' maxOccurs='unbounded' />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:schema>
+        </wsdl:types>
+        <wsdl:message name='getDepositsRequestMessage'>
+            <wsdl:part name='getDepositsRequest' element='xsd:getDepositsRequest' />
+        </wsdl:message>
+        <wsdl:message name='getDepositsResponseMessage'>
+            <wsdl:part name='getDepositsResponse' element='xsd:getDepositsResponse' />
+        </wsdl:message>
+        <wsdl:message name='getDepositByIdRequestMessage'>
+            <wsdl:part name='getDepositByIdRequest' element='xsd:getDepositByIdRequest' />
+        </wsdl:message>
+        <wsdl:message name='getDepositByIdResponseMessage'>
+            <wsdl:part name='getDepositByIdResponse' element='xsd:getDepositByIdResponse' />
+        </wsdl:message>
+        <wsdl:message name='getDepositByNameRequestMessage'>
+            <wsdl:part name='getDepositByNameRequest' element='xsd:getDepositByNameRequest' />
+        </wsdl:message>
+        <wsdl:message name='getDepositByNameResponseMessage'>
+            <wsdl:part name='getDepositByNameResponse' element='xsd:getDepositByNameResponse' />
+        </wsdl:message>
+        <wsdl:message name='addDepositRequestMessage'>
+            <wsdl:part name='addDepositRequest' element='xsd:addDepositRequest' />
+        </wsdl:message>
+        <wsdl:message name='addDepositResponseMessage'>
+            <wsdl:part name='addDepositResponse' element='xsd:addDepositResponse' />
+        </wsdl:message>
+        <wsdl:message name='updateDepositRequestMessage'>
+            <wsdl:part name='updateDepositRequest' element='xsd:updateDepositRequest' />
+        </wsdl:message>
+        <wsdl:message name='updateDepositResponseMessage'>
+            <wsdl:part name='updateDepositResponse' element='xsd:updateDepositResponse' />
+        </wsdl:message>
+        <wsdl:message name='deleteDepositRequestMessage'>
+            <wsdl:part name='deleteDepositRequest' element='xsd:deleteDepositRequest' />
+        </wsdl:message>
+        <wsdl:message name='deleteDepositResponseMessage'>
+            <wsdl:part name='deleteDepositResponse' element='xsd:deleteDepositResponse' />
+        </wsdl:message>
+        <wsdl:portType name='DepositServicePortType'>
+            <wsdl:operation name="getBankDeposits">
+                <wsdl:input message='tns:getDepositsRequestMessage' name='getDepositsRequestMessage' />
+                <wsdl:output message='tns:getDepositsResponseMessage' name='getDepositsResponseMessage' />
+            </wsdl:operation>
+            <wsdl:operation name="getBankDepositById">
+                <wsdl:input message='tns:getDepositByIdRequestMessage' name='getDepositByIdRequestMessage' />
+                <wsdl:output message='tns:getDepositByIdResponseMessage' name='getDepositByIdResponseMessage' />
+            </wsdl:operation>
+            <wsdl:operation name='getBankDepositByName'>
+                <wsdl:input message='tns:getDepositByNameRequestMessage' name='getDepositByNameRequestMessage' />
+                <wsdl:output message='tns:getDepositByNameResponseMessage' name='getDepositByNameResponseMessage' />
+            </wsdl:operation>
+            <wsdl:operation name='addBankDeposit'>
+                <wsdl:input message='tns:addDepositRequestMessage' name='addDepositRequestMessage' />
+                <wsdl:output message='tns:addDepositResponseMessage' name='addDepositResponseMessage' />
+            </wsdl:operation>
+            <wsdl:operation name='updateBankDeposit'>
+                <wsdl:input message='tns:updateDepositRequestMessage' name='updateDepositRequestMessage' />
+                <wsdl:output message='tns:updateDepositResponseMessage' name='updateDepositResponseMessage' />
+            </wsdl:operation>
+            <wsdl:operation name='deleteBankDeposit'>
+                <wsdl:input message='tns:deleteDepositRequestMessage' name='deleteDepositRequestMessage' />
+                <wsdl:output message='tns:deleteDepositResponseMessage' name='deleteDepositResponseMessage' />
+            </wsdl:operation>
+        </wsdl:portType>
+        <wsdl:binding name='DepositServiceBinding' type='tns:DepositServicePortType'>
+            <wsdl:operation name='getBankDeposits'>
+                <soap:operation soapAction='http://localhost:8080/BankDeposit/soap/client/getBankDeposits' style='rpc' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' />
+                <wsdl:input>
+                    <soap:body use='encoded' parts='getDepositsRequest' encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' namespace='http://client.bank.brest.com/soap/1/' />
+                </wsdl:input>
+                <wsdl:output>
+                    <soap:body use='encoded' parts='getDepositsResponse' encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' namespace='http://client.bank.brest.com/soap/1/' />
+                </wsdl:output>
+            </wsdl:operation>
+            <wsdl:operation name='getBankDepositById'>
+                <soap:operation soapAction='http://localhost:8080/BankDeposit/soap/client/getBankDepositById' style='rpc' xmlns:soap12='http://schemas.xmlsoap.org/wsdl/soap/' />
+                <wsdl:input>
+                    <soap:body use='encoded' parts='getDepositByIdRequest' encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' namespace='http://client.bank.brest.com/soap/1/' />
+                </wsdl:input>
+                <wsdl:output>
+                    <soap:body use='encoded' parts='getDepositByIdResponse' encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' namespace='http://client.bank.brest.com/soap/1/' />
+                </wsdl:output>
+            </wsdl:operation>
+            <wsdl:operation name='getBankDepositByName'>
+                <soap:operation soapAction='http://localhost:8080/BankDeposit/soap/client/getBankDepositByName' style='rpc' xmlns:soap12='http://schemas.xmlsoap.org/wsdl/soap/' />
+                <wsdl:input>
+                    <soap:body use='encoded' parts='getDepositByNameRequest' encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' namespace='http://client.bank.brest.com/soap/1/' />
+                </wsdl:input>
+                <wsdl:output>
+                    <soap:body use='encoded' parts='getDepositByNameResponse' encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' namespace='http://client.bank.brest.com/soap/1/' />
+                </wsdl:output>
+            </wsdl:operation>
+            <wsdl:operation name='addBankDeposit'>
+                <soap:operation soapAction='http://localhost:8080/BankDeposit/soap/client/addBankDeposit' style='rpc' xmlns:soap12='http://schemas.xmlsoap.org/wsdl/soap/' />
+                <wsdl:input>
+                    <soap:body use='encoded' parts='addDepositRequest' encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' namespace='http://client.bank.brest.com/soap/1/' />
+                </wsdl:input>
+                <wsdl:output>
+                    <soap:body use='encoded' parts='addDepositResponse' encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' namespace='http://client.bank.brest.com/soap/1/' />
+                </wsdl:output>
+            </wsdl:operation>
+            <wsdl:operation name='updateBankDeposit'>
+                <soap:operation soapAction='http://localhost:8080/BankDeposit/soap/client/updateBankDeposit' style='rpc' xmlns:soap12='http://schemas.xmlsoap.org/wsdl/soap/' />
+                <wsdl:input>
+                    <soap:body use='encoded' parts='updateDepositRequest' encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' namespace='http://client.bank.brest.com/soap/1/' />
+                </wsdl:input>
+                <wsdl:output>
+                    <soap:body use='encoded' parts='updateDepositResponse' encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' namespace='http://client.bank.brest.com/soap/1/' />
+                </wsdl:output>
+            </wsdl:operation>
+            <wsdl:operation name='deleteBankDeposit'>
+                <soap12:operation soapAction='http://localhost:8080/BankDeposit/soap/client/deleteBankDeposit' style='rpc' xmlns:soap12='http://schemas.xmlsoap.org/wsdl/soap/' />
+                <wsdl:input>
+                    <soap:body use='encoded' parts='deleteDepositRequest' encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' namespace='http://client.bank.brest.com/soap/1/' />
+                </wsdl:input>
+                <wsdl:output>
+                    <soap:body use='encoded' parts='deleteDepositResponse' encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' namespace='http://client.bank.brest.com/soap/1/' />
+                </wsdl:output>
+            </wsdl:operation>
+        </wsdl:binding>
+        <wsdl:service name='DepositService'>
+            <wsdl:port name='DepositServicePort' binding='tns:DepositServiceBinding' xmlns:soap12='http://schemas.xmlsoap.org/wsdl/soap/'>
+                <soap12:address location='http://localhost:8080/BankDeposit/soap/client' />
+            </wsdl:port>
+        </wsdl:service>
+    </wsdl:definitions>
