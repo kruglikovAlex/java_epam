@@ -24,9 +24,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 
 import java.io.*;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -44,55 +43,89 @@ public class BankDepositRest extends HttpServlet{
     private BankDepositorService depositorService = new BankDepositorServiceImpl();
     private BankDepositService depositService = new BankDepositServiceImpl();
 
+    private HttpServletRequest request= null;
+    private HttpServletResponse response = null;
+
+    public void setHttpServletRequest(HttpServletRequest request){
+        this.request = request;
+    }
+
+    public void setHttpServletResponse(HttpServletResponse response){
+        this.response = response;
+    }
+
     /**
      * Servlet method responding to HTTP GET methods calls.
      *
-     * @param request HTTP request.
-     * @param response HTTP response.
+     * @param req HTTP request.
+     * @param res HTTP response.
      */
     @Override
-    public void doGet( HttpServletRequest request,
-                       HttpServletResponse response ) throws IOException
+    public void doGet( HttpServletRequest req,
+                       HttpServletResponse res ) throws IOException
     {
+        if ((request == null)&&(response == null)){
+            //request = new HttpServletRequestWrapper(req);
+            //response = new HttpServletResponseWrapper(res);
+            setHttpServletRequest(req);
+            setHttpServletResponse(res);
+        }
+
         response.setContentType("application/json");
         final PrintWriter out = response.getWriter();
 
         //call get method
         get(request, response, out);
+
         out.flush();
         out.close();
+
+        response = null;
+        request = null;
     }
 
     /**
      * Servlet method responding to HTTP PUT methods calls.
      * update BankDeposit
      *
-     * @param request HTTP request.
-     * @param response HTTP response.
+     * @param req HTTP request.
+     * @param res HTTP response.
      */
     @Override
-    public void doPut( HttpServletRequest request,
-                        HttpServletResponse response ) throws IOException
+    public void doPut( HttpServletRequest req,
+                       HttpServletResponse res ) throws IOException
     {
+        if ((request == null)&&(response == null)){
+            setHttpServletRequest(req);
+            setHttpServletResponse(res);
+        }
         final PrintWriter out = response.getWriter();
 
         //call update method
         update(request,response,out);
         out.flush();
         out.close();
+
+        response = null;
+        request = null;
     }
 
     /**
      * Servlet method responding to HTTP POST methods calls.
      * insert BankDeposit
      *
-     * @param request HTTP request.
-     * @param response HTTP response.
+     * @param req HTTP request.
+     * @param res HTTP response.
      */
     @Override
-    public void doPost( HttpServletRequest request,
-                       HttpServletResponse response ) throws IOException
+    public void doPost( HttpServletRequest req,
+                        HttpServletResponse res ) throws IOException
     {
+        if ((request == null)&&(response == null)){
+            setHttpServletRequest(req);
+            setHttpServletResponse(res);
+        }
+
         response.setContentType("application/json");
         final PrintWriter out = response.getWriter();
 
@@ -100,19 +133,26 @@ public class BankDepositRest extends HttpServlet{
         insert(request,response,out);
         out.flush();
         out.close();
+
+        response = null;
+        request = null;
     }
 
     /**
      * Servlet method responding to HTTP DELETE methods calls.
      * delete BankDeposit
      *
-     * @param request HTTP request.
-     * @param response HTTP response.
+     * @param req HTTP request.
+     * @param res HTTP response.
      */
     @Override
-    public void doDelete( HttpServletRequest request,
-                          HttpServletResponse response ) throws IOException
+    public void doDelete( HttpServletRequest req,
+                          HttpServletResponse res ) throws IOException
     {
+        if ((request == null)&&(response == null)){
+            setHttpServletRequest(req);
+            setHttpServletResponse(res);
+        }
 
         final PrintWriter out = response.getWriter();
         out.write("DELETE method (removing data) was invoked!\n");
@@ -121,6 +161,9 @@ public class BankDepositRest extends HttpServlet{
         delete(request, response, out);
         out.flush();
         out.close();
+
+        response = null;
+        request = null;
     }
 
     @Override

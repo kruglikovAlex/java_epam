@@ -186,7 +186,7 @@ function findDepositById(depositId) {
     $.ajax({
         type: 'GET',
         url: REST_URL + '/deposit/id/' + depositId,
-        dataType: "json",
+        //dataType: "json",
         success: function (data) {
             console.log('findDepositById success: ' + data.depositId);
             currentDeposit = data;
@@ -204,7 +204,7 @@ function findDepositorById(depositorId) {
     $.ajax({
         type: 'GET',
         url: REST_URL + '/depositor/id/' + depositorId,
-        dataType: "json",
+        //dataType: "json",
         success: function (data) {
             console.log('findDepositorById success: ' + data.depositorId);
             currentDepositor = data;
@@ -223,13 +223,14 @@ function findAllDeposits() {
     var x = $.ajax({
         type: 'GET',
         url: REST_URL+"/deposits",
-        dataType: "json",
+        //dataType: "json",
         success: renderDepositList,
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(jqXHR, textStatus, errorThrown);
             alert('findAllDeposit: ' + textStatus);
         }
     });
+    return x;
 }
 
 function findAllDepositors() {
@@ -237,13 +238,14 @@ function findAllDepositors() {
     var x = $.ajax({
         type: 'GET',
         url: REST_URL+"/depositors",
-        dataType: "json", // data type of response
+        //dataType: "json", // data type of response
         success: renderDepositorList,
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(jqXHR, textStatus, errorThrown);
             alert('findAllDepositors: ' + textStatus);
         }
     });
+    return x;
 }
 
 function send(url,method,dataJson,log) {
