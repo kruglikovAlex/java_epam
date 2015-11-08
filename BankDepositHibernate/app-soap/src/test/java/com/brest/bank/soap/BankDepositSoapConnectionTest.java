@@ -1,24 +1,19 @@
 package com.brest.bank.soap;
 
 import javax.xml.soap.*;
-import java.io.PrintStream;
-import java.net.URL;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.junit.Test;
-import org.junit.After;
 import org.junit.Before;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class BankDepositSoapServerTest
+public class BankDepositSoapConnectionTest
 {
-    private final String TARGET_ENDPOINT = "http://localhost:8080/BankDeposit/soap/server";
     private SOAPConnection connection;
-    PrintStream out = System.out;
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -39,8 +34,8 @@ public class BankDepositSoapServerTest
     public void testClose() {
         LOGGER.info("Running test on close connection");
         try {
-            SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
-            sCon.close();
+            connection = SOAPConnectionFactory.newInstance().createConnection();
+            connection.close();
         } catch (SOAPException e) {
             fail("Unexpected Exception " + e);
         }
@@ -56,16 +51,16 @@ public class BankDepositSoapServerTest
             fail("Unexpected Exception " + e);
         }
 
-        SOAPConnection sCon = null;
+        connection = null;
         try {
-            sCon = soapConnectionFactory.createConnection();
-            sCon.close();
+            connection = soapConnectionFactory.createConnection();
+            connection.close();
         } catch (SOAPException e) {
             fail("Unexpected Exception " + e);
         }
 
         try {
-            sCon.close();
+            connection.close();
             fail("Expected Exception did not occur");
         } catch (SOAPException e) {
             assertTrue(true);
@@ -82,49 +77,19 @@ public class BankDepositSoapServerTest
             fail("Unexpected Exception " + e);
         }
 
-        SOAPConnection sCon = null;
+        connection = null;
         try {
-            sCon = soapConnectionFactory.createConnection();
-            sCon.close();
+            connection = soapConnectionFactory.createConnection();
+            connection.close();
         } catch (SOAPException e) {
             fail("Unexpected Exception " + e);
         }
 
         try {
-            sCon.call(null, new Object());
+            connection.call(null, new Object());
             fail("Expected Exception did not occur");
         } catch (SOAPException e) {
             assertTrue(true);
-        }
-    }
-
-    @Test
-    public void testSOAPConnection() throws Exception
-    {
-        LOGGER.debug("run test SOAP connection & calling");
-        try {
-            // Building the request document
-            SOAPMessage reqMsg = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL).createMessage();
-            SOAPEnvelope envelope = reqMsg.getSOAPPart().getEnvelope();
-            SOAPBody body = envelope.getBody();
-
-            body.addBodyElement(envelope.createName("getAllDeposits","methodName","http://www.XMLPowerCorp.com")).addTextNode("testBankDeposit");
-
-            // Connecting and calling
-            URL server = new URL(TARGET_ENDPOINT);
-
-            SOAPMessage resMsg = connection.call(reqMsg, server);
-            connection.close();
-
-            // Showing output
-            out.println("\n\nRequest:");
-            reqMsg.writeTo(out);
-            out.println("\n\nResponse:");
-            resMsg.writeTo(out);
-        } catch (Exception e) {
-            LOGGER.error("Exception",e.toString());
-            e.printStackTrace();
-            throw new RuntimeException("Failed to generate SOAP message", e);
         }
     }
 }

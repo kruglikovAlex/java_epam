@@ -44,6 +44,9 @@ public class BankDepositSoapServer extends HttpServlet {
     private SOAPMessage outGoingMessage = null;
     private SOAPMessage inGoingMessage = null;
 
+    private HttpServletRequest request= null;
+    private HttpServletResponse response = null;
+
     public void init(ServletConfig servletConfig) throws ServletException{
         super.init(servletConfig);
         try{
@@ -55,8 +58,44 @@ public class BankDepositSoapServer extends HttpServlet {
         }
     }
 
+    public void setHttpServletRequest(HttpServletRequest request){
+        this.request = request;
+    }
+
+    public void setHttpServletResponse(HttpServletResponse response){
+        this.response = response;
+    }
+
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+    public void doGet(HttpServletRequest req,
+                      HttpServletResponse res) throws ServletException, IOException{
+
+        if ((request == null)&&(response == null)){
+            setHttpServletRequest(req);
+            setHttpServletResponse(res);
+        }
+
+        final OutputStream out = response.getOutputStream();
+
+        /**
+         * TODO load depositWSDl.xml file
+         */
+
+        out.flush();
+        out.close();
+
+        response = null;
+        request = null;
+    }
+
+    @Override
+    public void doPost(HttpServletRequest req,
+                       HttpServletResponse res) throws ServletException, IOException{
+
+        if ((request == null)&&(response == null)){
+            setHttpServletRequest(req);
+            setHttpServletResponse(res);
+        }
 
         final OutputStream out = response.getOutputStream();
         StringBuilder sb = new StringBuilder();
@@ -378,61 +417,6 @@ public class BankDepositSoapServer extends HttpServlet {
         }
 
         /**
-         * @path /deleteBankDeposit
-         * @parameter /SOAP message <depositId>{id}</depositId>
-         *
-         */
-        if(request.getHeader("SOAPAction").equalsIgnoreCase("deleteBankDeposit")){
-            try {
-                messageFactory = MessageFactory.newInstance();
-                MimeHeaders header = new MimeHeaders();
-
-                s = request.getHeader("Content-Type");
-                header.setHeader("Content-Type",s);
-
-                inGoingMessage = messageFactory.createMessage(header,request.getInputStream());
-                try {
-                    SOAPPart sp = inGoingMessage.getSOAPPart();
-                    SOAPEnvelope env = sp.getEnvelope();
-                    SOAPHeader hdr = env.getHeader();
-                    SOAPBody bdy = env.getBody();
-
-                    Iterator ii = bdy.getChildElements();
-                    SOAPElement ee = null;
-                    while (ii.hasNext()) {
-                        SOAPElement e = (SOAPElement)ii.next();
-                        String methodName = e.getElementName().getLocalName();
-                        Iterator kk = e.getChildElements();
-                        while (kk.hasNext()) {
-                            ee = (SOAPElement)kk.next();
-                        }
-                    }
-                    if (ee!=null) {
-                        depositService.deleteBankDeposit(Long.parseLong(ee.getValue()));
-
-                        MessageFactory mFactory = MessageFactory.newInstance();
-                        outGoingMessage = mFactory.createMessage();
-
-                        SOAPPart soapPart = outGoingMessage.getSOAPPart();
-                        SOAPEnvelope envelope = soapPart.getEnvelope();
-                        SOAPHeader h = envelope.getHeader();
-                        SOAPBody body = envelope.getBody();
-
-                        SOAPBodyElement eMethod = body.addBodyElement(envelope.createName("deleteBankDeposit", "method", "http://localhost:8080/BankDeposit/soap/"));
-
-                        SOAPElement eDeposit = eMethod.addChildElement(envelope.createName("BankDeposit"));
-                        eDeposit.addChildElement(envelope.createName("result")).addTextNode("Deposit with ID:"+ee.getValue()+" removed");
-
-                        outGoingMessage.writeTo(out);
-                    }
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
-            }catch (Throwable e) {
-            }
-        }
-
-        /**
          * @path /getBankDepositors
          *
          */
@@ -470,6 +454,86 @@ public class BankDepositSoapServer extends HttpServlet {
             } catch (SOAPException e) {
                 LOGGER.error("SOAP error - {},/n{}", e.getMessage(), e.getStackTrace());
                 response.sendError(404,"SOAP error - "+e.getMessage()+"\n");
+                throw new IOException(e.getMessage());
+            }
+        }
+
+        /**
+         * @path /addBankDepositor
+         *
+         */
+        if(request.getHeader("SOAPAction").equalsIgnoreCase("addBankDepositor")){
+            try {
+                messageFactory = MessageFactory.newInstance();
+                MimeHeaders header = new MimeHeaders();
+
+                s = request.getHeader("Content-Type");
+                header.setHeader("Content-Type",s);
+
+                inGoingMessage = messageFactory.createMessage(header,request.getInputStream());
+                SOAPPart sp = inGoingMessage.getSOAPPart();
+                SOAPEnvelope env = sp.getEnvelope();
+                SOAPHeader hdr = env.getHeader();
+                SOAPBody bdy = env.getBody();
+
+                Iterator ii = bdy.getChildElements();
+
+                SOAPElement ee[] = new SOAPElement[9];
+
+                while (ii.hasNext()) {
+                    SOAPElement e = (SOAPElement)ii.next();
+                    String methodName = e.getElementName().getLocalName();
+                    Iterator kk = e.getChildElements();
+                    int count = 0;
+                    while (kk.hasNext()) {
+                        ee[count] = (SOAPElement)kk.next();
+                        count ++;
+                    }
+                }
+                if (ee.length>0) {
+                    depositor = new BankDepositor(null,"",dateFormat.parse("1900-01-01"),0,0,0,dateFormat.parse("1900-01-01"),0,null);
+                    depositor.setDepositorName(ee[2].getValue());
+                    depositor.setDepositorDateDeposit(dateFormat.parse(ee[3].getValue()));
+                    depositor.setDepositorAmountDeposit(Integer.parseInt(ee[4].getValue()));
+                    depositor.setDepositorAmountPlusDeposit(Integer.parseInt(ee[5].getValue()));
+                    depositor.setDepositorAmountMinusDeposit(Integer.parseInt(ee[6].getValue()));
+                    depositor.setDepositorDateReturnDeposit(dateFormat.parse(ee[7].getValue()));
+                    depositor.setDepositorMarkReturnDeposit(Integer.parseInt(ee[8].getValue()));
+
+                    depositorService.addBankDepositor(Long.parseLong(ee[0].getValue()),depositor);
+
+                    MessageFactory mFactory = MessageFactory.newInstance();
+                    outGoingMessage = mFactory.createMessage();
+
+                    SOAPPart soapPart = outGoingMessage.getSOAPPart();
+                    SOAPEnvelope envelope = soapPart.getEnvelope();
+                    SOAPHeader h = envelope.getHeader();
+                    SOAPBody body = envelope.getBody();
+
+                    SOAPBodyElement eMethod = body.addBodyElement(envelope.createName("addBankDepositor", "method", "http://localhost:8080/BankDeposit/soap/"));
+
+                    SOAPElement eDepositor = eMethod.addChildElement(envelope.createName("BankDepositor"));
+                    eDepositor.addChildElement(envelope.createName("depositorId")).addTextNode(Long.toString(depositor.getDepositorId()));
+                    eDepositor.addChildElement(envelope.createName("depositorName")).addTextNode(depositor.getDepositorName());
+                    eDepositor.addChildElement(envelope.createName("depositorDateDeposit")).addTextNode(dateFormat.format(depositor.getDepositorDateDeposit()));
+                    eDepositor.addChildElement(envelope.createName("depositorAmountDeposit")).addTextNode(Integer.toString(depositor.getDepositorAmountDeposit()));
+                    eDepositor.addChildElement(envelope.createName("depositorAmountPlusDeposit")).addTextNode(Integer.toString(depositor.getDepositorAmountPlusDeposit()));
+                    eDepositor.addChildElement(envelope.createName("depositorAmountMinusDeposit")).addTextNode(Integer.toString(depositor.getDepositorAmountMinusDeposit()));
+                    eDepositor.addChildElement(envelope.createName("depositorDateReturnDeposit")).addTextNode(dateFormat.format(depositor.getDepositorDateReturnDeposit()));
+                    eDepositor.addChildElement(envelope.createName("depositorMarkReturnDeposit")).addTextNode(Integer.toString(depositor.getDepositorMarkReturnDeposit()));
+
+                    outGoingMessage.writeTo(out);
+                }
+            }catch (HibernateException e) {
+                LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
+                response.sendError(404,"Hibernate error - "+e.getMessage()+"\n");
+                throw new IOException(e.getMessage());
+            } catch (SOAPException e) {
+                LOGGER.error("SOAP error - {},/n{}", e.getMessage(), e.getStackTrace());
+                response.sendError(404,"SOAP error - "+e.getMessage()+"\n");
+                throw new IOException(e.getMessage());
+            } catch (ParseException e){
+                LOGGER.error("Parse error - {},/n{}", e.getMessage(), e.getStackTrace());
                 throw new IOException(e.getMessage());
             }
         }
@@ -597,87 +661,6 @@ public class BankDepositSoapServer extends HttpServlet {
             }catch (Throwable e) {
             }
         }
-
-        /**
-         * @path /addBankDepositor
-         *
-         */
-        if(request.getHeader("SOAPAction").equalsIgnoreCase("addBankDepositor")){
-            try {
-                messageFactory = MessageFactory.newInstance();
-                MimeHeaders header = new MimeHeaders();
-
-                s = request.getHeader("Content-Type");
-                header.setHeader("Content-Type",s);
-
-                inGoingMessage = messageFactory.createMessage(header,request.getInputStream());
-                SOAPPart sp = inGoingMessage.getSOAPPart();
-                SOAPEnvelope env = sp.getEnvelope();
-                SOAPHeader hdr = env.getHeader();
-                SOAPBody bdy = env.getBody();
-
-                Iterator ii = bdy.getChildElements();
-
-                SOAPElement ee[] = new SOAPElement[9];
-
-                while (ii.hasNext()) {
-                    SOAPElement e = (SOAPElement)ii.next();
-                    String methodName = e.getElementName().getLocalName();
-                    Iterator kk = e.getChildElements();
-                    int count = 0;
-                    while (kk.hasNext()) {
-                        ee[count] = (SOAPElement)kk.next();
-                        count ++;
-                    }
-                }
-                if (ee.length>0) {
-                    depositor = new BankDepositor(null,"",dateFormat.parse("1900-01-01"),0,0,0,dateFormat.parse("1900-01-01"),0,null);
-                        depositor.setDepositorName(ee[2].getValue());
-                        depositor.setDepositorDateDeposit(dateFormat.parse(ee[3].getValue()));
-                        depositor.setDepositorAmountDeposit(Integer.parseInt(ee[4].getValue()));
-                        depositor.setDepositorAmountPlusDeposit(Integer.parseInt(ee[5].getValue()));
-                        depositor.setDepositorAmountMinusDeposit(Integer.parseInt(ee[6].getValue()));
-                        depositor.setDepositorDateReturnDeposit(dateFormat.parse(ee[7].getValue()));
-                        depositor.setDepositorMarkReturnDeposit(Integer.parseInt(ee[8].getValue()));
-
-                    depositorService.addBankDepositor(Long.parseLong(ee[0].getValue()),depositor);
-
-                    MessageFactory mFactory = MessageFactory.newInstance();
-                    outGoingMessage = mFactory.createMessage();
-
-                    SOAPPart soapPart = outGoingMessage.getSOAPPart();
-                    SOAPEnvelope envelope = soapPart.getEnvelope();
-                    SOAPHeader h = envelope.getHeader();
-                    SOAPBody body = envelope.getBody();
-
-                    SOAPBodyElement eMethod = body.addBodyElement(envelope.createName("addBankDepositor", "method", "http://localhost:8080/BankDeposit/soap/"));
-
-                    SOAPElement eDepositor = eMethod.addChildElement(envelope.createName("BankDepositor"));
-                        eDepositor.addChildElement(envelope.createName("depositorId")).addTextNode(Long.toString(depositor.getDepositorId()));
-                        eDepositor.addChildElement(envelope.createName("depositorName")).addTextNode(depositor.getDepositorName());
-                        eDepositor.addChildElement(envelope.createName("depositorDateDeposit")).addTextNode(dateFormat.format(depositor.getDepositorDateDeposit()));
-                        eDepositor.addChildElement(envelope.createName("depositorAmountDeposit")).addTextNode(Integer.toString(depositor.getDepositorAmountDeposit()));
-                        eDepositor.addChildElement(envelope.createName("depositorAmountPlusDeposit")).addTextNode(Integer.toString(depositor.getDepositorAmountPlusDeposit()));
-                        eDepositor.addChildElement(envelope.createName("depositorAmountMinusDeposit")).addTextNode(Integer.toString(depositor.getDepositorAmountMinusDeposit()));
-                        eDepositor.addChildElement(envelope.createName("depositorDateReturnDeposit")).addTextNode(dateFormat.format(depositor.getDepositorDateReturnDeposit()));
-                        eDepositor.addChildElement(envelope.createName("depositorMarkReturnDeposit")).addTextNode(Integer.toString(depositor.getDepositorMarkReturnDeposit()));
-
-                    outGoingMessage.writeTo(out);
-                }
-            }catch (HibernateException e) {
-                LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
-                response.sendError(404,"Hibernate error - "+e.getMessage()+"\n");
-                throw new IOException(e.getMessage());
-            } catch (SOAPException e) {
-                LOGGER.error("SOAP error - {},/n{}", e.getMessage(), e.getStackTrace());
-                response.sendError(404,"SOAP error - "+e.getMessage()+"\n");
-                throw new IOException(e.getMessage());
-            } catch (ParseException e){
-                LOGGER.error("Parse error - {},/n{}", e.getMessage(), e.getStackTrace());
-                throw new IOException(e.getMessage());
-            }
-        }
-
 
         /**
          * @path /updateBankDepositor
@@ -816,5 +799,67 @@ public class BankDepositSoapServer extends HttpServlet {
             }
         }
 
+        /**
+         * @path /deleteBankDeposit
+         * @parameter /SOAP message <depositId>{id}</depositId>
+         *
+         */
+        if(request.getHeader("SOAPAction").equalsIgnoreCase("deleteBankDeposit")){
+            try {
+                messageFactory = MessageFactory.newInstance();
+                MimeHeaders header = new MimeHeaders();
+
+                s = request.getHeader("Content-Type");
+                header.setHeader("Content-Type",s);
+
+                inGoingMessage = messageFactory.createMessage(header,request.getInputStream());
+                try {
+                    SOAPPart sp = inGoingMessage.getSOAPPart();
+                    SOAPEnvelope env = sp.getEnvelope();
+                    SOAPHeader hdr = env.getHeader();
+                    SOAPBody bdy = env.getBody();
+
+                    Iterator ii = bdy.getChildElements();
+                    SOAPElement ee = null;
+                    while (ii.hasNext()) {
+                        SOAPElement e = (SOAPElement)ii.next();
+                        String methodName = e.getElementName().getLocalName();
+                        Iterator kk = e.getChildElements();
+                        while (kk.hasNext()) {
+                            ee = (SOAPElement)kk.next();
+                        }
+                    }
+                    if (ee!=null) {
+                        depositService.deleteBankDeposit(Long.parseLong(ee.getValue()));
+
+                        MessageFactory mFactory = MessageFactory.newInstance();
+                        outGoingMessage = mFactory.createMessage();
+
+                        SOAPPart soapPart = outGoingMessage.getSOAPPart();
+                        SOAPEnvelope envelope = soapPart.getEnvelope();
+                        SOAPHeader h = envelope.getHeader();
+                        SOAPBody body = envelope.getBody();
+
+                        SOAPBodyElement eMethod = body.addBodyElement(envelope.createName("deleteBankDeposit", "method", "http://localhost:8080/BankDeposit/soap/"));
+
+                        SOAPElement eDeposit = eMethod.addChildElement(envelope.createName("BankDeposit"));
+                        eDeposit.addChildElement(envelope.createName("result")).addTextNode("Deposit with ID:"+ee.getValue()+" removed");
+
+                        outGoingMessage.writeTo(out);
+                    }
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }catch (Throwable e) {
+            }
+        }
+
+        out.flush();
+        out.close();
+
+        response = null;
+        request = null;
+
     }
+
 }
