@@ -111,12 +111,9 @@ $('#btnSendMessage').click(function () {
             }
         }
     }
-
     return false;
 });
 
-
-//Declaration function
 function renderDepositList(data) {
 // JAX-RS serializes an empty list as null, and a 'collection of one' as an object (not an 'array of one')
     var list = data == null ? [] : (data instanceof Array ? data : [data]);
@@ -129,7 +126,7 @@ function renderDepositorList(data) {
     var list = data == null ? [] : (data instanceof Array ? data : [data]);
     $('#depositorList td').remove();
     $.each(list, function (index, depositor) {
-        $('#depositorList').append('<tr><td><a href="#" data-identity="' + depositor.depositorId + '">' +depositor.depositorId+"</td><td>"+ depositor.depositorName + "</td><td>"+ depositor.depositId + "</td><td>"+ depositor.depositorDateDeposit + "</td><td>"+ depositor.depositorAmountDeposit + "</td><td>"+ depositor.depositorAmountPlusDeposit + "</td><td>"+ depositor.depositorAmountMinusDeposit + "</td><td>"+ depositor.depositorDateReturnDeposit + "</td><td>"+ depositor.depositorMarkReturnDeposit + '</a></td></tr>');
+        $('#depositorList').append('<tr><td><a href="#" data-identity="' + depositor.depositorId + '">' +depositor.depositorId+"</td><td>"+ depositor.depositorName + "</td><td>"+ depositor.depositorDateDeposit + "</td><td>"+ depositor.depositorAmountDeposit + "</td><td>"+ depositor.depositorAmountPlusDeposit + "</td><td>"+ depositor.depositorAmountMinusDeposit + "</td><td>"+ depositor.depositorDateReturnDeposit + "</td><td>"+ depositor.depositorMarkReturnDeposit + '</a></td></tr>');
     });
 }
 
@@ -181,6 +178,35 @@ function sendMessage(url,method, data,log) {
         send(url,method, data, log);
     }
 }
+
+function findAllDeposits() {
+    console.log('findAllDeposits');
+    $.ajax({
+        type: 'GET',
+        url: REST_URL+"/deposits",
+        dataType: "json", // data type of response
+        success: renderDepositList,
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR, textStatus, errorThrown);
+            alert('findAllDeposits: ' + textStatus);
+        }
+    });
+}
+
+function findAllDepositors() {
+    console.log('findAllDepositors');
+    $.ajax({
+        type: 'GET',
+        url: REST_URL+"/depositors",
+        dataType: "json", // data type of response
+        success: renderDepositorList,
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR, textStatus, errorThrown);
+            alert('findAllDepositors: ' + textStatus);
+        }
+    });
+}
+
 function findDepositById(depositId) {
     console.log('findDepositById: ' + depositId);
     $.ajax({
@@ -204,7 +230,7 @@ function findDepositorById(depositorId) {
     $.ajax({
         type: 'GET',
         url: REST_URL + '/depositor/id/' + depositorId,
-        //dataType: "json",
+        dataType: "json",
         success: function (data) {
             console.log('findDepositorById success: ' + data.depositorId);
             currentDepositor = data;
@@ -216,36 +242,6 @@ function findDepositorById(depositorId) {
             alert('findDepositorById: ' + textStatus);
         }
     });
-}
-
-function findAllDeposits() {
-    console.log('findAllDeposits');
-    var x = $.ajax({
-        type: 'GET',
-        url: REST_URL+"/deposits",
-        //dataType: "json",
-        success: renderDepositList,
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.log(jqXHR, textStatus, errorThrown);
-            alert('findAllDeposit: ' + textStatus);
-        }
-    });
-    return x;
-}
-
-function findAllDepositors() {
-    console.log('findAllDepositors');
-    var x = $.ajax({
-        type: 'GET',
-        url: REST_URL+"/depositors",
-        //dataType: "json", // data type of response
-        success: renderDepositorList,
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.log(jqXHR, textStatus, errorThrown);
-            alert('findAllDepositors: ' + textStatus);
-        }
-    });
-    return x;
 }
 
 function send(url,method,dataJson,log) {

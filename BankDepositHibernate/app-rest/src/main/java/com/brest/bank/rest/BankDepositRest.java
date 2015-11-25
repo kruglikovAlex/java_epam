@@ -1,8 +1,6 @@
 package com.brest.bank.rest;
 
-/**
- * Created by alexander on 27.4.15.
- */
+
 import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
 
@@ -11,22 +9,18 @@ import com.brest.bank.service.BankDepositorService;
 import com.brest.bank.service.BankDepositService;
 
 import com.brest.bank.service.BankDepositorServiceImpl;
-import com.brest.bank.util.HibernateUtil;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import org.apache.http.HttpStatus;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.hibernate.HibernateException;
-import org.hibernate.criterion.Restrictions;
 
 import java.io.*;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.*;
-
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -35,8 +29,8 @@ public class BankDepositRest extends HttpServlet{
     private static final Logger LOGGER = LogManager.getLogger();
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    private List<BankDeposit> deposits = new ArrayList<BankDeposit>();
-    private List<BankDepositor> depositors = new ArrayList<BankDepositor>();
+    private List<BankDeposit> deposits = new ArrayList<>();
+    private List<BankDepositor> depositors = new ArrayList<>();
     private BankDeposit deposit;
     private BankDepositor depositor;
 
@@ -65,8 +59,6 @@ public class BankDepositRest extends HttpServlet{
                        HttpServletResponse res ) throws IOException
     {
         if ((request == null)&&(response == null)){
-            //request = new HttpServletRequestWrapper(req);
-            //response = new HttpServletResponseWrapper(res);
             setHttpServletRequest(req);
             setHttpServletResponse(res);
         }
@@ -75,7 +67,7 @@ public class BankDepositRest extends HttpServlet{
         final PrintWriter out = response.getWriter();
 
         //call get method
-        get(request, response, out);
+        get(request, out);
 
         out.flush();
         out.close();
@@ -102,7 +94,7 @@ public class BankDepositRest extends HttpServlet{
         final PrintWriter out = response.getWriter();
 
         //call update method
-        update(request,response,out);
+        update(request,out);
         out.flush();
         out.close();
 
@@ -130,7 +122,7 @@ public class BankDepositRest extends HttpServlet{
         final PrintWriter out = response.getWriter();
 
         //call insert method
-        insert(request,response,out);
+        insert(request,out);
         out.flush();
         out.close();
 
@@ -158,7 +150,7 @@ public class BankDepositRest extends HttpServlet{
         out.write("DELETE method (removing data) was invoked!\n");
 
         //call delete method
-        delete(request, response, out);
+        delete(request, out);
         out.flush();
         out.close();
 
@@ -173,11 +165,7 @@ public class BankDepositRest extends HttpServlet{
     }
 
     public void get(HttpServletRequest request,
-                       HttpServletResponse response,
-                       PrintWriter out) throws IOException{
-
-        JsonObject jsonDeposit,jsonDepositor;
-        JsonArray jsonDeposits = new JsonArray(), jsonDepositors = new JsonArray();
+                    PrintWriter out) throws IOException{
 
         String str = request.getPathInfo();
         StringTokenizer pathInfo = new StringTokenizer(str);
@@ -200,30 +188,7 @@ public class BankDepositRest extends HttpServlet{
              *
              */
             if(path[0].equalsIgnoreCase("deposits")){
-                try{
-
-                    for(Object d: depositService.getBankDeposits()){
-                        deposit = (BankDeposit)d;
-                        jsonDeposit= new JsonObject();
-                            jsonDeposit.addProperty("depositId",deposit.getDepositId());
-                            jsonDeposit.addProperty("depositName",deposit.getDepositName());
-                            jsonDeposit.addProperty("depositMinTerm",deposit.getDepositMinTerm());
-                            jsonDeposit.addProperty("depositMinAmount",deposit.getDepositMinAmount());
-                            jsonDeposit.addProperty("depositCurrency",deposit.getDepositCurrency());
-                            jsonDeposit.addProperty("depositInterestRate",deposit.getDepositInterestRate());
-                            jsonDeposit.addProperty("depositAddConditions",deposit.getDepositAddConditions());
-
-                        jsonDeposits.add(jsonDeposit);
-                        deposits.add((BankDeposit)d);
-                    }
-
-                    out.print(jsonDeposits);
-
-                } catch (HibernateException e) {
-                    LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
-                    response.sendError(404,"Hibernate error - "+e.getMessage().toString()+"\n");
-                    throw new IOException(e.getMessage());
-                }
+                getDeposits(out);
             }
 
             /**
@@ -231,30 +196,7 @@ public class BankDepositRest extends HttpServlet{
              *
              */
             if(path[0].equalsIgnoreCase("depositors")){
-                try{
-
-                    for(Object d: depositorService.getBankDepositors()){
-                        depositor = (BankDepositor)d;
-                        jsonDepositor= new JsonObject();
-                            jsonDepositor.addProperty("depositorId",depositor.getDepositorId());
-                            jsonDepositor.addProperty("depositorName",depositor.getDepositorName());
-                            jsonDepositor.addProperty("depositorDateDeposit",dateFormat.format(depositor.getDepositorDateDeposit()));
-                            jsonDepositor.addProperty("depositorAmountDeposit",depositor.getDepositorAmountDeposit());
-                            jsonDepositor.addProperty("depositorAmountPlusDeposit",depositor.getDepositorAmountPlusDeposit());
-                            jsonDepositor.addProperty("depositorAmountMinusDeposit",depositor.getDepositorAmountMinusDeposit());
-                            jsonDepositor.addProperty("depositorDateReturnDeposit",dateFormat.format(depositor.getDepositorDateReturnDeposit()));
-                            jsonDepositor.addProperty("depositorMarkReturnDeposit",depositor.getDepositorMarkReturnDeposit());
-
-                        jsonDepositors.add(jsonDepositor);
-                        depositors.add((BankDepositor)d);
-                    }
-
-                    out.print(jsonDepositors);
-                } catch (HibernateException e) {
-                    LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
-                    response.sendError(404,"Hibernate error - "+e.getMessage().toString()+"\n");
-                    throw new IOException(e.getMessage());
-                }
+                getDepositors(out);
             }
         }
         if(path.length==3){
@@ -263,25 +205,7 @@ public class BankDepositRest extends HttpServlet{
              *
              */
             if(path[0].equalsIgnoreCase("deposit") & path[1].equalsIgnoreCase("id")){
-                try{
-
-                    deposit = depositService.getBankDepositById(Long.parseLong(path[2]));
-
-                    jsonDeposit= new JsonObject();
-                        jsonDeposit.addProperty("depositId",deposit.getDepositId());
-                        jsonDeposit.addProperty("depositName",deposit.getDepositName());
-                        jsonDeposit.addProperty("depositMinTerm",deposit.getDepositMinTerm());
-                        jsonDeposit.addProperty("depositMinAmount",deposit.getDepositMinAmount());
-                        jsonDeposit.addProperty("depositCurrency",deposit.getDepositCurrency());
-                        jsonDeposit.addProperty("depositInterestRate",deposit.getDepositInterestRate());
-                        jsonDeposit.addProperty("depositAddConditions",deposit.getDepositAddConditions());
-
-                    out.print(jsonDeposit);
-                } catch (HibernateException e) {
-                    LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
-                    response.sendError(404,"Hibernate error - "+e.getMessage().toString()+"\n");
-                    throw new IOException(e.getMessage());
-                }
+                getDepositById(Long.parseLong(path[2]),out);
             }
 
             /**
@@ -289,27 +213,7 @@ public class BankDepositRest extends HttpServlet{
              *
              */
             if(path[0].equalsIgnoreCase("depositor") & path[1].equalsIgnoreCase("id")){
-                try{
-
-                    depositor = depositorService.getBankDepositorById(Long.parseLong(path[2]));
-
-                    jsonDepositor= new JsonObject();
-                        jsonDepositor.addProperty("depositorId",depositor.getDepositorId());
-                        jsonDepositor.addProperty("depositorName",depositor.getDepositorName());
-                        jsonDepositor.addProperty("depositorDateDeposit",dateFormat.format(depositor.getDepositorDateDeposit()));
-                        jsonDepositor.addProperty("depositorAmountDeposit",depositor.getDepositorAmountDeposit());
-                        jsonDepositor.addProperty("depositorAmountPlusDeposit",depositor.getDepositorAmountPlusDeposit());
-                        jsonDepositor.addProperty("depositorAmountMinusDeposit",depositor.getDepositorAmountMinusDeposit());
-                        jsonDepositor.addProperty("depositorDateReturnDeposit",dateFormat.format(depositor.getDepositorDateReturnDeposit()));
-                    jsonDepositor.addProperty("depositorMarkReturnDeposit", depositor.getDepositorMarkReturnDeposit());
-
-                    out.print(jsonDepositor);
-
-                } catch (HibernateException e) {
-                    LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
-                    response.sendError(404,"Hibernate error - "+e.getMessage().toString()+"\n");
-                    throw new IOException(e.getMessage());
-                }
+                getDepositorById(Long.parseLong(path[2]),out);
             }
 
             /**
@@ -317,25 +221,7 @@ public class BankDepositRest extends HttpServlet{
              *
              */
             if(path[0].equalsIgnoreCase("deposit") & path[1].equalsIgnoreCase("name")){
-                try{
-
-                    deposit = depositService.getBankDepositByName(path[2]);
-
-                    jsonDeposit= new JsonObject();
-                        jsonDeposit.addProperty("depositId",deposit.getDepositId());
-                        jsonDeposit.addProperty("depositName",deposit.getDepositName());
-                        jsonDeposit.addProperty("depositMinTerm",deposit.getDepositMinTerm());
-                        jsonDeposit.addProperty("depositMinAmount",deposit.getDepositMinAmount());
-                        jsonDeposit.addProperty("depositCurrency",deposit.getDepositCurrency());
-                        jsonDeposit.addProperty("depositInterestRate",deposit.getDepositInterestRate());
-                        jsonDeposit.addProperty("depositAddConditions",deposit.getDepositAddConditions());
-
-                    out.print(jsonDeposit);
-                } catch (HibernateException e) {
-                    LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
-                    response.sendError(404,"Hibernate error - "+e.getMessage().toString()+"\n");
-                    throw new IOException(e.getMessage());
-                }
+                getDepositByName(path[2],out);
             }
 
             /**
@@ -343,33 +229,16 @@ public class BankDepositRest extends HttpServlet{
              *
              */
             if(path[0].equalsIgnoreCase("depositor") & path[1].equalsIgnoreCase("name")){
-                try{
-
-                    depositor = depositorService.getBankDepositorByName(path[2]);
-
-                    jsonDepositor= new JsonObject();
-                        jsonDepositor.addProperty("depositorId",depositor.getDepositorId());
-                        jsonDepositor.addProperty("depositorName",depositor.getDepositorName());
-                        jsonDepositor.addProperty("depositorDateDeposit",dateFormat.format(depositor.getDepositorDateDeposit()));
-                        jsonDepositor.addProperty("depositorAmountDeposit",depositor.getDepositorAmountDeposit());
-                        jsonDepositor.addProperty("depositorAmountPlusDeposit",depositor.getDepositorAmountPlusDeposit());
-                        jsonDepositor.addProperty("depositorAmountMinusDeposit",depositor.getDepositorAmountMinusDeposit());
-                        jsonDepositor.addProperty("depositorDateReturnDeposit",dateFormat.format(depositor.getDepositorDateReturnDeposit()));
-                        jsonDepositor.addProperty("depositorMarkReturnDeposit",depositor.getDepositorMarkReturnDeposit());
-
-                    out.print(jsonDepositor);
-                } catch (HibernateException e) {
-                    LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
-                    response.sendError(404,"Hibernate error - "+e.getMessage()+"\n");
-                    throw new IOException(e.getMessage());
-                }
+                getDepositorByName(path[2],out);
             }
         }
+        out.flush();
+        out.close();
     }
 
     public void delete(HttpServletRequest request,
-                              HttpServletResponse response,
-                              PrintWriter out) throws IOException {
+                       PrintWriter out) throws IOException {
+
         String str = request.getPathInfo();
         StringTokenizer pathInfo = new StringTokenizer(str);
         int count = 0;
@@ -391,17 +260,7 @@ public class BankDepositRest extends HttpServlet{
          */
         if((path.length==2)&(path[0].equalsIgnoreCase("deposit"))){
             Long depositId = Long.parseLong(path[1]);
-            try {
-
-                depositService.deleteBankDeposit(depositId);
-
-                out.write("deposit with " + depositId + " was deleted\n");
-
-            } catch (HibernateException e) {
-                LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
-                response.sendError(404, "Hibernate error - " + e.getMessage() + "\n");
-                throw new IOException(e.getMessage());
-            }
+            deleteDeposit(depositId,out);
         }
 
         /**
@@ -410,206 +269,491 @@ public class BankDepositRest extends HttpServlet{
          */
         if((path.length==2)&(path[0].equalsIgnoreCase("depositor"))){
             Long depositorId = Long.parseLong(path[1]);
-            try {
-
-                depositorService.removeBankDepositor(depositorId);
-
-                out.write("depositor with " + depositorId + " was deleted\n");
-
-            } catch (HibernateException e) {
-                LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
-                response.sendError(404, "Hibernate error - " + e.getMessage() + "\n");
-                throw new IOException(e.getMessage());
-            }
+            deleteDepositor(depositorId,out);
         }
+        out.flush();
+        out.close();
     }
 
     public void insert(HttpServletRequest request,
-                       HttpServletResponse response,
                        PrintWriter out) throws IOException{
 
-        //if (request.getContentType().equals("application/json")){
-            Gson gson = new Gson();
-            String str = request.getPathInfo();
-            StringTokenizer pathInfo = new StringTokenizer(str);
-            int count = 0;
-            while (pathInfo.hasMoreTokens()){
-                pathInfo.nextToken("/");
-                count++;
-            }
-            String[] path = new String[count];
-            pathInfo = new StringTokenizer(str);
-            count = 0;
-            while (pathInfo.hasMoreTokens()) {
-                path[count] = pathInfo.nextToken("/");
-                count++;
-            }
+        Gson gson = new Gson();
+        String str = request.getPathInfo();
+        StringTokenizer pathInfo = new StringTokenizer(str);
+        int count = 0;
+        while (pathInfo.hasMoreTokens()){
+            pathInfo.nextToken("/");
+            count++;
+        }
+        String[] path = new String[count];
+        pathInfo = new StringTokenizer(str);
+        count = 0;
+        while (pathInfo.hasMoreTokens()) {
+            path[count] = pathInfo.nextToken("/");
+            count++;
+        }
 
-            /**
-             * @path /deposit
-             *
-             * {"depositName":"Name1","depositMinTerm":12,"depositMinAmount":1000,
-             * "depositCurrency":"usd","depositInterestRate":5,"depositAddConditions":"conditions"}
-             */
-            if((path.length==1)&(path[0].equalsIgnoreCase("deposit"))){
-                try {
-                    StringBuilder sb = new StringBuilder();
-                    String s;
-                    while ((s = request.getReader().readLine()) != null) {
-                        sb.append(s);
-                    }
+        /**
+        * @path /deposit
+        *
+        * {"depositName":"Name1","depositMinTerm":12,"depositMinAmount":1000,
+        * "depositCurrency":"usd","depositInterestRate":5,"depositAddConditions":"conditions"}
+        */
+        if((path.length==1)&(path[0].equalsIgnoreCase("deposit"))){
+            addDeposit(gson,request,out);
+        }
 
-                    deposit = gson.fromJson(sb.toString(), BankDeposit.class);
-
-                    depositService.addBankDeposit(deposit);
-
-                    String jsonDeposit = gson.toJson(deposit);
-                    out.write(jsonDeposit);
-
-                } catch (HibernateException e) {
-                    LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
-                    response.sendError(404,"Hibernate error - "+e.getMessage()+"\n");
-                    throw new IOException(e.getMessage());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                } finally {
-                    out.flush();
-                    out.close();
-                }
-            }
-            /**
-             * @path /depositor/{depositId}
-             *
-             * {"depositorName":"depositorName2","depositorDateDeposit":"Jan 1, 2014 12:00:00 AM",
-             * "depositorAmountDeposit":1000,"depositorAmountPlusDeposit":100,"depositorAmountMinusDeposit":10,
-             * "depositorDateReturnDeposit":"Mar 1, 2015 12:00:00 AM","depositorMarkReturnDeposit":0}
-             */
-            if((path.length==2)&(path[0].equalsIgnoreCase("depositor"))){
-                try {
-                    Long depositId = Long.parseLong(path[1]);
-                    StringBuilder sb = new StringBuilder();
-                    String s;
-                    while ((s = request.getReader().readLine()) != null) {
-                        sb.append(s);
-                    }
-
-                    depositor = gson.fromJson(sb.toString(), BankDepositor.class);
-                    depositor.setDepositId(depositId);
-
-                    depositorService.addBankDepositor(depositId,depositor);
-
-                    String jsonDepositor = gson.toJson(depositor);
-                    out.write(jsonDepositor);
-
-                } catch (HibernateException e) {
-                    LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
-                    response.sendError(404,"Hibernate error - "+e.getMessage().toString());
-                    throw new IOException(e.getMessage());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                } finally {
-                    out.flush();
-                    out.close();
-                }
-            }
-        //} else {
-        //    response.setStatus(HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE);
-            out.flush();
-            out.close();
-        //}
+        /**
+        * @path /depositor/{depositId}
+        *
+        * {"depositorName":"depositorName2","depositorDateDeposit":"Jan 1, 2014 12:00:00 AM",
+        * "depositorAmountDeposit":1000,"depositorAmountPlusDeposit":100,"depositorAmountMinusDeposit":10,
+        * "depositorDateReturnDeposit":"Mar 1, 2015 12:00:00 AM","depositorMarkReturnDeposit":0}
+        */
+        if((path.length==2)&(path[0].equalsIgnoreCase("depositor"))){
+            addDepositor(gson,Long.parseLong(path[1]),request,out);
+        }
+        out.flush();
+        out.close();
     }
 
     public void update(HttpServletRequest request,
-                       HttpServletResponse response,
                        PrintWriter out) throws IOException {
 
-        //if (request.getContentType().equals("application/json")){
-            Gson gson = new Gson();
-            String str = request.getPathInfo();
-            StringTokenizer pathInfo = new StringTokenizer(str);
-            int count = 0;
-            while (pathInfo.hasMoreTokens()){
-                pathInfo.nextToken("/");
-                count++;
+        Gson gson = new Gson();
+        String str = request.getPathInfo();
+        StringTokenizer pathInfo = new StringTokenizer(str);
+        int count = 0;
+        while (pathInfo.hasMoreTokens()){
+            pathInfo.nextToken("/");
+            count++;
+        }
+        String[] path = new String[count];
+        pathInfo = new StringTokenizer(str);
+        count = 0;
+        while (pathInfo.hasMoreTokens()) {
+            path[count] = pathInfo.nextToken("/");
+            count++;
+        }
+
+        /**
+        * @path /deposit
+        *
+        * {"depositId":1,"depositName":"updateName1","depositMinTerm":10,"depositMinAmount":1000,
+        * "depositCurrency":"usd","depositInterestRate":5,"depositAddConditions":"conditions"}
+        */
+        if((path.length==1)&(path[0].equalsIgnoreCase("deposit"))){
+            updateDeposit(gson,out);
+        }
+
+        /**
+        * @path /depositor/{depositId}
+        *
+        * {"depositorId":1,"depositorName":"updateDepositorName2","depositorDateDeposit":"Jan 1, 2014 12:00:00 AM",
+        * "depositorAmountDeposit":1000,"depositorAmountPlusDeposit":100,"depositorAmountMinusDeposit":10,
+        * "depositorDateReturnDeposit":"Mar 1, 2015 12:00:00 AM","depositorMarkReturnDeposit":0}
+        */
+        if((path.length==2)&(path[0].equalsIgnoreCase("depositor"))){
+            updateDepositor(gson,out);
+        }
+        out.flush();
+        out.close();
+    }
+
+    /**
+     * @param out PrintWriter
+     * @throws IOException
+     */
+    private void getDeposits(PrintWriter out) throws IOException{
+        JsonObject jsonDeposit;
+        JsonArray jsonDeposits = new JsonArray();
+        try{
+            for(Object d: depositService.getBankDeposits()){
+                deposit = (BankDeposit)d;
+                jsonDeposit= new JsonObject();
+                    jsonDeposit.addProperty("depositId",deposit.getDepositId());
+                    jsonDeposit.addProperty("depositName",deposit.getDepositName());
+                    jsonDeposit.addProperty("depositMinTerm",deposit.getDepositMinTerm());
+                    jsonDeposit.addProperty("depositMinAmount",deposit.getDepositMinAmount());
+                    jsonDeposit.addProperty("depositCurrency",deposit.getDepositCurrency());
+                    jsonDeposit.addProperty("depositInterestRate",deposit.getDepositInterestRate());
+                    jsonDeposit.addProperty("depositAddConditions",deposit.getDepositAddConditions());
+
+                jsonDeposits.add(jsonDeposit);
+                deposits.add((BankDeposit)d);
             }
-            String[] path = new String[count];
-            pathInfo = new StringTokenizer(str);
-            count = 0;
-            while (pathInfo.hasMoreTokens()) {
-                path[count] = pathInfo.nextToken("/");
-                count++;
+
+            out.print(jsonDeposits);
+
+        } catch (HibernateException e) {
+            LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
+            out.print("Status:404\n"+"Hibernate error - "+e.getMessage()+"\n");
+            //response.sendError(404,"Hibernate error - "+e.getMessage()+"\n");
+            throw new IOException(e.getMessage());
+        }finally {
+            out.flush();
+            out.close();
+        }
+    }
+
+    /**
+     * @param out PrintWriter
+     * @throws IOException
+     */
+    private void getDepositors(PrintWriter out) throws IOException{
+        JsonObject jsonDepositor;
+        JsonArray jsonDepositors = new JsonArray();
+        try{
+            for(Object d: depositorService.getBankDepositors()){
+                depositor = (BankDepositor)d;
+                jsonDepositor= new JsonObject();
+                    jsonDepositor.addProperty("depositorId",depositor.getDepositorId());
+                    jsonDepositor.addProperty("depositorName",depositor.getDepositorName());
+                    jsonDepositor.addProperty("depositorDateDeposit",dateFormat.format(depositor.getDepositorDateDeposit()));
+                    jsonDepositor.addProperty("depositorAmountDeposit",depositor.getDepositorAmountDeposit());
+                    jsonDepositor.addProperty("depositorAmountPlusDeposit",depositor.getDepositorAmountPlusDeposit());
+                    jsonDepositor.addProperty("depositorAmountMinusDeposit",depositor.getDepositorAmountMinusDeposit());
+                    jsonDepositor.addProperty("depositorDateReturnDeposit",dateFormat.format(depositor.getDepositorDateReturnDeposit()));
+                    jsonDepositor.addProperty("depositorMarkReturnDeposit",depositor.getDepositorMarkReturnDeposit());
+
+                jsonDepositors.add(jsonDepositor);
+                depositors.add((BankDepositor)d);
             }
 
-            /**
-             * @path /deposit
-             *
-             * {"depositId":1,"depositName":"updateName1","depositMinTerm":10,"depositMinAmount":1000,
-             * "depositCurrency":"usd","depositInterestRate":5,"depositAddConditions":"conditions"}
-             */
-            if((path.length==1)&(path[0].equalsIgnoreCase("deposit"))){
-                try {
-                    StringBuilder sb = new StringBuilder();
-                    String s;
-                    while ((s = request.getReader().readLine()) != null) {
-                        sb.append(s);
-                    }
+            out.print(jsonDepositors);
+        } catch (HibernateException e) {
+            LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
+            out.print("Status:404\n" + "Hibernate error - " + e.getMessage() + "\n");
+            throw new IOException(e.getMessage());
+        }finally {
+            out.flush();
+            out.close();
+        }
+    }
 
-                    deposit = gson.fromJson(sb.toString(), BankDeposit.class);
+    /**
+     * @param id Long
+     * @param out PrintWriter
+     * @throws IOException
+     */
+    private void getDepositById(Long id,
+                                PrintWriter out) throws IOException{
+        JsonObject jsonDeposit;
+        try{
 
-                    depositService.updateBankDeposit(deposit);
+            deposit = depositService.getBankDepositById(id);
 
-                    String jsonDeposit = gson.toJson(deposit);
-                    out.write(jsonDeposit);
+            jsonDeposit= new JsonObject();
+                jsonDeposit.addProperty("depositId",deposit.getDepositId());
+                jsonDeposit.addProperty("depositName",deposit.getDepositName());
+                jsonDeposit.addProperty("depositMinTerm",deposit.getDepositMinTerm());
+                jsonDeposit.addProperty("depositMinAmount",deposit.getDepositMinAmount());
+                jsonDeposit.addProperty("depositCurrency",deposit.getDepositCurrency());
+                jsonDeposit.addProperty("depositInterestRate",deposit.getDepositInterestRate());
+                jsonDeposit.addProperty("depositAddConditions",deposit.getDepositAddConditions());
 
-                } catch (HibernateException e) {
-                    LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
-                    response.sendError(404,"Hibernate error - "+e.getMessage()+"\n");
-                    throw new IOException(e.getMessage());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                } finally {
-                    out.flush();
-                    out.close();
-                }
+            out.print(jsonDeposit);
+        } catch (HibernateException e) {
+            LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
+            out.print("Status:404\n" + "Hibernate error - " + e.getMessage() + "\n");
+            throw new IOException(e.getMessage());
+        }finally {
+            response = null;
+
+            out.flush();
+            out.close();
+        }
+    }
+
+    /**
+     * @param id Long
+     * @param out PrintWriter
+     * @throws IOException
+     */
+    private void getDepositorById(Long id,
+                                  PrintWriter out) throws IOException{
+        JsonObject jsonDepositor;
+        try{
+            depositor = depositorService.getBankDepositorById(id);
+
+            jsonDepositor= new JsonObject();
+                jsonDepositor.addProperty("depositorId",depositor.getDepositorId());
+                jsonDepositor.addProperty("depositorName",depositor.getDepositorName());
+                jsonDepositor.addProperty("depositorDateDeposit",dateFormat.format(depositor.getDepositorDateDeposit()));
+                jsonDepositor.addProperty("depositorAmountDeposit",depositor.getDepositorAmountDeposit());
+                jsonDepositor.addProperty("depositorAmountPlusDeposit",depositor.getDepositorAmountPlusDeposit());
+                jsonDepositor.addProperty("depositorAmountMinusDeposit",depositor.getDepositorAmountMinusDeposit());
+                jsonDepositor.addProperty("depositorDateReturnDeposit",dateFormat.format(depositor.getDepositorDateReturnDeposit()));
+                jsonDepositor.addProperty("depositorMarkReturnDeposit", depositor.getDepositorMarkReturnDeposit());
+
+            out.print(jsonDepositor);
+
+        } catch (HibernateException e) {
+            LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
+            out.print("Status:404\n" + "Hibernate error - " + e.getMessage() + "\n");
+            throw new IOException(e.getMessage());
+        }finally {
+            out.flush();
+            out.close();
+        }
+    }
+
+    /**
+     * @param name String
+     * @param out PrintWriter
+     * @throws IOException
+     */
+    private void getDepositByName(String name,
+                                  PrintWriter out) throws IOException{
+        JsonObject jsonDeposit;
+        try{
+            deposit = depositService.getBankDepositByName(name);
+
+            jsonDeposit= new JsonObject();
+                jsonDeposit.addProperty("depositId",deposit.getDepositId());
+                jsonDeposit.addProperty("depositName",deposit.getDepositName());
+                jsonDeposit.addProperty("depositMinTerm",deposit.getDepositMinTerm());
+                jsonDeposit.addProperty("depositMinAmount",deposit.getDepositMinAmount());
+                jsonDeposit.addProperty("depositCurrency",deposit.getDepositCurrency());
+                jsonDeposit.addProperty("depositInterestRate",deposit.getDepositInterestRate());
+                jsonDeposit.addProperty("depositAddConditions",deposit.getDepositAddConditions());
+
+            out.print(jsonDeposit);
+        } catch (HibernateException e) {
+            LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
+            out.print("Status:404\n" + "Hibernate error - " + e.getMessage() + "\n");
+            throw new IOException(e.getMessage());
+        }finally {
+            out.flush();
+            out.close();
+        }
+    }
+
+    /**
+     * @param name String
+     * @param out PrintWriter
+     * @throws IOException
+     */
+    private void getDepositorByName(String name,
+                                    PrintWriter out) throws IOException{
+        JsonObject jsonDepositor;
+        try{
+            depositor = depositorService.getBankDepositorByName(name);
+
+            jsonDepositor= new JsonObject();
+                jsonDepositor.addProperty("depositorId",depositor.getDepositorId());
+                jsonDepositor.addProperty("depositorName",depositor.getDepositorName());
+                jsonDepositor.addProperty("depositorDateDeposit",dateFormat.format(depositor.getDepositorDateDeposit()));
+                jsonDepositor.addProperty("depositorAmountDeposit",depositor.getDepositorAmountDeposit());
+                jsonDepositor.addProperty("depositorAmountPlusDeposit",depositor.getDepositorAmountPlusDeposit());
+                jsonDepositor.addProperty("depositorAmountMinusDeposit",depositor.getDepositorAmountMinusDeposit());
+                jsonDepositor.addProperty("depositorDateReturnDeposit",dateFormat.format(depositor.getDepositorDateReturnDeposit()));
+                jsonDepositor.addProperty("depositorMarkReturnDeposit",depositor.getDepositorMarkReturnDeposit());
+
+            out.print(jsonDepositor);
+        } catch (HibernateException e) {
+            LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
+            out.print("Status:404\n" + "Hibernate error - " + e.getMessage() + "\n");
+            throw new IOException(e.getMessage());
+        }finally {
+            out.flush();
+            out.close();
+        }
+    }
+
+    /**
+     * @param id Long
+     * @param out PrintWriter
+     * @throws IOException
+     */
+    private void deleteDeposit(Long id,
+                               PrintWriter out) throws IOException{
+
+        try {
+
+            depositService.deleteBankDeposit(id);
+
+            out.write("deposit with " + id + " was deleted\n");
+
+        } catch (HibernateException e) {
+            LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
+            out.print("Status:404\n" + "Hibernate error - " + e.getMessage() + "\n");
+            throw new IOException(e.getMessage());
+        }finally {
+            out.flush();
+            out.close();
+        }
+    }
+
+    /**
+     * @param id Long
+     * @param out PrintWriter
+     * @throws IOException
+     */
+    private void deleteDepositor(Long id,
+                                 PrintWriter out) throws IOException{
+
+        try {
+
+            depositService.deleteBankDeposit(id);
+
+            out.write("deposit with " + id + " was deleted\n");
+
+        } catch (HibernateException e) {
+            LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
+            out.print("Status:404\n" + "Hibernate error - " + e.getMessage() + "\n");
+            throw new IOException(e.getMessage());
+        }finally {
+            out.flush();
+            out.close();
+        }
+    }
+
+    /**
+     * @param gson Gson
+     * @param request HttpServletRequest
+     * @param out PrintWriter
+     * @throws IOException
+     */
+    private void addDeposit(Gson gson,
+                            HttpServletRequest request,
+                            PrintWriter out) throws IOException{
+        try {
+            StringBuilder sb = new StringBuilder();
+            String s;
+            while ((s = request.getReader().readLine()) != null) {
+                sb.append(s);
             }
-            /**
-             * @path /depositor/{depositId}
-             *
-             * {"depositorId":1,"depositorName":"updateDepositorName2","depositorDateDeposit":"Jan 1, 2014 12:00:00 AM",
-             * "depositorAmountDeposit":1000,"depositorAmountPlusDeposit":100,"depositorAmountMinusDeposit":10,
-             * "depositorDateReturnDeposit":"Mar 1, 2015 12:00:00 AM","depositorMarkReturnDeposit":0}
-             */
-            if((path.length==2)&(path[0].equalsIgnoreCase("depositor"))){
-                try {
-                    Long depositId = Long.parseLong(path[1]);
-                    StringBuilder sb = new StringBuilder();
-                    String s;
-                    while ((s = request.getReader().readLine()) != null) {
-                        sb.append(s);
-                    }
 
-                    depositor = gson.fromJson(sb.toString(), BankDepositor.class);
+            deposit = gson.fromJson(sb.toString(), BankDeposit.class);
 
-                    depositorService.updateBankDepositor(depositor);
+            depositService.addBankDeposit(deposit);
 
-                    String jsonDepositor = gson.toJson(depositor);
-                    out.write(jsonDepositor);
+            String jsonDeposit = gson.toJson(deposit);
+            out.write(jsonDeposit);
 
-                } catch (HibernateException e) {
-                    LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
-                    response.sendError(404,"Hibernate error - "+e.getMessage().toString());
-                    throw new IOException(e.getMessage());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                } finally {
-                    out.flush();
-                    out.close();
-                }
+        } catch (HibernateException e) {
+            LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
+            out.print("Status:404\n" + "Hibernate error - " + e.getMessage() + "\n");
+            throw new IOException(e.getMessage());
+        } catch (Exception e) {
+            LOGGER.error("Error: {},{}",e.getMessage());
+            out.print("Error: "+e.getMessage());
+            e.printStackTrace(out);
+        } finally {
+            out.flush();
+            out.close();
+        }
+    }
+
+    /**
+     * @param gson Gson
+     * @param depositId Long
+     * @param request HttpServletRequest
+     * @param out PrintWriter
+     * @throws IOException
+     */
+    private void addDepositor(Gson gson,
+                              Long depositId,
+                              HttpServletRequest request,
+                              PrintWriter out) throws IOException{
+        try {
+            StringBuilder sb = new StringBuilder();
+            String s;
+            while ((s = request.getReader().readLine()) != null) {
+                sb.append(s);
             }
-        //} else {
-        //    response.setStatus(HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE);
-        //    out.flush();
-        //    out.close();
-        //}
+
+            depositor = gson.fromJson(sb.toString(), BankDepositor.class);
+            depositor.setDepositId(depositId);
+
+            depositorService.addBankDepositor(depositId,depositor);
+
+            String jsonDepositor = gson.toJson(depositor);
+            out.write(jsonDepositor);
+
+        } catch (HibernateException e) {
+            LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
+            out.print("Status:404\n" + "Hibernate error - " + e.getMessage() + "\n");
+            throw new IOException(e.getMessage());
+        } catch (Exception e) {
+            LOGGER.error("Error: {},{}",e.getMessage());
+            out.print("Error: "+e.getMessage());
+            e.printStackTrace(out);
+        } finally {
+            out.flush();
+            out.close();
+        }
+    }
+
+    /**
+     * @param gson Gson
+     * @param out PrintWriter
+     * @throws IOException
+     */
+    private void updateDeposit(Gson gson,
+                               PrintWriter out) throws IOException{
+        try {
+            StringBuilder sb = new StringBuilder();
+            String s;
+            while ((s = request.getReader().readLine()) != null) {
+                sb.append(s);
+            }
+
+            deposit = gson.fromJson(sb.toString(), BankDeposit.class);
+
+            depositService.updateBankDeposit(deposit);
+
+            String jsonDeposit = gson.toJson(deposit);
+            out.write(jsonDeposit);
+
+        } catch (HibernateException e) {
+            LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
+            out.print("Status:404\n" + "Hibernate error - " + e.getMessage() + "\n");
+            throw new IOException(e.getMessage());
+        } catch (Exception e) {
+            LOGGER.error("Error: {},{}",e.getMessage());
+            out.print("Error: "+e.getMessage());
+            e.printStackTrace(out);
+        } finally {
+            out.flush();
+            out.close();
+        }
+    }
+
+    /**
+     * @param gson Gson
+     * @param out PrintWriter
+     * @throws IOException
+     */
+    private void updateDepositor(Gson gson,
+                                 PrintWriter out) throws IOException{
+        try {
+            StringBuilder sb = new StringBuilder();
+            String s;
+            while ((s = request.getReader().readLine()) != null) {
+                sb.append(s);
+            }
+
+            depositor = gson.fromJson(sb.toString(), BankDepositor.class);
+
+            depositorService.updateBankDepositor(depositor);
+
+            String jsonDepositor = gson.toJson(depositor);
+            out.write(jsonDepositor);
+
+        } catch (HibernateException e) {
+            LOGGER.error("Hibernate error - {},/n{}", e.getMessage(), e.getStackTrace());
+            out.print("Status:404\n" + "Hibernate error - " + e.getMessage() + "\n");
+            throw new IOException(e.getMessage());
+        } catch (Exception e) {
+            LOGGER.error("Error: {},{}",e.getMessage());
+            out.print("Error: "+e.getMessage());
+            e.printStackTrace(out);
+        } finally {
+            out.flush();
+            out.close();
+        }
     }
 }

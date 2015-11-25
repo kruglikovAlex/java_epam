@@ -1,9 +1,5 @@
 package com.brest.bank.client;
 
-import java.io.*;
-
-import com.brest.bank.client.GenerateWSDL.*;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -11,7 +7,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,12 +15,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class BankDepositSoapClient extends HttpServlet {
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private GenerateWSDL generateWSDL = new GenerateWSDL();
 
     /**
      * Servlet method responding to HTTP GET methods calls.
@@ -39,14 +35,15 @@ public class BankDepositSoapClient extends HttpServlet {
                          HttpServletResponse response) throws ServletException, IOException
     {
         try{
-            StringWriter wr = generateWSDL.dumpWSDL(generateWSDL.createWSDL());
+            StringWriter wr = GenerateWSDL.dumpWSDL(GenerateWSDL.createWSDL());
             PrintWriter outputStream = response.getWriter();
             outputStream.write(wr.toString());
 
             outputStream.flush();
             outputStream.close();
         }catch (IOException e){
-
+            LOGGER.error("IOException - {},/n{}", e.getMessage(), e.getStackTrace());
+            response.sendError(404,"IOException - "+e.getMessage()+"\n");
         }
     }
 
@@ -125,7 +122,7 @@ public class BankDepositSoapClient extends HttpServlet {
             sb.append(s);
         }
 
-        HttpEntity entity = new StringEntity(sb.toString());
+        StringEntity entity = new StringEntity(sb.toString());
 
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost postRequest = new HttpPost(url);
@@ -145,6 +142,9 @@ public class BankDepositSoapClient extends HttpServlet {
             LOGGER.error("Client Protocol POST -> error - {},/n{}", e.getMessage(), e.getStackTrace());
             response.sendError(404, "Client Protocol error - " + e.getMessage() + "\n");
             throw new IOException(e.getMessage());
+        }finally {
+            out.flush();
+            out.close();
         }
 
     }
