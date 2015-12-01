@@ -1,0 +1,4 @@
+rootProject.name = 'BDGradleHibernateSpring'
+include 'app-core'
+include 'app-dao'
+
