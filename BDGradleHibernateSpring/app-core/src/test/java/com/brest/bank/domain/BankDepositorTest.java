@@ -104,20 +104,21 @@ public class BankDepositorTest {
     public void testToStringNullDepositor() throws Exception {
         LOGGER.debug("testToString({})",depositors.toString());
 
-        assertEquals("BankDepositor: { depositorId=null, depositorName=null, " +
-                "depositorDateDeposit=null, depositorAmountDeposit=null, " +
-                "depositorAmountPlusDeposit=null, depositorAmountMinusDeposit=null, " +
-                "depositorDateReturnDeposit=null, depositorMarkReturnDeposit=null}",depositors.toString());
+        assertEquals("BankDepositor: { depositorId=null, depositorName=null, depositorDateDeposit=null, " +
+                "depositorAmountDeposit=null, depositorAmountPlusDeposit=null, depositorAmountMinusDeposit=null, " +
+                "depositorDateReturnDeposit=null, depositorMarkReturnDeposit=null, deposit=null}",depositors.toString());
     }
 
     @Test
     public void testToString() throws Exception {
         depositors = new BankDepositor(1L,"name",dateFormat.parse("2015-01-01"),100,10,30,dateFormat.parse("2015-10-10"),0,null);
+        depositors.setDeposit(new BankDeposit(7L, "name", 24, 1000, "grb", 4, "condition", null));
         LOGGER.debug("testToString({})", depositors.toString());
 
-        assertEquals("BankDepositor: { depositorId=1, depositorName=name, " +
-                "depositorDateDeposit=2015-01-01, depositorAmountDeposit=100, " +
-                "depositorAmountPlusDeposit=10, depositorAmountMinusDeposit=30, " +
-                "depositorDateReturnDeposit=2015-10-10, depositorMarkReturnDeposit=0}",depositors.toString());
+        assertEquals("BankDepositor: { depositorId=1, depositorName=name, depositorDateDeposit=2015-01-01, " +
+                "depositorAmountDeposit=100, depositorAmountPlusDeposit=10, depositorAmountMinusDeposit=30, " +
+                "depositorDateReturnDeposit=2015-10-10, depositorMarkReturnDeposit=0, " +
+                "deposit=BankDeposit: { depositId=7, depositName=name, depositMinTerm=24, depositMinAmount=1000, " +
+                "depositCurrency=grb, depositInterestRate=4, depositAddConditions=condition, depositors=null}}",depositors.toString());
     }
 }
