@@ -2,7 +2,6 @@ insert into BANKDEPOSIT (depositId, depositName, depositMinTerm, depositMinAmoun
 insert into BANKDEPOSIT (depositId, depositName, depositMinTerm, depositMinAmount, depositCurrency, depositInterestRate, depositAddConditions) values (default,'depositName1',13,200,'usd',5,'condition1');
 insert into BANKDEPOSIT (depositId, depositName, depositMinTerm, depositMinAmount, depositCurrency, depositInterestRate, depositAddConditions) values (default,'depositName2',14,300,'usd',6,'condition2');
 insert into BANKDEPOSIT (depositId, depositName, depositMinTerm, depositMinAmount, depositCurrency, depositInterestRate, depositAddConditions) values (default,'depositName3',15,400,'usd',7,'condition3');
-insert into BANKDEPOSIT (depositId, depositName, depositMinTerm, depositMinAmount, depositCurrency, depositInterestRate, depositAddConditions) values (default,'name',24,1000,'grb',4,'condition');
 
 insert into BANKDEPOSITOR (depositorId,depositorName,depositorDateDeposit,depositorAmountDeposit,depositorAmountPlusDeposit,depositorAmountMinusDeposit,depositorDateReturnDeposit,depositorMarkReturnDeposit) values (default,'depositorName1','2014-12-01',1001,20,20,'2014-12-02',0);
 insert into BANKDEPOSITOR (depositorId,depositorName,depositorDateDeposit,depositorAmountDeposit,depositorAmountPlusDeposit,depositorAmountMinusDeposit,depositorDateReturnDeposit,depositorMarkReturnDeposit) values (default,'depositorName6','2014-12-06',999,60,60,'2014-12-07',0);

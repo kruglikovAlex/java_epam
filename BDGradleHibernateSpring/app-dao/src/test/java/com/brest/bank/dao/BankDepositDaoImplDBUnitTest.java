@@ -21,7 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/spring-dao-DBUnit-test.xml"})
+@ContextConfiguration(locations = {"classpath:/spring-dao-test.xml"})
 public class BankDepositDaoImplDBUnitTest {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -35,7 +35,7 @@ public class BankDepositDaoImplDBUnitTest {
     @Autowired
     private IDatabaseTester databaseTester;
 
-    private BankDeposit deposit = new BankDeposit();;
+    private BankDeposit deposit = new BankDeposit();
     public List<BankDeposit> deposits = new ArrayList<BankDeposit>();
 
     @Before
@@ -125,6 +125,43 @@ public class BankDepositDaoImplDBUnitTest {
         actualTable = actualData.getTable("bankdeposit");
 
         Assertion.assertEquals(expectedTable, actualTable);
+        Assert.assertEquals(expectedData.getTable("bankdeposit").getRowCount(), actualData.getTable("bankdeposit").getRowCount());
+    }
+
+    @Test
+    public void testUpdateBankDeposit() throws Exception{
+        LOGGER.debug("testUpdateBankDeposit() - run");
+        deposit = depositDao.getBankDepositByIdCriteria(2L);
+        LOGGER.debug("deposit for update: {}",deposit.toString());
+        deposit.setDepositName("depositName1Update");
+        deposit.setDepositMinTerm(24);
+        deposit.setDepositCurrency("rub");
+        deposit.setDepositMinAmount(1000000);
+
+        depositDao.updateBankDeposit(deposit);
+
+        expectedData = new FlatXmlDataSetBuilder().build(getClass().getResourceAsStream("/com/brest/bank/dao/depositUpdate-data.xml"));
+        expectedTable = expectedData.getTable("bankdeposit");
+
+        actualData = databaseTester.getConnection().createDataSet();
+        actualTable = actualData.getTable("bankdeposit");
+
+        Assertion.assertEquals(expectedTable,actualTable);
+    }
+
+    @Test
+    public void testRemoveBankDeposit() throws Exception{
+        LOGGER.debug("testRemoveBankDeposit() - run");
+
+        depositDao.deleteBankDeposit(4L);
+
+        expectedData = new FlatXmlDataSetBuilder().build(getClass().getResourceAsStream("/com/brest/bank/dao/depositRemove-data.xml"));
+        expectedTable = expectedData.getTable("bankdeposit");
+
+        actualData = databaseTester.getConnection().createDataSet();
+        actualTable = actualData.getTable("bankdeposit");
+
+        Assertion.assertEquals(expectedTable,actualTable);
         Assert.assertEquals(expectedData.getTable("bankdeposit").getRowCount(), actualData.getTable("bankdeposit").getRowCount());
         Assert.assertEquals(expectedData.getTable("bankdepositor").getRowCount(), actualData.getTable("bankdepositor").getRowCount());
     }

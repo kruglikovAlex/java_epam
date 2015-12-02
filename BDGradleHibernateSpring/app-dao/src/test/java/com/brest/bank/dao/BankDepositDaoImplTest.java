@@ -1,6 +1,8 @@
 package com.brest.bank.dao;
 
 import com.brest.bank.domain.BankDeposit;
+import com.brest.bank.domain.BankDepositor;
+
 import com.brest.bank.util.HibernateUtil;
 
 import org.apache.logging.log4j.LogManager;
@@ -11,8 +13,11 @@ import org.hibernate.criterion.Projections;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
@@ -31,6 +36,7 @@ public class BankDepositDaoImplTest {
     private BankDepositDao depositDao;
 
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     private BankDeposit deposit;
     private List<BankDeposit> deposits;
@@ -42,11 +48,11 @@ public class BankDepositDaoImplTest {
     public void setUp() throws Exception {
         deposit = new BankDeposit();
         deposits = new ArrayList<BankDeposit>();
+        deposits = depositDao.getBankDepositsCriteria();
     }
 
     @Test
     public void testGetBankDepositsCriteria() throws Exception {
-        deposits = depositDao.getBankDepositsCriteria();
         LOGGER.debug("deposits.size()= {}", deposits.size());
 
         assertFalse(deposits.isEmpty());
@@ -99,6 +105,82 @@ public class BankDepositDaoImplTest {
         LOGGER.debug("size after add = {}",sizeAfter);
 
         assertTrue(sizeAfter == sizeBefore+1);
+    }
+
+    @Test
+    public void testUpdateBankDeposit(){
+        String testDeposit;
+
+        deposit = deposits.get(3);
+        Long id = deposit.getDepositId();
+
+        testDeposit = deposit.toString();
+
+        deposit.setDepositName("UpdateDepositName");
+        deposit.setDepositMinTerm(4);
+        deposit.setDepositMinAmount(10);
+        deposit.setDepositCurrency("grb");
+        deposit.setDepositInterestRate(3);
+        deposit.setDepositAddConditions("UpdateConditions");
+
+        depositDao.updateBankDeposit(deposit);
+
+        assertNotEquals(depositDao.getBankDepositByIdCriteria(id).toString(),testDeposit);
+        assertEquals(depositDao.getBankDepositByIdCriteria(id).toString(),deposit.toString());
+
+    }
+
+    @Test
+    public void testRemoveBankDeposit() {
+        assertNotNull(deposits);
+        assertFalse(deposits.isEmpty());
+        sizeBefore = deposits.size();
+        LOGGER.debug("size before - {}",sizeBefore);
+        depositDao.deleteBankDeposit(deposits.get((int) (Math.random() * sizeBefore)).getDepositId());
+        deposits = depositDao.getBankDepositsCriteria();
+        LOGGER.debug("size after - {}",deposits.size());
+        assertEquals(sizeBefore-1,deposits.size());
+    }
+
+    @Test
+    public void testRemoveBankDeposit2() throws Exception{
+        sizeBefore = rowCount(BankDeposit.class);
+        LOGGER.debug("sizeBefore = {}", sizeBefore);
+
+        int sizeDepositorsBefore = rowCount(BankDepositor.class);
+        LOGGER.debug("sizeDepositorsBefore = {}", sizeDepositorsBefore);
+
+        deposit = depositDao.getBankDepositByIdCriteria(2L);
+
+        BankDepositor depositor = new BankDepositor();
+            depositor.setDepositorName("newName");
+            depositor.setDepositorDateDeposit(dateFormat.parse("2014-12-02"));
+            depositor.setDepositorAmountDeposit(1000);
+            depositor.setDepositorAmountPlusDeposit(10);
+            depositor.setDepositorAmountMinusDeposit(10);
+            depositor.setDepositorDateReturnDeposit(dateFormat.parse("2014-12-03"));
+            depositor.setDepositorMarkReturnDeposit(0);
+
+        Set depositors = new HashSet();
+        depositors.add(depositor);
+        deposit.setDepositors(depositors);
+        depositDao.updateBankDeposit(deposit);
+
+        sizeDepositorsBefore = rowCount(BankDepositor.class);
+        LOGGER.debug("sizeDepositorsBefore = {}", sizeDepositorsBefore);
+
+        depositDao.deleteBankDeposit(2L);
+
+        assertNull(depositDao.getBankDepositByIdCriteria(2L));
+
+        sizeAfter = rowCount(BankDeposit.class);
+        LOGGER.debug("sizeAfter = {}", sizeAfter);
+
+        int sizeDepositorsAfter = rowCount(BankDepositor.class);
+        LOGGER.debug("sizeDepositorsAfter = {}", sizeDepositorsAfter);
+
+        assertTrue(sizeAfter == sizeBefore - 1);
+        assertTrue(sizeDepositorsAfter == sizeDepositorsBefore - 1);
     }
 
     public Integer rowCount(Class<?> name) throws ClassNotFoundException{
