@@ -22,11 +22,17 @@ public class BankDepositDaoImpl implements BankDepositDao {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
+
     private BankDeposit deposit;
     private List<BankDeposit> deposits;
     private Session session;
     private SessionFactory sessionFactory;
 
+    /**
+     * Set Hibernate session factory
+     * @param sessionFactory SessionFactory
+     */
     @Override
     public void setSession(SessionFactory sessionFactory){
         this.sessionFactory = sessionFactory;
@@ -35,7 +41,10 @@ public class BankDepositDaoImpl implements BankDepositDao {
         LOGGER.debug("BankDepositDaoImpl session: {}", session.toString());
     }
 
-    //---- get all deposits with Criteria
+    /**
+     * Get all deposits with Criteria
+     * @return List<BankDeposit>
+     */
     @Override
     @Transactional
     public List<BankDeposit> getBankDepositsCriteria() {
@@ -55,7 +64,11 @@ public class BankDepositDaoImpl implements BankDepositDao {
         return deposits;
     }
 
-    //---- get by depositId with Criteria
+    /**
+     * Get by depositId with Criteria
+     * @param id Long
+     * @return BankDeposit
+     */
     @Override
     @Transactional
     public BankDeposit getBankDepositByIdCriteria(Long id){
@@ -73,7 +86,11 @@ public class BankDepositDaoImpl implements BankDepositDao {
         return deposit;
     }
 
-    //---- get by depositName createCriteria
+    /**
+     * get by depositName createCriteria
+     * @param name String
+     * @return BankDeposit
+     */
     @Override
     @Transactional
     public BankDeposit getBankDepositByNameCriteria(String name){
@@ -92,7 +109,142 @@ public class BankDepositDaoImpl implements BankDepositDao {
         return deposit;
     }
 
-    //---- create
+    /**
+     * Get Bank Deposits by CURRENCY
+     * @param currency String
+     * @return List<BankDeposit>
+     */
+    @Override
+    @Transactional
+    public List<BankDeposit> getBankDepositsByCurrencyCriteria(String currency){
+        LOGGER.debug("getBankDepositByCurrencyCriteria({})", currency);
+        assertNotNull(currency);
+        deposits = new ArrayList<BankDeposit>();
+        try{
+            //--- open session
+            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+            //--- query
+            for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
+                    .createCriteria(BankDeposit.class)
+                    .add(Restrictions.eq("depositCurrency",currency))
+                    .list()){
+                deposits.add((BankDeposit)d);
+            }
+            //--- close session
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+
+            LOGGER.debug("deposits: {}",deposits);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositsByCurrencyCriteria({}) - {}", currency, e.toString());
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
+            throw new IllegalArgumentException("error - getBankDepositsByCurrencyCriteria() "+e.toString());
+        }
+        return deposits;
+    }
+
+    /**
+     * Get Bank Deposits by INTEREST RATE
+     * @param rate Integer
+     * @return
+     */
+    @Override
+    @Transactional
+    public List<BankDeposit> getBankDepositsByInterestRateCriteria(Integer rate){
+        LOGGER.debug("getBankDepositsByInterestRateCriteria({})", rate);
+        assertNotNull(rate);
+        deposits = new ArrayList<BankDeposit>();
+        try{
+            //--- open session
+            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+            //--- query
+            for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
+                    .createCriteria(BankDeposit.class)
+                    .add(Restrictions.eq("depositInterestRate",rate))
+                    .list()){
+                deposits.add((BankDeposit)d);
+            }
+            //--- close session
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositsByInterestRateCriteria({}) - {}", rate, e.toString());
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
+            throw new IllegalArgumentException("error - getBankDepositsByInterestRateCriteria() "+e.toString());
+        }
+        return deposits;
+    }
+
+    /**
+     * Get Bank Deposits between MINTERM values
+     * @param fromTerm Integer
+     * @param toTerm Integer
+     * @return List<BankDeposit>
+     */
+    @Override
+    @Transactional
+    public List<BankDeposit> getBankDepositsFromToMinTermCriteria(Integer fromTerm, Integer toTerm){
+        LOGGER.debug("getBankDepositsFromToMinTermCriteria({}, {})",fromTerm,toTerm);
+        assertNotNull(ERROR_METHOD_PARAM,fromTerm);
+        assertNotNull(ERROR_METHOD_PARAM,toTerm);
+        assertTrue(fromTerm<=toTerm);
+        deposits = new ArrayList<BankDeposit>();
+        try{
+            //--- open session
+            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+            //--- query
+            for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
+                    .createCriteria(BankDeposit.class)
+                    .add(Restrictions.between("depositMinTerm",fromTerm,toTerm))
+                    .list()){
+                deposits.add((BankDeposit)d);
+            }
+            //--- close session
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositsFromToMinTermCriteria({}, {}) - {}", fromTerm, toTerm, e.toString());
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
+            throw new IllegalArgumentException("error - getBankDepositsFromToMinTermCriteria() "+e.toString());
+        }
+        return deposits;
+    }
+
+    /**
+     * Get Bank Deposits from-to Interest Rate values
+     * @param startRate
+     * @param endRate
+     * @return List<BankDeposit>
+     */
+    @Override
+    @Transactional
+    public List<BankDeposit> getBankDepositsFromToInterestRateCriteria(Integer startRate, Integer endRate){
+        LOGGER.debug("getBankDepositsFromToInterestRateCriteria({}, {})",startRate,endRate);
+        assertNotNull(ERROR_METHOD_PARAM,startRate);
+        assertNotNull(ERROR_METHOD_PARAM,endRate);
+        assertTrue(startRate<=endRate);
+        deposits = new ArrayList<BankDeposit>();
+        try{
+            //--- open session
+            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+            //--- query
+            for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
+                    .createCriteria(BankDeposit.class)
+                    .add(Restrictions.between("depositInterestRate",startRate,endRate))
+                    .list()){
+                deposits.add((BankDeposit)d);
+            }
+            //--- close session
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositsFromToInterestRateCriteria({}, {}) - {}", startRate, endRate, e.toString());
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
+            throw new IllegalArgumentException("error - getBankDepositsFromToInterestRateCriteria() "+e.toString());
+        }
+        return deposits;
+    }
+
+    /**
+     * Add Bank Deposit
+     * @param deposit BankDeposit
+     */
     @Override
     @Transactional
     public void addBankDeposit(BankDeposit deposit) {
@@ -113,7 +265,10 @@ public class BankDepositDaoImpl implements BankDepositDao {
         }
     }
 
-    //---- update
+    /**
+     * Update Bank Deposit
+     * @param deposit BankDeposit
+     */
     @Override
     @Transactional
     public void updateBankDeposit(BankDeposit deposit){
@@ -136,6 +291,10 @@ public class BankDepositDaoImpl implements BankDepositDao {
         }
     }
 
+    /**
+     * Remove Bank Deposit
+     * @param id Long
+     */
     @Override
     @Transactional
     public void deleteBankDeposit(Long id){

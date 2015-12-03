@@ -81,6 +81,72 @@ public class BankDepositDaoImplTest {
     }
 
     @Test
+    public void testGetBankDepositByCurrencyCriteria(){
+        deposits = depositDao.getBankDepositsByCurrencyCriteria("usd");
+        LOGGER.debug("deposits: {}", deposits);
+
+        assertFalse(deposits.isEmpty());
+        assertThat(deposits.size(), is(not(0)));
+        assertNotNull(deposits);
+
+        assertEquals("[BankDeposit: { depositId=1, depositName=depositName0, depositMinTerm=12, depositMinAmount=100, " +
+                "depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition0}, " +
+                "BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
+                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}]",deposits.toString());
+    }
+
+    @Test
+    public void testGetBankDepositsByInterestRateCriteria(){
+        deposits = depositDao.getBankDepositsByInterestRateCriteria(6);
+        LOGGER.debug("deposits: {}",deposits);
+
+        assertFalse(deposits.isEmpty());
+        assertThat(deposits.size(), is(not(0)));
+        assertNotNull(deposits);
+
+        assertEquals("[BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
+                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}]",deposits.toString());
+    }
+
+    @Test
+    public void testGetBankDepositsFromToMinTermCriteria(){
+        deposits = depositDao.getBankDepositsFromToMinTermCriteria(13, 14);
+        LOGGER.debug("deposits: {}",deposits);
+
+        assertFalse(deposits.isEmpty());
+        assertThat(deposits.size(), is(not(0)));
+        assertNotNull(deposits);
+
+        assertEquals("[BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
+                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}]",deposits.toString());
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testGetBankDepositsFromToMinTermCriteriaNullFirstArgs(){
+        Integer start = null;
+        deposits = depositDao.getBankDepositsFromToMinTermCriteria(start, 14);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testGetBankDepositsFromToMinTermCriteriaNullSecondArgs(){
+        Integer end = null;
+        deposits = depositDao.getBankDepositsFromToMinTermCriteria(13, end);
+    }
+
+    @Test
+    public void testGetBankDepositsFromToInterestRateCriteria(){
+        deposits = depositDao.getBankDepositsFromToInterestRateCriteria(5,6);
+        LOGGER.debug("deposits: {}",deposits);
+
+        assertFalse(deposits.isEmpty());
+        assertThat(deposits.size(), is(not(0)));
+        assertNotNull(deposits);
+
+        assertEquals("[BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
+                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}]",deposits.toString());
+    }
+
+    @Test
     public void testAddBankDeposit() throws Exception {
         deposit = new BankDeposit();
             deposit.setDepositName("name");
@@ -117,10 +183,8 @@ public class BankDepositDaoImplTest {
         testDeposit = deposit.toString();
 
         deposit.setDepositName("UpdateDepositName");
-        deposit.setDepositMinTerm(4);
         deposit.setDepositMinAmount(10);
         deposit.setDepositCurrency("grb");
-        deposit.setDepositInterestRate(3);
         deposit.setDepositAddConditions("UpdateConditions");
 
         depositDao.updateBankDeposit(deposit);
@@ -136,7 +200,7 @@ public class BankDepositDaoImplTest {
         assertFalse(deposits.isEmpty());
         sizeBefore = deposits.size();
         LOGGER.debug("size before - {}",sizeBefore);
-        depositDao.deleteBankDeposit(deposits.get((int) (Math.random() * sizeBefore)).getDepositId());
+        depositDao.deleteBankDeposit(5L);
         deposits = depositDao.getBankDepositsCriteria();
         LOGGER.debug("size after - {}",deposits.size());
         assertEquals(sizeBefore-1,deposits.size());
