@@ -124,12 +124,14 @@ public class BankDepositDaoImplTest {
     @Test(expected = AssertionError.class)
     public void testGetBankDepositsFromToMinTermCriteriaNullFirstArgs(){
         Integer start = null;
+
         deposits = depositDao.getBankDepositsFromToMinTermCriteria(start, 14);
     }
 
     @Test(expected = AssertionError.class)
     public void testGetBankDepositsFromToMinTermCriteriaNullSecondArgs(){
         Integer end = null;
+
         deposits = depositDao.getBankDepositsFromToMinTermCriteria(13, end);
     }
 

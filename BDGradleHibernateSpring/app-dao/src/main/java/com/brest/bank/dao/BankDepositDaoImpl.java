@@ -319,7 +319,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
             HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
             throw new IllegalArgumentException("error - deleteBankDeposit()"+e.toString());
         }
-
     }
 
 }

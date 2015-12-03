@@ -3,7 +3,6 @@ package com.brest.bank.dao;
 import com.brest.bank.domain.BankDeposit;
 import org.hibernate.SessionFactory;
 
-import java.util.Date;
 import java.util.List;
 
 public interface BankDepositDao {
