@@ -9,9 +9,11 @@ import org.apache.logging.log4j.LogManager;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.*;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +23,10 @@ import static org.junit.Assert.*;
 public class BankDepositDaoImpl implements BankDepositDao {
 
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
+    public static final String ERROR_FROM_TO_PARAM = "The first parameter to be smaller than the second parameter";
 
     private BankDeposit deposit;
     private List<BankDeposit> deposits;
@@ -73,6 +77,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
     @Transactional
     public BankDeposit getBankDepositByIdCriteria(Long id){
         LOGGER.debug("getBankDepositByIdCriteria({})", id);
+        assertNotNull(ERROR_METHOD_PARAM,id);
         //--- open session
         HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
         //--- query
@@ -95,7 +100,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
     @Transactional
     public BankDeposit getBankDepositByNameCriteria(String name){
         LOGGER.debug("getBankDepositByNameCriteria({})",name);
-
+        assertNotNull(ERROR_METHOD_PARAM,name);
         //--- open session
         HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
         //--- query
@@ -118,7 +123,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
     @Transactional
     public List<BankDeposit> getBankDepositsByCurrencyCriteria(String currency){
         LOGGER.debug("getBankDepositByCurrencyCriteria({})", currency);
-        assertNotNull(currency);
+        assertNotNull(ERROR_METHOD_PARAM,currency);
         deposits = new ArrayList<BankDeposit>();
         try{
             //--- open session
@@ -151,7 +156,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
     @Transactional
     public List<BankDeposit> getBankDepositsByInterestRateCriteria(Integer rate){
         LOGGER.debug("getBankDepositsByInterestRateCriteria({})", rate);
-        assertNotNull(rate);
+        assertNotNull(ERROR_METHOD_PARAM,rate);
         deposits = new ArrayList<BankDeposit>();
         try{
             //--- open session
@@ -185,7 +190,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
         LOGGER.debug("getBankDepositsFromToMinTermCriteria({}, {})",fromTerm,toTerm);
         assertNotNull(ERROR_METHOD_PARAM,fromTerm);
         assertNotNull(ERROR_METHOD_PARAM,toTerm);
-        assertTrue(fromTerm<=toTerm);
+        assertTrue(ERROR_FROM_TO_PARAM,fromTerm<=toTerm);
         deposits = new ArrayList<BankDeposit>();
         try{
             //--- open session
@@ -219,7 +224,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
         LOGGER.debug("getBankDepositsFromToInterestRateCriteria({}, {})",startRate,endRate);
         assertNotNull(ERROR_METHOD_PARAM,startRate);
         assertNotNull(ERROR_METHOD_PARAM,endRate);
-        assertTrue(startRate<=endRate);
+        assertTrue(ERROR_FROM_TO_PARAM,startRate<=endRate);
         deposits = new ArrayList<BankDeposit>();
         try{
             //--- open session
@@ -241,6 +246,83 @@ public class BankDepositDaoImpl implements BankDepositDao {
         return deposits;
     }
 
+    @Override
+    @Transactional
+    public List<BankDeposit> getBankDepositsFromToDateDeposit(Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositsFromToDateDeposit({}, {})",dateFormat.format(startDate),dateFormat.format(endDate));
+        assertNotNull(ERROR_METHOD_PARAM,startDate);
+        assertNotNull(ERROR_METHOD_PARAM,endDate);
+        assertTrue(ERROR_FROM_TO_PARAM,startDate.before(endDate));
+        deposits = new ArrayList<BankDeposit>();
+        try{
+            //--- open session
+            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+            //--- query
+            String[] properties = HibernateUtil.getSessionFactory()
+                    .getClassMetadata(BankDeposit.class)
+                    .getPropertyNames();
+            for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
+                    .createCriteria(BankDeposit.class)
+                    .createAlias("depositors","depositor")
+                    .add(Restrictions.between("depositor.depositorDateDeposit", startDate, endDate))
+                    .setProjection(Projections.distinct(Projections.projectionList()
+                            .add(Projections.property("depositId"),"depositId")
+                            .add(formProjection(properties)))
+                    )
+                    .setResultTransformer(new AliasToBeanResultTransformer(BankDeposit.class))
+                    .list()){
+                deposits.add((BankDeposit)d);
+            }
+            //--- close session
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositsFromToDateDeposit({}, {}) - {}", dateFormat.format(startDate),
+                    dateFormat.format(endDate), e.toString());
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
+            throw new IllegalArgumentException("error - getBankDepositsFromToDateDeposit() "+e.toString());
+        }
+        return deposits;
+    }
+
+    @Override
+    @Transactional
+    public List<BankDeposit> getBankDepositsFromToDateReturnDeposit(Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositsFromToDateReturnDeposit({}, {})",dateFormat.format(startDate),
+                dateFormat.format(endDate));
+        assertNotNull(ERROR_METHOD_PARAM,startDate);
+        assertNotNull(ERROR_METHOD_PARAM,endDate);
+        assertTrue(ERROR_FROM_TO_PARAM,startDate.before(endDate));
+        deposits = new ArrayList<BankDeposit>();
+        try{
+            //--- open session
+            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+            //--- query
+            String[] properties = HibernateUtil.getSessionFactory()
+                    .getClassMetadata(BankDeposit.class)
+                    .getPropertyNames();
+            for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
+                    .createCriteria(BankDeposit.class)
+                    .createAlias("depositors","depositor")
+                    .add(Restrictions.between("depositor.depositorDateReturnDeposit", startDate, endDate))
+                    .setProjection(Projections.distinct(Projections.projectionList()
+                                    .add(Projections.property("depositId"),"depositId")
+                                    .add(formProjection(properties)))
+                    )
+                    .setResultTransformer(new AliasToBeanResultTransformer(BankDeposit.class))
+                    .list()){
+                deposits.add((BankDeposit)d);
+            }
+            //--- close session
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositsFromToDateReturnDeposit({}, {}) - {}", dateFormat.format(startDate),
+                    dateFormat.format(endDate), e.toString());
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
+            throw new IllegalArgumentException("error - getBankDepositsFromToDateReturnDeposit() "+e.toString());
+        }
+        return deposits;
+    }
+
     /**
      * Add Bank Deposit
      * @param deposit BankDeposit
@@ -250,6 +332,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
     public void addBankDeposit(BankDeposit deposit) {
         LOGGER.debug("addBankDeposit({})",deposit);
         assertNotNull(deposit);
+        assertNull(deposit.getDepositId());
         try {
             //--- open session
             HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
@@ -274,7 +357,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
     public void updateBankDeposit(BankDeposit deposit){
         LOGGER.debug("updateBankDeposit({})",deposit);
         assertNotNull(deposit);
-
+        assertNotNull(deposit.getDepositId());
         try {
             //--- open session
             HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
@@ -299,7 +382,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
     @Transactional
     public void deleteBankDeposit(Long id){
         LOGGER.debug("deleteBankDeposit({})",id);
-        assertNotNull(id);
+        assertNotNull(ERROR_METHOD_PARAM,id);
         try{
             //--- open session
             HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
@@ -321,4 +404,16 @@ public class BankDepositDaoImpl implements BankDepositDao {
         }
     }
 
+    /**
+     * List properties for query output
+     * @param properties String[]
+     * @return ProjectionList
+     */
+    public Projection formProjection(String[] properties) {
+        ProjectionList list = Projections.projectionList();
+        for (int i=0; i<properties.length-1; i++){
+            list.add(Projections.property(properties[i]),properties[i]);
+        }
+        return list;
+    }
 }

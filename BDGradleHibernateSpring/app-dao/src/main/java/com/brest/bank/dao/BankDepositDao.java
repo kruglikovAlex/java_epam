@@ -3,6 +3,7 @@ package com.brest.bank.dao;
 import com.brest.bank.domain.BankDeposit;
 import org.hibernate.SessionFactory;
 
+import java.util.Date;
 import java.util.List;
 
 public interface BankDepositDao {
@@ -56,15 +57,28 @@ public interface BankDepositDao {
 
     /**
      * Get Bank Deposits from-to INTEREST RATE values
-     * @param startRate
-     * @param endRate
-     * @return
+     * @param startRate Integer
+     * @param endRate Integer
+     * @return List<BankDeposit>
      */
     public List<BankDeposit> getBankDepositsFromToInterestRateCriteria(Integer startRate, Integer endRate);
-    /*
-    public List<BankDeposit> getBankDepositsBetweenDateDeposit(Date startDate, Date endDate);
-    public List<BankDeposit> getBankDepositsBetweenDateReturnDeposit(Date startDate, Date endDate);
-    */
+
+    /**
+     * Get Bank Deposits from-to Date Deposit values
+     * @param startDate Date
+     * @param endDate Date
+     * @return List<BankDeposit>
+     */
+    public List<BankDeposit> getBankDepositsFromToDateDeposit(Date startDate, Date endDate);
+
+    /**
+     * Get Bank Deposits from-to Date Return Deposit values
+     * @param startDate Date
+     * @param endDate Date
+     * @return List<BankDeposit>
+     */
+    public List<BankDeposit> getBankDepositsFromToDateReturnDeposit(Date startDate, Date endDate);
+
     /**
      * Adding Bank Deposit
      * @param deposit BankDeposit

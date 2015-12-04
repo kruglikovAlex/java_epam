@@ -14,10 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
@@ -89,10 +86,9 @@ public class BankDepositDaoImplTest {
         assertThat(deposits.size(), is(not(0)));
         assertNotNull(deposits);
 
-        assertEquals("[BankDeposit: { depositId=1, depositName=depositName0, depositMinTerm=12, depositMinAmount=100, " +
-                "depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition0}, " +
-                "BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
-                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}]",deposits.toString());
+        for(BankDeposit aDeposit: deposits){
+            assertTrue("usd".equalsIgnoreCase(aDeposit.getDepositCurrency()));
+        }
     }
 
     @Test
@@ -104,8 +100,9 @@ public class BankDepositDaoImplTest {
         assertThat(deposits.size(), is(not(0)));
         assertNotNull(deposits);
 
-        assertEquals("[BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
-                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}]",deposits.toString());
+        for(BankDeposit aDeposit: deposits){
+            assertTrue(6==aDeposit.getDepositInterestRate());
+        }
     }
 
     @Test
@@ -117,8 +114,9 @@ public class BankDepositDaoImplTest {
         assertThat(deposits.size(), is(not(0)));
         assertNotNull(deposits);
 
-        assertEquals("[BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
-                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}]",deposits.toString());
+        for(BankDeposit aDeposit: deposits){
+            assertTrue((13==aDeposit.getDepositMinTerm())||(14==aDeposit.getDepositMinTerm()));
+        }
     }
 
     @Test(expected = AssertionError.class)
@@ -144,7 +142,108 @@ public class BankDepositDaoImplTest {
         assertThat(deposits.size(), is(not(0)));
         assertNotNull(deposits);
 
-        assertEquals("[BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
+        for(BankDeposit aDeposit: deposits){
+            assertTrue((5==aDeposit.getDepositInterestRate())||(6==aDeposit.getDepositInterestRate()));
+        }
+    }
+
+    @Test
+    public void testGetBankDepositsBetweenDateDeposit() throws Exception {
+        Date startDate = dateFormat.parse("2015-11-02");
+        Date endDate = dateFormat.parse("2015-12-04");
+
+        //--- Initialization test data
+        //--- first
+        deposit = depositDao.getBankDepositByIdCriteria(1L);
+
+        BankDepositor depositor = new BankDepositor();
+        depositor.setDepositorName("newName1");
+        depositor.setDepositorDateDeposit(dateFormat.parse("2015-11-02"));
+        depositor.setDepositorAmountDeposit(1000);
+        depositor.setDepositorAmountPlusDeposit(10);
+        depositor.setDepositorAmountMinusDeposit(10);
+        depositor.setDepositorDateReturnDeposit(dateFormat.parse("2015-12-03"));
+        depositor.setDepositorMarkReturnDeposit(0);
+
+        Set depositors = new HashSet();
+        depositors.add(depositor);
+        deposit.setDepositors(depositors);
+        depositDao.updateBankDeposit(deposit);
+
+        //--- second
+        deposit = depositDao.getBankDepositByIdCriteria(3L);
+
+        depositor = new BankDepositor();
+        depositor.setDepositorName("newName2");
+        depositor.setDepositorDateDeposit(dateFormat.parse("2015-12-02"));
+        depositor.setDepositorAmountDeposit(1000);
+        depositor.setDepositorAmountPlusDeposit(10);
+        depositor.setDepositorAmountMinusDeposit(10);
+        depositor.setDepositorDateReturnDeposit(dateFormat.parse("2015-12-03"));
+        depositor.setDepositorMarkReturnDeposit(0);
+
+        depositors = new HashSet();
+        depositors.add(depositor);
+        deposit.setDepositors(depositors);
+        depositDao.updateBankDeposit(deposit);
+
+        //--- Testing
+        deposits = depositDao.getBankDepositsFromToDateDeposit(startDate, endDate);
+        LOGGER.debug("deposits = {}", deposits);
+
+        assertEquals("[BankDeposit: { depositId=1, depositName=depositName0, depositMinTerm=12, depositMinAmount=100, " +
+                "depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition0}, " +
+                "BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
+                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}]",deposits.toString());
+    }
+
+    @Test
+    public void testGetBankDepositsBetweenDateReturnDeposit() throws Exception {
+        Date startDate = dateFormat.parse("2015-11-01");
+        Date endDate = dateFormat.parse("2015-12-01");
+
+        //--- Initialization test data
+        //--- first
+        deposit = depositDao.getBankDepositByIdCriteria(2L);
+
+        BankDepositor depositor = new BankDepositor();
+        depositor.setDepositorName("newName3");
+        depositor.setDepositorDateDeposit(dateFormat.parse("2015-10-02"));
+        depositor.setDepositorAmountDeposit(1000);
+        depositor.setDepositorAmountPlusDeposit(10);
+        depositor.setDepositorAmountMinusDeposit(10);
+        depositor.setDepositorDateReturnDeposit(dateFormat.parse("2015-11-03"));
+        depositor.setDepositorMarkReturnDeposit(0);
+
+        Set depositors = new HashSet();
+        depositors.add(depositor);
+        deposit.setDepositors(depositors);
+        depositDao.updateBankDeposit(deposit);
+
+        //--- second
+        deposit = depositDao.getBankDepositByIdCriteria(3L);
+
+        depositor = new BankDepositor();
+        depositor.setDepositorName("newName4");
+        depositor.setDepositorDateDeposit(dateFormat.parse("2015-11-02"));
+        depositor.setDepositorAmountDeposit(1000);
+        depositor.setDepositorAmountPlusDeposit(10);
+        depositor.setDepositorAmountMinusDeposit(10);
+        depositor.setDepositorDateReturnDeposit(dateFormat.parse("2015-11-25"));
+        depositor.setDepositorMarkReturnDeposit(0);
+
+        depositors = new HashSet();
+        depositors.add(depositor);
+        deposit.setDepositors(depositors);
+        depositDao.updateBankDeposit(deposit);
+
+        //--- Testing
+        deposits = depositDao.getBankDepositsFromToDateReturnDeposit(startDate, endDate);
+        LOGGER.debug("deposits = {}", deposits);
+
+        assertEquals("[BankDeposit: { depositId=2, depositName=depositName1, depositMinTerm=13, depositMinAmount=200," +
+                " depositCurrency=eur, depositInterestRate=5, depositAddConditions=condition1}, " +
+                "BankDeposit: { depositId=3, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
                 "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}]",deposits.toString());
     }
 
