@@ -2,6 +2,7 @@ package com.brest.bank.dao;
 
 import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.util.HibernateUtil;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 
 import org.apache.logging.log4j.Logger;
@@ -150,7 +151,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
     /**
      * Get Bank Deposits by INTEREST RATE
      * @param rate Integer
-     * @return
+     * @return List<BankDeposit>
      */
     @Override
     @Transactional
@@ -214,8 +215,8 @@ public class BankDepositDaoImpl implements BankDepositDao {
 
     /**
      * Get Bank Deposits from-to Interest Rate values
-     * @param startRate
-     * @param endRate
+     * @param startRate Integer
+     * @param endRate Integer
      * @return List<BankDeposit>
      */
     @Override
@@ -324,6 +325,101 @@ public class BankDepositDaoImpl implements BankDepositDao {
     }
 
     /**
+     * Get Bank Deposits by Name with depositors
+     * @param name String
+     * @return List<Map>
+     */
+    @Override
+    @Transactional
+    public List<Map> getBankDepositByNameWithDepositors(String name){
+        LOGGER.debug("getBankDepositByNameWithDepositors({})", name);
+        assertNotNull(ERROR_METHOD_PARAM,name);
+        List list;
+        try{
+            //--- open session
+            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+            //--- query
+            String[] properties = HibernateUtil.getSessionFactory()
+                    .getClassMetadata(BankDeposit.class)
+                    .getPropertyNames();
+            list = HibernateUtil.getSessionFactory().getCurrentSession()
+                    .createCriteria(BankDeposit.class,"deposit")
+                    .add(Restrictions.eq("deposit.depositName",name))
+                    .createAlias("depositors","depositor")
+                    .setProjection(Projections.distinct(Projections.projectionList()
+                            .add(Projections.property("deposit.depositId"),"depositId")
+                            .add(formProjection(properties))
+                            .add(Projections.count("depositor.depositorId").as("depositorCount"))
+                            .add(Projections.sum("depositor.depositorAmountDeposit").as("depositorAmountSum"))
+                            .add(Projections.sum("depositor.depositorAmountPlusDeposit").as("depositorAmountPlusSum"))
+                            .add(Projections.sum("depositor.depositorAmountMinusDeposit").as("depositorAmountMinusSum"))
+                            .add(Projections.groupProperty("deposit.depositId"))
+                    ))
+                    .setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
+                    .list();
+            //--- close session
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+            LOGGER.debug("list - {}",list);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositByNameWithDepositors({}) - {}", name, e.toString());
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
+            throw new IllegalArgumentException("error - getBankDepositByNameWithDepositors() "+e.toString());
+        }
+        return mapRow(list);
+    }
+
+    /**
+     * Get Bank Deposits by NAME with depositors from-to Date Deposit values
+     * @param name String
+     * @param startDate Date
+     * @param endDate Date
+     * @return List<Map>
+     */
+    @Override
+    @Transactional
+    public List<Map> getBankDepositByNameFromToDateDepositWithDepositors(String name,Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositByNameFromToDateDepositWithDepositors({}, {}, {})",name,
+                dateFormat.format(startDate),dateFormat.format(endDate));
+        assertNotNull(ERROR_METHOD_PARAM,name);
+        assertNotNull(ERROR_METHOD_PARAM,startDate);
+        assertNotNull(ERROR_METHOD_PARAM,endDate);
+        assertTrue(ERROR_FROM_TO_PARAM,startDate.before(endDate));
+        List list;
+        try{
+            //--- open session
+            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+            //--- query
+            String[] properties = HibernateUtil.getSessionFactory()
+                    .getClassMetadata(BankDeposit.class)
+                    .getPropertyNames();
+            list = HibernateUtil.getSessionFactory().getCurrentSession()
+                    .createCriteria(BankDeposit.class,"deposit")
+                    .add(Restrictions.eq("deposit.depositName",name))
+                    .createAlias("depositors","depositor")
+                    .add(Restrictions.between("depositor.depositorDateDeposit",startDate,endDate))
+                    .setProjection(Projections.distinct(Projections.projectionList()
+                                    .add(Projections.property("deposit.depositId"), "depositId")
+                                    .add(formProjection(properties))
+                                    .add(Projections.count("depositor.depositorId").as("depositorCount"))
+                                    .add(Projections.sum("depositor.depositorAmountDeposit").as("depositorAmountSum"))
+                                    .add(Projections.sum("depositor.depositorAmountPlusDeposit").as("depositorAmountPlusSum"))
+                                    .add(Projections.sum("depositor.depositorAmountMinusDeposit").as("depositorAmountMinusSum"))
+                                    .add(Projections.groupProperty("deposit.depositId"))
+                    ))
+                    .setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
+                    .list();
+            //--- close session
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+            LOGGER.debug("list - {}",list);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositByNameWithDepositors({}) - {}", name, e.toString());
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
+            throw new IllegalArgumentException("error - getBankDepositByNameWithDepositors() "+e.toString());
+        }
+        return mapRow(list);
+    }
+
+    /**
      * Add Bank Deposit
      * @param deposit BankDeposit
      */
@@ -403,6 +499,22 @@ public class BankDepositDaoImpl implements BankDepositDao {
             throw new IllegalArgumentException("error - deleteBankDeposit()"+e.toString());
         }
     }
+
+    /**
+     * List to List<Map>
+     * @param list List
+     * @return List<Map>
+     */
+    public List<Map> mapRow(List list){
+        List<Map> depositAgrDepositor = new ArrayList<Map>(list.size());
+        for(Object aList: list){
+            Map map = (Map)aList;
+            LOGGER.debug("map - {}", map);
+            depositAgrDepositor.add(map);
+        }
+        return depositAgrDepositor;
+    }
+
 
     /**
      * List properties for query output

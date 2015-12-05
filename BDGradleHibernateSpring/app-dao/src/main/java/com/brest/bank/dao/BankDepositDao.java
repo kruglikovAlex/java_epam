@@ -5,11 +5,13 @@ import org.hibernate.SessionFactory;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface BankDepositDao {
+
     /**
      * Set Hibernate session factory
-     * @param sessionFactory
+     * @param sessionFactory SessionFactory
      */
     public void setSession(SessionFactory sessionFactory);
 
@@ -35,7 +37,7 @@ public interface BankDepositDao {
 
     /**
      * Get Bank Deposit by Currency
-     * @param currency
+     * @param currency String
      * @return List<BankDeposit>
      */
     public List<BankDeposit> getBankDepositsByCurrencyCriteria(String currency);
@@ -80,6 +82,36 @@ public interface BankDepositDao {
     public List<BankDeposit> getBankDepositsFromToDateReturnDeposit(Date startDate, Date endDate);
 
     /**
+     * Get Bank Deposits by NAME with depositors
+     * @param name String
+     * @return List<Map>
+     */
+    public List<Map> getBankDepositByNameWithDepositors(String name);
+
+    /**
+     * Get Bank Deposits by NAME with depositors from-to Date Deposit values
+     * @param name String
+     * @param startDate Date
+     * @param endDate Date
+     * @return List<Map>
+     */
+    public List<Map> getBankDepositByNameFromToDateDepositWithDepositors(String name,Date startDate, Date endDate);
+    /*
+    public List<Map> getBankDepositByNameFromToDateReturnDepositWithDepositors(String name,Date startDate, Date endDate);
+
+    public List<Map> getBankDepositByIdWithDepositors(String name);
+    public List<Map> getBankDepositByIdFromToDateDepositWithDepositors(String name,Date startDate, Date endDate);
+    public List<Map> getBankDepositByIdFromToDateReturnDepositWithDepositors(String name,Date startDate, Date endDate);
+
+    public List<Map> getBankDepositsFromToDateDepositWithDepositors(Date startDate, Date endDate);
+    public List<Map> getBankDepositsFromToDateReturnDepositWithDepositors(Date startDate, Date endDate);
+
+    public List<Map> getBankDepositByCurrencyWithDepositors(String currency);
+    public List<Map> getBankDepositByCurrencyFromToDateDepositWithDepositors(String currency,Date startDate, Date endDate);
+    public List<Map> getBankDepositByCurrencyFromToDateReturnDepositWithDepositors(String currency,Date startDate, Date endDate);
+     */
+
+    /**
      * Adding Bank Deposit
      * @param deposit BankDeposit
      */
@@ -89,7 +121,6 @@ public interface BankDepositDao {
      * Updating Bank Deposit
      * @param deposit BankDeposit
      */
-
     public void updateBankDeposit(BankDeposit deposit);
 
     /**
