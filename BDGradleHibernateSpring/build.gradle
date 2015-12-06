@@ -17,8 +17,6 @@ task wrapper(type: Wrapper){
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.3.11'
 
-    compile group: 'org.hibernate', name: 'hibernate-core', version: '4.3.8.Final'
-
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.1'
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.1'
     compile group: 'org.apache.logging.log4j', name: 'log4j-jcl', version: '2.1'
