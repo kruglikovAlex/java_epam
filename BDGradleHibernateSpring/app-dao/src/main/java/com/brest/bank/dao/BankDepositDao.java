@@ -99,17 +99,39 @@ public interface BankDepositDao {
 
     /**
      * Get Bank Deposits by NAME with depositors from-to Date Return Deposit values
-     * @param name
-     * @param startDate
-     * @param endDate
+     * @param name String
+     * @param startDate Date
+     * @param endDate Date
      * @return List<Map>
      */
     public List<Map> getBankDepositByNameFromToDateReturnDepositWithDepositors(String name,Date startDate, Date endDate);
-    /*
-    public List<Map> getBankDepositByIdWithDepositors(String name);
-    public List<Map> getBankDepositByIdFromToDateDepositWithDepositors(String name,Date startDate, Date endDate);
-    public List<Map> getBankDepositByIdFromToDateReturnDepositWithDepositors(String name,Date startDate, Date endDate);
 
+    /**
+     * Get Bank Deposits by ID with depositors
+     * @param id Long
+     * @return List<Map>
+     */
+    public List<Map> getBankDepositByIdWithDepositors(Long id);
+
+    /**
+     * Get Bank Deposits by ID with depositors from-to Date Deposit values
+     * @param id Long
+     * @param startDate Date
+     * @param endDate Date
+     * @return List<Map>
+     */
+    public List<Map> getBankDepositByIdFromToDateDepositWithDepositors(Long id,Date startDate, Date endDate);
+
+    /**
+     * Get Bank Deposits by ID with depositors from-to Date Return Deposit values
+     * @param id Long
+     * @param startDate Date
+     * @param endDate Date
+     * @return List<Map>
+     */
+    public List<Map> getBankDepositByIdFromToDateReturnDepositWithDepositors(Long id,Date startDate, Date endDate);
+
+    /*
     public List<Map> getBankDepositsFromToDateDepositWithDepositors(Date startDate, Date endDate);
     public List<Map> getBankDepositsFromToDateReturnDepositWithDepositors(Date startDate, Date endDate);
 
