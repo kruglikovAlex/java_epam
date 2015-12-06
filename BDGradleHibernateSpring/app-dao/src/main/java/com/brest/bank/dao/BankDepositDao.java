@@ -96,9 +96,16 @@ public interface BankDepositDao {
      * @return List<Map>
      */
     public List<Map> getBankDepositByNameFromToDateDepositWithDepositors(String name,Date startDate, Date endDate);
-    /*
-    public List<Map> getBankDepositByNameFromToDateReturnDepositWithDepositors(String name,Date startDate, Date endDate);
 
+    /**
+     * Get Bank Deposits by NAME with depositors from-to Date Return Deposit values
+     * @param name
+     * @param startDate
+     * @param endDate
+     * @return List<Map>
+     */
+    public List<Map> getBankDepositByNameFromToDateReturnDepositWithDepositors(String name,Date startDate, Date endDate);
+    /*
     public List<Map> getBankDepositByIdWithDepositors(String name);
     public List<Map> getBankDepositByIdFromToDateDepositWithDepositors(String name,Date startDate, Date endDate);
     public List<Map> getBankDepositByIdFromToDateReturnDepositWithDepositors(String name,Date startDate, Date endDate);

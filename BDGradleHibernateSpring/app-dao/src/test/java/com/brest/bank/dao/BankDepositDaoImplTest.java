@@ -387,6 +387,80 @@ public class BankDepositDaoImplTest {
     }
 
     @Test
+    public void testGetBankDepositByNameFromToDateReturnDepositWithDepositors() throws ParseException{
+        Integer sumAmountDeposit=0,
+                sumAmountPlusDeposit=0,
+                sumAmountMinusDeposit=0;
+        String name = "depositName0";
+        Date start = dateFormat.parse("2015-11-03");
+        Date end = dateFormat.parse("2015-11-25");
+
+        //--- Initialization test data
+        deposit = depositDao.getBankDepositByNameCriteria(name);
+
+        BankDepositor depositor1 = new BankDepositor();
+        depositor1.setDepositorName("newName3");
+        depositor1.setDepositorDateDeposit(dateFormat.parse("2015-10-02"));
+        depositor1.setDepositorAmountDeposit(1000);
+        depositor1.setDepositorAmountPlusDeposit(10);
+        depositor1.setDepositorAmountMinusDeposit(10);
+        depositor1.setDepositorDateReturnDeposit(dateFormat.parse("2015-11-03"));
+        depositor1.setDepositorMarkReturnDeposit(0);
+
+        BankDepositor depositor2 = new BankDepositor();
+        depositor2.setDepositorName("newName4");
+        depositor2.setDepositorDateDeposit(dateFormat.parse("2015-11-02"));
+        depositor2.setDepositorAmountDeposit(1000);
+        depositor2.setDepositorAmountPlusDeposit(10);
+        depositor2.setDepositorAmountMinusDeposit(10);
+        depositor2.setDepositorDateReturnDeposit(dateFormat.parse("2015-11-25"));
+        depositor2.setDepositorMarkReturnDeposit(0);
+
+        Set deps = new HashSet();
+        deps.add(depositor1);
+        deps.add(depositor2);
+        deposit.setDepositors(deps);
+        depositDao.updateBankDeposit(deposit);
+        LOGGER.debug("deposit = {}", deposit);
+
+        depositors = deposit.getDepositors();
+        LOGGER.debug("depositors = {}", depositors.toString());
+
+        //--- Testing
+        List<Map> list = depositDao.getBankDepositByNameFromToDateReturnDepositWithDepositors(name,start,end);
+        LOGGER.debug("deposits = {}", list);
+
+        assertTrue(list.size()==1);
+
+        for(BankDepositor aDepositors: depositors){
+            Date testDate = aDepositors.getDepositorDateReturnDeposit();
+            if( (testDate.after(start) & testDate.before(end))
+                    || (testDate.compareTo(start)==0)
+                    || (testDate.compareTo(end)==0)){
+                sumAmountDeposit += aDepositors.getDepositorAmountDeposit();
+                sumAmountPlusDeposit += aDepositors.getDepositorAmountPlusDeposit();
+                sumAmountMinusDeposit += aDepositors.getDepositorAmountMinusDeposit();
+            }
+        }
+        LOGGER.debug("sumAmountDeposit = {}", sumAmountDeposit);
+        LOGGER.debug("sumAmountPlusDeposit = {}", sumAmountPlusDeposit);
+        LOGGER.debug("sumAmountMinusDepositt = {}", sumAmountMinusDeposit);
+
+        for (Map aList: list) {
+            assertEquals(deposit.getDepositId(), aList.get("depositId"));
+            assertEquals(deposit.getDepositName(), aList.get("depositName"));
+            assertEquals(deposit.getDepositMinTerm(), aList.get("depositMinTerm"));
+            assertEquals(deposit.getDepositMinAmount(), aList.get("depositMinAmount"));
+            assertEquals(deposit.getDepositCurrency(), aList.get("depositCurrency"));
+            assertEquals(deposit.getDepositInterestRate(), aList.get("depositInterestRate"));
+            assertEquals(deposit.getDepositAddConditions(), aList.get("depositAddConditions"));
+            assertTrue("Error sum all amount", sumAmountDeposit==Integer.parseInt(aList.get("depositorAmountSum").toString()));
+            assertTrue("Error sum all plus amount", sumAmountPlusDeposit==Integer.parseInt(aList.get("depositorAmountPlusSum").toString()));
+            assertTrue("Error sum all minus amount", sumAmountMinusDeposit==Integer.parseInt(aList.get("depositorAmountMinusSum").toString()));
+        }
+    }
+
+    @Test
     public void testAddBankDeposit() throws Exception {
         deposit = new BankDeposit();
             deposit.setDepositName("name");

@@ -412,9 +412,55 @@ public class BankDepositDaoImpl implements BankDepositDao {
             HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
             LOGGER.debug("list - {}",list);
         }catch (Exception e){
-            LOGGER.error("error - getBankDepositByNameWithDepositors({}) - {}", name, e.toString());
+            LOGGER.error("error - getBankDepositByNameFromToDateDepositWithDepositors({},{},{}) - {}",
+                    name, dateFormat.format(startDate),dateFormat.format(endDate),e.toString());
             HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
-            throw new IllegalArgumentException("error - getBankDepositByNameWithDepositors() "+e.toString());
+            throw new IllegalArgumentException("error - getBankDepositByNameFromToDateDepositWithDepositors() "+e.toString());
+        }
+        return mapRow(list);
+    }
+
+    @Override
+    @Transactional
+    public List<Map> getBankDepositByNameFromToDateReturnDepositWithDepositors(String name,Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositByNameFromToDateReturnDepositWithDepositors({}, {}, {})",name,
+                dateFormat.format(startDate),dateFormat.format(endDate));
+        assertNotNull(ERROR_METHOD_PARAM,name);
+        assertNotNull(ERROR_METHOD_PARAM,startDate);
+        assertNotNull(ERROR_METHOD_PARAM,endDate);
+        assertTrue(ERROR_FROM_TO_PARAM,startDate.before(endDate));
+        List list;
+        try{
+            //--- open session
+            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+            //--- query
+            String[] properties = HibernateUtil.getSessionFactory()
+                    .getClassMetadata(BankDeposit.class)
+                    .getPropertyNames();
+            list = HibernateUtil.getSessionFactory().getCurrentSession()
+                    .createCriteria(BankDeposit.class,"deposit")
+                    .add(Restrictions.eq("deposit.depositName",name))
+                    .createAlias("depositors","depositor")
+                    .add(Restrictions.between("depositor.depositorDateReturnDeposit",startDate,endDate))
+                    .setProjection(Projections.distinct(Projections.projectionList()
+                                    .add(Projections.property("deposit.depositId"), "depositId")
+                                    .add(formProjection(properties))
+                                    .add(Projections.count("depositor.depositorId").as("depositorCount"))
+                                    .add(Projections.sum("depositor.depositorAmountDeposit").as("depositorAmountSum"))
+                                    .add(Projections.sum("depositor.depositorAmountPlusDeposit").as("depositorAmountPlusSum"))
+                                    .add(Projections.sum("depositor.depositorAmountMinusDeposit").as("depositorAmountMinusSum"))
+                                    .add(Projections.groupProperty("deposit.depositId"))
+                    ))
+                    .setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
+                    .list();
+            //--- close session
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+            LOGGER.debug("list - {}",list);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositByNameFromToDateReturnDepositWithDepositors({},{},{}) - {}",
+                    name, dateFormat.format(startDate),dateFormat.format(endDate),e.toString());
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
+            throw new IllegalArgumentException("error - getBankDepositByNameFromToDateReturnDepositWithDepositors() "+e.toString());
         }
         return mapRow(list);
     }
