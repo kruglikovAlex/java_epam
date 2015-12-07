@@ -131,11 +131,30 @@ public interface BankDepositDao {
      */
     public List<Map> getBankDepositByIdFromToDateReturnDepositWithDepositors(Long id,Date startDate, Date endDate);
 
-    /*
+    /**
+     * Get Bank Deposit from-to Date Deposit with depositors
+     * @param startDate Date
+     * @param endDate Date
+     * @return List<Map>
+     */
     public List<Map> getBankDepositsFromToDateDepositWithDepositors(Date startDate, Date endDate);
+
+    /**
+     * Get Bank Deposit from-to Date Return Deposit with depositors
+     * @param startDate Date
+     * @param endDate Date
+     * @return List<Map>
+     */
     public List<Map> getBankDepositsFromToDateReturnDepositWithDepositors(Date startDate, Date endDate);
 
+    /**
+     * Get Bank Deposit by Currency with depositors
+     * @param currency String
+     * @return List<Map>
+     */
     public List<Map> getBankDepositByCurrencyWithDepositors(String currency);
+
+    /*
     public List<Map> getBankDepositByCurrencyFromToDateDepositWithDepositors(String currency,Date startDate, Date endDate);
     public List<Map> getBankDepositByCurrencyFromToDateReturnDepositWithDepositors(String currency,Date startDate, Date endDate);
      */

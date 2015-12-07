@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import org.hibernate.criterion.Projections;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -562,6 +563,153 @@ public class BankDepositDaoImplTest {
             assertEquals(deposit.getDepositCurrency(), aList.get("depositCurrency"));
             assertEquals(deposit.getDepositInterestRate(), aList.get("depositInterestRate"));
             assertEquals(deposit.getDepositAddConditions(), aList.get("depositAddConditions"));
+            assertTrue("Error sum all amount", sumAmountDeposit==Integer.parseInt(aList.get("depositorAmountSum").toString()));
+            assertTrue("Error sum all plus amount", sumAmountPlusDeposit==Integer.parseInt(aList.get("depositorAmountPlusSum").toString()));
+            assertTrue("Error sum all minus amount", sumAmountMinusDeposit==Integer.parseInt(aList.get("depositorAmountMinusSum").toString()));
+        }
+    }
+
+    @Test
+    public void testGetBankDepositsFromToDateDepositWithDepositors() throws Exception {
+        Date startDate = dateFormat.parse("2015-11-02");
+        Date endDate = dateFormat.parse("2015-12-05");
+
+        //--- Initialization test data
+        //--- first
+        deposit = depositDao.getBankDepositByIdCriteria(1L);
+
+        depositor = DataFixture.getNewDepositor("newName");
+
+        Set depositors = new HashSet();
+            depositors.add(depositor);
+        deposit.setDepositors(depositors);
+        depositDao.updateBankDeposit(deposit);
+
+        //--- second
+        deposit = depositDao.getBankDepositByIdCriteria(3L);
+
+        depositor = DataFixture.getNewDepositor("newName2");
+
+        depositors = new HashSet();
+            depositors.add(depositor);
+        deposit.setDepositors(depositors);
+
+        depositDao.updateBankDeposit(deposit);
+
+        //--- testing
+        List<Map> list = depositDao.getBankDepositsFromToDateDepositWithDepositors(startDate,endDate);
+        LOGGER.debug("list = {}", list);
+
+        deposits = depositDao.getBankDepositsFromToDateDeposit(startDate, endDate);
+        LOGGER.debug("deposits = {}", deposits);
+
+        assertTrue(list.size()==deposits.size());
+
+        for (int i=0; i<list.size(); i++) {
+            assertEquals(deposits.get(i).getDepositId(), list.get(i).get("depositId"));
+            assertEquals(deposits.get(i).getDepositName(), list.get(i).get("depositName"));
+            assertEquals(deposits.get(i).getDepositMinTerm(), list.get(i).get("depositMinTerm"));
+            assertEquals(deposits.get(i).getDepositMinAmount(), list.get(i).get("depositMinAmount"));
+            assertEquals(deposits.get(i).getDepositCurrency(), list.get(i).get("depositCurrency"));
+            assertEquals(deposits.get(i).getDepositInterestRate(), list.get(i).get("depositInterestRate"));
+            assertEquals(deposits.get(i).getDepositAddConditions(), list.get(i).get("depositAddConditions"));
+        }
+    }
+
+    @Test
+    public void testGetBankDepositsFromToDateReturnDepositWithDepositors() throws Exception {
+        Date startDate = dateFormat.parse("2015-11-02");
+        Date endDate = dateFormat.parse("2015-12-03");
+
+        //--- Initialization test data
+        //--- first
+        deposit = depositDao.getBankDepositByIdCriteria(1L);
+
+        depositor = DataFixture.getNewDepositor("newName");
+
+        Set depositors = new HashSet();
+        depositors.add(depositor);
+        deposit.setDepositors(depositors);
+        depositDao.updateBankDeposit(deposit);
+
+        //--- second
+        deposit = depositDao.getBankDepositByIdCriteria(3L);
+
+        depositor = DataFixture.getNewDepositor("newName2");
+            depositor.setDepositorDateReturnDeposit(dateFormat.parse("2015-12-11"));
+
+        depositors = new HashSet();
+        depositors.add(depositor);
+        deposit.setDepositors(depositors);
+
+        depositDao.updateBankDeposit(deposit);
+
+        //--- testing
+        List<Map> list = depositDao.getBankDepositsFromToDateReturnDepositWithDepositors(startDate, endDate);
+        LOGGER.debug("list = {}", list);
+
+        deposits = depositDao.getBankDepositsFromToDateReturnDeposit(startDate, endDate);
+        LOGGER.debug("deposits = {}", deposits);
+
+        assertTrue(list.size()==deposits.size());
+
+        for (int i=0; i<list.size(); i++) {
+            assertEquals(deposits.get(i).getDepositId(), list.get(i).get("depositId"));
+            assertEquals(deposits.get(i).getDepositName(), list.get(i).get("depositName"));
+            assertEquals(deposits.get(i).getDepositMinTerm(), list.get(i).get("depositMinTerm"));
+            assertEquals(deposits.get(i).getDepositMinAmount(), list.get(i).get("depositMinAmount"));
+            assertEquals(deposits.get(i).getDepositCurrency(), list.get(i).get("depositCurrency"));
+            assertEquals(deposits.get(i).getDepositInterestRate(), list.get(i).get("depositInterestRate"));
+            assertEquals(deposits.get(i).getDepositAddConditions(), list.get(i).get("depositAddConditions"));
+        }
+    }
+
+    @Test
+    public void testGetBankDepositByCurrencyWithDepositors() throws ParseException{
+        Integer sumAmountDeposit=0,
+                sumAmountPlusDeposit=0,
+                sumAmountMinusDeposit=0;
+
+        //--- Initialization test data
+        deposits = depositDao.getBankDepositsByCurrencyCriteria("eur");
+
+        BankDepositor depositor1 = DataFixture.getNewDepositor("newNam3");
+
+        BankDepositor depositor2 = DataFixture.getNewDepositor("newName4");
+
+        Set deps = new HashSet();
+            deps.add(depositor1);
+            deps.add(depositor2);
+        deposits.get(0).setDepositors(deps);
+        depositDao.updateBankDeposit(deposits.get(0));
+        LOGGER.debug("deposit = {}", deposits.get(0));
+
+        depositors = deposits.get(0).getDepositors();
+        LOGGER.debug("depositors = {}", depositors);
+
+        //--- Testing
+        List<Map> list = depositDao.getBankDepositByCurrencyWithDepositors("eur");
+        LOGGER.debug("list = {}", list);
+
+        assertTrue(list.size()==1);
+
+        for(BankDepositor aDepositors: depositors){
+            sumAmountDeposit += aDepositors.getDepositorAmountDeposit();
+            sumAmountPlusDeposit += aDepositors.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit += aDepositors.getDepositorAmountMinusDeposit();
+        }
+        LOGGER.debug("sumAmountDeposit = {}", sumAmountDeposit);
+        LOGGER.debug("sumAmountPlusDeposit = {}", sumAmountPlusDeposit);
+        LOGGER.debug("sumAmountMinusDepositt = {}", sumAmountMinusDeposit);
+
+        for (Map aList: list) {
+            assertEquals(deposits.get(0).getDepositId(), aList.get("depositId"));
+            assertEquals(deposits.get(0).getDepositName(), aList.get("depositName"));
+            assertEquals(deposits.get(0).getDepositMinTerm(), aList.get("depositMinTerm"));
+            assertEquals(deposits.get(0).getDepositMinAmount(), aList.get("depositMinAmount"));
+            assertEquals(deposits.get(0).getDepositCurrency(), aList.get("depositCurrency"));
+            assertEquals(deposits.get(0).getDepositInterestRate(), aList.get("depositInterestRate"));
+            assertEquals(deposits.get(0).getDepositAddConditions(), aList.get("depositAddConditions"));
             assertTrue("Error sum all amount", sumAmountDeposit==Integer.parseInt(aList.get("depositorAmountSum").toString()));
             assertTrue("Error sum all plus amount", sumAmountPlusDeposit==Integer.parseInt(aList.get("depositorAmountPlusSum").toString()));
             assertTrue("Error sum all minus amount", sumAmountMinusDeposit==Integer.parseInt(aList.get("depositorAmountMinusSum").toString()));
