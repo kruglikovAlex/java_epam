@@ -786,7 +786,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
 
     /**
      * Update Bank Deposit
-     * @param deposit BankDeposit
+     * @param deposit BankDeposit - Bank Deposit to be stored in the database
      */
     @Override
     @Transactional
@@ -811,7 +811,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
 
     /**
      * Remove Bank Deposit
-     * @param id Long
+     * @param id Long - id of the Bank Deposit to be removed
      */
     @Override
     @Transactional
