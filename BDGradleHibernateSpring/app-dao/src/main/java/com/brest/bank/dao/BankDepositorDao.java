@@ -6,18 +6,49 @@ import org.hibernate.SessionFactory;
 import java.util.List;
 
 public interface BankDepositorDao {
-    //--- connection
+
+    /**
+     * Set Hibernate session factory
+     *
+     * @param sessionFactory SessionFactory
+     */
     public void setSession(SessionFactory sessionFactory);
-    //---- get
-        //---- all
+
+    /**
+     * Get all Bank Depositors
+     *
+     * @return List<BankDepositor> - a list containing all of the Bank Depositors in the database
+     */
     public List<BankDepositor> getBankDepositorsCriteria();
-        //---- single
+
+    /**
+     * Get Bank Depositor by ID
+     *
+     * @param depositorId  Long - id of the Bank Depositor to return
+     * @return BankDepositor1 with the specified id from the database
+     */
     public BankDepositor getBankDepositorByIdCriteria(Long depositorId);
     public BankDepositor getBankDepositorByNameCriteria(String depositorName);
-    //---- create
+
+    /**
+     * Adding Bank Depositor
+     *
+     * @param depositId Long - id of the Bank Deposit
+     * @param depositor BankDepositor - Bank Depositor to be inserted to the database
+     */
     public void addBankDepositor(Long depositId, BankDepositor depositor);
 
+    /**
+     * Updating Bank Depositor
+     *
+     * @param depositor BankDepositor - Bank Depositor to be stored in the database
+     */
     public void updateBankDepositor(BankDepositor depositor);
 
+    /**
+     * Deleting Bank Depositor by ID
+     *
+     * @param id Long - id of the Bank Depositor to be removed
+     */
     public void removeBankDepositor(Long id);
 }
