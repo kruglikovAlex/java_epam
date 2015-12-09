@@ -215,9 +215,18 @@ public interface BankDepositDao {
                                                                              Date startDate,
                                                                              Date endDate);
 
-    /*
-    public List<Map> getBankDepositByCurrencyFromToDateReturnDepositWithDepositors(String currency,Date startDate, Date endDate);
-    */
+    /**
+     * Get Bank Deposit from-to Date Return Deposit by Currency with depositors
+     *
+     * @param currency String - Currency of the Bank Deposit to return
+     * @param startDate Date - start value of the date deposit (startDate < endDate)
+     * @param endDate Date - end value of the date deposit (startDate < endDate)
+     * @return List<Map> a list of all bank deposits with a report on all relevant
+     * bank depositors with the specified task`s date return deposit
+     */
+    public List<Map> getBankDepositByCurrencyFromToDateReturnDepositWithDepositors(String currency,
+                                                                                   Date startDate,
+                                                                                   Date endDate);
 
     /**
      * Adding Bank Deposit
