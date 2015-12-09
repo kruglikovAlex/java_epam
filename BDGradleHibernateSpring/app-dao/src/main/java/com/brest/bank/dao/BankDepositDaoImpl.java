@@ -723,7 +723,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
 
     @Override
     @Transactional
-    public List<Map> getBankDepositByCurrencyWithDepositors(String currency){
+    public List<Map> getBankDepositsByCurrencyWithDepositors(String currency){
         LOGGER.debug("getBankDepositByCurrencyWithDepositors({})", currency);
         assertNotNull(ERROR_METHOD_PARAM,currency);
         List list;
@@ -755,6 +755,59 @@ public class BankDepositDaoImpl implements BankDepositDao {
             LOGGER.error("error - getBankDepositByCurrencyWithDepositors({}) - {}",currency,e.toString());
             HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
             throw new IllegalArgumentException("error - getBankDepositByCurrencyWithDepositors() "+e.toString());
+        }
+        return mapRow(list);
+    }
+
+    /**
+     * Get Bank Deposit from-to Date Deposit by Currency with depositors
+     *
+     * @param currency String
+     * @param startDate Date
+     * @param endDate Date
+     * @return List<Map>
+     */
+    @Override
+    @Transactional
+    public List<Map> getBankDepositsByCurrencyFromToDateDepositWithDepositors(String currency,
+                                                                             Date startDate,
+                                                                             Date endDate){
+        LOGGER.debug("getBankDepositByCurrencyFromToDateDepositWithDepositors({}, {}, {})", currency,
+                dateFormat.format(startDate),dateFormat.format(endDate));
+        assertNotNull(ERROR_METHOD_PARAM,currency);
+        assertNotNull(ERROR_METHOD_PARAM,startDate);
+        assertNotNull(ERROR_METHOD_PARAM,endDate);
+        assertTrue(ERROR_FROM_TO_PARAM,startDate.before(endDate));
+        List list;
+        try{
+            //--- open session
+            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+            String[] properties = HibernateUtil.getSessionFactory()
+                    .getClassMetadata(BankDeposit.class)
+                    .getPropertyNames();
+            //--- query
+            list = HibernateUtil.getSessionFactory().getCurrentSession()
+                    .createCriteria(BankDeposit.class, "deposit")
+                    .add(Restrictions.eq("deposit.depositCurrency", currency))
+                    .createAlias("depositors", "depositor")
+                    .add(Restrictions.between("depositor.depositorDateDeposit",startDate,endDate))
+                    .setProjection(Projections.distinct(Projections.projectionList()
+                                    .add(Projections.property("deposit.depositId"), "depositId")
+                                    .add(formProjection(properties))
+                                    .add(Projections.count("depositor.depositorId").as("depositorCount"))
+                                    .add(Projections.sum("depositor.depositorAmountDeposit").as("depositorAmountSum"))
+                                    .add(Projections.sum("depositor.depositorAmountPlusDeposit").as("depositorAmountPlusSum"))
+                                    .add(Projections.sum("depositor.depositorAmountMinusDeposit").as("depositorAmountMinusSum"))
+                                    .add(Projections.groupProperty("deposit.depositId"))
+                    ))
+                    .setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
+                    .list();
+            //--- close session
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositByCurrencyFromToDateDepositWithDepositors({}) - {}",currency,e.toString());
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
+            throw new IllegalArgumentException("error - getBankDepositByCurrencyFromToDateDepositWithDepositors() "+e.toString());
         }
         return mapRow(list);
     }
