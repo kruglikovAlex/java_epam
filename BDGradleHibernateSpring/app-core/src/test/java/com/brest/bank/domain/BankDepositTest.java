@@ -108,6 +108,6 @@ public class BankDepositTest {
         LOGGER.debug("testToString({})",deposit);
 
         assertEquals("BankDeposit: { depositId=null, depositName=null, depositMinTerm=null, depositMinAmount=null, " +
-                "depositCurrency=null, depositInterestRate=null, depositAddConditions=null, depositors=[]}",deposit.toString());
+                "depositCurrency=null, depositInterestRate=null, depositAddConditions=null}",deposit.toString());
     }
 }

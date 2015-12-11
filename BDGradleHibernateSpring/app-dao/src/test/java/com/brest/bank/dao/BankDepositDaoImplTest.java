@@ -123,12 +123,12 @@ public class BankDepositDaoImplTest {
         }
     }
 
-    @Test(expected = AssertionError.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testGetBankDepositsFromToMinTermCriteriaNullFirstArgs(){
         deposits = depositDao.getBankDepositsFromToMinTermCriteria(null, 14);
     }
 
-    @Test(expected = AssertionError.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testGetBankDepositsFromToMinTermCriteriaNullSecondArgs(){
         deposits = depositDao.getBankDepositsFromToMinTermCriteria(13, null);
     }

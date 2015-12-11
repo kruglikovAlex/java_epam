@@ -1,18 +1,10 @@
 package com.brest.bank.dao;
 
 import com.brest.bank.domain.BankDepositor;
-import org.hibernate.SessionFactory;
 
 import java.util.List;
 
 public interface BankDepositorDao {
-
-    /**
-     * Set Hibernate session factory
-     *
-     * @param sessionFactory SessionFactory
-     */
-    public void setSession(SessionFactory sessionFactory);
 
     /**
      * Get all Bank Depositors
@@ -25,9 +17,16 @@ public interface BankDepositorDao {
      * Get Bank Depositor by ID
      *
      * @param depositorId  Long - id of the Bank Depositor to return
-     * @return BankDepositor1 with the specified id from the database
+     * @return BankDepositor with the specified id from the database
      */
     public BankDepositor getBankDepositorByIdCriteria(Long depositorId);
+
+    /**
+     * Get Bank Depositor by Name
+     *
+     * @param depositorName  String - name of the Bank Depositor to return
+     * @return BankDepositor with the specified id from the database
+     */
     public BankDepositor getBankDepositorByNameCriteria(String depositorName);
 
     /**

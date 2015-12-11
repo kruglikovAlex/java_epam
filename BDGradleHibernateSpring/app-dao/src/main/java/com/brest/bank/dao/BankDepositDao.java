@@ -7,21 +7,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public interface BankDepositDao {
+ public interface BankDepositDao {
 
-    /**
-     * Set Hibernate session factory
-     *
-     * @param sessionFactory SessionFactory
-     */
-    public void setSession(SessionFactory sessionFactory);
+     public void setSession(SessionFactory sessionFactory);
 
     /**
      * Get all Bank Deposits
      *
      * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
      */
-    public List<BankDeposit> getBankDepositsCriteria();
+     List<BankDeposit> getBankDepositsCriteria();
 
     /**
      * Get Bank Deposit by ID
@@ -29,7 +24,7 @@ public interface BankDepositDao {
      * @param id Long - id of the Bank Deposit to return
      * @return BankDeposit with the specified id from the database
      */
-    public BankDeposit getBankDepositByIdCriteria(Long id);
+     BankDeposit getBankDepositByIdCriteria(Long id);
 
     /**
      * Get Bank Deposit by NAME
@@ -37,7 +32,7 @@ public interface BankDepositDao {
      * @param depositName String - name of the Bank Deposit to return
      * @return BankDeposit with the specified depositName from the database
      */
-    public BankDeposit getBankDepositByNameCriteria(String depositName);
+     BankDeposit getBankDepositByNameCriteria(String depositName);
 
     /**
      * Get Bank Deposit by Currency
@@ -46,7 +41,7 @@ public interface BankDepositDao {
      * @return List<BankDeposit> - a list containing all of the Bank Deposits with the specified
      * currency in the database
      */
-    public List<BankDeposit> getBankDepositsByCurrencyCriteria(String currency);
+     List<BankDeposit> getBankDepositsByCurrencyCriteria(String currency);
 
     /**
      * Get Bank Deposits by INTEREST RATE
@@ -55,7 +50,7 @@ public interface BankDepositDao {
      * @return List<BankDeposit>  - a list containing all of the Bank Deposits with the specified
      * interest rate in the database
      */
-    public List<BankDeposit> getBankDepositsByInterestRateCriteria(Integer rate);
+     List<BankDeposit> getBankDepositsByInterestRateCriteria(Integer rate);
 
     /**
      * Get Bank Deposits from-to MIN TERM values
@@ -65,7 +60,7 @@ public interface BankDepositDao {
      * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
      * with the specified task`s min term of deposit
      */
-    public List<BankDeposit> getBankDepositsFromToMinTermCriteria(Integer fromTerm,
+     List<BankDeposit> getBankDepositsFromToMinTermCriteria(Integer fromTerm,
                                                                   Integer toTerm);
 
     /**
@@ -76,7 +71,7 @@ public interface BankDepositDao {
      * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
      * with the specified task`s in of deterest rate of deposit
      */
-    public List<BankDeposit> getBankDepositsFromToInterestRateCriteria(Integer startRate,
+     List<BankDeposit> getBankDepositsFromToInterestRateCriteria(Integer startRate,
                                                                        Integer endRate);
 
     /**
@@ -87,7 +82,7 @@ public interface BankDepositDao {
      * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
      * with the specified task`s date of deposit
      */
-    public List<BankDeposit> getBankDepositsFromToDateDeposit(Date startDate,
+     List<BankDeposit> getBankDepositsFromToDateDeposit(Date startDate,
                                                               Date endDate);
 
     /**
@@ -98,7 +93,7 @@ public interface BankDepositDao {
      * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
      * with the specified task`s date return of deposit
      */
-    public List<BankDeposit> getBankDepositsFromToDateReturnDeposit(Date startDate,
+     List<BankDeposit> getBankDepositsFromToDateReturnDeposit(Date startDate,
                                                                     Date endDate);
 
     /**
@@ -108,7 +103,7 @@ public interface BankDepositDao {
      * @return List<Map>  - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
-    public List<Map> getBankDepositByNameWithDepositors(String name);
+     List<Map> getBankDepositByNameWithDepositors(String name);
 
     /**
      * Get Bank Deposits by NAME with depositors from-to Date Deposit values
@@ -119,7 +114,7 @@ public interface BankDepositDao {
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors with the specified task`s date of deposit
      */
-    public List<Map> getBankDepositByNameFromToDateDepositWithDepositors(String name,
+     List<Map> getBankDepositByNameFromToDateDepositWithDepositors(String name,
                                                                          Date startDate,
                                                                          Date endDate);
 
@@ -132,7 +127,7 @@ public interface BankDepositDao {
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors with the specified task`s date return of deposit
      */
-    public List<Map> getBankDepositByNameFromToDateReturnDepositWithDepositors(String name,
+     List<Map> getBankDepositByNameFromToDateReturnDepositWithDepositors(String name,
                                                                                Date startDate,
                                                                                Date endDate);
 
@@ -143,7 +138,7 @@ public interface BankDepositDao {
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
-    public List<Map> getBankDepositByIdWithDepositors(Long id);
+     List<Map> getBankDepositByIdWithDepositors(Long id);
 
     /**
      * Get Bank Deposits by ID with depositors from-to Date Deposit values
@@ -154,7 +149,7 @@ public interface BankDepositDao {
      * @return List<Map>  a list of all bank deposits with a report on all relevant
      * bank depositors with the specified task`s date of deposit
      */
-    public List<Map> getBankDepositByIdFromToDateDepositWithDepositors(Long id,
+     List<Map> getBankDepositByIdFromToDateDepositWithDepositors(Long id,
                                                                        Date startDate,
                                                                        Date endDate);
 
@@ -167,7 +162,7 @@ public interface BankDepositDao {
      * @return List<Map>  a list of all bank deposits with a report on all relevant
      * bank depositors with the specified task`s date return deposit
      */
-    public List<Map> getBankDepositByIdFromToDateReturnDepositWithDepositors(Long id,
+     List<Map> getBankDepositByIdFromToDateReturnDepositWithDepositors(Long id,
                                                                              Date startDate,
                                                                              Date endDate);
 
@@ -179,7 +174,7 @@ public interface BankDepositDao {
      * @return List<Map> a list of all bank deposits with a report on all relevant
      * bank depositors with the specified task`s date deposit
      */
-    public List<Map> getBankDepositsFromToDateDepositWithDepositors(Date startDate,
+     List<Map> getBankDepositsFromToDateDepositWithDepositors(Date startDate,
                                                                     Date endDate);
 
     /**
@@ -190,7 +185,7 @@ public interface BankDepositDao {
      * @return List<Map> a list of all bank deposits with a report on all relevant
      * bank depositors with the specified task`s date return deposit
      */
-    public List<Map> getBankDepositsFromToDateReturnDepositWithDepositors(Date startDate,
+     List<Map> getBankDepositsFromToDateReturnDepositWithDepositors(Date startDate,
                                                                           Date endDate);
 
     /**
@@ -200,7 +195,7 @@ public interface BankDepositDao {
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
-    public List<Map> getBankDepositsByCurrencyWithDepositors(String currency);
+     List<Map> getBankDepositsByCurrencyWithDepositors(String currency);
 
     /**
      * Get Bank Deposit from-to Date Deposit by Currency with depositors
@@ -211,7 +206,7 @@ public interface BankDepositDao {
      * @return List<Map> a list of all bank deposits with a report on all relevant
      * bank depositors with the specified task`s date deposit
      */
-    public List<Map> getBankDepositsByCurrencyFromToDateDepositWithDepositors(String currency,
+     List<Map> getBankDepositsByCurrencyFromToDateDepositWithDepositors(String currency,
                                                                              Date startDate,
                                                                              Date endDate);
 
@@ -224,7 +219,7 @@ public interface BankDepositDao {
      * @return List<Map> a list of all bank deposits with a report on all relevant
      * bank depositors with the specified task`s date return deposit
      */
-    public List<Map> getBankDepositByCurrencyFromToDateReturnDepositWithDepositors(String currency,
+     List<Map> getBankDepositByCurrencyFromToDateReturnDepositWithDepositors(String currency,
                                                                                    Date startDate,
                                                                                    Date endDate);
 
@@ -233,19 +228,19 @@ public interface BankDepositDao {
      *
      * @param deposit BankDeposit - Bank Deposit to be inserted to the database
      */
-    public void addBankDeposit(BankDeposit deposit);
+     void addBankDeposit(BankDeposit deposit);
 
     /**
      * Updating Bank Deposit
      *
      * @param deposit BankDeposit - Bank Deposit to be stored in the database
      */
-    public void updateBankDeposit(BankDeposit deposit);
+     void updateBankDeposit(BankDeposit deposit);
 
     /**
      * Deleting Bank Deposit by ID
      *
      * @param id Long - id of the Bank Deposit to be removed
      */
-    public void deleteBankDeposit(Long id);
+     void deleteBankDeposit(Long id);
 }

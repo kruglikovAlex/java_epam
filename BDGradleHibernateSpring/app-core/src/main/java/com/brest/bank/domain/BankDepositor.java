@@ -137,7 +137,6 @@ public class BankDepositor {
 		", depositorAmountPlusDeposit="+ depositorAmountPlusDeposit+
 		", depositorAmountMinusDeposit="+ depositorAmountMinusDeposit+
 		", depositorDateReturnDeposit="+ dateReturn +
-		", depositorMarkReturnDeposit="+ depositorMarkReturnDeposit  +
-		", deposit="+ bankDeposit  +'}';
+		", depositorMarkReturnDeposit="+ depositorMarkReturnDeposit +'}';
     }
 }

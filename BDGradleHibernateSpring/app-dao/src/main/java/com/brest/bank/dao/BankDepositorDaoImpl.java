@@ -4,7 +4,7 @@ import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
 
 import com.brest.bank.util.HibernateUtil;
-import org.hibernate.*;
+import org.hibernate.Criteria;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -12,7 +12,7 @@ import org.hibernate.criterion.*;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
+import org.springframework.util.Assert;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Component;
@@ -22,18 +22,12 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
+    public static final String ERROR_NULL_PARAM = "The parameter must be NULL";
+    public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
+
     private BankDepositor depositor;
     private List<BankDepositor> depositors = new ArrayList<BankDepositor>();
-    private Session session;
-    private SessionFactory sessionFactory;
-
-    @Override
-    public void setSession(SessionFactory sessionFactory){
-        this.sessionFactory = sessionFactory;
-        this.session = this.sessionFactory.getCurrentSession();
-        this.session.beginTransaction();
-        LOGGER.debug("BankDepositDaoImpl session: {}", session.toString());
-    }
 
     //---- get all deposits with Criteria
     @Override
@@ -61,6 +55,7 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
     @Transactional
     public BankDepositor getBankDepositorByIdCriteria(Long id){
         LOGGER.debug("getBankDepositorByIdCriteria({})", id);
+        Assert.notNull(id,ERROR_METHOD_PARAM);
 
         HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
         //--- query
@@ -79,7 +74,7 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
     @Transactional
     public BankDepositor getBankDepositorByNameCriteria(String name){
         LOGGER.debug("getBankDepositorByNameCriteria({})",name);
-
+        Assert.notNull(name,ERROR_METHOD_PARAM);
 
         HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
         //--- query
@@ -98,7 +93,9 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
     @Transactional
     public void addBankDepositor(Long depositId, BankDepositor depositor){
         LOGGER.debug("addBankDepositor({},{})",depositId, depositor);
-        assertNotNull(depositor);
+        Assert.notNull(depositId,ERROR_METHOD_PARAM);
+        Assert.notNull(depositor,ERROR_METHOD_PARAM);
+        Assert.isNull(depositor.getDepositorId(), ERROR_NULL_PARAM);
 
         try {
             HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
@@ -127,7 +124,8 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
     @Transactional
     public void updateBankDepositor(BankDepositor depositor){
         LOGGER.debug("updateBankDepositor({})",depositor);
-        assertNotNull(depositor);
+        Assert.notNull(depositor,ERROR_METHOD_PARAM);
+        Assert.notNull(depositor.getDepositorId(), ERROR_NULL_PARAM);
 
         try {
             //--- open session
@@ -150,6 +148,8 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
     @Transactional
     public void removeBankDepositor(Long id){
         LOGGER.debug("removeBankDepositor({})",id);
+        Assert.notNull(id,ERROR_METHOD_PARAM);
+
         try {
             HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 

@@ -117,7 +117,6 @@ public class BankDeposit{
         		", depositMinAmount=" + depositMinAmount + 
         		", depositCurrency=" + depositCurrency + 
         		", depositInterestRate=" + depositInterestRate + 
-        		", depositAddConditions=" + depositAddConditions +
-				", depositors=" + depositors +'}';
+        		", depositAddConditions=" + depositAddConditions +'}';
     }
 }

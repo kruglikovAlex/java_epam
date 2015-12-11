@@ -132,7 +132,7 @@ public class BankDepositDaoImplDBUnitTest {
     public void testUpdateBankDeposit() throws Exception{
         LOGGER.debug("testUpdateBankDeposit() - run");
         deposit = depositDao.getBankDepositByIdCriteria(2L);
-        LOGGER.debug("deposit for update: {}",deposit.toString());
+        LOGGER.debug("deposit for update: {}",deposit);
         deposit.setDepositName("depositName1Update");
         deposit.setDepositMinTerm(24);
         deposit.setDepositCurrency("rub");

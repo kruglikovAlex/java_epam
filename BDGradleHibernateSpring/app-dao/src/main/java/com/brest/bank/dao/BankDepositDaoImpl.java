@@ -3,10 +3,10 @@ package com.brest.bank.dao;
 import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.util.HibernateUtil;
 import org.hibernate.Criteria;
-import org.hibernate.Session;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.*;
 
@@ -15,10 +15,12 @@ import java.util.*;
 import java.util.List;
 
 import org.hibernate.transform.AliasToBeanResultTransformer;
+
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.Assert.*;
+import org.springframework.util.Assert;
 
 @Component
 public class BankDepositDaoImpl implements BankDepositDao {
@@ -27,17 +29,14 @@ public class BankDepositDaoImpl implements BankDepositDao {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
-    public static final String ERROR_FROM_TO_PARAM = "The first parameter to be smaller than the second parameter";
+    public static final String ERROR_NULL_PARAM = "The parameter must be NULL";
+    public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
 
     private BankDeposit deposit;
     private List<BankDeposit> deposits;
     private Session session;
-    private SessionFactory sessionFactory;
+    public SessionFactory sessionFactory;
 
-    /**
-     * Set Hibernate session factory
-     * @param sessionFactory SessionFactory
-     */
     @Override
     public void setSession(SessionFactory sessionFactory){
         this.sessionFactory = sessionFactory;
@@ -45,7 +44,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
         this.session.beginTransaction();
         LOGGER.debug("BankDepositDaoImpl session: {}", session.toString());
     }
-
     /**
      * Get all deposits with Criteria
      * @return List<BankDeposit>
@@ -78,7 +76,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
     @Transactional
     public BankDeposit getBankDepositByIdCriteria(Long id){
         LOGGER.debug("getBankDepositByIdCriteria({})", id);
-        assertNotNull(ERROR_METHOD_PARAM,id);
+        Assert.notNull(id,ERROR_METHOD_PARAM);
         //--- open session
         HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
         //--- query
@@ -101,7 +99,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
     @Transactional
     public BankDeposit getBankDepositByNameCriteria(String name){
         LOGGER.debug("getBankDepositByNameCriteria({})",name);
-        assertNotNull(ERROR_METHOD_PARAM,name);
+        Assert.notNull(name,ERROR_METHOD_PARAM);
         //--- open session
         HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
         //--- query
@@ -124,7 +122,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
     @Transactional
     public List<BankDeposit> getBankDepositsByCurrencyCriteria(String currency){
         LOGGER.debug("getBankDepositByCurrencyCriteria({})", currency);
-        assertNotNull(ERROR_METHOD_PARAM,currency);
+        Assert.notNull(currency,ERROR_METHOD_PARAM);
         deposits = new ArrayList<BankDeposit>();
         try{
             //--- open session
@@ -157,7 +155,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
     @Transactional
     public List<BankDeposit> getBankDepositsByInterestRateCriteria(Integer rate){
         LOGGER.debug("getBankDepositsByInterestRateCriteria({})", rate);
-        assertNotNull(ERROR_METHOD_PARAM,rate);
+        Assert.notNull(rate,ERROR_METHOD_PARAM);
         deposits = new ArrayList<BankDeposit>();
         try{
             //--- open session
@@ -189,9 +187,9 @@ public class BankDepositDaoImpl implements BankDepositDao {
     @Transactional
     public List<BankDeposit> getBankDepositsFromToMinTermCriteria(Integer fromTerm, Integer toTerm){
         LOGGER.debug("getBankDepositsFromToMinTermCriteria({}, {})",fromTerm,toTerm);
-        assertNotNull(ERROR_METHOD_PARAM,fromTerm);
-        assertNotNull(ERROR_METHOD_PARAM,toTerm);
-        assertTrue(ERROR_FROM_TO_PARAM,fromTerm<=toTerm);
+        Assert.notNull(fromTerm,ERROR_METHOD_PARAM);
+        Assert.notNull(toTerm,ERROR_METHOD_PARAM);
+        Assert.isTrue(fromTerm <= toTerm,ERROR_FROM_TO_PARAM);
         deposits = new ArrayList<BankDeposit>();
         try{
             //--- open session
@@ -223,9 +221,9 @@ public class BankDepositDaoImpl implements BankDepositDao {
     @Transactional
     public List<BankDeposit> getBankDepositsFromToInterestRateCriteria(Integer startRate, Integer endRate){
         LOGGER.debug("getBankDepositsFromToInterestRateCriteria({}, {})",startRate,endRate);
-        assertNotNull(ERROR_METHOD_PARAM,startRate);
-        assertNotNull(ERROR_METHOD_PARAM,endRate);
-        assertTrue(ERROR_FROM_TO_PARAM,startRate<=endRate);
+        Assert.notNull(startRate,ERROR_METHOD_PARAM);
+        Assert.notNull(endRate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startRate<=endRate,ERROR_FROM_TO_PARAM);
         deposits = new ArrayList<BankDeposit>();
         try{
             //--- open session
@@ -257,9 +255,9 @@ public class BankDepositDaoImpl implements BankDepositDao {
     @Transactional
     public List<BankDeposit> getBankDepositsFromToDateDeposit(Date startDate, Date endDate){
         LOGGER.debug("getBankDepositsFromToDateDeposit({}, {})",dateFormat.format(startDate),dateFormat.format(endDate));
-        assertNotNull(ERROR_METHOD_PARAM,startDate);
-        assertNotNull(ERROR_METHOD_PARAM,endDate);
-        assertTrue(ERROR_FROM_TO_PARAM,startDate.before(endDate));
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate),ERROR_FROM_TO_PARAM);
         deposits = new ArrayList<BankDeposit>();
         try{
             //--- open session
@@ -302,9 +300,9 @@ public class BankDepositDaoImpl implements BankDepositDao {
     public List<BankDeposit> getBankDepositsFromToDateReturnDeposit(Date startDate, Date endDate){
         LOGGER.debug("getBankDepositsFromToDateReturnDeposit({}, {})",dateFormat.format(startDate),
                 dateFormat.format(endDate));
-        assertNotNull(ERROR_METHOD_PARAM,startDate);
-        assertNotNull(ERROR_METHOD_PARAM,endDate);
-        assertTrue(ERROR_FROM_TO_PARAM,startDate.before(endDate));
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate),ERROR_FROM_TO_PARAM);
         deposits = new ArrayList<BankDeposit>();
         try{
             //--- open session
@@ -345,7 +343,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
     @Transactional
     public List<Map> getBankDepositByNameWithDepositors(String name){
         LOGGER.debug("getBankDepositByNameWithDepositors({})", name);
-        assertNotNull(ERROR_METHOD_PARAM,name);
+        Assert.notNull(name,ERROR_METHOD_PARAM);
         List list;
         try{
             //--- open session
@@ -392,10 +390,10 @@ public class BankDepositDaoImpl implements BankDepositDao {
     public List<Map> getBankDepositByNameFromToDateDepositWithDepositors(String name,Date startDate, Date endDate){
         LOGGER.debug("getBankDepositByNameFromToDateDepositWithDepositors({}, {}, {})",name,
                 dateFormat.format(startDate),dateFormat.format(endDate));
-        assertNotNull(ERROR_METHOD_PARAM,name);
-        assertNotNull(ERROR_METHOD_PARAM,startDate);
-        assertNotNull(ERROR_METHOD_PARAM,endDate);
-        assertTrue(ERROR_FROM_TO_PARAM,startDate.before(endDate));
+        Assert.notNull(name,ERROR_METHOD_PARAM);
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate),ERROR_FROM_TO_PARAM);
         List list;
         try{
             //--- open session
@@ -444,10 +442,10 @@ public class BankDepositDaoImpl implements BankDepositDao {
     public List<Map> getBankDepositByNameFromToDateReturnDepositWithDepositors(String name,Date startDate, Date endDate){
         LOGGER.debug("getBankDepositByNameFromToDateReturnDepositWithDepositors({}, {}, {})",name,
                 dateFormat.format(startDate),dateFormat.format(endDate));
-        assertNotNull(ERROR_METHOD_PARAM,name);
-        assertNotNull(ERROR_METHOD_PARAM,startDate);
-        assertNotNull(ERROR_METHOD_PARAM,endDate);
-        assertTrue(ERROR_FROM_TO_PARAM,startDate.before(endDate));
+        Assert.notNull(name,ERROR_METHOD_PARAM);
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate),ERROR_FROM_TO_PARAM);
         List list;
         try{
             //--- open session
@@ -493,7 +491,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
     @Transactional
     public List<Map> getBankDepositByIdWithDepositors(Long id){
         LOGGER.debug("getBankDepositByIdWithDepositors({})", id);
-        assertNotNull(ERROR_METHOD_PARAM,id);
+        Assert.notNull(id,ERROR_METHOD_PARAM);
         List list;
         try{
             //--- open session
@@ -539,10 +537,10 @@ public class BankDepositDaoImpl implements BankDepositDao {
     public List<Map> getBankDepositByIdFromToDateDepositWithDepositors(Long id,Date startDate, Date endDate){
         LOGGER.debug("getBankDepositByNameFromToDateReturnDepositWithDepositors({}, {}, {})",id,
                 dateFormat.format(startDate),dateFormat.format(endDate));
-        assertNotNull(ERROR_METHOD_PARAM,id);
-        assertNotNull(ERROR_METHOD_PARAM,startDate);
-        assertNotNull(ERROR_METHOD_PARAM,endDate);
-        assertTrue(ERROR_FROM_TO_PARAM,startDate.before(endDate));
+        Assert.notNull(id,ERROR_METHOD_PARAM);
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate),ERROR_FROM_TO_PARAM);
         List list;
         try{
             //--- open session
@@ -589,10 +587,10 @@ public class BankDepositDaoImpl implements BankDepositDao {
     public List<Map> getBankDepositByIdFromToDateReturnDepositWithDepositors(Long id,Date startDate, Date endDate){
         LOGGER.debug("getBankDepositByIdFromToDateReturnDepositWithDepositors({}, {}, {})",id,
                 dateFormat.format(startDate),dateFormat.format(endDate));
-        assertNotNull(ERROR_METHOD_PARAM,id);
-        assertNotNull(ERROR_METHOD_PARAM,startDate);
-        assertNotNull(ERROR_METHOD_PARAM,endDate);
-        assertTrue(ERROR_FROM_TO_PARAM,startDate.before(endDate));
+        Assert.notNull(id,ERROR_METHOD_PARAM);
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate),ERROR_FROM_TO_PARAM);
         List list;
         try{
             //--- open session
@@ -638,9 +636,9 @@ public class BankDepositDaoImpl implements BankDepositDao {
     public List<Map> getBankDepositsFromToDateDepositWithDepositors(Date startDate, Date endDate){
         LOGGER.debug("getBankDepositsFromToDateDepositWithDepositors({}, {})",
                 dateFormat.format(startDate),dateFormat.format(endDate));
-        assertNotNull(ERROR_METHOD_PARAM,startDate);
-        assertNotNull(ERROR_METHOD_PARAM,endDate);
-        assertTrue(ERROR_FROM_TO_PARAM,startDate.before(endDate));
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate),ERROR_FROM_TO_PARAM);
         List list;
         try{
             //--- open session
@@ -685,9 +683,9 @@ public class BankDepositDaoImpl implements BankDepositDao {
     public List<Map> getBankDepositsFromToDateReturnDepositWithDepositors(Date startDate, Date endDate){
         LOGGER.debug("getBankDepositsFromToDateReturnDepositWithDepositors({}, {})",
                 dateFormat.format(startDate),dateFormat.format(endDate));
-        assertNotNull(ERROR_METHOD_PARAM,startDate);
-        assertNotNull(ERROR_METHOD_PARAM,endDate);
-        assertTrue(ERROR_FROM_TO_PARAM,startDate.before(endDate));
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate),ERROR_FROM_TO_PARAM);
         List list;
         try{
             //--- open session
@@ -725,7 +723,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
     @Transactional
     public List<Map> getBankDepositsByCurrencyWithDepositors(String currency){
         LOGGER.debug("getBankDepositByCurrencyWithDepositors({})", currency);
-        assertNotNull(ERROR_METHOD_PARAM,currency);
+        Assert.notNull(currency,ERROR_METHOD_PARAM);
         List list;
         try{
             //--- open session
@@ -774,10 +772,10 @@ public class BankDepositDaoImpl implements BankDepositDao {
                                                                              Date endDate){
         LOGGER.debug("getBankDepositByCurrencyFromToDateDepositWithDepositors({}, {}, {})", currency,
                 dateFormat.format(startDate),dateFormat.format(endDate));
-        assertNotNull(ERROR_METHOD_PARAM,currency);
-        assertNotNull(ERROR_METHOD_PARAM,startDate);
-        assertNotNull(ERROR_METHOD_PARAM,endDate);
-        assertTrue(ERROR_FROM_TO_PARAM,startDate.before(endDate));
+        Assert.notNull(currency,ERROR_METHOD_PARAM);
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate),ERROR_FROM_TO_PARAM);
         List list;
         try{
             //--- open session
@@ -827,10 +825,10 @@ public class BankDepositDaoImpl implements BankDepositDao {
                                                                                    Date endDate){
         LOGGER.debug("getBankDepositByCurrencyFromToDateReturnDepositWithDepositors({}, {}, {})", currency,
                 dateFormat.format(startDate),dateFormat.format(endDate));
-        assertNotNull(ERROR_METHOD_PARAM,currency);
-        assertNotNull(ERROR_METHOD_PARAM,startDate);
-        assertNotNull(ERROR_METHOD_PARAM,endDate);
-        assertTrue(ERROR_FROM_TO_PARAM,startDate.before(endDate));
+        Assert.notNull(currency,ERROR_METHOD_PARAM);
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate),ERROR_FROM_TO_PARAM);
         List list;
         try{
             //--- open session
@@ -873,8 +871,8 @@ public class BankDepositDaoImpl implements BankDepositDao {
     @Transactional
     public void addBankDeposit(BankDeposit deposit) {
         LOGGER.debug("addBankDeposit({})",deposit);
-        assertNotNull(deposit);
-        assertNull(deposit.getDepositId());
+        Assert.notNull(deposit,ERROR_METHOD_PARAM);
+        Assert.isNull(deposit.getDepositId(),ERROR_NULL_PARAM);
         try {
             //--- open session
             HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
@@ -898,8 +896,8 @@ public class BankDepositDaoImpl implements BankDepositDao {
     @Transactional
     public void updateBankDeposit(BankDeposit deposit){
         LOGGER.debug("updateBankDeposit({})",deposit);
-        assertNotNull(deposit);
-        assertNotNull(deposit.getDepositId());
+        Assert.notNull(deposit,ERROR_METHOD_PARAM);
+        Assert.notNull(deposit.getDepositId(),ERROR_NULL_PARAM);
         try {
             //--- open session
             HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
@@ -923,7 +921,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
     @Transactional
     public void deleteBankDeposit(Long id){
         LOGGER.debug("deleteBankDeposit({})",id);
-        assertNotNull(ERROR_METHOD_PARAM,id);
+        Assert.notNull(id,ERROR_METHOD_PARAM);
         try{
             //--- open session
             HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
