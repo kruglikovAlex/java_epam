@@ -4,7 +4,6 @@ import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
 
 import com.brest.bank.util.HibernateUtil;
-import org.hibernate.Criteria;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -24,12 +23,15 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
 
     public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
     public static final String ERROR_NULL_PARAM = "The parameter must be NULL";
-    public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
 
     private BankDepositor depositor;
     private List<BankDepositor> depositors = new ArrayList<BankDepositor>();
 
-    //---- get all deposits with Criteria
+    /**
+     * Get all Bank Depositors
+     *
+     * @return List<BankDepositor> - a list containing all of the Bank Depositors in the database
+     */
     @Override
     @Transactional
     public List<BankDepositor> getBankDepositorsCriteria() {
@@ -50,7 +52,12 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         return depositors;
     }
 
-    //---- get by depositorId with Criteria
+    /**
+     * Get Bank Depositor by ID
+     *
+     * @param id  Long - id of the Bank Depositor to return
+     * @return BankDepositor with the specified id from the database
+     */
     @Override
     @Transactional
     public BankDepositor getBankDepositorByIdCriteria(Long id){
@@ -69,7 +76,12 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         return depositor;
     }
 
-    //---- get by depositorName createCriteria
+    /**
+     * Get Bank Depositor by Name
+     *
+     * @param name  String - name of the Bank Depositor to return
+     * @return BankDepositor with the specified id from the database
+     */
     @Override
     @Transactional
     public BankDepositor getBankDepositorByNameCriteria(String name){
@@ -88,7 +100,12 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         return depositor;
     }
 
-    //---- add BankDepositor to BankDeposit
+    /**
+     * Adding Bank Depositor
+     *
+     * @param depositId Long - id of the Bank Deposit
+     * @param depositor BankDepositor - Bank Depositor to be inserted to the database
+     */
     @Override
     @Transactional
     public void addBankDepositor(Long depositId, BankDepositor depositor){
@@ -119,7 +136,11 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         }
     }
 
-    //---- update
+    /**
+     * Updating Bank Depositor
+     *
+     * @param depositor BankDepositor - Bank Depositor to be stored in the database
+     */
     @Override
     @Transactional
     public void updateBankDepositor(BankDepositor depositor){
@@ -143,7 +164,11 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         }
     }
 
-    //---- delete
+    /**
+     * Deleting Bank Depositor by ID
+     *
+     * @param id Long - id of the Bank Depositor to be removed
+     */
     @Override
     @Transactional
     public void removeBankDepositor(Long id){

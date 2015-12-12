@@ -6,8 +6,6 @@ import org.hibernate.Criteria;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.*;
 
 import java.text.SimpleDateFormat;
@@ -34,16 +32,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
 
     private BankDeposit deposit;
     private List<BankDeposit> deposits;
-    private Session session;
-    public SessionFactory sessionFactory;
 
-    @Override
-    public void setSession(SessionFactory sessionFactory){
-        this.sessionFactory = sessionFactory;
-        this.session = this.sessionFactory.getCurrentSession();
-        this.session.beginTransaction();
-        LOGGER.debug("BankDepositDaoImpl session: {}", session.toString());
-    }
     /**
      * Get all deposits with Criteria
      * @return List<BankDeposit>

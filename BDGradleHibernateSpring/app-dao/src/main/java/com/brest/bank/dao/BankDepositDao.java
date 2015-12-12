@@ -1,15 +1,12 @@
 package com.brest.bank.dao;
 
 import com.brest.bank.domain.BankDeposit;
-import org.hibernate.SessionFactory;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
  public interface BankDepositDao {
-
-     public void setSession(SessionFactory sessionFactory);
 
     /**
      * Get all Bank Deposits
