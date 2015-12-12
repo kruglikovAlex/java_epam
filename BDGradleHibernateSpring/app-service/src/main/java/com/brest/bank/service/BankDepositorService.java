@@ -11,7 +11,7 @@ public interface BankDepositorService {
      *
      * @return List<BankDepositor> - a list containing all of the Bank Depositors in the database
      */
-    public List<BankDepositor> getBankDepositors();
+    List<BankDepositor> getBankDepositors();
 
     /**
      * Get Bank Depositor by ID
@@ -19,7 +19,7 @@ public interface BankDepositorService {
      * @param depositorId  Long - id of the Bank Depositor to return
      * @return BankDepositor with the specified id from the database
      */
-    public BankDepositor getBankDepositorById(Long depositorId);
+    BankDepositor getBankDepositorById(Long depositorId);
 
     /**
      * Get Bank Depositor by Name
@@ -27,7 +27,7 @@ public interface BankDepositorService {
      * @param depositorName  String - name of the Bank Depositor to return
      * @return BankDepositor with the specified id from the database
      */
-    public BankDepositor getBankDepositorByName(String depositorName);
+    BankDepositor getBankDepositorByName(String depositorName);
 
     /**
      * Adding Bank Depositor
@@ -35,19 +35,19 @@ public interface BankDepositorService {
      * @param depositId Long - id of the Bank Deposit
      * @param depositor BankDepositor - Bank Depositor to be inserted to the database
      */
-    public void addBankDepositor(Long depositId, BankDepositor depositor);
+    void addBankDepositor(Long depositId, BankDepositor depositor);
 
     /**
      * Updating Bank Depositor
      *
      * @param depositor BankDepositor - Bank Depositor to be stored in the database
      */
-    public void updateBankDepositor(BankDepositor depositor);
+    void updateBankDepositor(BankDepositor depositor);
 
     /**
      * Deleting Bank Depositor by ID
      *
      * @param id Long - id of the Bank Depositor to be removed
      */
-    public void removeBankDepositor(Long id);
+    void removeBankDepositor(Long id);
 }
