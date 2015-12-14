@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <File name="File" fileName="/tmp/output.log">
+            <PatternLayout pattern="%d %с [%t] %m%n"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.brest.bank.service" level="trace">
+            <AppenderRef ref="File"/>
+        </Logger>
+        <Root level="error">
+            <AppenderRef ref="File"/>
+        </Root>
+    </Loggers>
+</Configuration>
