@@ -5,9 +5,7 @@ import com.brest.bank.domain.BankDepositor;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class DataFixture {
 
@@ -35,6 +33,26 @@ public class DataFixture {
     }
 
     /**
+     * Get a Bank Deposit with null parameters
+     *
+     * @return BankDeposit with null parameters
+     */
+    public static BankDeposit getNullDeposit() {
+        BankDeposit deposit = new BankDeposit(null,null,null,null,null,null,null,null);
+        return deposit;
+    }
+
+    /**
+     * Get empty Bank Deposit
+     *
+     * @return BankDeposit empty
+     */
+    public static BankDeposit getEmptyDeposit() {
+        BankDeposit deposit = new BankDeposit();
+        return deposit;
+    }
+
+    /**
      * Get all Bank Deposits
      *
      * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
@@ -42,6 +60,12 @@ public class DataFixture {
     public static List<BankDeposit> getDeposits(){
         List<BankDeposit> deposits = new ArrayList<BankDeposit>();
         deposits.add(getNewDeposit());
+        return deposits;
+    }
+
+    public static List<Map> getExistAllDepositsAllDepositors() throws ParseException{
+        List<Map> deposits = new ArrayList<Map>();
+        deposits.add(getExistDepositAllDepositors(1L, 1L));
         return deposits;
     }
 
@@ -76,6 +100,47 @@ public class DataFixture {
     public static List<BankDepositor> getDepositors() throws ParseException{
         List<BankDepositor> depositors = new ArrayList<BankDepositor>();
         depositors.add(getNewDepositor());
+        return depositors;
+    }
+
+    public static Map getExistDepositAllDepositors(Long id, Long idd) throws ParseException{
+        BankDeposit deposit =  getExistDeposit(id);
+        BankDepositor depositor = getExistDepositorIdDeposit(id, idd);
+
+        Map<String, Object> list = new HashMap<String, Object>(11);
+
+        list.put("depositId", deposit.getDepositId());
+        list.put("depositName", deposit.getDepositName());
+        list.put("depositMinTerm", deposit.getDepositMinTerm());
+        list.put("depositMinAmount", deposit.getDepositMinAmount());
+        list.put("depositCurrency", deposit.getDepositCurrency());
+        list.put("depositInterestRate", deposit.getDepositInterestRate());
+        list.put("depositAddConditions", deposit.getDepositAddConditions());
+        list.put("sumAmount", depositor.getDepositorAmountDeposit());
+        list.put("sumPlusAmount", depositor.getDepositorAmountPlusDeposit());
+        list.put("sumMinusAmount", depositor.getDepositorAmountMinusDeposit());
+        list.put("numDepositors", 1);
+        return list;
+    }
+
+
+    public static BankDepositor getExistDepositorIdDeposit(Long id, Long idD) throws ParseException{
+        BankDepositor depositor = new BankDepositor();
+        depositor.setDepositorId(id);
+        depositor.setDepositorName("depositorName1");
+        depositor.setDepositorDateDeposit(dateFormat.parse("2015-12-01"));
+        depositor.setDepositorAmountDeposit(10000);
+        depositor.setDepositorAmountPlusDeposit(1000);
+        depositor.setDepositorAmountMinusDeposit(11000);
+        depositor.setDepositorDateReturnDeposit(dateFormat.parse("2015-12-01"));
+        depositor.setDepositorMarkReturnDeposit(0);
+        return depositor;
+    }
+
+    public static List<BankDepositor> getExistDepositors() throws ParseException{
+        List<BankDepositor> depositors = new ArrayList<BankDepositor>();
+        depositors.add(getExistDepositorIdDeposit(1L,1L));
+        depositors.add(getExistDepositorIdDeposit(2L,1L));
         return depositors;
     }
 }

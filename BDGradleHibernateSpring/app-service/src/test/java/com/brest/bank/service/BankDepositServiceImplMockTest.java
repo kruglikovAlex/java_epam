@@ -24,10 +24,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/spring-services-mock-test.xml"})
@@ -200,17 +197,50 @@ public class BankDepositServiceImplMockTest {
         assertSame(deposits,resultDeposits);
     }
 
-    /*
+
     @Test
     public void testGetBankDepositsFromToDateReturnDeposit() throws Exception {
+        List<BankDeposit> deposits = DataFixture.getDeposits();
+        deposits.get(0).setDepositInterestRate(3);
+        deposits.add(DataFixture.getExistDeposit(2L));
 
+        Set<BankDepositor> depositors = new HashSet<BankDepositor>();
+        depositors.add(DataFixture.getExistDepositor(1L));
+        depositors.add(DataFixture.getExistDepositor(2L));
+        LOGGER.debug("depositors - {}",depositors);
+
+        deposits.get(0).setDepositors(depositors);
+        LOGGER.debug("deposits - {}",deposits);
+
+        expect(depositDao.getBankDepositsFromToDateReturnDeposit(dateFormat.parse("2015-01-01"),
+                dateFormat.parse("2015-02-02")))
+                .andReturn(deposits);
+        replay(depositDao);
+
+        List<BankDeposit> resultDeposits = bankDepositService.getBankDepositsFromToDateReturnDeposit(dateFormat.parse("2015-01-01"),
+                dateFormat.parse("2015-02-02"));
+        LOGGER.debug("resultDeposits = {}", resultDeposits);
+
+        verify(depositDao);
+
+        assertSame(deposits,resultDeposits);
     }
 
     @Test
     public void testGetBankDepositByNameWithDepositors() throws Exception {
+        List<Map> depositsAllDepositors = DataFixture.getExistAllDepositsAllDepositors();
 
+        expect(depositDao.getBankDepositByNameWithDepositors("depositName1")).andReturn(depositsAllDepositors);
+        replay(depositDao);
+
+        List<Map> resultDeposits = bankDepositService.getBankDepositByNameWithDepositors("depositName1");
+
+        verify(depositDao);
+
+        assertEquals(depositsAllDepositors, resultDeposits);
+        assertSame(depositsAllDepositors, resultDeposits);
     }
-
+/*
     @Test
     public void testGetBankDepositByNameFromToDateDepositWithDepositors() throws Exception {
 
@@ -260,20 +290,152 @@ public class BankDepositServiceImplMockTest {
     public void testGetBankDepositByCurrencyFromToDateReturnDepositWithDepositors() throws Exception {
 
     }
-
+*/
     @Test
     public void testAddBankDeposit() throws Exception {
+        BankDeposit deposit = DataFixture.getNewDeposit();
 
+        depositDao.addBankDeposit(deposit);
+        expectLastCall();
+
+        expect(depositDao.getBankDepositByNameCriteria(deposit.getDepositName())).andReturn(null);
+
+        replay(depositDao);
+
+        bankDepositService.addBankDeposit(deposit);
+
+        verify(depositDao);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddTwoDeposit() {
+        BankDeposit deposit = DataFixture.getNewDeposit();
+
+        depositDao.addBankDeposit(deposit);
+        expectLastCall().times(2);
+
+        depositDao.getBankDepositByNameCriteria(deposit.getDepositName());
+        expectLastCall().andReturn(deposit).times(2);
+
+        replay(depositDao);
+
+        bankDepositService.addBankDeposit(deposit);
+        bankDepositService.addBankDeposit(deposit);
+
+        verify(depositDao);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void addDepositWithSameName() {
+        BankDeposit deposit = DataFixture.getNewDeposit();
+
+        depositDao.addBankDeposit(deposit);
+        expectLastCall();
+
+        expect(depositDao.getBankDepositByNameCriteria(deposit.getDepositName())).andReturn(deposit);
+        replay(depositDao);
+
+        bankDepositService.addBankDeposit(deposit);
+
+        verify(depositDao);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void AddNotNullIdDeposit() {
+        BankDeposit deposit = DataFixture.getExistDeposit(1L);
+
+        depositDao.addBankDeposit(deposit);
+        expectLastCall();
+
+        expect(depositDao.getBankDepositByNameCriteria(deposit.getDepositName())).andReturn(null);
+        replay(depositDao);
+
+        bankDepositService.addBankDeposit(deposit);
+
+        verify(depositDao);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void AddNullDeposit() {
+        BankDeposit deposit = DataFixture.getNullDeposit();
+
+        depositDao.addBankDeposit(deposit);
+        expectLastCall();
+
+        expect(depositDao.getBankDepositByNameCriteria(deposit.getDepositName())).andReturn(null);
+        replay(depositDao);
+
+        bankDepositService.addBankDeposit(deposit);
+
+        verify(depositDao);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void AddEmptyDeposit(){
+        BankDeposit deposit = DataFixture.getEmptyDeposit();
+
+        expect(depositDao.getBankDepositByNameCriteria(deposit.getDepositName())).andReturn(null);
+
+        depositDao.addBankDeposit(deposit);
+        expectLastCall();
+
+        replay(depositDao);
+
+        bankDepositService.addBankDeposit(deposit);
+
+        verify(depositDao);
     }
 
     @Test
     public void testUpdateBankDeposit() throws Exception {
+        BankDeposit deposit = DataFixture.getExistDeposit(1L);
 
+        expect(depositDao.getBankDepositByIdCriteria(deposit.getDepositId())).andReturn(deposit);
+
+        depositDao.updateBankDeposit(deposit);
+        expectLastCall();
+
+        replay(depositDao);
+
+        bankDepositService.updateBankDeposit(deposit);
+
+        verify(depositDao);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void UpdateEmptyDeposit(){
+        BankDeposit deposit = DataFixture.getEmptyDeposit();
+
+        expect(depositDao.getBankDepositByIdCriteria(deposit.getDepositId())).andReturn(deposit);
+
+        depositDao.updateBankDeposit(deposit);
+        expectLastCall();
+
+        replay(depositDao);
+
+        bankDepositService.updateBankDeposit(deposit);
+
+        verify(depositDao);
     }
 
     @Test
     public void testDeleteBankDeposit() throws Exception {
+        BankDeposit deposit = DataFixture.getExistDeposit(1L);
 
+        expect(depositDao.getBankDepositByIdCriteria(deposit.getDepositId())).andReturn(deposit);
+
+        depositDao.deleteBankDeposit(deposit.getDepositId());
+        expectLastCall();
+
+        replay(depositDao);
+
+        bankDepositService.deleteBankDeposit(deposit.getDepositId());
+
+        verify(depositDao);
     }
-    */
+
+    @Test(expected = IllegalArgumentException.class)
+    public void RemoveNullIdDeposit(){
+        bankDepositService.deleteBankDeposit(null);
+    }
 }
