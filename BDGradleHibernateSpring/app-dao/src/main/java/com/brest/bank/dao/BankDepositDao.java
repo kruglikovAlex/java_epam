@@ -94,48 +94,48 @@ import java.util.Map;
                                                                     Date endDate);
 
     /**
-     * Get Bank Deposits by NAME with depositors
+     * Get Bank Deposit by NAME with depositors
      *
      * @param name String - name of the Bank Deposit to return
-     * @return List<Map>  - a list of all bank deposits with a report on all relevant
+     * @return Map - a list of all bank deposit with a report on all relevant
      * bank depositors
      */
-     List<Map> getBankDepositByNameWithDepositors(String name);
+     Map getBankDepositByNameWithDepositors(String name);
 
     /**
-     * Get Bank Deposits by NAME with depositors from-to Date Deposit values
+     * Get Bank Deposit by NAME with depositors from-to Date Deposit values
      *
      * @param name String - name of the Bank Deposit to return
      * @param startDate Date - start value of the date deposit (startDate < endDate)
      * @param endDate Date - end value of the date deposit (endDate > startDate)
-     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * @return Map - a list of all bank deposit with a report on all relevant
      * bank depositors with the specified task`s date of deposit
      */
-     List<Map> getBankDepositByNameFromToDateDepositWithDepositors(String name,
-                                                                         Date startDate,
-                                                                         Date endDate);
+     Map getBankDepositByNameFromToDateDepositWithDepositors(String name,
+                                                             Date startDate,
+                                                             Date endDate);
 
     /**
-     * Get Bank Deposits by NAME with depositors from-to Date Return Deposit values
+     * Get Bank Deposit by NAME with depositor from-to Date Return Deposit values
      *
      * @param name String - name of the Bank Deposit to return
      * @param startDate Date - start value of the date return deposit (startDate < endDate)
      * @param endDate Date - end value of the date return deposit (endDate > startDate)
-     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * @return Map - a list of all bank deposit with a report on all relevant
      * bank depositors with the specified task`s date return of deposit
      */
-     List<Map> getBankDepositByNameFromToDateReturnDepositWithDepositors(String name,
-                                                                               Date startDate,
-                                                                               Date endDate);
+     Map getBankDepositByNameFromToDateReturnDepositWithDepositors(String name,
+                                                                   Date startDate,
+                                                                   Date endDate);
 
     /**
-     * Get Bank Deposits by ID with depositors
+     * Get Bank Deposit by ID with depositors
      *
      * @param id Long - depositId of the Bank Deposit to return
-     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * @return Map - a list of all bank deposit with a report on all relevant
      * bank depositors
      */
-     List<Map> getBankDepositByIdWithDepositors(Long id);
+     Map getBankDepositByIdWithDepositors(Long id);
 
     /**
      * Get Bank Deposits by ID with depositors from-to Date Deposit values
@@ -143,23 +143,23 @@ import java.util.Map;
      * @param id Long - depositId of the Bank Deposit to return
      * @param startDate Date - start value of the date deposit (startDate < endDate)
      * @param endDate Date - end value of the date deposit (endDate > startDate)
-     * @return List<Map>  a list of all bank deposits with a report on all relevant
+     * @return Map  a list of all bank deposit with a report on all relevant
      * bank depositors with the specified task`s date of deposit
      */
-     List<Map> getBankDepositByIdFromToDateDepositWithDepositors(Long id,
-                                                                       Date startDate,
-                                                                       Date endDate);
+     Map getBankDepositByIdFromToDateDepositWithDepositors(Long id,
+                                                           Date startDate,
+                                                           Date endDate);
 
     /**
-     * Get Bank Deposits by ID with depositors from-to Date Return Deposit values
+     * Get Bank Deposit by ID with depositors from-to Date Return Deposit values
      *
      * @param id Long - depositId of the Bank Deposit to return
      * @param startDate Date - start value of the date return deposit (startDate < endDate)
      * @param endDate Date - end value of the date return deposit (startDate < endDate)
-     * @return List<Map>  a list of all bank deposits with a report on all relevant
+     * @return Map  a list of all bank deposit with a report on all relevant
      * bank depositors with the specified task`s date return deposit
      */
-     List<Map> getBankDepositByIdFromToDateReturnDepositWithDepositors(Long id,
+     Map getBankDepositByIdFromToDateReturnDepositWithDepositors(Long id,
                                                                              Date startDate,
                                                                              Date endDate);
 
@@ -216,7 +216,7 @@ import java.util.Map;
      * @return List<Map> a list of all bank deposits with a report on all relevant
      * bank depositors with the specified task`s date return deposit
      */
-     List<Map> getBankDepositByCurrencyFromToDateReturnDepositWithDepositors(String currency,
+     List<Map> getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(String currency,
                                                                                    Date startDate,
                                                                                    Date endDate);
 
