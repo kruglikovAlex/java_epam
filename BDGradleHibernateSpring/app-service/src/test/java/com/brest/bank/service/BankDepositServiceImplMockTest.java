@@ -228,34 +228,77 @@ public class BankDepositServiceImplMockTest {
 
     @Test
     public void testGetBankDepositByNameWithDepositors() throws Exception {
-        List<Map> depositsAllDepositors = DataFixture.getExistAllDepositsAllDepositors();
+        Map depositsAllDepositors = DataFixture.getExistDepositAllDepositors(1L,2L);
+        LOGGER.debug("depositsAllDepositors = {}",depositsAllDepositors);
 
         expect(depositDao.getBankDepositByNameWithDepositors("depositName1")).andReturn(depositsAllDepositors);
         replay(depositDao);
 
-        List<Map> resultDeposits = bankDepositService.getBankDepositByNameWithDepositors("depositName1");
+        Map resultDeposits = bankDepositService.getBankDepositByNameWithDepositors("depositName1");
+        LOGGER.debug("resultDeposits = {}",resultDeposits);
 
         verify(depositDao);
 
         assertEquals(depositsAllDepositors, resultDeposits);
         assertSame(depositsAllDepositors, resultDeposits);
     }
-/*
+
     @Test
     public void testGetBankDepositByNameFromToDateDepositWithDepositors() throws Exception {
+        Map depositsByNameAllDepositors = DataFixture.getExistDepositAllDepositors(1L,2L);
+        LOGGER.debug("depositsByNameAllDepositors: {}",depositsByNameAllDepositors);
 
+        expect(depositDao.getBankDepositByNameFromToDateDepositWithDepositors("depositName1",
+                dateFormat.parse("2015-01-01"),dateFormat.parse("2015-01-02"))).andReturn(depositsByNameAllDepositors);
+        replay(depositDao);
+
+        Map resultDeposits = bankDepositService.getBankDepositByNameFromToDateDepositWithDepositors("depositName1",
+                dateFormat.parse("2015-01-01"),dateFormat.parse("2015-01-02"));
+        LOGGER.debug("result deposit: {}",resultDeposits);
+
+        verify(depositDao);
+
+        assertEquals(depositsByNameAllDepositors, resultDeposits);
+        assertSame(depositsByNameAllDepositors, resultDeposits);
     }
 
     @Test
     public void testGetBankDepositByNameFromToDateReturnDepositWithDepositors() throws Exception {
+        Map depositByNameAllDepositors = DataFixture.getExistDepositAllDepositors(1L,2L);
+        LOGGER.debug("depositsByNameAllDepositors: {}",depositByNameAllDepositors);
 
+        expect(depositDao.getBankDepositByNameFromToDateReturnDepositWithDepositors("depositName1",
+                dateFormat.parse("2015-01-01"), dateFormat.parse("2015-01-02"))).andReturn(depositByNameAllDepositors);
+        replay(depositDao);
+
+        Map resultDeposit = bankDepositService.getBankDepositByNameFromToDateReturnDepositWithDepositors("depositName1",
+                dateFormat.parse("2015-01-01"), dateFormat.parse("2015-01-02"));
+        LOGGER.debug("result deposit: {}",resultDeposit);
+
+        verify(depositDao);
+
+        assertEquals(depositByNameAllDepositors, resultDeposit);
+        assertSame(depositByNameAllDepositors, resultDeposit);
     }
 
     @Test
     public void testGetBankDepositByIdWithDepositors() throws Exception {
+        Map deposit = DataFixture.getExistDepositAllDepositors(1L,2L);
+        LOGGER.debug("deposit: {}",deposit);
 
+        expect(depositDao.getBankDepositByIdWithDepositors(1L)).andReturn(deposit);
+
+        replay(depositDao);
+
+        Map resultDeposit = bankDepositService.getBankDepositByIdWithDepositors(1L);
+        LOGGER.debug("result deposit: {}",resultDeposit);
+
+        verify(depositDao);
+
+        assertEquals(deposit, resultDeposit);
+        assertSame(deposit, resultDeposit);
     }
-
+/*
     @Test
     public void testGetBankDepositByIdFromToDateDepositWithDepositors() throws Exception {
 
@@ -294,6 +337,7 @@ public class BankDepositServiceImplMockTest {
     @Test
     public void testAddBankDeposit() throws Exception {
         BankDeposit deposit = DataFixture.getNewDeposit();
+        LOGGER.debug("new deposit = {}",deposit);
 
         depositDao.addBankDeposit(deposit);
         expectLastCall();
@@ -310,6 +354,7 @@ public class BankDepositServiceImplMockTest {
     @Test(expected = IllegalArgumentException.class)
     public void testAddTwoDeposit() {
         BankDeposit deposit = DataFixture.getNewDeposit();
+        LOGGER.debug("new deposit = {}",deposit);
 
         depositDao.addBankDeposit(deposit);
         expectLastCall().times(2);
@@ -328,6 +373,7 @@ public class BankDepositServiceImplMockTest {
     @Test(expected = IllegalArgumentException.class)
     public void addDepositWithSameName() {
         BankDeposit deposit = DataFixture.getNewDeposit();
+        LOGGER.debug("new deposit = {}",deposit);
 
         depositDao.addBankDeposit(deposit);
         expectLastCall();
@@ -343,6 +389,7 @@ public class BankDepositServiceImplMockTest {
     @Test(expected = IllegalArgumentException.class)
     public void AddNotNullIdDeposit() {
         BankDeposit deposit = DataFixture.getExistDeposit(1L);
+        LOGGER.debug("deposit = {}",deposit);
 
         depositDao.addBankDeposit(deposit);
         expectLastCall();
@@ -358,6 +405,7 @@ public class BankDepositServiceImplMockTest {
     @Test(expected = IllegalArgumentException.class)
     public void AddNullDeposit() {
         BankDeposit deposit = DataFixture.getNullDeposit();
+        LOGGER.debug("null deposit = {}",deposit);
 
         depositDao.addBankDeposit(deposit);
         expectLastCall();
@@ -373,6 +421,7 @@ public class BankDepositServiceImplMockTest {
     @Test(expected = IllegalArgumentException.class)
     public void AddEmptyDeposit(){
         BankDeposit deposit = DataFixture.getEmptyDeposit();
+        LOGGER.debug("empty deposit = {}", deposit);
 
         expect(depositDao.getBankDepositByNameCriteria(deposit.getDepositName())).andReturn(null);
 
@@ -389,6 +438,7 @@ public class BankDepositServiceImplMockTest {
     @Test
     public void testUpdateBankDeposit() throws Exception {
         BankDeposit deposit = DataFixture.getExistDeposit(1L);
+        LOGGER.debug("deposit = {}", deposit);
 
         expect(depositDao.getBankDepositByIdCriteria(deposit.getDepositId())).andReturn(deposit);
 
@@ -405,6 +455,7 @@ public class BankDepositServiceImplMockTest {
     @Test(expected = IllegalArgumentException.class)
     public void UpdateEmptyDeposit(){
         BankDeposit deposit = DataFixture.getEmptyDeposit();
+        LOGGER.debug("empty deposit = {}", deposit);
 
         expect(depositDao.getBankDepositByIdCriteria(deposit.getDepositId())).andReturn(deposit);
 
@@ -421,6 +472,7 @@ public class BankDepositServiceImplMockTest {
     @Test
     public void testDeleteBankDeposit() throws Exception {
         BankDeposit deposit = DataFixture.getExistDeposit(1L);
+        LOGGER.debug("deposit = {}", deposit);
 
         expect(depositDao.getBankDepositByIdCriteria(deposit.getDepositId())).andReturn(deposit);
 

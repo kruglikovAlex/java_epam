@@ -234,156 +234,156 @@ public class BankDepositServiceImpl implements BankDepositService{
     }
 
     /**
-     * Get Bank Deposits by NAME with depositors
+     * Get Bank Deposit by NAME with depositors
      *
      * @param name String - name of the Bank Deposit to return
-     * @return List<Map>  - a list of all bank deposits with a report on all relevant
+     * @return Map  - a list of all bank deposit with a report on all relevant
      * bank depositors
      */
     @Override
     @Transactional
-    public List<Map> getBankDepositByNameWithDepositors(String name){
+    public Map getBankDepositByNameWithDepositors(String name){
         LOGGER.debug("getBankDepositByNameWithDepositors(name={})",name);
         Assert.notNull(name,ERROR_METHOD_PARAM);
-        List<Map> deposits = null;
+        Map deposit = null;
         try{
-            deposits = bankDepositDao.getBankDepositByNameWithDepositors(name);
+            deposit = bankDepositDao.getBankDepositByNameWithDepositors(name);
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositByNameWithDepositors({}), Exception:{}", name, e.toString());
         }
-        return deposits;
+        return deposit;
     }
 
     /**
-     * Get Bank Deposits by NAME with depositors from-to Date Deposit values
+     * Get Bank Deposit by NAME with depositors from-to Date Deposit values
      *
      * @param name String - name of the Bank Deposit to return
      * @param startDate Date - start value of the date deposit (startDate < endDate)
      * @param endDate Date - end value of the date deposit (endDate > startDate)
-     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * @return Map - a list of all bank deposit with a report on all relevant
      * bank depositors with the specified task`s date of deposit
      */
     @Override
     @Transactional
-    public List<Map> getBankDepositByNameFromToDateDepositWithDepositors(String name,Date startDate,Date endDate){
+    public Map getBankDepositByNameFromToDateDepositWithDepositors(String name,Date startDate,Date endDate){
         LOGGER.debug("getBankDepositByNameFromToDateDepositWithDepositors(name={},from={},to={})",name,
                 dateFormat.format(startDate),dateFormat.format(endDate));
         Assert.notNull(name,ERROR_METHOD_PARAM);
         Assert.notNull(startDate,ERROR_METHOD_PARAM);
         Assert.notNull(endDate,ERROR_METHOD_PARAM);
         Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
-        List<Map> deposits = null;
+        Map deposit = null;
         try{
-            deposits = bankDepositDao.getBankDepositByNameFromToDateDepositWithDepositors(name,startDate,endDate);
+            deposit = bankDepositDao.getBankDepositByNameFromToDateDepositWithDepositors(name,startDate,endDate);
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositByNameFromToDateDepositWithDepositors({},{},{}), Exception:{}", name, e.toString());
         }
-        return deposits;
+        return deposit;
     }
 
     /**
-     * Get Bank Deposits by NAME with depositors from-to Date Return Deposit values
+     * Get Bank Deposit by NAME with depositors from-to Date Return Deposit values
      *
      * @param name String - name of the Bank Deposit to return
      * @param startDate Date - start value of the date return deposit (startDate < endDate)
      * @param endDate Date - end value of the date return deposit (endDate > startDate)
-     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * @return Map - a list of all bank deposit with a report on all relevant
      * bank depositors with the specified task`s date return of deposit
      */
     @Override
     @Transactional
-    public List<Map> getBankDepositByNameFromToDateReturnDepositWithDepositors(String name,Date startDate,Date endDate){
+    public Map getBankDepositByNameFromToDateReturnDepositWithDepositors(String name,Date startDate,Date endDate){
         LOGGER.debug("getBankDepositByNameFromToDateReturnDepositWithDepositors(name={},from={},to={})",name,
                 dateFormat.format(startDate),dateFormat.format(endDate));
         Assert.notNull(name,ERROR_METHOD_PARAM);
         Assert.notNull(startDate,ERROR_METHOD_PARAM);
         Assert.notNull(endDate,ERROR_METHOD_PARAM);
         Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
-        List<Map> deposits = null;
+        Map deposit = null;
         try{
-            deposits = bankDepositDao.getBankDepositByNameFromToDateReturnDepositWithDepositors(name, startDate, endDate);
+            deposit = bankDepositDao.getBankDepositByNameFromToDateReturnDepositWithDepositors(name, startDate, endDate);
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositByNameFromToDateReturnDepositWithDepositors({},{},{}), Exception:{}", name,
                     dateFormat.format(startDate),dateFormat.format(endDate),e.toString());
         }
-        return deposits;
+        return deposit;
     }
 
     /**
-     * Get Bank Deposits by ID with depositors
+     * Get Bank Deposit by ID with depositors
      *
      * @param id Long - depositId of the Bank Deposit to return
-     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * @return Map - a list of all bank deposit with a report on all relevant
      * bank depositors
      */
     @Override
     @Transactional
-    public List<Map> getBankDepositByIdWithDepositors(Long id){
+    public Map getBankDepositByIdWithDepositors(Long id){
         LOGGER.debug("getBankDepositByIdWithDepositors(depositId={})",id);
         Assert.notNull(id,ERROR_METHOD_PARAM);
-        List<Map> deposits = null;
+        Map deposit = null;
         try{
-            deposits = bankDepositDao.getBankDepositByIdWithDepositors(id);
+            deposit = bankDepositDao.getBankDepositByIdWithDepositors(id);
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositByIdWithDepositors({}), Exception:{}",id, e.toString());
         }
-        return deposits;
+        return deposit;
     }
 
     /**
-     * Get Bank Deposits by ID with depositors from-to Date Deposit values
+     * Get Bank Deposit by ID with depositor from-to Date Deposit values
      *
      * @param id Long - depositId of the Bank Deposit to return
      * @param startDate Date - start value of the date deposit (startDate < endDate)
      * @param endDate Date - end value of the date deposit (endDate > startDate)
-     * @return List<Map>  a list of all bank deposits with a report on all relevant
+     * @return Map  a list of all bank deposit with a report on all relevant
      * bank depositors with the specified task`s date of deposit
      */
     @Override
     @Transactional
-    public List<Map> getBankDepositByIdFromToDateDepositWithDepositors(Long id,Date startDate,Date endDate){
+    public Map getBankDepositByIdFromToDateDepositWithDepositors(Long id,Date startDate,Date endDate){
         LOGGER.debug("getBankDepositByIdFromToDateDepositWithDepositors(id={},from={},to={})",id,
                 dateFormat.format(startDate),dateFormat.format(endDate));
         Assert.notNull(id,ERROR_METHOD_PARAM);
         Assert.notNull(startDate,ERROR_METHOD_PARAM);
         Assert.notNull(endDate,ERROR_METHOD_PARAM);
         Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
-        List<Map> deposits = null;
+        Map deposit = null;
         try{
-            deposits = bankDepositDao.getBankDepositByIdFromToDateDepositWithDepositors(id,startDate,endDate);
+            deposit = bankDepositDao.getBankDepositByIdFromToDateDepositWithDepositors(id,startDate,endDate);
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositByIdFromToDateDepositWithDepositors({},{},{}), Exception:{}", id,
                     dateFormat.format(startDate),dateFormat.format(endDate), e.toString());
         }
-        return deposits;
+        return deposit;
     }
 
     /**
-     * Get Bank Deposits by ID with depositors from-to Date Return Deposit values
+     * Get Bank Deposit by ID with depositor from-to Date Return Deposit values
      *
      * @param id Long - depositId of the Bank Deposit to return
      * @param startDate Date - start value of the date return deposit (startDate < endDate)
      * @param endDate Date - end value of the date return deposit (startDate < endDate)
-     * @return List<Map>  a list of all bank deposits with a report on all relevant
+     * @return Map  a list of all bank deposit with a report on all relevant
      * bank depositors with the specified task`s date return deposit
      */
     @Override
     @Transactional
-    public List<Map> getBankDepositByIdFromToDateReturnDepositWithDepositors(Long id,Date startDate,Date endDate){
+    public Map getBankDepositByIdFromToDateReturnDepositWithDepositors(Long id,Date startDate,Date endDate){
         LOGGER.debug("getBankDepositByIdFromToDateReturnDepositWithDepositors(id={},from={},to={})",id,
                 dateFormat.format(startDate),dateFormat.format(endDate));
         Assert.notNull(id,ERROR_METHOD_PARAM);
         Assert.notNull(startDate,ERROR_METHOD_PARAM);
         Assert.notNull(endDate,ERROR_METHOD_PARAM);
         Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
-        List<Map> deposits = null;
+        Map deposit = null;
         try{
-            deposits = bankDepositDao.getBankDepositByIdFromToDateReturnDepositWithDepositors(id, startDate, endDate);
+            deposit = bankDepositDao.getBankDepositByIdFromToDateReturnDepositWithDepositors(id, startDate, endDate);
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositByIdFromToDateReturnDepositWithDepositors({},{},{}), Exception:{}", id,
                     dateFormat.format(startDate),dateFormat.format(endDate), e.toString());
         }
-        return deposits;
+        return deposit;
     }
 
     /**
@@ -491,7 +491,7 @@ public class BankDepositServiceImpl implements BankDepositService{
     }
 
     /**
-     * Get Bank Deposit from-to Date Return Deposit by Currency with depositors
+     * Get Bank Deposits from-to Date Return Deposit by Currency with depositors
      *
      * @param currency String - Currency of the Bank Deposit to return
      * @param startDate Date - start value of the date deposit (startDate < endDate)
@@ -501,7 +501,7 @@ public class BankDepositServiceImpl implements BankDepositService{
      */
     @Override
     @Transactional
-    public List<Map> getBankDepositByCurrencyFromToDateReturnDepositWithDepositors(String currency,
+    public List<Map> getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(String currency,
                                                                                    Date startDate,
                                                                                    Date endDate){
         LOGGER.debug("getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(currency={},from={},to={})",
@@ -512,7 +512,7 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
         List<Map> deposits = null;
         try{
-            deposits = bankDepositDao.getBankDepositByCurrencyFromToDateReturnDepositWithDepositors(currency,
+            deposits = bankDepositDao.getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(currency,
                     startDate, endDate);
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors({},{},{}), Exception:{}",

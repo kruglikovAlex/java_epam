@@ -105,42 +105,27 @@ public class DataFixture {
 
     public static Map getExistDepositAllDepositors(Long id, Long idd) throws ParseException{
         BankDeposit deposit =  getExistDeposit(id);
-        BankDepositor depositor = getExistDepositorIdDeposit(id, idd);
+        BankDepositor depositor = getExistDepositor(idd);
 
         Map<String, Object> list = new HashMap<String, Object>(11);
-
-        list.put("depositId", deposit.getDepositId());
-        list.put("depositName", deposit.getDepositName());
-        list.put("depositMinTerm", deposit.getDepositMinTerm());
-        list.put("depositMinAmount", deposit.getDepositMinAmount());
-        list.put("depositCurrency", deposit.getDepositCurrency());
-        list.put("depositInterestRate", deposit.getDepositInterestRate());
-        list.put("depositAddConditions", deposit.getDepositAddConditions());
-        list.put("sumAmount", depositor.getDepositorAmountDeposit());
-        list.put("sumPlusAmount", depositor.getDepositorAmountPlusDeposit());
-        list.put("sumMinusAmount", depositor.getDepositorAmountMinusDeposit());
-        list.put("numDepositors", 1);
+            list.put("depositId", deposit.getDepositId());
+            list.put("depositName", deposit.getDepositName());
+            list.put("depositMinTerm", deposit.getDepositMinTerm());
+            list.put("depositMinAmount", deposit.getDepositMinAmount());
+            list.put("depositCurrency", deposit.getDepositCurrency());
+            list.put("depositInterestRate", deposit.getDepositInterestRate());
+            list.put("depositAddConditions", deposit.getDepositAddConditions());
+            list.put("sumAmount", depositor.getDepositorAmountDeposit());
+            list.put("sumPlusAmount", depositor.getDepositorAmountPlusDeposit());
+            list.put("sumMinusAmount", depositor.getDepositorAmountMinusDeposit());
+            list.put("numDepositors", 1);
         return list;
-    }
-
-
-    public static BankDepositor getExistDepositorIdDeposit(Long id, Long idD) throws ParseException{
-        BankDepositor depositor = new BankDepositor();
-        depositor.setDepositorId(id);
-        depositor.setDepositorName("depositorName1");
-        depositor.setDepositorDateDeposit(dateFormat.parse("2015-12-01"));
-        depositor.setDepositorAmountDeposit(10000);
-        depositor.setDepositorAmountPlusDeposit(1000);
-        depositor.setDepositorAmountMinusDeposit(11000);
-        depositor.setDepositorDateReturnDeposit(dateFormat.parse("2015-12-01"));
-        depositor.setDepositorMarkReturnDeposit(0);
-        return depositor;
     }
 
     public static List<BankDepositor> getExistDepositors() throws ParseException{
         List<BankDepositor> depositors = new ArrayList<BankDepositor>();
-        depositors.add(getExistDepositorIdDeposit(1L,1L));
-        depositors.add(getExistDepositorIdDeposit(2L,1L));
+            depositors.add(getExistDepositor(1L));
+            depositors.add(getExistDepositor(2L));
         return depositors;
     }
 }
