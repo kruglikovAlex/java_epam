@@ -17,8 +17,7 @@ public class DataFixture {
      * @return BankDeposit with fixed parameters for tests
      */
     public static BankDeposit getNewDeposit(){
-        BankDeposit deposit = new BankDeposit(null,"depositName1",12,1000,"usd",4,"conditions1",new HashSet());
-        return deposit;
+        return new BankDeposit(null,"depositName1",12,1000,"usd",4,"conditions1",new HashSet());
     }
 
     /**
@@ -28,8 +27,7 @@ public class DataFixture {
      * @return BankDeposit with fixed parameters for tests
      */
     public static BankDeposit getExistDeposit(Long id){
-        BankDeposit deposit = new BankDeposit(id,"depositName1",12,1000,"usd",4,"conditions1",new HashSet());
-        return deposit;
+        return new BankDeposit(id,"depositName1",12,1000,"usd",4,"conditions1",new HashSet());
     }
 
     /**
@@ -38,8 +36,7 @@ public class DataFixture {
      * @return BankDeposit with null parameters
      */
     public static BankDeposit getNullDeposit() {
-        BankDeposit deposit = new BankDeposit(null,null,null,null,null,null,null,null);
-        return deposit;
+        return new BankDeposit(null,null,null,null,null,null,null,null);
     }
 
     /**
@@ -48,8 +45,7 @@ public class DataFixture {
      * @return BankDeposit empty
      */
     public static BankDeposit getEmptyDeposit() {
-        BankDeposit deposit = new BankDeposit();
-        return deposit;
+        return new BankDeposit();
     }
 
     /**
@@ -63,6 +59,41 @@ public class DataFixture {
         return deposits;
     }
 
+    /**
+     * Get exist Bank Deposit with all Bank Depositors
+     *
+     * @param id Long - id of Bank Deposit
+     * @param idd Long - id of Bank Depositor
+     * @returne Map - a bank deposit with a report on all relevant
+     * bank depositors
+     * @throws ParseException
+     */
+    public static Map getExistDepositAllDepositors(Long id, Long idd) throws ParseException{
+        BankDeposit deposit = getExistDeposit(id);
+        BankDepositor depositor = getExistDepositor(idd);
+
+        Map<String, Object> list = new HashMap<String, Object>(11);
+        list.put("depositId", deposit.getDepositId());
+        list.put("depositName", deposit.getDepositName());
+        list.put("depositMinTerm", deposit.getDepositMinTerm());
+        list.put("depositMinAmount", deposit.getDepositMinAmount());
+        list.put("depositCurrency", deposit.getDepositCurrency());
+        list.put("depositInterestRate", deposit.getDepositInterestRate());
+        list.put("depositAddConditions", deposit.getDepositAddConditions());
+        list.put("sumAmount", depositor.getDepositorAmountDeposit());
+        list.put("sumPlusAmount", depositor.getDepositorAmountPlusDeposit());
+        list.put("sumMinusAmount", depositor.getDepositorAmountMinusDeposit());
+        list.put("numDepositors", 1);
+        return list;
+    }
+
+    /**
+     * Get all Bank Deposits with all Bank Depositors
+     *
+     * @return List<Map>  - a list of bank deposits with a report on all relevant
+     * bank depositors
+     * @throws ParseException
+     */
     public static List<Map> getExistAllDepositsAllDepositors() throws ParseException{
         List<Map> deposits = new ArrayList<Map>();
         deposits.add(getExistDepositAllDepositors(1L, 1L));
@@ -75,9 +106,8 @@ public class DataFixture {
      * @return BankDepositor with fixed parameters for tests
      */
     public static BankDepositor getNewDepositor() throws ParseException{
-        BankDepositor depositor = new BankDepositor(null,"depositorName1",
+        return new BankDepositor(null,"depositorName1",
                 dateFormat.parse("2015-01-01"),1000,100,100,dateFormat.parse("2015-09-09"),0,null);
-        return depositor;
     }
 
     /**
@@ -86,10 +116,10 @@ public class DataFixture {
      * @param id Long - id of the Bank Depositor to return
      * @return BankDepositor with fixed parameters for tests
      */
+    //@Contract("_->!null")
     public static BankDepositor getExistDepositor(Long id) throws ParseException{
-        BankDepositor depositor = new BankDepositor(id,"depositorName1",
+        return new BankDepositor(id,"depositorName1",
                 dateFormat.parse("2015-01-01"),1000,100,100,dateFormat.parse("2015-09-09"),0,null);
-        return depositor;
     }
 
     /**
@@ -103,25 +133,12 @@ public class DataFixture {
         return depositors;
     }
 
-    public static Map getExistDepositAllDepositors(Long id, Long idd) throws ParseException{
-        BankDeposit deposit = getExistDeposit(id);
-        BankDepositor depositor = getExistDepositor(idd);
-
-        Map<String, Object> list = new HashMap<String, Object>(11);
-            list.put("depositId", deposit.getDepositId());
-            list.put("depositName", deposit.getDepositName());
-            list.put("depositMinTerm", deposit.getDepositMinTerm());
-            list.put("depositMinAmount", deposit.getDepositMinAmount());
-            list.put("depositCurrency", deposit.getDepositCurrency());
-            list.put("depositInterestRate", deposit.getDepositInterestRate());
-            list.put("depositAddConditions", deposit.getDepositAddConditions());
-            list.put("sumAmount", depositor.getDepositorAmountDeposit());
-            list.put("sumPlusAmount", depositor.getDepositorAmountPlusDeposit());
-            list.put("sumMinusAmount", depositor.getDepositorAmountMinusDeposit());
-            list.put("numDepositors", 1);
-        return list;
-    }
-
+    /**
+     * Get exist Bank Depositors
+     *
+     * @return List<BankDepositor> - a list containing all of the Bank Depositors in the database
+     * @throws ParseException
+     */
     public static List<BankDepositor> getExistDepositors() throws ParseException{
         List<BankDepositor> depositors = new ArrayList<BankDepositor>();
             depositors.add(getExistDepositor(1L));
