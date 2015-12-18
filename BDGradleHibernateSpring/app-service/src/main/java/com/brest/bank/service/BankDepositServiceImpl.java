@@ -62,13 +62,13 @@ public class BankDepositServiceImpl implements BankDepositService{
     @Override
     @Transactional
     public BankDeposit getBankDepositById(Long id){
-        LOGGER.debug("getBankDepositByIdCriteria");
+        LOGGER.debug("getBankDepositById");
         Assert.notNull(id,ERROR_METHOD_PARAM);
         BankDeposit deposit = null;
         try{
             deposit = bankDepositDao.getBankDepositByIdCriteria(id);
         }catch (EmptyResultDataAccessException e){
-            LOGGER.error("getBankDepositByIdCriteria({}), Exception:{}",id,e.toString());
+            LOGGER.error("getBankDepositById({}), Exception:{}",id,e.toString());
         }
         return deposit;
     }

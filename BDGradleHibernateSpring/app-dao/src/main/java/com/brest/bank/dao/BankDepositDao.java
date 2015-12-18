@@ -97,7 +97,7 @@ import java.util.Map;
      * Get Bank Deposit by NAME with depositors
      *
      * @param name String - name of the Bank Deposit to return
-     * @return Map - a list of all bank deposit with a report on all relevant
+     * @return Map - a bank deposit with a report on all relevant
      * bank depositors
      */
      Map getBankDepositByNameWithDepositors(String name);
@@ -108,7 +108,7 @@ import java.util.Map;
      * @param name String - name of the Bank Deposit to return
      * @param startDate Date - start value of the date deposit (startDate < endDate)
      * @param endDate Date - end value of the date deposit (endDate > startDate)
-     * @return Map - a list of all bank deposit with a report on all relevant
+     * @return Map - a bank deposit with a report on all relevant
      * bank depositors with the specified task`s date of deposit
      */
      Map getBankDepositByNameFromToDateDepositWithDepositors(String name,
@@ -121,7 +121,7 @@ import java.util.Map;
      * @param name String - name of the Bank Deposit to return
      * @param startDate Date - start value of the date return deposit (startDate < endDate)
      * @param endDate Date - end value of the date return deposit (endDate > startDate)
-     * @return Map - a list of all bank deposit with a report on all relevant
+     * @return Map - a bank deposit with a report on all relevant
      * bank depositors with the specified task`s date return of deposit
      */
      Map getBankDepositByNameFromToDateReturnDepositWithDepositors(String name,
@@ -132,7 +132,7 @@ import java.util.Map;
      * Get Bank Deposit by ID with depositors
      *
      * @param id Long - depositId of the Bank Deposit to return
-     * @return Map - a list of all bank deposit with a report on all relevant
+     * @return Map - a bank deposit with a report on all relevant
      * bank depositors
      */
      Map getBankDepositByIdWithDepositors(Long id);
@@ -143,7 +143,7 @@ import java.util.Map;
      * @param id Long - depositId of the Bank Deposit to return
      * @param startDate Date - start value of the date deposit (startDate < endDate)
      * @param endDate Date - end value of the date deposit (endDate > startDate)
-     * @return Map  a list of all bank deposit with a report on all relevant
+     * @return Map - a bank deposit with a report on all relevant
      * bank depositors with the specified task`s date of deposit
      */
      Map getBankDepositByIdFromToDateDepositWithDepositors(Long id,
@@ -156,7 +156,7 @@ import java.util.Map;
      * @param id Long - depositId of the Bank Deposit to return
      * @param startDate Date - start value of the date return deposit (startDate < endDate)
      * @param endDate Date - end value of the date return deposit (startDate < endDate)
-     * @return Map  a list of all bank deposit with a report on all relevant
+     * @return Map - a bank deposit with a report on all relevant
      * bank depositors with the specified task`s date return deposit
      */
      Map getBankDepositByIdFromToDateReturnDepositWithDepositors(Long id,
