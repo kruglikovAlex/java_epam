@@ -2,8 +2,10 @@ package com.brest.bank.service;
 
 import com.brest.bank.dao.BankDepositDao;
 
+import com.brest.bank.dao.BankDepositorDao;
 import com.brest.bank.domain.BankDeposit;
 
+import com.brest.bank.domain.BankDepositor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,9 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class BankDepositServiceImpl implements BankDepositService{
@@ -35,8 +35,16 @@ public class BankDepositServiceImpl implements BankDepositService{
     private BankDepositDao bankDepositDao;
 
     @Autowired
+    private BankDepositorDao bankDepositorDao;
+
+    @Autowired
     public void setBankDepositDao(BankDepositDao bankDepositDao){
         this.bankDepositDao = bankDepositDao;
+    }
+
+    @Autowired
+    public void setBankDepositorDao(BankDepositorDao bankDepositorDao){
+        this.bankDepositorDao = bankDepositorDao;
     }
 
     /**
@@ -247,7 +255,12 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.notNull(name,ERROR_METHOD_PARAM);
         Map deposit = null;
         try{
-            deposit = bankDepositDao.getBankDepositByNameWithDepositors(name);
+            BankDeposit existDeposit = bankDepositDao.getBankDepositByNameCriteria(name);
+            if(existDeposit.getDepositors()!=null){
+                deposit = bankDepositDao.getBankDepositByNameWithDepositors(name);
+            }else{
+                deposit = depositWithoutDepositors(existDeposit);
+            }
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositByNameWithDepositors({}), Exception:{}", name, e.toString());
         }
@@ -274,7 +287,12 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
         Map deposit = null;
         try{
-            deposit = bankDepositDao.getBankDepositByNameFromToDateDepositWithDepositors(name,startDate,endDate);
+            BankDeposit existDeposit = bankDepositDao.getBankDepositByNameCriteria(name);
+            if(existDeposit.getDepositors()!=null){
+                deposit = bankDepositDao.getBankDepositByNameFromToDateDepositWithDepositors(name,startDate,endDate);
+            }else{
+                deposit = depositWithoutDepositors(existDeposit);
+            }
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositByNameFromToDateDepositWithDepositors({},{},{}), Exception:{}", name, e.toString());
         }
@@ -301,7 +319,12 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
         Map deposit = null;
         try{
-            deposit = bankDepositDao.getBankDepositByNameFromToDateReturnDepositWithDepositors(name, startDate, endDate);
+            BankDeposit existDeposit = bankDepositDao.getBankDepositByNameCriteria(name);
+            if(existDeposit.getDepositors()!=null){
+                deposit = bankDepositDao.getBankDepositByNameFromToDateReturnDepositWithDepositors(name, startDate, endDate);
+            }else{
+                deposit = depositWithoutDepositors(existDeposit);
+            }
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositByNameFromToDateReturnDepositWithDepositors({},{},{}), Exception:{}", name,
                     dateFormat.format(startDate),dateFormat.format(endDate),e.toString());
@@ -384,6 +407,28 @@ public class BankDepositServiceImpl implements BankDepositService{
                     dateFormat.format(startDate),dateFormat.format(endDate), e.toString());
         }
         return deposit;
+    }
+
+    /**
+     * Get Bank Deposit with depositors
+     *
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    public List<Map> getBankDepositsWithDepositors(){
+        LOGGER.debug("getBankDepositsWithDepositors");
+        List<Map> deposits = null;
+        try{
+            List<BankDepositor> existDepositors = bankDepositorDao.getBankDepositorsCriteria();
+            if(existDepositors!=null){
+                deposits = bankDepositDao.getBankDepositsWithDepositors();
+            }else{
+                deposits = depositsWithoutDepositors(bankDepositDao.getBankDepositsCriteria());
+            }
+        }catch (EmptyResultDataAccessException e){
+            LOGGER.error("getBankDepositsWithDepositors(), Exception:{}", e.toString());
+        }
+        return deposits;
     }
 
     /**
@@ -580,5 +625,29 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.notNull(id,ERROR_METHOD_PARAM);
         Assert.notNull(bankDepositDao.getBankDepositByIdCriteria(id),ERROR_DEPOSIT+": depositId");
         bankDepositDao.deleteBankDeposit(id);
+    }
+
+    private Map depositWithoutDepositors(BankDeposit deposit){
+        Map<String, Object> list = new HashMap<String, Object>(11);
+            list.put("depositId", deposit.getDepositId());
+            list.put("depositName", deposit.getDepositName());
+            list.put("depositMinTerm", deposit.getDepositMinTerm());
+            list.put("depositMinAmount", deposit.getDepositMinAmount());
+            list.put("depositCurrency", deposit.getDepositCurrency());
+            list.put("depositInterestRate", deposit.getDepositInterestRate());
+            list.put("depositAddConditions", deposit.getDepositAddConditions());
+            list.put("numDepositors", 0);
+            list.put("sumAmount", 0);
+            list.put("sumPlusAmount", 0);
+            list.put("sumMinusAmount", 0);
+        return list;
+    }
+
+    private List<Map> depositsWithoutDepositors(List<BankDeposit> deposits){
+        List<Map> list = new ArrayList<Map>(deposits.size());
+        for(BankDeposit dep:deposits){
+            list.add(depositWithoutDepositors(dep));
+        }
+        return list;
     }
 }

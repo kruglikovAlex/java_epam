@@ -34,6 +34,9 @@ public class BankDepositDaoImplTest {
     @Autowired
     private BankDepositDao depositDao;
 
+    @Autowired
+    private BankDepositorDao depositorDao;
+
     private static final Logger LOGGER = LogManager.getLogger();
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -583,6 +586,42 @@ public class BankDepositDaoImplTest {
         LOGGER.debug("deposits = {}", deposits);
 
         assertTrue(list.size()==deposits.size());
+
+        for (int i=0; i<list.size(); i++) {
+            assertEquals(deposits.get(i).getDepositId(), list.get(i).get("depositId"));
+            assertEquals(deposits.get(i).getDepositName(), list.get(i).get("depositName"));
+            assertEquals(deposits.get(i).getDepositMinTerm(), list.get(i).get("depositMinTerm"));
+            assertEquals(deposits.get(i).getDepositMinAmount(), list.get(i).get("depositMinAmount"));
+            assertEquals(deposits.get(i).getDepositCurrency(), list.get(i).get("depositCurrency"));
+            assertEquals(deposits.get(i).getDepositInterestRate(), list.get(i).get("depositInterestRate"));
+            assertEquals(deposits.get(i).getDepositAddConditions(), list.get(i).get("depositAddConditions"));
+        }
+    }
+
+    @Test
+    public void testGetBankDepositsWithDepositors() throws Exception {
+        //--- Initialization test data
+        //--- first
+        depositors = new HashSet<BankDepositor>();
+        deposits = depositDao.getBankDepositsCriteria();
+        depositors.add(depositorDao.getBankDepositorByIdCriteria(1L));
+        LOGGER.debug("depositors = {}", depositors);
+        deposits.get(0).setDepositors(depositors);
+        depositDao.updateBankDeposit(deposits.get(0));
+        LOGGER.debug("deposits.get(0): {}", deposits.get(0));
+        //--- second
+        depositors = new HashSet<BankDepositor>();
+        depositors.add(depositorDao.getBankDepositorByIdCriteria(2L));
+        LOGGER.debug("depositors = {}", depositors);
+        deposits.get(1).setDepositors(depositors);
+        depositDao.updateBankDeposit(deposits.get(1));
+        LOGGER.debug("deposits.get(1): {}", deposits.get(1));
+
+        //--- testing
+        List<Map> list = depositDao.getBankDepositsWithDepositors();
+        LOGGER.debug("list = {}", list);
+
+        assertTrue(list.size()==2);
 
         for (int i=0; i<list.size(); i++) {
             assertEquals(deposits.get(i).getDepositId(), list.get(i).get("depositId"));

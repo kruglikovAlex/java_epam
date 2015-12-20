@@ -163,6 +163,14 @@ import java.util.Map;
                                                                              Date startDate,
                                                                              Date endDate);
 
+     /**
+      * Get Bank Deposit with depositors
+      *
+      * @return List<Map> - a list of all bank deposits with a report on all relevant
+      * bank depositors
+      */
+     List<Map> getBankDepositsWithDepositors();
+
     /**
      * Get Bank Deposit from-to Date Deposit with depositors
      *

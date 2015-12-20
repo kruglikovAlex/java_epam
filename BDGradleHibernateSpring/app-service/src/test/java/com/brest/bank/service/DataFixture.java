@@ -60,6 +60,17 @@ public class DataFixture {
     }
 
     /**
+     * Get exist Bank Deposits
+     *
+     * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
+     */
+    public static List<BankDeposit> getExistDeposits(){
+        List<BankDeposit> deposits = new ArrayList<BankDeposit>();
+        deposits.add(getExistDeposit(1L));
+        return deposits;
+    }
+
+    /**
      * Get exist Bank Deposit with all Bank Depositors
      *
      * @param id Long - id of Bank Deposit

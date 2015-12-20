@@ -1,6 +1,7 @@
 package com.brest.bank.service;
 
 import com.brest.bank.dao.BankDepositDao;
+import com.brest.bank.dao.BankDepositorDao;
 import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
 import org.apache.logging.log4j.LogManager;
@@ -39,6 +40,9 @@ public class BankDepositServiceImplMockTest {
     @Autowired
     BankDepositDao depositDao;
 
+    @Autowired
+    BankDepositorDao depositorDao;
+
     @Before
     public void setUp() throws Exception {
 
@@ -47,6 +51,7 @@ public class BankDepositServiceImplMockTest {
     @After
     public void clean() throws Exception {
         reset(depositDao);
+        reset(depositorDao);
     }
 
     @Test
@@ -233,7 +238,10 @@ public class BankDepositServiceImplMockTest {
         Map depositsAllDepositors = DataFixture.getExistDepositAllDepositors(1L,2L);
         LOGGER.debug("depositsAllDepositors = {}",depositsAllDepositors);
 
+        expect(depositDao.getBankDepositByNameCriteria("depositName1")).andReturn(DataFixture.getExistDeposit(1L));
+
         expect(depositDao.getBankDepositByNameWithDepositors("depositName1")).andReturn(depositsAllDepositors);
+
         replay(depositDao);
 
         Map resultDeposits = bankDepositService.getBankDepositByNameWithDepositors("depositName1");
@@ -249,6 +257,8 @@ public class BankDepositServiceImplMockTest {
     public void testGetBankDepositByNameFromToDateDepositWithDepositors() throws Exception {
         Map depositsByNameAllDepositors = DataFixture.getExistDepositAllDepositors(1L,2L);
         LOGGER.debug("depositsByNameAllDepositors: {}",depositsByNameAllDepositors);
+
+        expect(depositDao.getBankDepositByNameCriteria("depositName1")).andReturn(DataFixture.getExistDeposit(1L));
 
         expect(depositDao.getBankDepositByNameFromToDateDepositWithDepositors("depositName1",
                 dateFormat.parse("2015-01-01"),dateFormat.parse("2015-01-02"))).andReturn(depositsByNameAllDepositors);
@@ -268,6 +278,8 @@ public class BankDepositServiceImplMockTest {
     public void testGetBankDepositByNameFromToDateReturnDepositWithDepositors() throws Exception {
         Map depositByNameAllDepositors = DataFixture.getExistDepositAllDepositors(1L,2L);
         LOGGER.debug("depositsByNameAllDepositors: {}",depositByNameAllDepositors);
+
+        expect(depositDao.getBankDepositByNameCriteria("depositName1")).andReturn(DataFixture.getExistDeposit(1L));
 
         expect(depositDao.getBankDepositByNameFromToDateReturnDepositWithDepositors("depositName1",
                 dateFormat.parse("2015-01-01"), dateFormat.parse("2015-01-02"))).andReturn(depositByNameAllDepositors);
@@ -337,6 +349,26 @@ public class BankDepositServiceImplMockTest {
 
         assertEquals(deposit, resultDeposit);
         assertSame(deposit, resultDeposit);
+    }
+
+    @Test
+    public void testGetBankDepositsWithDepositors() throws Exception {
+        List<Map> deposits = DataFixture.getExistAllDepositsAllDepositors();
+        LOGGER.debug("depositors: {}", deposits);
+
+        expect(depositorDao.getBankDepositorsCriteria()).andReturn(DataFixture.getExistDepositors());
+
+        expect(depositDao.getBankDepositsWithDepositors()).andReturn(deposits);
+
+        replay(depositDao,depositorDao);
+
+        List<Map> resultDeposits = bankDepositService.getBankDepositsWithDepositors();
+        LOGGER.debug("resultDeposits: {}",resultDeposits);
+
+        verify(depositDao,depositorDao);
+
+        assertEquals(deposits, resultDeposits);
+        assertSame(deposits, resultDeposits);
     }
 
     @Test

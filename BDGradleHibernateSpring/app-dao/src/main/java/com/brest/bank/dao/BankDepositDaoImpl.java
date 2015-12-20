@@ -614,7 +614,47 @@ public class BankDepositDaoImpl implements BankDepositDao {
     }
 
     /**
-     * Get Bank Deposit from-to Date Deposit
+     * Get Bank Deposit with depositors
+     *
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    public List<Map> getBankDepositsWithDepositors(){
+        LOGGER.debug("getBankDepositsWithDepositors()");
+        List list;
+        try{
+            //--- open session
+            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+            String[] properties = HibernateUtil.getSessionFactory()
+                    .getClassMetadata(BankDeposit.class)
+                    .getPropertyNames();
+            //--- query
+            list = HibernateUtil.getSessionFactory().getCurrentSession()
+                    .createCriteria(BankDeposit.class, "deposit")
+                    .createAlias("depositors", "depositor")
+                    .setProjection(Projections.distinct(Projections.projectionList()
+                                    .add(Projections.property("deposit.depositId"), "depositId")
+                                    .add(formProjection(properties))
+                                    .add(Projections.count("depositor.depositorId").as("depositorCount"))
+                                    .add(Projections.sum("depositor.depositorAmountDeposit").as("depositorAmountSum"))
+                                    .add(Projections.sum("depositor.depositorAmountPlusDeposit").as("depositorAmountPlusSum"))
+                                    .add(Projections.sum("depositor.depositorAmountMinusDeposit").as("depositorAmountMinusSum"))
+                                    .add(Projections.groupProperty("deposit.depositId"))
+                    ))
+                    .setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
+                    .list();
+            //--- close session
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositsWithDepositors() - {}",e.toString());
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
+            throw new IllegalArgumentException("error - getBankDepositsWithDepositors() "+e.toString());
+        }
+        return mapRow(list);
+    }
+
+    /**
+     * Get Bank Deposit from-to Date Deposit with Bank Depositors
      * @param startDate Date
      * @param endDate Date
      * @return List<Map>
@@ -945,7 +985,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
         }
         return depositAgrDepositor;
     }
-
 
     /**
      * List properties for query output

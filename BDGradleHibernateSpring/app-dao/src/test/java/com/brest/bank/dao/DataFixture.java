@@ -4,6 +4,10 @@ import com.brest.bank.domain.BankDepositor;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class DataFixture {
 
@@ -25,5 +29,11 @@ public class DataFixture {
             depositor.setDepositorDateReturnDeposit(dateFormat.parse("2015-12-03"));
             depositor.setDepositorMarkReturnDeposit(0);
         return depositor;
+    }
+
+    public static Set<BankDepositor> getDepositors() throws ParseException{
+        Set<BankDepositor> depositors = new HashSet<BankDepositor>();
+        depositors.add(getNewDepositor("depositorName"));
+        return depositors;
     }
 }
