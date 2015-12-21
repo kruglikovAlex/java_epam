@@ -245,7 +245,7 @@ public class BankDepositServiceImpl implements BankDepositService{
      * Get Bank Deposit by NAME with depositors
      *
      * @param name String - name of the Bank Deposit to return
-     * @return Map  - a list of all bank deposit with a report on all relevant
+     * @return Map  - a bank deposit with a report on all relevant
      * bank depositors
      */
     @Override
@@ -273,7 +273,7 @@ public class BankDepositServiceImpl implements BankDepositService{
      * @param name String - name of the Bank Deposit to return
      * @param startDate Date - start value of the date deposit (startDate < endDate)
      * @param endDate Date - end value of the date deposit (endDate > startDate)
-     * @return Map - a list of all bank deposit with a report on all relevant
+     * @return Map - a bank deposit with a report on all relevant
      * bank depositors with the specified task`s date of deposit
      */
     @Override
@@ -305,7 +305,7 @@ public class BankDepositServiceImpl implements BankDepositService{
      * @param name String - name of the Bank Deposit to return
      * @param startDate Date - start value of the date return deposit (startDate < endDate)
      * @param endDate Date - end value of the date return deposit (endDate > startDate)
-     * @return Map - a list of all bank deposit with a report on all relevant
+     * @return Map - a bank deposit with a report on all relevant
      * bank depositors with the specified task`s date return of deposit
      */
     @Override
@@ -336,7 +336,7 @@ public class BankDepositServiceImpl implements BankDepositService{
      * Get Bank Deposit by ID with depositors
      *
      * @param id Long - depositId of the Bank Deposit to return
-     * @return Map - a list of all bank deposit with a report on all relevant
+     * @return Map - a bank deposit with a report on all relevant
      * bank depositors
      */
     @Override
@@ -346,7 +346,12 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.notNull(id,ERROR_METHOD_PARAM);
         Map deposit = null;
         try{
-            deposit = bankDepositDao.getBankDepositByIdWithDepositors(id);
+            BankDeposit existDeposit = bankDepositDao.getBankDepositByIdCriteria(id);
+            if(existDeposit.getDepositors()!=null){
+                deposit = bankDepositDao.getBankDepositByIdWithDepositors(id);
+            }else{
+                deposit = depositWithoutDepositors(existDeposit);
+            }
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositByIdWithDepositors({}), Exception:{}",id, e.toString());
         }
@@ -359,7 +364,7 @@ public class BankDepositServiceImpl implements BankDepositService{
      * @param id Long - depositId of the Bank Deposit to return
      * @param startDate Date - start value of the date deposit (startDate < endDate)
      * @param endDate Date - end value of the date deposit (endDate > startDate)
-     * @return Map  a list of all bank deposit with a report on all relevant
+     * @return Map  a bank deposit with a report on all relevant
      * bank depositors with the specified task`s date of deposit
      */
     @Override
@@ -373,7 +378,12 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
         Map deposit = null;
         try{
-            deposit = bankDepositDao.getBankDepositByIdFromToDateDepositWithDepositors(id,startDate,endDate);
+            BankDeposit existDeposit = bankDepositDao.getBankDepositByIdCriteria(id);
+            if(existDeposit.getDepositors()!=null){
+                deposit = bankDepositDao.getBankDepositByIdFromToDateDepositWithDepositors(id,startDate,endDate);
+            }else{
+                deposit = depositWithoutDepositors(existDeposit);
+            }
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositByIdFromToDateDepositWithDepositors({},{},{}), Exception:{}", id,
                     dateFormat.format(startDate),dateFormat.format(endDate), e.toString());
@@ -387,7 +397,7 @@ public class BankDepositServiceImpl implements BankDepositService{
      * @param id Long - depositId of the Bank Deposit to return
      * @param startDate Date - start value of the date return deposit (startDate < endDate)
      * @param endDate Date - end value of the date return deposit (startDate < endDate)
-     * @return Map  a list of all bank deposit with a report on all relevant
+     * @return Map  a bank deposit with a report on all relevant
      * bank depositors with the specified task`s date return deposit
      */
     @Override
@@ -401,7 +411,12 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
         Map deposit = null;
         try{
-            deposit = bankDepositDao.getBankDepositByIdFromToDateReturnDepositWithDepositors(id, startDate, endDate);
+            BankDeposit existDeposit = bankDepositDao.getBankDepositByIdCriteria(id);
+            if(existDeposit.getDepositors()!=null){
+                deposit = bankDepositDao.getBankDepositByIdFromToDateReturnDepositWithDepositors(id, startDate, endDate);
+            }else{
+                deposit = depositWithoutDepositors(existDeposit);
+            }
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositByIdFromToDateReturnDepositWithDepositors({},{},{}), Exception:{}", id,
                     dateFormat.format(startDate),dateFormat.format(endDate), e.toString());
@@ -449,7 +464,12 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
         List<Map> deposits = null;
         try{
-            deposits = bankDepositDao.getBankDepositsFromToDateDepositWithDepositors(startDate, endDate);
+            List<BankDepositor> existDepositors = bankDepositorDao.getBankDepositorsFromToDateDeposit(startDate,endDate);
+            if(existDepositors!=null){
+                deposits = bankDepositDao.getBankDepositsFromToDateDepositWithDepositors(startDate, endDate);
+            }else{
+                deposits = depositsWithoutDepositors(bankDepositDao.getBankDepositsCriteria());
+            }
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositsFromToDateDepositWithDepositors({},{}), Exception:{}",
                     dateFormat.format(startDate),dateFormat.format(endDate), e.toString());
@@ -574,7 +594,7 @@ public class BankDepositServiceImpl implements BankDepositService{
     @Override
     @Transactional
     public void addBankDeposit(BankDeposit deposit){
-        LOGGER.debug("addBankDeposit(deposit={})",deposit.toString());
+        LOGGER.debug("addBankDeposit(deposit={})",deposit);
         Assert.notNull(deposit,ERROR_METHOD_PARAM);
         Assert.isNull(deposit.getDepositId(),ERROR_NULL_PARAM);
         Assert.notNull(deposit.getDepositName(),ERROR_METHOD_PARAM);

@@ -53,6 +53,33 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
     }
 
     /**
+     * Get all Bank Depositors from-to Date Deposit
+     *
+     * @param start Date - start value of the date deposit (startDate < endDate)
+     * @param end Date - end value of the date deposit (startDate < endDate)
+     * @return List<BankDepositors> a list of all bank depositors with the specified task`s date deposit
+     */
+    public List<BankDepositor> getBankDepositorsFromToDateDeposit(Date start, Date end){
+        LOGGER.debug("getBankDepositorsFromToDateDeposit()");
+
+        depositors = new ArrayList<BankDepositor>();
+        //--- open session
+        HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+        //--- query
+        for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
+                .createCriteria(BankDepositor.class, "depositor")
+                .add(Restrictions.between("depositor.depositorDateDeposit", start, end))
+                .list()){
+            depositors.add((BankDepositor)d);
+        }
+        //--- close session
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+
+        LOGGER.debug("depositors:{}", depositors);
+        return depositors;
+    }
+
+    /**
      * Get Bank Depositor by ID
      *
      * @param id  Long - id of the Bank Depositor to return

@@ -15,6 +15,7 @@ import org.springframework.util.Assert;
 
 import java.text.SimpleDateFormat;
 
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -27,6 +28,7 @@ public class BankDepositorServiceImpl implements BankDepositorService{
     public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
     public static final String ERROR_NULL_PARAM = "The parameter must be NULL";
     public static final String ERROR_DEPOSITOR = "In the database there is no Depositor with such parameters";
+    public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
 
     @Autowired
     private BankDepositorDao bankDepositorDao;
@@ -46,6 +48,29 @@ public class BankDepositorServiceImpl implements BankDepositorService{
         LOGGER.debug("getBankDepositors()");
         List<BankDepositor> depositors = bankDepositorDao.getBankDepositorsCriteria();
         Assert.notEmpty(depositors, ERROR_DB_EMPTY);
+        return depositors;
+    }
+
+    /**
+     * Get all Bank Depositors from-to Date Deposit
+     *
+     * @param start Date - start value of the date deposit (startDate < endDate)
+     * @param end Date - end value of the date deposit (startDate < endDate)
+     * @return List<BankDepositors> a list of all bank depositors with the specified task`s date deposit
+     */
+    @Override
+    @Transactional
+    public List<BankDepositor> getBankDepositorsFromToDateDeposit(Date start, Date end){
+        LOGGER.debug("getBankDepositorsFromToDateDeposit(start date={}, end date={})",start,end);
+        Assert.notNull(start,ERROR_METHOD_PARAM);
+        Assert.notNull(end,ERROR_METHOD_PARAM);
+        Assert.isTrue(start.before(end)||start.equals(end),ERROR_FROM_TO_PARAM);
+        List<BankDepositor> depositors = null;
+        try{
+            depositors = bankDepositorDao.getBankDepositorsFromToDateDeposit(start, end);
+        }catch (EmptyResultDataAccessException e){
+            LOGGER.error("getBankDepositorsFromToDateDeposit(start date={}, end date={}), error-{}",start,end,e.toString());
+        }
         return depositors;
     }
 
@@ -102,6 +127,7 @@ public class BankDepositorServiceImpl implements BankDepositorService{
         Assert.notNull(depositId,ERROR_METHOD_PARAM);
         Assert.notNull(depositor,ERROR_METHOD_PARAM);
         Assert.isNull(depositor.getDepositorId(),ERROR_NULL_PARAM);
+        Assert.notNull(depositor.getDepositorName(),ERROR_METHOD_PARAM);
         BankDepositor existingDepositor = bankDepositorDao.getBankDepositorByNameCriteria(depositor.getDepositorName());
         if(existingDepositor != null){
             throw new IllegalArgumentException("Bank Depositor is present in DB");

@@ -36,7 +36,7 @@ public class DataFixture {
      * @return BankDeposit with null parameters
      */
     public static BankDeposit getNullDeposit() {
-        return new BankDeposit(null,null,null,null,null,null,null,null);
+        return null;
     }
 
     /**
@@ -119,6 +119,24 @@ public class DataFixture {
     public static BankDepositor getNewDepositor() throws ParseException{
         return new BankDepositor(null,"depositorName1",
                 dateFormat.parse("2015-01-01"),1000,100,100,dateFormat.parse("2015-09-09"),0,null);
+    }
+
+    /**
+     * Get a Bank Depositor with null parameters
+     *
+     * @return BankDepositor with null parameters
+     */
+    public static BankDepositor getNullDepositor() {
+        return null;
+    }
+
+    /**
+     * Get empty Bank Depositor
+     *
+     * @return BankDepositor empty
+     */
+    public static BankDepositor getEmptyDepositor() {
+        return new BankDepositor();
     }
 
     /**

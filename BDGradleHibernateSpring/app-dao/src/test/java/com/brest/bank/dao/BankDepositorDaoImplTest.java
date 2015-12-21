@@ -11,7 +11,9 @@ import org.hibernate.criterion.Projections;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -47,6 +49,18 @@ public class BankDepositorDaoImplTest {
     @Test
     public void testGetBankDepositorsCriteria() throws Exception {
         depositors = depositorDao.getBankDepositorsCriteria();
+        LOGGER.debug("depositors.size()= {}", depositors.size());
+
+        assertFalse(depositors.isEmpty());
+        assertNotNull(depositors);
+    }
+
+    @Test
+    public void testGetBankDepositorsFromToDateDeposit() throws ParseException{
+        Date startDate = dateFormat.parse("2014-11-02");
+        Date endDate = dateFormat.parse("2014-12-04");
+
+        depositors = depositorDao.getBankDepositorsFromToDateDeposit(startDate,endDate);
         LOGGER.debug("depositors.size()= {}", depositors.size());
 
         assertFalse(depositors.isEmpty());

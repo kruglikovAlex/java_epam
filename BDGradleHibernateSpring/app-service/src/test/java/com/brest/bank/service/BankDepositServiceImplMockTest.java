@@ -15,9 +15,6 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
-import static org.junit.Assert.*;
-import org.easymock.EasyMock;
-
 import static org.easymock.EasyMock.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +42,6 @@ public class BankDepositServiceImplMockTest {
 
     @Before
     public void setUp() throws Exception {
-
     }
 
     @After
@@ -189,8 +185,7 @@ public class BankDepositServiceImplMockTest {
         LOGGER.debug("deposits - {}",deposits);
 
         expect(depositDao.getBankDepositsFromToDateDeposit(dateFormat.parse("2015-01-01"),
-                                                            dateFormat.parse("2015-02-02")))
-                .andReturn(deposits);
+                                                            dateFormat.parse("2015-02-02"))).andReturn(deposits);
         replay(depositDao);
 
         List<BankDeposit> resultDeposits =
@@ -202,7 +197,6 @@ public class BankDepositServiceImplMockTest {
 
         assertSame(deposits,resultDeposits);
     }
-
 
     @Test
     public void testGetBankDepositsFromToDateReturnDeposit() throws Exception {
@@ -300,6 +294,8 @@ public class BankDepositServiceImplMockTest {
         Map deposit = DataFixture.getExistDepositAllDepositors(1L,2L);
         LOGGER.debug("deposit: {}",deposit);
 
+        expect(depositDao.getBankDepositByIdCriteria(1L)).andReturn(DataFixture.getExistDeposit(1L));
+
         expect(depositDao.getBankDepositByIdWithDepositors(1L)).andReturn(deposit);
 
         replay(depositDao);
@@ -318,8 +314,10 @@ public class BankDepositServiceImplMockTest {
         Map deposit = DataFixture.getExistDepositAllDepositors(1L,2L);
         LOGGER.debug("deposit: {}",deposit);
 
+        expect(depositDao.getBankDepositByIdCriteria(1L)).andReturn(DataFixture.getExistDeposit(1L));
+
         expect(depositDao.getBankDepositByIdFromToDateDepositWithDepositors(1L,
-                dateFormat.parse("2015-01-01"),dateFormat.parse("2015-02-02"))).andReturn(deposit);
+                dateFormat.parse("2015-01-01"), dateFormat.parse("2015-02-02"))).andReturn(deposit);
         replay(depositDao);
 
         Map resultDeposit = bankDepositService.getBankDepositByIdFromToDateDepositWithDepositors(1L,
@@ -336,6 +334,8 @@ public class BankDepositServiceImplMockTest {
     public void testGetBankDepositByIdFromToDateReturnDepositWithDepositors() throws Exception {
         Map deposit = DataFixture.getExistDepositAllDepositors(1L,2L);
         LOGGER.debug("deposit: {}",deposit);
+
+        expect(depositDao.getBankDepositByIdCriteria(1L)).andReturn(DataFixture.getExistDeposit(1L));
 
         expect(depositDao.getBankDepositByIdFromToDateReturnDepositWithDepositors(1L,
                 dateFormat.parse("2015-01-01"), dateFormat.parse("2015-02-02"))).andReturn(deposit);
@@ -376,16 +376,19 @@ public class BankDepositServiceImplMockTest {
         List<Map> deposits = DataFixture.getExistAllDepositsAllDepositors();
         LOGGER.debug("depositors: {}", deposits);
 
+        expect(depositorDao.getBankDepositorsFromToDateDeposit(dateFormat.parse("2015-01-01"),
+                dateFormat.parse("2015-02-02"))).andReturn(DataFixture.getExistDepositors());
+
         expect(depositDao.getBankDepositsFromToDateDepositWithDepositors(dateFormat.parse("2015-01-01"),
                 dateFormat.parse("2015-02-02"))).andReturn(deposits);
-        replay(depositDao);
+        replay(depositorDao,depositDao);
 
         List<Map> resultDeposits =
                 bankDepositService.getBankDepositsFromToDateDepositWithDepositors(dateFormat.parse("2015-01-01"),
                                                                                 dateFormat.parse("2015-02-02"));
         LOGGER.debug("resultDeposits: {}",resultDeposits);
 
-        verify(depositDao);
+        verify(depositorDao,depositDao);
 
         assertEquals(deposits, resultDeposits);
         assertSame(deposits, resultDeposits);
@@ -545,7 +548,7 @@ public class BankDepositServiceImplMockTest {
         depositDao.addBankDeposit(deposit);
         expectLastCall();
 
-        expect(depositDao.getBankDepositByNameCriteria(deposit.getDepositName())).andReturn(null);
+        expect(depositDao.getBankDepositByNameCriteria("name")).andReturn(null);
         replay(depositDao);
 
         bankDepositService.addBankDeposit(deposit);

@@ -2,6 +2,7 @@ package com.brest.bank.dao;
 
 import com.brest.bank.domain.BankDepositor;
 
+import java.util.Date;
 import java.util.List;
 
 public interface BankDepositorDao {
@@ -12,6 +13,15 @@ public interface BankDepositorDao {
      * @return List<BankDepositor> - a list containing all of the Bank Depositors in the database
      */
     List<BankDepositor> getBankDepositorsCriteria();
+
+    /**
+     * Get all Bank Depositors from-to Date Deposit
+     *
+     * @param start Date - start value of the date deposit (startDate < endDate)
+     * @param end Date - end value of the date deposit (startDate < endDate)
+     * @return List<BankDepositors> a list of all bank depositors with the specified task`s date deposit
+     */
+    List<BankDepositor> getBankDepositorsFromToDateDeposit(Date start, Date end);
 
     /**
      * Get Bank Depositor by ID
