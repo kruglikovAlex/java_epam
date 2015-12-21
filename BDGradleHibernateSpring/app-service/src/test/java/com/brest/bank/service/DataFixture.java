@@ -101,7 +101,7 @@ public class DataFixture {
     /**
      * Get all Bank Deposits with all Bank Depositors
      *
-     * @return List<Map>  - a list of bank deposits with a report on all relevant
+     * @return List<Map> - a list of bank deposits with a report on all relevant
      * bank depositors
      * @throws ParseException
      */
