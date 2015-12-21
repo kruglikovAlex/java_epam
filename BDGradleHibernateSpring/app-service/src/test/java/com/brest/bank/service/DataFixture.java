@@ -84,17 +84,17 @@ public class DataFixture {
         BankDepositor depositor = getExistDepositor(idd);
 
         Map<String, Object> list = new HashMap<String, Object>(11);
-        list.put("depositId", deposit.getDepositId());
-        list.put("depositName", deposit.getDepositName());
-        list.put("depositMinTerm", deposit.getDepositMinTerm());
-        list.put("depositMinAmount", deposit.getDepositMinAmount());
-        list.put("depositCurrency", deposit.getDepositCurrency());
-        list.put("depositInterestRate", deposit.getDepositInterestRate());
-        list.put("depositAddConditions", deposit.getDepositAddConditions());
-        list.put("sumAmount", depositor.getDepositorAmountDeposit());
-        list.put("sumPlusAmount", depositor.getDepositorAmountPlusDeposit());
-        list.put("sumMinusAmount", depositor.getDepositorAmountMinusDeposit());
-        list.put("numDepositors", 1);
+            list.put("depositId", deposit.getDepositId());
+            list.put("depositName", deposit.getDepositName());
+            list.put("depositMinTerm", deposit.getDepositMinTerm());
+            list.put("depositMinAmount", deposit.getDepositMinAmount());
+            list.put("depositCurrency", deposit.getDepositCurrency());
+            list.put("depositInterestRate", deposit.getDepositInterestRate());
+            list.put("depositAddConditions", deposit.getDepositAddConditions());
+            list.put("sumAmount", depositor.getDepositorAmountDeposit());
+            list.put("sumPlusAmount", depositor.getDepositorAmountPlusDeposit());
+            list.put("sumMinusAmount", depositor.getDepositorAmountMinusDeposit());
+            list.put("numDepositors", 1);
         return list;
     }
 
