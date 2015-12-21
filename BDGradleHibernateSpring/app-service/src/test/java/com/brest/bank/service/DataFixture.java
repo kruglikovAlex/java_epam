@@ -82,7 +82,6 @@ public class DataFixture {
     public static Map getExistDepositAllDepositors(Long id, Long idd) throws ParseException{
         BankDeposit deposit = getExistDeposit(id);
         BankDepositor depositor = getExistDepositor(idd);
-
         Map<String, Object> list = new HashMap<String, Object>(11);
             list.put("depositId", deposit.getDepositId());
             list.put("depositName", deposit.getDepositName());
