@@ -25,4 +25,9 @@ dependencies {
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.easymock', name: 'easymock', version: '3.3.1'
+    testCompile group: 'org.unitils', name: 'unitils-mock', version: '3.4.2'
+    testCompile group: 'org.unitils', name: 'unitils-spring', version: '3.4.2'
+    testCompile group: 'org.unitils', name: 'unitils-database', version: '3.4.2'
+    testCompile group: 'org.unitils', name: 'unitils-dbmaintainer', version: '3.4.2'
+    testCompile group: 'org.unitils', name: 'unitils-inject', version: '3.4.2'
 }

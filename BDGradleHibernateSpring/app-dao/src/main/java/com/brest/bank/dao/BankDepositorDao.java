@@ -24,12 +24,29 @@ public interface BankDepositorDao {
     List<BankDepositor> getBankDepositorsFromToDateDeposit(Date start, Date end);
 
     /**
+     * Get all Bank Depositors from-to Date return Deposit
+     *
+     * @param start Date - start value of the date return deposit (startDate < endDate)
+     * @param end Date - end value of the date return deposit (startDate < endDate)
+     * @return List<BankDepositors> a list of all bank depositors with the specified task`s date return deposit
+     */
+    List<BankDepositor> getBankDepositorsFromToDateReturnDeposit(Date start, Date end);
+
+    /**
      * Get Bank Depositor by ID
      *
      * @param depositorId  Long - id of the Bank Depositor to return
      * @return BankDepositor with the specified id from the database
      */
     BankDepositor getBankDepositorByIdCriteria(Long depositorId);
+
+    /**
+     * Get Bank Depositors by ID Bank Deposit
+     *
+     * @param depositId  Long - id of the Bank Deposit
+     * @return List<BankDepositor> with the specified id bank deposit from the database
+     */
+    List<BankDepositor> getBankDepositorByIdDepositCriteria(Long depositId);
 
     /**
      * Get Bank Depositor by Name

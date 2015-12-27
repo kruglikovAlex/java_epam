@@ -80,6 +80,33 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
     }
 
     /**
+     * Get all Bank Depositors from-to Date return Deposit
+     *
+     * @param start Date - start value of the date return deposit (startDate < endDate)
+     * @param end Date - end value of the date return deposit (startDate < endDate)
+     * @return List<BankDepositors> a list of all bank depositors with the specified task`s date return deposit
+     */
+    public List<BankDepositor> getBankDepositorsFromToDateReturnDeposit(Date start, Date end){
+        LOGGER.debug("getBankDepositorsFromToDateReturnDeposit()");
+
+        depositors = new ArrayList<BankDepositor>();
+        //--- open session
+        HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+        //--- query
+        for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
+                .createCriteria(BankDepositor.class, "depositor")
+                .add(Restrictions.between("depositor.depositorDateReturnDeposit", start, end))
+                .list()){
+            depositors.add((BankDepositor)d);
+        }
+        //--- close session
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+
+        LOGGER.debug("depositors:{}", depositors);
+        return depositors;
+    }
+
+    /**
      * Get Bank Depositor by ID
      *
      * @param id  Long - id of the Bank Depositor to return
@@ -101,6 +128,29 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
 
         LOGGER.debug("depositor:{}", depositor);
         return depositor;
+    }
+
+    /**
+     * Get Bank Depositors by ID Bank Deposit
+     *
+     * @param id  Long - id of the Bank Deposit
+     * @return List<BankDepositor> with the specified id bank deposit from the database
+     */
+    public List<BankDepositor> getBankDepositorByIdDepositCriteria(Long id){
+        LOGGER.debug("getBankDepositorByIdDepositCriteria({})", id);
+        Assert.notNull(id,ERROR_METHOD_PARAM);
+
+        HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+        //--- query
+        BankDeposit deposit = (BankDeposit)HibernateUtil.getSessionFactory().getCurrentSession()
+                .createCriteria(BankDeposit.class)
+                .add(Restrictions.eq("depositId", id)).uniqueResult();
+        depositors = new ArrayList<BankDepositor>(deposit.getDepositors());
+
+        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+
+        LOGGER.debug("depositors:{}", depositors);
+        return depositors;
     }
 
     /**
