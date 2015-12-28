@@ -9,6 +9,10 @@
 
     <bean id="depositService" class="com.brest.bank.service.BankDepositServiceImpl"/>
 
-    <context:component-scan base-package="com.brest.bank"/>
+    <bean id="depositDao" class="com.brest.bank.dao.BankDepositDaoImpl"/>
+
+    <bean id="bankDepositorDao" class="com.brest.bank.dao.BankDepositorDaoImpl"/>
+
+    <context:component-scan base-package="com.brest.bank.service"/>
 
 </beans>
