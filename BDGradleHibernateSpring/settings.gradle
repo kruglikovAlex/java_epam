@@ -3,4 +3,6 @@ include 'app-core'
 include 'app-dao'
 include 'app-service'
 include 'app-dao-spring'
+include 'app-web'
+include 'app-rest'
 

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <bean id="depositDao" class="org.easymock.EasyMock" factory-method="createMock">
+        <constructor-arg value="com.brest.bank.dao.BankDepositDao"/>
+    </bean>
+
+    <bean id="depositorDao" class="org.easymock.EasyMock" factory-method="createMock">
+        <constructor-arg value="com.brest.bank.dao.BankDepositorDao"/>
+    </bean>
+
+    <bean id="depositService" class="org.easymock.EasyMock" factory-method="createMock">
+        <constructor-arg value="com.brest.bank.service.BankDepositService"/>
+    </bean>
+
+    <bean id="depositorService" class="org.easymock.EasyMock" factory-method="createMock">
+        <constructor-arg value="com.brest.bank.service.BankDepositorService"/>
+    </bean>
+
+    <context:component-scan base-package="com.brest.bank.rest"/>
+
+</beans>
