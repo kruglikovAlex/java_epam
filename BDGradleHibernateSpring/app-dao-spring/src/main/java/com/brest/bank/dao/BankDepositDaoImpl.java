@@ -1,4 +1,4 @@
-package com.brest.bank.daoSpring;
+package com.brest.bank.dao;
 
 import com.brest.bank.domain.BankDeposit;
 
@@ -13,6 +13,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
     public static final String ERROR_NULL_PARAM = "The parameter must be NULL";
     public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
 
+    @Autowired
     private SessionFactory sessionFactory;
 
     private BankDeposit deposit;

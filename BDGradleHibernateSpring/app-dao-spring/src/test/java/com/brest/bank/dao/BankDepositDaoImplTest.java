@@ -1,11 +1,11 @@
-package com.brest.bank.daoSpring;
+package com.brest.bank.dao;
 
 import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,10 +27,13 @@ import static org.junit.Assert.*;
 public class BankDepositDaoImplTest {
 
     @Autowired
-    private BankDepositDao depositDao;
+    SessionFactory sessionFactory;
 
-    //@Autowired
-    //private BankDepositorDao depositorDao;
+    @Autowired
+    BankDepositDao depositDao;
+
+    @Autowired
+    BankDepositorDao depositorDao;
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -38,7 +41,6 @@ public class BankDepositDaoImplTest {
     private static final String ERROR_EMPTY_BD = "Data Base is empty";
     private static final String ERROR_SIZE = "Size can not be 0";
     private static final String ERROR_NULL = "The parameter can not be NULL";
-    private static final String ERROR_EMPTY_RESULT = "The result can not be empty";
 
     private BankDeposit deposit;
     private BankDepositor depositor;
@@ -219,7 +221,7 @@ public class BankDepositDaoImplTest {
             assertEquals(deposits.get(i).getDepositAddConditions(), list.get(i).get("depositAddConditions"));
         }
     }
-/*
+
     @Test
     public void testGetBankDepositsFromToDateDepositWithDepositors() throws Exception {
         int[]   sumAmountDeposit =      new int[]{0, 0},
@@ -824,13 +826,12 @@ public class BankDepositDaoImplTest {
 
     public Integer rowCount(Class<?> name) throws ClassNotFoundException{
 
-        HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+        sessionFactory.getCurrentSession().beginTransaction();
         //--- query
-        result = HibernateUtil.getSessionFactory().getCurrentSession().createCriteria(name)
+        result = sessionFactory.getCurrentSession().createCriteria(name)
                 .setProjection(Projections.rowCount()).uniqueResult();
 
-        HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        sessionFactory.getCurrentSession().getTransaction().commit();
         return Integer.parseInt(result.toString());
     }
-    */
 }

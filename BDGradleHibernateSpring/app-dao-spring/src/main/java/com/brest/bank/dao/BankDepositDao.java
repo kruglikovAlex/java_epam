@@ -1,4 +1,4 @@
-package com.brest.bank.daoSpring;
+package com.brest.bank.dao;
 
 import com.brest.bank.domain.BankDeposit;
 import org.hibernate.SessionFactory;
