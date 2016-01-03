@@ -35,16 +35,16 @@ public class BankDepositServiceImpl implements BankDepositService{
     public BankDepositDao depositDao;
 
     @Autowired
-    private BankDepositorDao bankDepositorDao;
+    private BankDepositorDao depositorDao;
 
-    @Autowired
+    @Override
     public void setDepositDao(BankDepositDao depositDao){
         this.depositDao = depositDao;
     }
 
-    @Autowired
-    public void setBankDepositorDao(BankDepositorDao bankDepositorDao){
-        this.bankDepositorDao = bankDepositorDao;
+    @Override
+    public void setDepositorDao(BankDepositorDao depositorDao){
+        this.depositorDao = depositorDao;
     }
 
     /**
@@ -434,7 +434,7 @@ public class BankDepositServiceImpl implements BankDepositService{
         LOGGER.debug("getBankDepositsWithDepositors");
         List<Map> deposits = null;
         try{
-            List<BankDepositor> existDepositors = bankDepositorDao.getBankDepositorsCriteria();
+            List<BankDepositor> existDepositors = depositorDao.getBankDepositorsCriteria();
             if(existDepositors!=null){
                 deposits = depositDao.getBankDepositsWithDepositors();
             }else{
@@ -464,7 +464,7 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
         List<Map> deposits = null;
         try{
-            List<BankDepositor> existDepositors = bankDepositorDao.getBankDepositorsFromToDateDeposit(startDate,endDate);
+            List<BankDepositor> existDepositors = depositorDao.getBankDepositorsFromToDateDeposit(startDate,endDate);
             if(existDepositors!=null){
                 deposits = depositDao.getBankDepositsFromToDateDepositWithDepositors(startDate, endDate);
             }else{

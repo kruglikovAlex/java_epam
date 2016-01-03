@@ -2,6 +2,8 @@ package com.brest.bank.service;
 
 import com.brest.bank.dao.BankDepositDao;
 import com.brest.bank.dao.BankDepositDaoImpl;
+import com.brest.bank.dao.BankDepositorDao;
+import com.brest.bank.dao.BankDepositorDaoImpl;
 import com.brest.bank.domain.BankDeposit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,11 +46,14 @@ public class BankDepositServiceImplUnitilsMockTest{
     BankDepositService depositService;
 
     private Mock<BankDepositDao> depositMockDao;
+    private Mock<BankDepositorDao> depositorMockDao;
 
     @Before
     public void setUp() throws Exception {
         depositMockDao = new MockObject<BankDepositDao>(BankDepositDaoImpl.class, this);
+        depositorMockDao = new MockObject<BankDepositorDao>(BankDepositorDaoImpl.class, this);
         depositService.setDepositDao(depositMockDao.getMock());
+        depositService.setDepositorDao(depositorMockDao.getMock());
     }
 
     @Test

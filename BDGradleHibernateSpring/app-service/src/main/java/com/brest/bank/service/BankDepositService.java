@@ -1,6 +1,7 @@
 package com.brest.bank.service;
 
 import com.brest.bank.dao.BankDepositDao;
+import com.brest.bank.dao.BankDepositorDao;
 import com.brest.bank.domain.BankDeposit;
 
 import java.util.Date;
@@ -14,6 +15,12 @@ public interface BankDepositService {
      * @param depositDao
      */
     void setDepositDao(BankDepositDao depositDao);
+
+    /**
+     *
+     * @param depositorDao
+     */
+    void setDepositorDao(BankDepositorDao depositorDao);
 
     /**
      * Get all Bank Deposits

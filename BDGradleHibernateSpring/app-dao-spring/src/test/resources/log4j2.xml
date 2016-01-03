@@ -9,7 +9,7 @@
         </File>
     </Appenders>
     <Loggers>
-        <Logger name="com.brest.bank.daoSpring" level="trace">
+        <Logger name="com.brest.bank.dao" level="trace">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="File"/>
         </Logger>

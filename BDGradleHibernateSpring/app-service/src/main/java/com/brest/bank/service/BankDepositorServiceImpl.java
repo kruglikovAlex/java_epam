@@ -34,7 +34,7 @@ public class BankDepositorServiceImpl implements BankDepositorService{
     private BankDepositorDao bankDepositorDao;
 
     @Autowired
-    public void setBankDepositorDao(BankDepositorDao bankDepositorDao){
+    public void setDepositorDao(BankDepositorDao bankDepositorDao){
         this.bankDepositorDao = bankDepositorDao;
     }
     /**
