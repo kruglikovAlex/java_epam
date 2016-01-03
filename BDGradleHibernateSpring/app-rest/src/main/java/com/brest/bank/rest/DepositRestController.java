@@ -41,7 +41,7 @@ public class DepositRestController {
         LOGGER.debug("getDeposits()");
         try {
             List<BankDeposit> deposits = depositService.getBankDeposits();
-            return new ResponseEntity(deposits, HttpStatus.OK);
+            return new ResponseEntity(deposits, HttpStatus.FOUND);
         } catch (Exception e){
             LOGGER.error("getDeposits(), Exception:{}", e.toString());
             return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
@@ -60,7 +60,7 @@ public class DepositRestController {
         LOGGER.debug("getDepositById(id={})",depositId);
         try {
             BankDeposit deposit = depositService.getBankDepositById(depositId);
-            return new ResponseEntity(deposit, HttpStatus.OK);
+            return new ResponseEntity(deposit, HttpStatus.FOUND);
         } catch (Exception e) {
             LOGGER.error("getDepositById({}), Exception:{}", depositId, e.toString());
             return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -79,7 +79,7 @@ public class DepositRestController {
         LOGGER.debug("getDepositByName(name={})",depositName);
         try {
     		BankDeposit deposit = depositService.getBankDepositByName(depositName);
-            return new ResponseEntity(deposit, HttpStatus.OK);
+            return new ResponseEntity(deposit, HttpStatus.FOUND);
     	} catch(Exception e){
             LOGGER.error("getDepositByName({}), Exception:{}", depositName, e.toString());
     		return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
@@ -99,7 +99,7 @@ public class DepositRestController {
         LOGGER.debug("getBankDepositsByCurrency(currency={})",currency);
         try{
             List<BankDeposit> deposits = depositService.getBankDepositsByCurrency(currency);
-            return new ResponseEntity<List<BankDeposit>>(deposits,HttpStatus.OK);
+            return new ResponseEntity<List<BankDeposit>>(deposits,HttpStatus.FOUND);
         }catch (Exception e){
             LOGGER.error("getBankDepositsByCurrency(currency={}), Exception:{}",currency,e.toString());
             return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
@@ -158,16 +158,16 @@ public class DepositRestController {
      * with the specified task`s in of deterest rate of deposit
      */
     @ResponseBody
-    @RequestMapping(value = "/rate/{startRate},{endRate}", method = RequestMethod.GET)
+    @RequestMapping(value = "/rateBetween/{startRate},{endRate}", method = RequestMethod.GET)
     public ResponseEntity<List<BankDeposit>> getBankDepositsFromToInterestRate(@PathVariable Integer startRate,
                                                                                @PathVariable Integer endRate){
-        LOGGER.debug("getBankDepositsFromToInterestRate(startRate={}, endRate={})",startRate,endRate);
+        LOGGER.debug("getBankDepositsFromToInterestRate(from={}, to={})",startRate,endRate);
         try{
             List<BankDeposit> deposits = depositService.getBankDepositsFromToInterestRate(startRate, endRate);
-            return new ResponseEntity<List<BankDeposit>>(deposits, HttpStatus.FOUND);
+            return new ResponseEntity<List<BankDeposit>>(deposits,HttpStatus.FOUND);
         }catch (Exception e){
-            LOGGER.error("getBankDepositsFromToInterestRate(startRate={},endRate={}), Exception:{}",
-                    startRate,endRate,e.getMessage());
+            LOGGER.error("getBankDepositsFromInterestRate(from={}, to={}), Exception:{}",startRate,
+                    endRate,e.getMessage());
             return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
         }
     }
