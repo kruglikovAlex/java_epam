@@ -399,6 +399,140 @@ public class DepositRestController {
     }
 
     /**
+     * Get Bank Deposit from-to Date Deposit with depositors
+     *
+     * @param startDate String - start value of the date deposit (startDate < endDate)
+     * @param endDate String - end value of the date deposit (startDate < endDate)
+     * @return ResponseEntity(List<Map>) - a list of all bank deposits with a report on all relevant
+     * bank depositors with the specified task`s date deposit
+     * @throws ParseException
+     */
+    @ResponseBody
+    @RequestMapping(value="/report/allDate/{startDate},{endDate}",method = RequestMethod.GET)
+    public ResponseEntity<List<Map>> getBankDepositsFromToDateDepositWithDepositors(@PathVariable String startDate,
+                                                                                    @PathVariable String endDate)
+                                                                                    throws ParseException{
+        LOGGER.debug("getBankDepositsFromToDateDepositWithDepositors(startDate={},endDate={})",startDate,endDate);
+        try{
+            List<Map> deposits =
+                    depositService.getBankDepositsFromToDateDepositWithDepositors(dateFormat.parse(startDate),
+                            dateFormat.parse(endDate));
+            return new ResponseEntity<List<Map>>(deposits,HttpStatus.FOUND);
+        }catch (Exception e){
+            LOGGER.error("getBankDepositsFromToDateDepositWithDepositors(startDate={},endDate={}), Exception:{}",
+                    startDate,endDate,e.getMessage());
+            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
+     * Get Bank Deposit from-to Date Return Deposit with depositors
+     *
+     * @param startDate String - start value of the date return deposit (startDate < endDate)
+     * @param endDate String - end value of the date return deposit (startDate < endDate)
+     * @return ResponseEntity(List<Map>) - a list of all bank deposits with a report on all relevant
+     * bank depositors with the specified task`s date return deposit
+     * @throws ParseException
+     */
+    @ResponseBody
+    @RequestMapping(value = "/report/allDateReturn/{startDate},{endDate}",method = RequestMethod.GET)
+    public ResponseEntity<List<Map>> getBankDepositsFromToDateReturnDepositWithDepositors(@PathVariable String startDate,
+                                                                                          @PathVariable String endDate)
+                                                                                            throws ParseException{
+        LOGGER.debug("getBankDepositsFromToDateReturnDepositWithDepositors(startDate={},endDate={})",startDate,endDate);
+        try{
+            List<Map> deposits =
+                    depositService.getBankDepositsFromToDateReturnDepositWithDepositors(dateFormat.parse(startDate),
+                            dateFormat.parse(endDate));
+            return new ResponseEntity<List<Map>>(deposits,HttpStatus.FOUND);
+        }catch (Exception e){
+            LOGGER.error("getBankDepositsFromToDateReturnDepositWithDepositors(startDate={},endDate={}), Exception:{}",
+                    startDate,endDate,e.getMessage());
+            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
+     * Get Bank Deposit by Currency with depositors
+     *
+     * @param currency String - Currency of the Bank Deposit to return
+     * @return ResponseEntity(List<Map>) - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    @ResponseBody
+    @RequestMapping(value = "/report/currency/{currency}",method = RequestMethod.GET)
+    public ResponseEntity<List<Map>> getBankDepositsByCurrencyWithDepositors(@PathVariable String currency){
+        LOGGER.debug("getBankDepositsByCurrencyWithDepositors(currency={})",currency);
+        try{
+            List<Map> deposits = depositService.getBankDepositsByCurrencyWithDepositors(currency);
+            return new ResponseEntity<List<Map>>(deposits,HttpStatus.FOUND);
+        }catch (Exception e){
+            LOGGER.error("getBankDepositsByCurrencyWithDepositors(currency={}), Exception:{}",currency,e.getMessage());
+            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+
+    }
+
+    /**
+     * Get Bank Deposit from-to Date Deposit by Currency with depositors
+     *
+     * @param currency String - Currency of the Bank Deposit to return
+     * @param startDate String - start value of the date deposit (startDate < endDate)
+     * @param endDate String - end value of the date deposit (startDate < endDate)
+     * @return ResponseEntity(List<Map>) a list of all bank deposits with a report on all relevant
+     * bank depositors with the specified task`s date deposit
+     * @throws ParseException
+     */
+    @ResponseBody
+    @RequestMapping(value = "/report/currencyDate/{currency},{startDate},{endDate}", method = RequestMethod.GET)
+    public ResponseEntity<List<Map>> getBankDepositsByCurrencyFromToDateDepositWithDepositors(@PathVariable String currency,
+                                                                                              @PathVariable String startDate,
+                                                                                              @PathVariable String endDate)
+            throws ParseException{
+        LOGGER.debug("getBankDepositsByCurrencyFromToDateDepositWithDepositors(currency={},startDate={},endDate={})",
+                currency,startDate,endDate);
+        try{
+            List<Map> deposits = depositService.getBankDepositsByCurrencyFromToDateDepositWithDepositors(currency,
+                    dateFormat.parse(startDate),dateFormat.parse(endDate));
+            return new ResponseEntity<List<Map>>(deposits,HttpStatus.FOUND);
+        }catch (Exception e){
+            LOGGER.error("getBankDepositsByCurrencyFromToDateDepositWithDepositors(currency={},startDate={},endDate={}), " +
+                            "Exception:{}",currency,startDate,endDate);
+            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
+     * Get Bank Deposit from-to Date Return Deposit by Currency with depositors
+     *
+     * @param currency String - Currency of the Bank Deposit to return
+     * @param startDate String - start value of the date deposit (startDate < endDate)
+     * @param endDate String - end value of the date deposit (startDate < endDate)
+     * @return ResponseEntity(List<Map>) a list of all bank deposits with a report on all relevant
+     * bank depositors with the specified task`s date return deposit
+     * @throws ParseException
+     */
+    @ResponseBody
+    @RequestMapping(value = "/report/currencyDateReturn/{currency},{startDate},{endDate}", method = RequestMethod.GET)
+    public ResponseEntity<List<Map>> getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(@PathVariable String currency,
+                                                                                                    @PathVariable String startDate,
+                                                                                                    @PathVariable String endDate)
+            throws ParseException{
+        LOGGER.debug("getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(currency={},startDate={},endDate={})",
+                currency,startDate,endDate);
+        try{
+            List<Map> deposits =
+                    depositService.getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(currency,
+                            dateFormat.parse(startDate),dateFormat.parse(endDate));
+            return new ResponseEntity<List<Map>>(deposits,HttpStatus.FOUND);
+        }catch (Exception e){
+            LOGGER.error("getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(currency={},startDate={},endDate={}), Exception:{}",
+                    currency,startDate,endDate,e.getMessage());
+            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
      * Adding Bank Deposit
      *
      * @param deposit BankDeposit - Bank Deposit to be inserted to the database
@@ -423,7 +557,12 @@ public class DepositRestController {
         }
     }
 
-    //--- Update Deposit
+    /**
+     * Updating Bank Deposit
+     *
+     * @param deposit BankDeposit - Bank Deposit to be stored in the database
+     * @return ResponseEntity
+     */
     @RequestMapping(method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity updateDeposit(@RequestBody BankDeposit deposit) {
@@ -443,7 +582,12 @@ public class DepositRestController {
         }
     }
 
-	//--- Remove Deposit
+    /**
+     * Deleting Bank Deposit by ID
+     *
+     * @param depositId Long - id of the Bank Deposit to be removed
+     * @return
+     */
     @RequestMapping(value = "/id/{depositId}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity removeDeposit(@PathVariable Long depositId) {
