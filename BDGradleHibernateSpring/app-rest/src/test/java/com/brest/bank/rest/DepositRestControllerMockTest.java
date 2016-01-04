@@ -8,18 +8,19 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.easymock.EasyMock.*;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,6 +35,8 @@ public class DepositRestControllerMockTest {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     private MockMvc mockMvc;
+
+    private ObjectMapper objectMapper;
 
     @Resource
     DepositRestController depositRestController;
@@ -428,11 +431,11 @@ public class DepositRestControllerMockTest {
         expectLastCall();
         replay(depositService);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String depositToJson = objectMapper.writeValueAsString(DataFixture.getNewDeposit());
+        objectMapper = new ObjectMapper();
+        String depositJson = objectMapper.writeValueAsString(DataFixture.getNewDeposit());
 
         this.mockMvc.perform(post("/deposit/")
-                    .content(depositToJson)
+                    .content(depositJson)
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -448,7 +451,7 @@ public class DepositRestControllerMockTest {
         expectLastCall().andThrow(new IllegalArgumentException("Bank Deposit is present in DB"));
         replay(depositService);
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper = new ObjectMapper();
         String existDeposit = objectMapper.writeValueAsString(DataFixture.getExistDeposit(1L));
 
         this.mockMvc.perform(post("/deposit/")
@@ -477,7 +480,7 @@ public class DepositRestControllerMockTest {
 
     @Test
     public void testAddEmptyDeposit() throws Exception{
-        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper = new ObjectMapper();
         String emptyDeposit = objectMapper.writeValueAsString(new BankDeposit(null,null,0,0,null,0,null,null));
 
         this.mockMvc.perform(post("/deposit/")
@@ -487,5 +490,92 @@ public class DepositRestControllerMockTest {
                 .andDo(print())
                 .andExpect(status().isNotModified())
                 .andExpect(content().string("\"Can not be added to the database Empty deposit\""));
+    }
+
+    @Test
+    public void testUpdateDeposit() throws Exception{
+        depositService.updateBankDeposit(anyObject(BankDeposit.class));
+        expectLastCall();
+        replay(depositService);
+
+        objectMapper = new ObjectMapper();
+        String depositJson = objectMapper.writeValueAsString(DataFixture.getExistDeposit(1L));
+
+        ResultActions result = this.mockMvc.perform(put("/deposit/")
+                .content(depositJson)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("\"a bank Deposit updated\""));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testUpdateNullDeposit() throws Exception{
+        objectMapper = new ObjectMapper();
+        String nullDeposit = objectMapper.writeValueAsString(null);
+
+        ResultActions result = this.mockMvc.perform(put("/deposit/")
+                .content(nullDeposit)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        result.andDo(print())
+                .andExpect(status().isNotModified())
+                .andExpect(content().string("\"You can not upgrade NULL deposit\""));
+
+    }
+
+    @Test
+    public void testUpdateEmptyDeposit() throws Exception{
+        objectMapper = new ObjectMapper();
+        String emptyDeposit = objectMapper.writeValueAsString(new BankDeposit(null,null,0,0,null,0,null,null));
+
+        ResultActions result = this.mockMvc.perform(put("/deposit/")
+                .content(emptyDeposit)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        result.andDo(print())
+                .andExpect(status().isNotModified())
+                .andExpect(content().string("\"You can not upgrade EMPTY deposit\""));
+    }
+
+    @Test
+    public void tesRemoveDeposit() throws Exception{
+        depositService.deleteBankDeposit(1L);
+        expectLastCall();
+        replay(depositService);
+
+        ResultActions result = this.mockMvc.perform(delete("/deposit/id/1")
+                .accept(MediaType.APPLICATION_JSON));
+
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("\"a bank Deposit removed\""));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testRemoveNullIdDeposit() throws Exception{
+
+        this.mockMvc.perform(delete("/deposit/id/null")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testRemoveErrorIdDeposit() throws Exception{
+
+        this.mockMvc.perform(delete("/deposit/id/-1")
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("\"Id Deposit - incorrect\""));
     }
 }

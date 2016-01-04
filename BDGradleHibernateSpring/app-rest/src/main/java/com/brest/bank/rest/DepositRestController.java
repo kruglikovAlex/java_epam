@@ -562,8 +562,8 @@ public class DepositRestController {
      * @param deposit BankDeposit - Bank Deposit to be stored in the database
      * @return ResponseEntity
      */
-    @RequestMapping(method = RequestMethod.PUT)
     @ResponseBody
+    @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity updateDeposit(@RequestBody BankDeposit deposit) {
         LOGGER.debug("updateDeposit({})", deposit);
         try {
@@ -602,7 +602,7 @@ public class DepositRestController {
             return new ResponseEntity("a bank Deposit removed", HttpStatus.OK);
         }catch (Exception e){
             LOGGER.error("removeDeposit({}), Exception:{}", depositId, e.toString());
-        	return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 }
