@@ -1,7 +1,9 @@
 package com.brest.bank.rest;
 
+import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.service.BankDepositService;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.easymock.EasyMock.*;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -230,5 +233,259 @@ public class DepositRestControllerMockTest {
                         "\"sumAmount\":1000,\"depositAddConditions\":\"conditions1\"}"));
 
         verify(depositService);
+    }
+
+    @Test
+    public void testGetBankDepositByNameFromToDateReturnDepositWithDepositors() throws Exception{
+        expect(depositService.getBankDepositByNameFromToDateReturnDepositWithDepositors("depositName1",
+                dateFormat.parse("2015-01-01"), dateFormat.parse("2015-02-02")))
+                .andReturn(DataFixture.getExistDepositAllDepositors(1L,1L));
+        replay(depositService);
+
+        this.mockMvc.perform(get("/deposit/report/nameDateReturn/depositName1,2015-01-01,2015-02-02")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isFound())
+                .andExpect(content().string("{\"depositMinTerm\":12,\"depositInterestRate\":4," +
+                        "\"depositName\":\"depositName1\",\"sumMinusAmount\":100,\"depositCurrency\":\"usd\"," +
+                        "\"depositId\":1,\"sumPlusAmount\":100,\"depositMinAmount\":1000,\"numDepositors\":1," +
+                        "\"sumAmount\":1000,\"depositAddConditions\":\"conditions1\"}"));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testGetBankDepositByIdWithDepositors() throws Exception{
+        expect(depositService.getBankDepositByIdWithDepositors(1L))
+                .andReturn(DataFixture.getExistDepositAllDepositors(1L, 1L));
+        replay(depositService);
+
+        this.mockMvc.perform(get("/deposit/report/id/1")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isFound())
+                .andExpect(content().string("{\"depositMinTerm\":12,\"depositInterestRate\":4," +
+                        "\"depositName\":\"depositName1\",\"sumMinusAmount\":100,\"depositCurrency\":\"usd\"," +
+                        "\"depositId\":1,\"sumPlusAmount\":100,\"depositMinAmount\":1000,\"numDepositors\":1," +
+                        "\"sumAmount\":1000,\"depositAddConditions\":\"conditions1\"}"));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testGetBankDepositByIdFromToDateDepositWithDepositors() throws Exception{
+        expect(depositService.getBankDepositByIdFromToDateDepositWithDepositors(1L,
+                dateFormat.parse("2015-01-01"),dateFormat.parse("2015-02-02")))
+                .andReturn(DataFixture.getExistDepositAllDepositors(1L,1L));
+        replay(depositService);
+
+        this.mockMvc.perform(get("/deposit/report/idDate/1,2015-01-01,2015-02-02")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isFound())
+                .andExpect(content().string("{\"depositMinTerm\":12,\"depositInterestRate\":4," +
+                        "\"depositName\":\"depositName1\",\"sumMinusAmount\":100,\"depositCurrency\":\"usd\"," +
+                        "\"depositId\":1,\"sumPlusAmount\":100,\"depositMinAmount\":1000,\"numDepositors\":1," +
+                        "\"sumAmount\":1000,\"depositAddConditions\":\"conditions1\"}"));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testGetBankDepositByIdFromToDateReturnDepositWithDepositors() throws Exception{
+        expect(depositService.getBankDepositByIdFromToDateReturnDepositWithDepositors(1L,
+                dateFormat.parse("2015-01-01"), dateFormat.parse("2015-02-02")))
+                .andReturn(DataFixture.getExistDepositAllDepositors(1L,1L));
+        replay(depositService);
+
+        this.mockMvc.perform(get("/deposit/report/idDateReturn/1,2015-01-01,2015-02-02")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isFound())
+                .andExpect(content().string("{\"depositMinTerm\":12,\"depositInterestRate\":4," +
+                        "\"depositName\":\"depositName1\",\"sumMinusAmount\":100,\"depositCurrency\":\"usd\"," +
+                        "\"depositId\":1,\"sumPlusAmount\":100,\"depositMinAmount\":1000,\"numDepositors\":1," +
+                        "\"sumAmount\":1000,\"depositAddConditions\":\"conditions1\"}"));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testGetBankDepositsWithDepositors() throws Exception{
+        expect(depositService.getBankDepositsWithDepositors())
+                .andReturn(DataFixture.getExistAllDepositsAllDepositors());
+        replay(depositService);
+
+        this.mockMvc.perform(get("/deposit/report/all")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isFound())
+                .andExpect(content().string("[{\"depositMinTerm\":12,\"depositInterestRate\":4," +
+                        "\"depositName\":\"depositName1\",\"sumMinusAmount\":100,\"depositCurrency\":\"usd\"," +
+                        "\"depositId\":1,\"sumPlusAmount\":100,\"depositMinAmount\":1000,\"numDepositors\":1," +
+                        "\"sumAmount\":1000,\"depositAddConditions\":\"conditions1\"}]"));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testGetBankDepositsFromToDateDepositWithDepositors() throws Exception{
+        expect(depositService.getBankDepositsFromToDateDepositWithDepositors(
+                dateFormat.parse("2015-01-01"),dateFormat.parse("2015-02-02")))
+                .andReturn(DataFixture.getExistAllDepositsAllDepositors());
+        replay(depositService);
+
+        this.mockMvc.perform(get("/deposit/report/allDate/2015-01-01,2015-02-02")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isFound())
+                .andExpect(content().string("[{\"depositMinTerm\":12,\"depositInterestRate\":4," +
+                        "\"depositName\":\"depositName1\",\"sumMinusAmount\":100,\"depositCurrency\":\"usd\"," +
+                        "\"depositId\":1,\"sumPlusAmount\":100,\"depositMinAmount\":1000,\"numDepositors\":1," +
+                        "\"sumAmount\":1000,\"depositAddConditions\":\"conditions1\"}]"));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testGetBankDepositsFromToDateReturnDepositWithDepositors() throws Exception{
+        expect(depositService.getBankDepositsFromToDateReturnDepositWithDepositors(
+                dateFormat.parse("2015-01-01"), dateFormat.parse("2015-02-02")))
+                .andReturn(DataFixture.getExistAllDepositsAllDepositors());
+        replay(depositService);
+
+        this.mockMvc.perform(get("/deposit/report/allDateReturn/2015-01-01,2015-02-02")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isFound())
+                .andExpect(content().string("[{\"depositMinTerm\":12,\"depositInterestRate\":4," +
+                        "\"depositName\":\"depositName1\",\"sumMinusAmount\":100,\"depositCurrency\":\"usd\"," +
+                        "\"depositId\":1,\"sumPlusAmount\":100,\"depositMinAmount\":1000,\"numDepositors\":1," +
+                        "\"sumAmount\":1000,\"depositAddConditions\":\"conditions1\"}]"));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testGetBankDepositsByCurrencyWithDepositors() throws Exception{
+        expect(depositService.getBankDepositsByCurrencyWithDepositors("usd"))
+                .andReturn(DataFixture.getExistAllDepositsAllDepositors());
+        replay(depositService);
+
+        this.mockMvc.perform(get("/deposit/report/currency/usd")
+                    .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isFound())
+                .andExpect(content().string("[{\"depositMinTerm\":12,\"depositInterestRate\":4," +
+                        "\"depositName\":\"depositName1\",\"sumMinusAmount\":100,\"depositCurrency\":\"usd\"," +
+                        "\"depositId\":1,\"sumPlusAmount\":100,\"depositMinAmount\":1000,\"numDepositors\":1," +
+                        "\"sumAmount\":1000,\"depositAddConditions\":\"conditions1\"}]"));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testGetBankDepositsByCurrencyFromToDateDepositWithDepositors() throws Exception{
+        expect(depositService.getBankDepositsByCurrencyFromToDateDepositWithDepositors("usd",
+                dateFormat.parse("2015-01-01"),dateFormat.parse("2015-02-02")))
+                .andReturn(DataFixture.getExistAllDepositsAllDepositors());
+        replay(depositService);
+
+        this.mockMvc.perform(get("/deposit/report/currencyDate/usd,2015-01-01,2015-02-02")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isFound())
+                .andExpect(content().string("[{\"depositMinTerm\":12,\"depositInterestRate\":4," +
+                        "\"depositName\":\"depositName1\",\"sumMinusAmount\":100,\"depositCurrency\":\"usd\"," +
+                        "\"depositId\":1,\"sumPlusAmount\":100,\"depositMinAmount\":1000,\"numDepositors\":1," +
+                        "\"sumAmount\":1000,\"depositAddConditions\":\"conditions1\"}]"));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testGetBankDepositsByCurrencyFromToDateReturnDepositWithDepositors() throws Exception{
+        expect(depositService.getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors("usd",
+                dateFormat.parse("2015-01-01"), dateFormat.parse("2015-02-02")))
+                .andReturn(DataFixture.getExistAllDepositsAllDepositors());
+        replay(depositService);
+
+        this.mockMvc.perform(get("/deposit/report/currencyDateReturn/usd,2015-01-01,2015-02-02")
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isFound())
+                .andExpect(content().string("[{\"depositMinTerm\":12,\"depositInterestRate\":4," +
+                        "\"depositName\":\"depositName1\",\"sumMinusAmount\":100,\"depositCurrency\":\"usd\"," +
+                        "\"depositId\":1,\"sumPlusAmount\":100,\"depositMinAmount\":1000,\"numDepositors\":1," +
+                        "\"sumAmount\":1000,\"depositAddConditions\":\"conditions1\"}]"));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testAddDeposit() throws Exception{
+        depositService.addBankDeposit(anyObject(BankDeposit.class));
+        expectLastCall();
+        replay(depositService);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String depositToJson = objectMapper.writeValueAsString(DataFixture.getNewDeposit());
+
+        this.mockMvc.perform(post("/deposit/")
+                    .content(depositToJson)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(content().string("\"a bank deposit created\""));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testAddExistDeposit() throws Exception{
+        depositService.addBankDeposit(anyObject(BankDeposit.class));
+        expectLastCall().andThrow(new IllegalArgumentException("Bank Deposit is present in DB"));
+        replay(depositService);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String existDeposit = objectMapper.writeValueAsString(DataFixture.getExistDeposit(1L));
+
+        this.mockMvc.perform(post("/deposit/")
+                    .content(existDeposit)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotModified())
+                .andExpect(content().string("\"Bank Deposit is present in DB\""));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testAddNullDeposit() throws Exception{
+        ObjectMapper objectMapper = new ObjectMapper();
+        String nullDeposit = objectMapper.writeValueAsString(null);
+
+        this.mockMvc.perform(post("/deposit/")
+                .content(nullDeposit)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotModified())
+                .andExpect(content().string("\"Can not be added to the database NULL deposit\""));
+    }
+
+    @Test
+    public void testAddEmptyDeposit() throws Exception{
+        ObjectMapper objectMapper = new ObjectMapper();
+        String emptyDeposit = objectMapper.writeValueAsString(new BankDeposit(null,null,0,0,null,0,null,null));
+
+        this.mockMvc.perform(post("/deposit/")
+                    .content(emptyDeposit)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotModified())
+                .andExpect(content().string("\"Can not be added to the database Empty deposit\""));
     }
 }

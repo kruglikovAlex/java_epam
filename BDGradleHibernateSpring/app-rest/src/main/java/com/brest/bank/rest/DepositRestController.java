@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +27,7 @@ public class DepositRestController {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
-    private BankDepositService depositService;
+    BankDepositService depositService;
 
     /**
      * Get all Bank deposits
@@ -550,7 +549,7 @@ public class DepositRestController {
                 throw new Exception("Can not be added to the database Empty deposit");
             }
             depositService.addBankDeposit(deposit);
-            return new ResponseEntity("Bank Deposit - ", HttpStatus.CREATED);
+            return new ResponseEntity("a bank deposit created", HttpStatus.CREATED);
         }catch (Exception e){
             LOGGER.error("addDeposit({}), Exception:{}", deposit, e.toString());
         	return new ResponseEntity(e.getMessage(), HttpStatus.NOT_MODIFIED);
@@ -575,7 +574,7 @@ public class DepositRestController {
                 throw new Exception("You can not upgrade EMPTY deposit");
             }
         	depositService.updateBankDeposit(deposit);
-            return new ResponseEntity("Bank Deposit updated - ", HttpStatus.OK);
+            return new ResponseEntity("a bank Deposit updated", HttpStatus.OK);
         } catch (Exception e){
             LOGGER.error("updateDeposit({}), Exception:{}", deposit, e.toString());
         	return new ResponseEntity(e.getMessage(), HttpStatus.NOT_MODIFIED);
@@ -600,7 +599,7 @@ public class DepositRestController {
                 throw new Exception("Deposit can not be removed with null id");
             }
             depositService.deleteBankDeposit(depositId);
-            return new ResponseEntity("Bank Deposit removed - ", HttpStatus.OK);
+            return new ResponseEntity("a bank Deposit removed", HttpStatus.OK);
         }catch (Exception e){
             LOGGER.error("removeDeposit({}), Exception:{}", depositId, e.toString());
         	return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
