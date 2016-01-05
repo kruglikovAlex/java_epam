@@ -145,7 +145,7 @@ public class BankDepositorServiceImpl implements BankDepositorService{
     public void updateBankDepositor(BankDepositor depositor){
         LOGGER.debug("updateBankDepositor(depositor={})",depositor);
         Assert.notNull(depositor,ERROR_METHOD_PARAM);
-        Assert.notNull(depositor.getDepositorId(),ERROR_METHOD_PARAM);
+        Assert.notNull(depositor.getDepositorId(),ERROR_METHOD_PARAM+" - depositorId");
         Assert.notNull(depositor.getDepositorName(),ERROR_METHOD_PARAM);
         BankDepositor existingDepositor;
         try {

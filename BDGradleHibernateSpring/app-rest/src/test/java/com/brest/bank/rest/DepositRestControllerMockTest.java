@@ -525,7 +525,7 @@ public class DepositRestControllerMockTest {
 
         result.andDo(print())
                 .andExpect(status().isNotModified())
-                .andExpect(content().string("\"You can not upgrade NULL deposit\""));
+                .andExpect(content().string("\"Can not be updated NULL deposit\""));
 
     }
 
@@ -541,7 +541,7 @@ public class DepositRestControllerMockTest {
 
         result.andDo(print())
                 .andExpect(status().isNotModified())
-                .andExpect(content().string("\"You can not upgrade EMPTY deposit\""));
+                .andExpect(content().string("\"Can not be updated Empty deposit\""));
     }
 
     @Test

@@ -72,7 +72,7 @@ public interface BankDepositService {
      * with the specified task`s min term of deposit
      */
     List<BankDeposit> getBankDepositsFromToMinTerm(Integer fromTerm,
-                                                           Integer toTerm);
+                                                   Integer toTerm);
 
     /**
      * Get Bank Deposits from-to INTEREST RATE values
@@ -83,7 +83,7 @@ public interface BankDepositService {
      * with the specified task`s in of deterest rate of deposit
      */
     List<BankDeposit> getBankDepositsFromToInterestRate(Integer startRate,
-                                                                Integer endRate);
+                                                        Integer endRate);
 
     /**
      * Get Bank Deposits from-to Date Deposit values

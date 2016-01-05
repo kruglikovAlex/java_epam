@@ -135,7 +135,7 @@ public class DataFixture {
      * @return BankDepositor empty
      */
     public static BankDepositor getEmptyDepositor() {
-        return new BankDepositor();
+        return new BankDepositor(null,null,null,0,0,0,null,0,null);
     }
 
     /**

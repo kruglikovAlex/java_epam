@@ -5,12 +5,14 @@ import com.brest.bank.service.BankDepositService;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -542,12 +544,8 @@ public class DepositRestController {
     public ResponseEntity addDeposit(@RequestBody BankDeposit deposit) {
         LOGGER.debug("addDeposit({})", deposit);
         try {
-            if (deposit == null){
-                throw new Exception("Can not be added to the database NULL deposit");
-            }
-            if (deposit.getDepositName()==null) {
-                throw new Exception("Can not be added to the database Empty deposit");
-            }
+            Assert.notNull(deposit,"Can not be added to the database NULL deposit");
+            Assert.notNull(deposit.getDepositName(),"Can not be added to the database Empty deposit");
             depositService.addBankDeposit(deposit);
             return new ResponseEntity("a bank deposit created", HttpStatus.CREATED);
         }catch (Exception e){
@@ -567,12 +565,8 @@ public class DepositRestController {
     public ResponseEntity updateDeposit(@RequestBody BankDeposit deposit) {
         LOGGER.debug("updateDeposit({})", deposit);
         try {
-            if (deposit == null){
-                throw new Exception("You can not upgrade NULL deposit");
-            }
-            if (deposit.getDepositName()==null) {
-                throw new Exception("You can not upgrade EMPTY deposit");
-            }
+            Assert.notNull(deposit,"Can not be updated NULL deposit");
+            Assert.notNull(deposit.getDepositName(),"Can not be updated Empty deposit");
         	depositService.updateBankDeposit(deposit);
             return new ResponseEntity("a bank Deposit updated", HttpStatus.OK);
         } catch (Exception e){
@@ -592,12 +586,8 @@ public class DepositRestController {
     public ResponseEntity removeDeposit(@PathVariable Long depositId) {
         LOGGER.debug("removeDeposit({})", depositId);
         try {
-            if (Long.valueOf(depositId) < 0) {
-                throw new Exception("Id Deposit - incorrect");
-            }
-            if (depositId == null) {
-                throw new Exception("Deposit can not be removed with null id");
-            }
+            Assert.isTrue(Long.valueOf(depositId) > 0, "Id Deposit - incorrect");
+            Assert.notNull(depositId,"The parameter can not be NULL");
             depositService.deleteBankDeposit(depositId);
             return new ResponseEntity("a bank Deposit removed", HttpStatus.OK);
         }catch (Exception e){
