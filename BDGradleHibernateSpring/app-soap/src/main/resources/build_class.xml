@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Ant-Generate-Classes-With-JAXB2" default="compile" basedir=".">
+
+    <property name="schema1" value="bankDeposit.xsd"/>
+    <property name="schema2" value="bankDepositor.xsd"/>
+    <property name="package" value="com.brest.bank.soap"/>
+
+    <target name="compile">
+        <echo message="Compiling the schema..."/>
+        <exec executable="xjc">
+            <arg line="-d ${basedir}"/>
+            <arg line="-p ${package}"/>
+            <arg line="${basedir}/${schema1}"/>
+            <arg line="-p ${package}"/>
+            <arg line="${basedir}/${schema2}"/>
+        </exec>
+    </target>
+</project>
+

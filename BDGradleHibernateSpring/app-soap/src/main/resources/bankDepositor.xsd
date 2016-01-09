@@ -1,0 +1,59 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://bank.brest.com/soap"
+            targetNamespace="http://bank.brest.com/soap" elementFormDefault="qualified">
+    <xsd:element name="getBankDepositorByIdRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositorId" type="xsd:long"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositorByIdResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositor" type="tns:bankDepositor"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:complexType name="bankDepositor">
+        <xsd:sequence>
+            <xsd:element name="depositorId" type="xsd:long"/>
+            <xsd:element name="depositorName">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="[A-Z][a-z]+[0-9]*"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="depositorDateDeposit" type="xsd:date"/>
+            <xsd:element name="depositorAmountDeposit">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:int">
+                        <xsd:minInclusive value="100"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="depositorAmountPlusDeposit">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:int">
+                        <xsd:minInclusive value="0"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="depositorAmountMinusDeposit">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:int">
+                        <xsd:minInclusive value="0"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="depositorDateReturnDeposit" type="xsd:date"/>
+            <xsd:element name="depositorMarkReturnDeposit">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:int">
+                        <xsd:pattern value="[0,1]"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>
