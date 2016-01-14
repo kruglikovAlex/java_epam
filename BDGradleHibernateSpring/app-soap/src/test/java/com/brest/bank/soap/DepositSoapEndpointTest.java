@@ -2,7 +2,6 @@ package com.brest.bank.soap;
 
 import com.brest.bank.service.BankDepositService;
 import com.brest.bank.service.BankDepositorService;
-import com.brest.bank.service.DataFixture;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
