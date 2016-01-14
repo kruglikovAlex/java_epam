@@ -3,12 +3,13 @@
 
     <property name="schema1" value="bankDeposit.xsd"/>
     <property name="schema2" value="bankDepositor.xsd"/>
-    <property name="package" value="com.brest.bank.soap"/>
+    <property name="package" value="com.brest.bank.util"/>
+    <property name="source_dir" value="../java"/>
 
     <target name="compile">
         <echo message="Compiling the schema..."/>
         <exec executable="xjc">
-            <arg line="-d ${basedir}"/>
+            <arg line="-d ${source_dir}"/>
             <arg line="-p ${package}"/>
             <arg line="${basedir}/${schema1}"/>
             <arg line="-p ${package}"/>

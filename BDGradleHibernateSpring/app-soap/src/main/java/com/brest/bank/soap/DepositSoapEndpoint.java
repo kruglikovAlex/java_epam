@@ -2,15 +2,18 @@ package com.brest.bank.soap;
 
 import com.brest.bank.service.BankDepositService;
 import com.brest.bank.service.BankDepositorService;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
-
-import static com.brest.bank.soap.*;
-
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
+
+import com.brest.bank.util.*;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -23,18 +26,19 @@ import java.util.GregorianCalendar;
 @ContextConfiguration(locations = {"classpath:/spring-soap.xml"})
 public class DepositSoapEndpoint {
 
+    private static final Logger LOGGER = LogManager.getLogger();
+
     private static final String NAMESPACE_URI = "http://bank.brest.com/soap";
 
     @Autowired
-    private BankDepositService depositService;
+    BankDepositService depositService;
 
     @Autowired
-    private BankDepositorService depositorService;
+    BankDepositorService depositorService;
 
     private BankDeposit deposit;
     private BankDepositor depositor;
     private BankDeposits deposits;
-    private com.brest.bank.domain.BankDeposit depositDao;
 
     @Autowired
     public DepositSoapEndpoint(BankDepositService depositService,BankDepositorService depositorService){
@@ -54,7 +58,7 @@ public class DepositSoapEndpoint {
         int i = 0;
         for (com.brest.bank.domain.BankDeposit dd:depositService.getBankDeposits()
              ) {
-            deposits.bankDeposit.add(i,depositDaoToSoap(dd));
+            deposits.getBankDeposit().add(i,depositDaoToSoap(dd));
             i++;
         }
         response.setBankDeposits(deposits);
@@ -67,9 +71,11 @@ public class DepositSoapEndpoint {
      */
     @PayloadRoot(namespace = NAMESPACE_URI,  localPart = "getBankDepositByIdRequest")
     @ResponsePayload
-    public GetBankDepositByIdResponse getBankDeposit(@RequestPayload GetBankDepositByIdRequest request){
+    public GetBankDepositByIdResponse getBankDepositById(@RequestPayload GetBankDepositByIdRequest request){
+        LOGGER.debug("request - depositId={}",request.getDepositId());
         GetBankDepositByIdResponse response = new GetBankDepositByIdResponse();
-        response.setBankDeposit(depositDaoToSoap(depositService.getBankDepositById(request.depositId)));
+        response.setBankDeposit(depositDaoToSoap(depositService.getBankDepositById(request.getDepositId())));
+        LOGGER.debug("response - depositId={}",response.getBankDeposit().getDepositId());
         return response;
     }
 
@@ -85,7 +91,7 @@ public class DepositSoapEndpoint {
     public GetBankDepositorByIdResponse getBankDepositorById(@RequestPayload GetBankDepositorByIdRequest request)
                                                                             throws DatatypeConfigurationException{
         GetBankDepositorByIdResponse response = new GetBankDepositorByIdResponse();
-        response.setBankDepositor(depositorDaoToSoap(depositorService.getBankDepositorById(request.depositorId)));
+        response.setBankDepositor(depositorDaoToSoap(depositorService.getBankDepositorById(request.getDepositorId())));
         return response;
     }
 

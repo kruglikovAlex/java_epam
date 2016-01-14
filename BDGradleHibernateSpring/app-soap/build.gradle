@@ -24,9 +24,12 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-tx', version: '3.2.0.RELEASE'
     compile group: 'org.springframework', name: 'spring-jdbc', version: '3.2.0.RELEASE'
     compile group: 'org.springframework', name: 'spring-orm', version: '3.2.0.RELEASE'
+    compile('org.apache.axis2:axis2-java2wsdl:1.6.4')
 
     compile group: 'org.springframework.ws', name:'spring-ws-core', version:'2.2.4.RELEASE'
+    compile('org.springframework.ws:spring-ws-test:2.2.4.RELEASE')
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.easymock', name: 'easymock', version: '3.3.1'
+
 }

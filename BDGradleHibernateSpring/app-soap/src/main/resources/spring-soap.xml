@@ -1,16 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sws="http://www.springframework.org/schema/web-services"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/web-services
+http://www.springframework.org/schema/web-services/web-services-2.0.xsd
 http://www.springframework.org/schema/context
 http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <sws:annotation-driven />
 
     <bean id="depositService" class="com.brest.bank.service.BankDepositServiceImpl"/>
 
     <bean id="depositorService" class="com.brest.bank.service.BankDepositorServiceImpl"/>
 
     <context:component-scan base-package="com.brest.bank.soap"/>
+<!--
+    <bean class="org.springframework.ws.server.endpoint.adapter.PayloadEndpointAdapter">
+        <property name="marshaller" ref="marshaller" />
+        <property name="unmarshaller" ref="marshaller" />
+    </bean>
 
+    <bean id="marshaller" class="org.springframework.oxm.xmlbeans.XmlBeansMarshaller"/>
+
+    <sws:dynamic-wsdl id="DepositService" portTypeName="service" locationUri="/DepositService" >
+        <sws:xsd location="/resources/bankDeposit.xsd" />
+        <sws:xsd location="/resources/bankDepositor.xsd" />
+    </sws:dynamic-wsdl>
+-->
+    <!--
+          Our test service bean
+    -->
+    <bean id="AccountDetailsService" class="org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition" lazy-init="true">
+        <property name="schemaCollection">
+            <bean class="org.springframework.xml.xsd.commons.CommonsXsdSchemaCollection">
+                <property name="inline" value="true" />
+                <property name="xsds">
+                    <list>
+                        <value>bankDeposit.xsd</value>
+                        <value>bankDepositor.xsd</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="portTypeName" value="bankDepositService"/>
+        <property name="serviceName" value="bankDepositsServices" />
+        <property name="locationUri" value="/endpoints"/>
+    </bean>
 </beans>
