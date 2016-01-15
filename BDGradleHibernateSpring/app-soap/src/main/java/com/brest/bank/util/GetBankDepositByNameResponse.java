@@ -38,8 +38,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "bankDeposit"
 })
-@XmlRootElement(name = "getBankDepositByIdResponse")
-public class GetBankDepositByIdResponse {
+@XmlRootElement(name = "getBankDepositByNameResponse")
+public class GetBankDepositByNameResponse {
 
     @XmlElement(required = true)
     protected BankDeposit bankDeposit;

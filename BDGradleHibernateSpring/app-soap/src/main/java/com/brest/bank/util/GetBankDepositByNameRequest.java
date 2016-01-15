@@ -25,7 +25,13 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="bankDeposit" type="{http://bank.brest.com/soap}bankDeposit"/>
+ *         &lt;element name="depositName">
+ *           &lt;simpleType>
+ *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *               &lt;pattern value="[A-Z][a-z]+[0-9]*"/>
+ *             &lt;/restriction>
+ *           &lt;/simpleType>
+ *         &lt;/element>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,36 +42,36 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "bankDeposit"
+    "depositName"
 })
-@XmlRootElement(name = "getBankDepositByIdResponse")
-public class GetBankDepositByIdResponse {
+@XmlRootElement(name = "getBankDepositByNameRequest")
+public class GetBankDepositByNameRequest {
 
     @XmlElement(required = true)
-    protected BankDeposit bankDeposit;
+    protected String depositName;
 
     /**
-     * Gets the value of the bankDeposit property.
+     * Gets the value of the depositName property.
      * 
      * @return
      *     possible object is
-     *     {@link BankDeposit }
+     *     {@link String }
      *     
      */
-    public BankDeposit getBankDeposit() {
-        return bankDeposit;
+    public String getDepositName() {
+        return depositName;
     }
 
     /**
-     * Sets the value of the bankDeposit property.
+     * Sets the value of the depositName property.
      * 
      * @param value
      *     allowed object is
-     *     {@link BankDeposit }
+     *     {@link String }
      *     
      */
-    public void setBankDeposit(BankDeposit value) {
-        this.bankDeposit = value;
+    public void setDepositName(String value) {
+        this.depositName = value;
     }
 
 }

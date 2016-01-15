@@ -56,6 +56,88 @@ public class DepositSoapEndpointTest {
     @After
     public void tearDown(){
         reset(depositService);
+        reset(depositorService);
+    }
+
+    @Test
+    public void testGetBankDeposits() throws Exception {
+        LOGGER.debug("testGetBankDeposits() - run");
+
+        expect(depositService.getBankDeposits()).andReturn(DataFixture.getExistDeposits());
+        replay(depositService);
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositsRequest xmlns='http://bank.brest.com/soap'>" +
+                "</getBankDepositsRequest>");
+
+        Source responsePayload = new StringSource(
+                "<getBankDepositsResponse xmlns=\"http://bank.brest.com/soap\">" +
+                        "<bankDeposits>" +
+                            "<bankDeposit>" +
+                                "<depositId>1</depositId>" +
+                                "<depositName>depositName1</depositName>" +
+                                "<depositMinTerm>12</depositMinTerm>" +
+                                "<depositMinAmount>1000</depositMinAmount>" +
+                                "<depositCurrency>usd</depositCurrency>" +
+                                "<depositInterestRate>4</depositInterestRate>" +
+                                "<depositAddConditions>conditions1</depositAddConditions>" +
+                            "</bankDeposit>"+
+                        "</bankDeposits>" +
+                "</getBankDepositsResponse>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testGetBankDepositors() throws Exception {
+        LOGGER.debug("testGetBankDepositors() - run");
+
+        expect(depositorService.getBankDepositors()).andReturn(DataFixture.getExistDepositors());
+        replay(depositorService);
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositorsRequest xmlns='http://bank.brest.com/soap'>" +
+                        "</getBankDepositorsRequest>");
+
+        Source responsePayload = new StringSource(
+                "<getBankDepositorsResponse xmlns=\"http://bank.brest.com/soap\">" +
+                        "<bankDepositors>" +
+                            "<bankDepositor>" +
+                                "<depositorId>1</depositorId>" +
+                                "<depositorName>depositorName1</depositorName>" +
+                                "<depositorDateDeposit>2015-01-01Z</depositorDateDeposit>" +
+                                "<depositorAmountDeposit>1000</depositorAmountDeposit>" +
+                                "<depositorAmountPlusDeposit>100</depositorAmountPlusDeposit>" +
+                                "<depositorAmountMinusDeposit>100</depositorAmountMinusDeposit>" +
+                                "<depositorDateReturnDeposit>2015-09-09Z</depositorDateReturnDeposit>" +
+                                "<depositorMarkReturnDeposit>0</depositorMarkReturnDeposit>" +
+                            "</bankDepositor>" +
+                            "<bankDepositor>" +
+                                "<depositorId>2</depositorId>" +
+                                "<depositorName>depositorName1</depositorName>" +
+                                "<depositorDateDeposit>2015-01-01Z</depositorDateDeposit>" +
+                                "<depositorAmountDeposit>1000</depositorAmountDeposit>" +
+                                "<depositorAmountPlusDeposit>100</depositorAmountPlusDeposit>" +
+                                "<depositorAmountMinusDeposit>100</depositorAmountMinusDeposit>" +
+                                "<depositorDateReturnDeposit>2015-09-09Z</depositorDateReturnDeposit>" +
+                                "<depositorMarkReturnDeposit>0</depositorMarkReturnDeposit>" +
+                            "</bankDepositor>" +
+                        "</bankDepositors>" +
+                "</getBankDepositorsResponse>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+
+        verify(depositorService);
     }
 
     @Test
@@ -82,6 +164,40 @@ public class DepositSoapEndpointTest {
                             "<depositAddConditions>conditions1</depositAddConditions>" +
                         "</bankDeposit>" +
                 "</getBankDepositByIdResponse>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testGetBankDepositByName() throws Exception {
+        LOGGER.debug("testGetBankDepositByName() - run");
+
+        expect(depositService.getBankDepositByName("depositName1")).andReturn(DataFixture.getExistDeposit(1L));
+        replay(depositService);
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositByNameRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<depositName>depositName1</depositName>" +
+                        "</getBankDepositByNameRequest>");
+
+        Source responsePayload = new StringSource(
+                "<getBankDepositByNameResponse xmlns=\"http://bank.brest.com/soap\">" +
+                        "<bankDeposit>" +
+                            "<depositId>1</depositId>" +
+                            "<depositName>depositName1</depositName>" +
+                            "<depositMinTerm>12</depositMinTerm>" +
+                            "<depositMinAmount>1000</depositMinAmount>" +
+                            "<depositCurrency>usd</depositCurrency>" +
+                            "<depositInterestRate>4</depositInterestRate>" +
+                            "<depositAddConditions>conditions1</depositAddConditions>" +
+                        "</bankDeposit>" +
+                "</getBankDepositByNameResponse>");
 
         RequestCreator creator = RequestCreators.withPayload(requestPayload);
 
@@ -140,5 +256,75 @@ public class DepositSoapEndpointTest {
                 .andExpect(ResponseMatchers.payload(responsePayload));
 
         verify(depositService);
+    }
+
+    @Test
+    public void testGetBankDepositorById() throws java.text.ParseException{
+        LOGGER.debug("testGetBankDepositorById() - run");
+
+        expect(depositorService.getBankDepositorById(1L)).andReturn(DataFixture.getExistDepositor(1L));
+        replay(depositorService);
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositorByIdRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<depositorId>1</depositorId>" +
+                "</getBankDepositorByIdRequest>");
+
+        Source responsePayload = new StringSource(
+                "<getBankDepositorByIdResponse xmlns=\"http://bank.brest.com/soap\">" +
+                        "<bankDepositor>" +
+                            "<depositorId>1</depositorId>" +
+                            "<depositorName>depositorName1</depositorName>" +
+                            "<depositorDateDeposit>2015-01-01Z</depositorDateDeposit>" +
+                            "<depositorAmountDeposit>1000</depositorAmountDeposit>" +
+                            "<depositorAmountPlusDeposit>100</depositorAmountPlusDeposit>" +
+                            "<depositorAmountMinusDeposit>100</depositorAmountMinusDeposit>" +
+                            "<depositorDateReturnDeposit>2015-09-09Z</depositorDateReturnDeposit>" +
+                            "<depositorMarkReturnDeposit>0</depositorMarkReturnDeposit>" +
+                        "</bankDepositor>" +
+                "</getBankDepositorByIdResponse>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+
+        verify(depositorService);
+    }
+
+    @Test
+    public void testGetBankDepositorByName() throws java.text.ParseException{
+        LOGGER.debug("testGetBankDepositorByName() - run");
+
+        expect(depositorService.getBankDepositorByName("depositorName1")).andReturn(DataFixture.getExistDepositor(1L));
+        replay(depositorService);
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositorByNameRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<depositorName>depositorName1</depositorName>" +
+                "</getBankDepositorByNameRequest>");
+
+        Source responsePayload = new StringSource(
+                "<getBankDepositorByNameResponse xmlns=\"http://bank.brest.com/soap\">" +
+                        "<bankDepositor>" +
+                            "<depositorId>1</depositorId>" +
+                            "<depositorName>depositorName1</depositorName>" +
+                            "<depositorDateDeposit>2015-01-01Z</depositorDateDeposit>" +
+                            "<depositorAmountDeposit>1000</depositorAmountDeposit>" +
+                            "<depositorAmountPlusDeposit>100</depositorAmountPlusDeposit>" +
+                            "<depositorAmountMinusDeposit>100</depositorAmountMinusDeposit>" +
+                            "<depositorDateReturnDeposit>2015-09-09Z</depositorDateReturnDeposit>" +
+                            "<depositorMarkReturnDeposit>0</depositorMarkReturnDeposit>" +
+                        "</bankDepositor>" +
+                "</getBankDepositorByNameResponse>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+
+        verify(depositorService);
     }
 }

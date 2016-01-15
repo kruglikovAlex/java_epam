@@ -22,6 +22,26 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+    <xsd:element name="getBankDepositByNameRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositName">
+                    <xsd:simpleType>
+                        <xsd:restriction base='xsd:string'>
+                            <xsd:pattern value='[A-Z][a-z]+[0-9]*' />
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByNameResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposit" type="tns:bankDeposit"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:complexType name="bankDeposit">
         <xsd:sequence>
             <xsd:element name="depositId" type="xsd:long"/>
