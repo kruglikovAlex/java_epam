@@ -259,6 +259,42 @@ public class DepositSoapEndpointTest {
     }
 
     @Test
+    public void testGetBankDepositsByCurrency() throws Exception {
+        LOGGER.debug("testGetBankDepositsByCurrency() - run");
+
+        expect(depositService.getBankDepositsByCurrency("usd")).andReturn(DataFixture.getExistDeposits());
+        replay(depositService);
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositsByCurrencyRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<depositCurrency>usd</depositCurrency>" +
+                "</getBankDepositsByCurrencyRequest>");
+
+        Source responsePayload = new StringSource(
+                "<getBankDepositsByCurrencyResponse xmlns=\"http://bank.brest.com/soap\">" +
+                        "<bankDeposits>" +
+                            "<bankDeposit>" +
+                                "<depositId>1</depositId>" +
+                                "<depositName>depositName1</depositName>" +
+                                "<depositMinTerm>12</depositMinTerm>" +
+                                "<depositMinAmount>1000</depositMinAmount>" +
+                                "<depositCurrency>usd</depositCurrency>" +
+                                "<depositInterestRate>4</depositInterestRate>" +
+                                "<depositAddConditions>conditions1</depositAddConditions>" +
+                            "</bankDeposit>"+
+                        "</bankDeposits>" +
+                "</getBankDepositsByCurrencyResponse>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+
+        verify(depositService);
+    }
+
+    @Test
     public void testGetBankDepositorById() throws java.text.ParseException{
         LOGGER.debug("testGetBankDepositorById() - run");
 

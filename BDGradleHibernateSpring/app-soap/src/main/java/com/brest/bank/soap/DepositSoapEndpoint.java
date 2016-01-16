@@ -77,7 +77,7 @@ public class DepositSoapEndpoint {
             i++;
         }
         response.setBankDeposits(deposits);
-        Assert.notEmpty(response.getBankDeposits().getBankDeposit(),"The service was return Null Bank Deposit");
+        Assert.notEmpty(response.getBankDeposits().getBankDeposit(),"The service was return Null Bank Deposits");
 
         return response;
     }
@@ -101,7 +101,7 @@ public class DepositSoapEndpoint {
             i++;
         }
         response.setBankDepositors(depositors);
-        Assert.notEmpty(response.getBankDepositors().getBankDepositor(),"The service was return Null Bank Depositor");
+        Assert.notEmpty(response.getBankDepositors().getBankDepositor(),"The service was return Null Bank Depositors");
 
         return response;
     }
@@ -136,7 +136,7 @@ public class DepositSoapEndpoint {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getBankDepositByNameRequest")
     @ResponsePayload
     public GetBankDepositByNameResponse getBankDepositByName(@RequestPayload GetBankDepositByNameRequest request){
-        LOGGER.debug("getBankDepositByNameRequest - depositName={}", request.getDepositName());
+        LOGGER.debug("getBankDepositByNameRequest(depositName={})", request.getDepositName());
         Assert.notNull(request.getDepositName(),ERROR_METHOD_PARAM);
 
         GetBankDepositByNameResponse response = new GetBankDepositByNameResponse();
@@ -144,6 +144,31 @@ public class DepositSoapEndpoint {
 
         LOGGER.debug("getBankDepositByNameResponse - depositName={}",response.getBankDeposit().getDepositName());
         Assert.notNull(response.getBankDeposit(),"The service was return Null Bank Deposit");
+
+        return response;
+    }
+
+    /**
+     * Get Bank Deposits by depositCurrency
+     *
+     * @param request XmlElement depositCurrency
+     * @return XmlElement BankDeposits
+     */
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getBankDepositsByCurrencyRequest")
+    @ResponsePayload
+    public GetBankDepositsByCurrencyResponse getBankDepositsByCurrency(@RequestPayload GetBankDepositsByCurrencyRequest request) {
+        LOGGER.debug("getBankDepositsByCurrencyRequest(depositCurrency={})",request.getDepositCurrency());
+        Assert.notNull(request.getDepositCurrency(),ERROR_METHOD_PARAM);
+
+        deposits = new BankDeposits();
+        GetBankDepositsByCurrencyResponse response = new GetBankDepositsByCurrencyResponse();
+        int i = 0;
+        for (com.brest.bank.domain.BankDeposit dd:depositService.getBankDepositsByCurrency(request.getDepositCurrency())) {
+            deposits.getBankDeposit().add(i,depositDaoToSoap(dd));
+            i++;
+        }
+        response.setBankDeposits(deposits);
+        Assert.notEmpty(response.getBankDeposits().getBankDeposit(),"The service was return Null Bank Deposits");
 
         return response;
     }
