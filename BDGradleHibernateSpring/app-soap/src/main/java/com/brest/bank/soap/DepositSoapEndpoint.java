@@ -6,6 +6,7 @@ import com.brest.bank.service.BankDepositorService;
 import com.brest.bank.util.BankDeposit;
 import com.brest.bank.util.BankDepositor;
 
+import org.apache.commons.io.input.XmlStreamReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,31 +15,42 @@ import org.springframework.test.context.ContextConfiguration;
 
 import org.springframework.util.Assert;
 
-import org.springframework.ws.server.endpoint.annotation.Endpoint;
-import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
-import org.springframework.ws.server.endpoint.annotation.RequestPayload;
-import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
+import org.springframework.ws.context.MessageContext;
+import org.springframework.ws.server.endpoint.annotation.*;
 
 import com.brest.bank.util.*;
+import org.springframework.ws.soap.SoapHeader;
+import org.springframework.ws.soap.SoapHeaderElement;
+import org.springframework.ws.test.client.RequestMatchers;
+import org.springframework.ws.test.server.RequestCreator;
+import org.springframework.ws.test.server.ResponseMatchers;
+import org.springframework.xml.transform.StringSource;
 
-import javax.xml.bind.JAXBException;
+import javax.xml.bind.*;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.namespace.QName;
+import javax.xml.transform.stream.StreamSource;
 
+import java.io.*;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 
 @Endpoint
 @ContextConfiguration(locations = {"classpath:/spring-soap.xml"})
 public class DepositSoapEndpoint {
 
-    public static final String ERROR_DB_EMPTY = "There is no RECORDS in the DataBase";
+    public static final String ERROR_NULL_RESPONSE = "Response is NULL";
     public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
     public static final String ERROR_NULL_PARAM = "The parameter must be NULL";
     public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
     public static final String ERROR_DEPOSIT = "In the database there is no Deposit with such parameters";
+    public static final String ERROR_EMPTY_RESPONSE = "Response is EMPTY";
+
     private static final Logger LOGGER = LogManager.getLogger();
+
     private static final String NAMESPACE_URI = "http://bank.brest.com/soap";
 
     @Autowired
@@ -46,7 +58,7 @@ public class DepositSoapEndpoint {
 
     @Autowired
     BankDepositorService depositorService;
-
+    ObjectFactory objectFactory = new ObjectFactory();
     private BankDeposit deposit;
     private BankDeposits deposits;
     private BankDepositor depositor;
@@ -73,11 +85,11 @@ public class DepositSoapEndpoint {
         int i = 0;
         for (com.brest.bank.domain.BankDeposit dd:depositService.getBankDeposits()
              ) {
-            deposits.getBankDeposit().add(i,depositDaoToSoap(dd));
+            deposits.getBankDeposit().add(i,depositDaoToXml(dd));
             i++;
         }
         response.setBankDeposits(deposits);
-        Assert.notEmpty(response.getBankDeposits().getBankDeposit(),"The service was return Null Bank Deposits");
+        Assert.notEmpty(response.getBankDeposits().getBankDeposit(),ERROR_NULL_RESPONSE);
 
         return response;
     }
@@ -97,11 +109,11 @@ public class DepositSoapEndpoint {
         int i = 0;
         for (com.brest.bank.domain.BankDepositor dd:depositorService.getBankDepositors()
                 ) {
-            depositors.getBankDepositor().add(i,depositorDaoToSoap(dd));
+            depositors.getBankDepositor().add(i,depositorDaoToXml(dd));
             i++;
         }
         response.setBankDepositors(depositors);
-        Assert.notEmpty(response.getBankDepositors().getBankDepositor(),"The service was return Null Bank Depositors");
+        Assert.notEmpty(response.getBankDepositors().getBankDepositor(),ERROR_NULL_RESPONSE);
 
         return response;
     }
@@ -119,10 +131,10 @@ public class DepositSoapEndpoint {
         Assert.notNull(request.getDepositId(),ERROR_METHOD_PARAM);
 
         GetBankDepositByIdResponse response = new GetBankDepositByIdResponse();
-        response.setBankDeposit(depositDaoToSoap(depositService.getBankDepositById(request.getDepositId())));
+        response.setBankDeposit(depositDaoToXml(depositService.getBankDepositById(request.getDepositId())));
 
         LOGGER.debug("getBankDepositByIdResponse - depositId={}",response.getBankDeposit().getDepositId());
-        Assert.notNull(response.getBankDeposit(),"The service was return Null Bank Deposit");
+        Assert.notNull(response.getBankDeposit(),ERROR_NULL_RESPONSE);
 
         return response;
     }
@@ -140,10 +152,10 @@ public class DepositSoapEndpoint {
         Assert.notNull(request.getDepositName(),ERROR_METHOD_PARAM);
 
         GetBankDepositByNameResponse response = new GetBankDepositByNameResponse();
-        response.setBankDeposit(depositDaoToSoap(depositService.getBankDepositByName(request.getDepositName())));
+        response.setBankDeposit(depositDaoToXml(depositService.getBankDepositByName(request.getDepositName())));
 
         LOGGER.debug("getBankDepositByNameResponse - depositName={}",response.getBankDeposit().getDepositName());
-        Assert.notNull(response.getBankDeposit(),"The service was return Null Bank Deposit");
+        Assert.notNull(response.getBankDeposit(),ERROR_NULL_RESPONSE);
 
         return response;
     }
@@ -152,7 +164,7 @@ public class DepositSoapEndpoint {
      * Get Bank Deposits by depositCurrency
      *
      * @param request XmlElement depositCurrency
-     * @return XmlElement BankDeposits
+     * @return XmlElement List<BankDeposit>
      */
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getBankDepositsByCurrencyRequest")
     @ResponsePayload
@@ -164,11 +176,84 @@ public class DepositSoapEndpoint {
         GetBankDepositsByCurrencyResponse response = new GetBankDepositsByCurrencyResponse();
         int i = 0;
         for (com.brest.bank.domain.BankDeposit dd:depositService.getBankDepositsByCurrency(request.getDepositCurrency())) {
-            deposits.getBankDeposit().add(i,depositDaoToSoap(dd));
+            deposits.getBankDeposit().add(i,depositDaoToXml(dd));
             i++;
         }
         response.setBankDeposits(deposits);
-        Assert.notEmpty(response.getBankDeposits().getBankDeposit(),"The service was return Null Bank Deposits");
+        Assert.notEmpty(response.getBankDeposits().getBankDeposit(),ERROR_NULL_RESPONSE);
+
+        return response;
+    }
+
+    /**
+     * Get Bank Deposits by depositInterestRate
+     *
+     * @param request XmlElement depositInterestRate
+     * @return XmlElement List<BankDeposit>
+     */
+    @PayloadRoot(localPart = "getBankDepositsByInterestRateRequest",namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public GetBankDepositsByInterestRateResponse getBankDepositsByInterestRate(@RequestPayload GetBankDepositsByInterestRateRequest request) {
+        LOGGER.debug("getBankDepositsByInterestRateRequest(depositInterestRate={})",request.getDepositInterestRate());
+        Assert.notNull(request.getDepositInterestRate(),ERROR_METHOD_PARAM);
+
+        deposits = new BankDeposits();
+        GetBankDepositsByInterestRateResponse response = new GetBankDepositsByInterestRateResponse();
+        int i = 0;
+        for(com.brest.bank.domain.BankDeposit dd:depositService
+                .getBankDepositsByInterestRate(request.getDepositInterestRate())){
+            deposits.getBankDeposit().add(i,depositDaoToXml(dd));
+            i++;
+        }
+        response.setBankDeposits(deposits);
+        Assert.notNull(response.getBankDeposits(),ERROR_NULL_RESPONSE);
+
+        return response;
+    }
+
+    /**
+     * Get Bank Deposits from-to MIN TERM values
+     *
+     * @param request XmlElements: fromTerm and toTerm
+     * @return XmlElement - List<BankDeposit>
+     */
+    @PayloadRoot(localPart = "getBankDepositsFromToMinTermRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public GetBankDepositsFromToMinTermResponse getBankDepositsFromToMinTerm(@RequestPayload GetBankDepositsFromToMinTermRequest request){
+        LOGGER.debug("getBankDepositsFromToMinTermRequest(from={}, to={})",request.getFromTerm(),request.getToTerm());
+        Assert.notNull(request.getFromTerm(),ERROR_METHOD_PARAM);
+        Assert.notNull(request.getToTerm(),ERROR_METHOD_PARAM);
+        Assert.isTrue(request.getFromTerm()<=request.getToTerm(),ERROR_FROM_TO_PARAM);
+
+        deposits = new BankDeposits();
+        GetBankDepositsFromToMinTermResponse response = new GetBankDepositsFromToMinTermResponse();
+        int i = 0;
+        for(com.brest.bank.domain.BankDeposit dd:depositService
+                .getBankDepositsFromToMinTerm(request.getFromTerm(),request.getToTerm())){
+            deposits.getBankDeposit().add(i,depositDaoToXml(dd));
+            i++;
+        }
+        response.setBankDeposits(deposits);
+        Assert.notEmpty(response.getBankDeposits().getBankDeposit(),ERROR_EMPTY_RESPONSE);
+        Assert.notNull(response.getBankDeposits(),ERROR_NULL_RESPONSE);
+
+        return response;
+    }
+
+    @PayloadRoot(localPart = "addBankDepositRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public AddBankDepositResponse addBankDeposit(@RequestPayload AddBankDepositRequest request) throws IOException{
+        LOGGER.debug("addBankDepositRequest(deposit={})",request.getBankDeposit().getDepositId());
+        Assert.notNull(request.getBankDeposit(),ERROR_METHOD_PARAM);
+
+        AddBankDepositResponse response = new AddBankDepositResponse();
+
+        depositService.addBankDeposit(xmlToDepositDao(request.getBankDeposit()));
+
+        response.setBankDeposit(depositDaoToXml(depositService.getBankDepositByName(request.getBankDeposit().getDepositName())));
+
+        Assert.notNull(response.getBankDeposit(),ERROR_NULL_RESPONSE);
+        LOGGER.debug("addBankDepositResponse(depositId={})",response.getBankDeposit().getDepositId());
 
         return response;
     }
@@ -188,10 +273,10 @@ public class DepositSoapEndpoint {
         Assert.notNull(request.getDepositorId(),ERROR_METHOD_PARAM);
 
         GetBankDepositorByIdResponse response = new GetBankDepositorByIdResponse();
-        response.setBankDepositor(depositorDaoToSoap(depositorService.getBankDepositorById(request.getDepositorId())));
+        response.setBankDepositor(depositorDaoToXml(depositorService.getBankDepositorById(request.getDepositorId())));
         LOGGER.debug("getBankDepositorByIdResponse - depositorId={}",response.getBankDepositor().getDepositorId());
 
-        Assert.notNull(response.getBankDepositor(),"The service was return Null Bank Depositor");
+        Assert.notNull(response.getBankDepositor(),ERROR_NULL_RESPONSE);
         return response;
     }
 
@@ -210,10 +295,10 @@ public class DepositSoapEndpoint {
         Assert.notNull(request.getDepositorName(),ERROR_METHOD_PARAM);
 
         GetBankDepositorByNameResponse response = new GetBankDepositorByNameResponse();
-        response.setBankDepositor(depositorDaoToSoap(depositorService.getBankDepositorByName(request.getDepositorName())));
+        response.setBankDepositor(depositorDaoToXml(depositorService.getBankDepositorByName(request.getDepositorName())));
         LOGGER.debug("getBankDepositorByNameResponse - depositorName={}",response.getBankDepositor().getDepositorName());
 
-        Assert.notNull(response.getBankDepositor(),"The service was return Null Bank Depositor");
+        Assert.notNull(response.getBankDepositor(),ERROR_NULL_RESPONSE);
         return response;
     }
 
@@ -223,7 +308,7 @@ public class DepositSoapEndpoint {
      * @param depositDao - an entity of domain BankDeposit.class
      * @return XmlElement BankDeposit
      */
-    public BankDeposit depositDaoToSoap(com.brest.bank.domain.BankDeposit depositDao){
+    public BankDeposit depositDaoToXml(com.brest.bank.domain.BankDeposit depositDao){
         deposit = new BankDeposit();
             deposit.setDepositId(depositDao.getDepositId());
             deposit.setDepositName(depositDao.getDepositName());
@@ -236,6 +321,20 @@ public class DepositSoapEndpoint {
         return deposit;
     }
 
+    public com.brest.bank.domain.BankDeposit xmlToDepositDao(BankDeposit depositXml){
+        com.brest.bank.domain.BankDeposit deposit = new com.brest.bank.domain.BankDeposit();
+        deposit.setDepositId(depositXml.getDepositId());
+        deposit.setDepositName(depositXml.getDepositName());
+        deposit.setDepositMinTerm(depositXml.getDepositMinTerm());
+        deposit.setDepositMinAmount(depositXml.getDepositMinAmount());
+        deposit.setDepositCurrency(depositXml.getDepositCurrency());
+        deposit.setDepositInterestRate(depositXml.getDepositInterestRate());
+        deposit.setDepositAddConditions(depositXml.getDepositAddConditions());
+
+        LOGGER.debug("depositDao - {}",deposit.toString());
+        return deposit;
+    }
+
     /**
      * Convert object of domain BankDepositor to soap BankDepositor
      *
@@ -243,7 +342,7 @@ public class DepositSoapEndpoint {
      * @return XmlElement List<BankDepositor>
      * @throws DatatypeConfigurationException
      */
-    public BankDepositor depositorDaoToSoap(com.brest.bank.domain.BankDepositor depositorDao)
+    public BankDepositor depositorDaoToXml(com.brest.bank.domain.BankDepositor depositorDao)
                                                         throws DatatypeConfigurationException{
         GregorianCalendar dateDeposit = new GregorianCalendar();
         GregorianCalendar dateReturnDeposit = new GregorianCalendar();
@@ -276,23 +375,18 @@ public class DepositSoapEndpoint {
         return depositor;
     }
 
-    /*
-    * public static String marshal(Car car) throws JAXBException {
-        StringWriter stringWriter = new StringWriter();
-
-        JAXBContext jaxbContext = JAXBContext.newInstance(Car.class);
-        Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-        // format the XML output
-        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-        QName qName = new QName("info.source4code.jaxb.model", "car");
-        JAXBElement<Car> root = new JAXBElement<Car>(qName, Car.class, car);
-
-        jaxbMarshaller.marshal(root, stringWriter);
-
-        String result = stringWriter.toString();
-        LOGGER.info(result);
-        return result;
+/*
+    private static BankDeposit jaxbXMLToObject() {
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(BankDeposit.class);
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            StringBuffer xmlStr = new StringBuffer( );
+            Object o = unmarshaller.unmarshal( new StreamSource( new StringReader( xmlStr.toString() ) ) );
+            //BankDeposit deposit = (BankDeposit) un.unmarshal(new File(FILE_NAME));
+            return deposit;
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+        return null;
     }*/
 }

@@ -42,9 +42,121 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+    <xsd:element name="getBankDepositsByCurrencyRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositCurrency">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:pattern value="[A-Z]{3}"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsByCurrencyResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposits" type="tns:bankDeposits"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsByInterestRateRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositInterestRate">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:int">
+                            <xsd:minInclusive value="1"/>
+                            <xsd:maxInclusive value="100"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsByInterestRateResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposits" type="tns:bankDeposits"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToMinTermRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="fromTerm">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:int">
+                            <xsd:minInclusive value="1"/>
+                            <xsd:maxInclusive value="480"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="toTerm">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:int">
+                            <xsd:minInclusive value="1"/>
+                            <xsd:maxInclusive value="480"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToMinTermResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposits" type="tns:bankDeposits"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="addBankDepositRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposit" type="tns:bankDeposit"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="addBankDepositResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposit" type="tns:bankDeposit"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="updateBankDepositRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposit" type="tns:bankDeposit"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="updateBankDepositResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposit" type="tns:bankDeposit"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="deleteBankDepositRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositId" type="xsd:long"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="deleteBankDepositResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="result" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:complexType name="bankDeposit">
         <xsd:sequence>
-            <xsd:element name="depositId" type="xsd:long"/>
+            <xsd:element name="depositId" nillable="true" type="xsd:long"/>
             <xsd:element name='depositName'>
                 <xsd:simpleType>
                     <xsd:restriction base='xsd:string'>

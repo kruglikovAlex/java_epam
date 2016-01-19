@@ -1,5 +1,6 @@
 package com.brest.bank.soap;
 
+import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.service.BankDepositService;
 import com.brest.bank.service.BankDepositorService;
 
@@ -148,22 +149,22 @@ public class DepositSoapEndpointTest {
         replay(depositService);
 
         Source requestPayload = new StringSource(
-                "<getBankDepositByIdRequest xmlns='http://bank.brest.com/soap'>" +
-                    "<depositId>1</depositId>" +
-                "</getBankDepositByIdRequest>");
+                "<ns2:getBankDepositByIdRequest xmlns:ns2='http://bank.brest.com/soap'>" +
+                    "<ns2:depositId>1</ns2:depositId>" +
+                "</ns2:getBankDepositByIdRequest>");
 
         Source responsePayload = new StringSource(
-                "<getBankDepositByIdResponse xmlns=\"http://bank.brest.com/soap\">" +
-                        "<bankDeposit>" +
-                            "<depositId>1</depositId>" +
-                            "<depositName>depositName1</depositName>" +
-                            "<depositMinTerm>12</depositMinTerm>" +
-                            "<depositMinAmount>1000</depositMinAmount>" +
-                            "<depositCurrency>usd</depositCurrency>" +
-                            "<depositInterestRate>4</depositInterestRate>" +
-                            "<depositAddConditions>conditions1</depositAddConditions>" +
-                        "</bankDeposit>" +
-                "</getBankDepositByIdResponse>");
+                "<ns2:getBankDepositByIdResponse xmlns:ns2=\"http://bank.brest.com/soap\">" +
+                        "<ns2:bankDeposit>" +
+                            "<ns2:depositId>1</ns2:depositId>" +
+                            "<ns2:depositName>depositName1</ns2:depositName>" +
+                            "<ns2:depositMinTerm>12</ns2:depositMinTerm>" +
+                            "<ns2:depositMinAmount>1000</ns2:depositMinAmount>" +
+                            "<ns2:depositCurrency>usd</ns2:depositCurrency>" +
+                            "<ns2:depositInterestRate>4</ns2:depositInterestRate>" +
+                            "<ns2:depositAddConditions>conditions1</ns2:depositAddConditions>" +
+                        "</ns2:bankDeposit>" +
+                "</ns2:getBankDepositByIdResponse>");
 
         RequestCreator creator = RequestCreators.withPayload(requestPayload);
 
@@ -234,7 +235,7 @@ public class DepositSoapEndpointTest {
         LOGGER.debug("testInvalidGetBankDepositById() - run");
 
         depositService.getBankDepositById(-1L);
-        expectLastCall().andThrow(new IllegalArgumentException());
+        expectLastCall().andThrow(new IllegalArgumentException("The parameter can not be NULL"));
         replay(depositService);
 
 
@@ -246,8 +247,8 @@ public class DepositSoapEndpointTest {
         Source responsePayload = new StringSource(
                 "<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
                         "<faultcode>SOAP-ENV:Server</faultcode>" +
-                        "<faultstring xml:lang=\"en\">java.lang.IllegalArgumentException</faultstring>" +
-                        "</SOAP-ENV:Fault>");
+                        "<faultstring xml:lang=\"en\">The parameter can not be NULL</faultstring>" +
+                "</SOAP-ENV:Fault>");
 
         RequestCreator creator = RequestCreators.withPayload(requestPayload);
 
@@ -284,6 +285,172 @@ public class DepositSoapEndpointTest {
                             "</bankDeposit>"+
                         "</bankDeposits>" +
                 "</getBankDepositsByCurrencyResponse>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testGetBankDepositsByInterestRate() throws Exception {
+        LOGGER.debug("testGetBankDepositsByInterestRate() - run");
+
+        expect(depositService.getBankDepositsByInterestRate(4)).andReturn(DataFixture.getExistDeposits());
+        replay(depositService);
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositsByInterestRateRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<depositInterestRate>4</depositInterestRate>" +
+                "</getBankDepositsByInterestRateRequest>");
+
+        Source responsePayload = new StringSource(
+                "<getBankDepositsByInterestRateResponse xmlns=\"http://bank.brest.com/soap\">" +
+                        "<bankDeposits>" +
+                            "<bankDeposit>" +
+                                "<depositId>1</depositId>" +
+                                "<depositName>depositName1</depositName>" +
+                                "<depositMinTerm>12</depositMinTerm>" +
+                                "<depositMinAmount>1000</depositMinAmount>" +
+                                "<depositCurrency>usd</depositCurrency>" +
+                                "<depositInterestRate>4</depositInterestRate>" +
+                                "<depositAddConditions>conditions1</depositAddConditions>" +
+                            "</bankDeposit>"+
+                        "</bankDeposits>" +
+                "</getBankDepositsByInterestRateResponse>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testGetBankDepositsFromToMinTerm() throws Exception {
+        LOGGER.debug("testGetBankDepositsFomToMinTerm() - run");
+
+        expect(depositService.getBankDepositsFromToMinTerm(10,12)).andReturn(DataFixture.getExistDeposits());
+        replay(depositService);
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositsFromToMinTermRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<fromTerm>10</fromTerm>" +
+                        "<toTerm>12</toTerm>" +
+                "</getBankDepositsFromToMinTermRequest>");
+
+        Source responsePayload = new StringSource(
+                "<getBankDepositsFromToMinTermResponse xmlns=\"http://bank.brest.com/soap\">" +
+                        "<bankDeposits>" +
+                            "<bankDeposit>" +
+                                "<depositId>1</depositId>" +
+                                "<depositName>depositName1</depositName>" +
+                                "<depositMinTerm>12</depositMinTerm>" +
+                                "<depositMinAmount>1000</depositMinAmount>" +
+                                "<depositCurrency>usd</depositCurrency>" +
+                                "<depositInterestRate>4</depositInterestRate>" +
+                                "<depositAddConditions>conditions1</depositAddConditions>" +
+                            "</bankDeposit>"+
+                        "</bankDeposits>" +
+                "</getBankDepositsFromToMinTermResponse>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testGetBankDepositsInvalidFromToMinTerm() throws Exception {
+        LOGGER.debug("testGetBankDepositsInvalidFomToMinTerm() - run");
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositsFromToMinTermRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<fromTerm>12</fromTerm>" +
+                        "<toTerm>11</toTerm>" +
+                "</getBankDepositsFromToMinTermRequest>");
+
+        Source responsePayload = new StringSource(
+                "<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                        "<faultcode>SOAP-ENV:Server</faultcode>" +
+                        "<faultstring xml:lang=\"en\">The first parameter should be less than the second</faultstring>" +
+                "</SOAP-ENV:Fault>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+    }
+
+    @Test
+    public void testGetBankDepositsNullFromToMinTerm() throws Exception {
+        LOGGER.debug("testGetBankDepositsNullFomToMinTerm() - run");
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositsFromToMinTermRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<fromTerm>-1</fromTerm>" +
+                        "<toTerm>12</toTerm>" +
+                "</getBankDepositsFromToMinTermRequest>");
+
+        Source responsePayload = new StringSource(
+                "<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                        "<faultcode>SOAP-ENV:Server</faultcode>" +
+                        "<faultstring xml:lang=\"en\">java.lang.NullPointerException</faultstring>" +
+                "</SOAP-ENV:Fault>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+    }
+
+    @Test
+    public void testAddBankDeposit() throws Exception {
+        LOGGER.debug("testAddBankDeposit() - run");
+
+        depositService.addBankDeposit(anyObject(BankDeposit.class));
+        expectLastCall();
+
+        expect(depositService.getBankDepositByName("depositName1"))
+                .andReturn(DataFixture.getExistDeposit(1L));
+
+        replay(depositService);
+
+        Source requestPayload = new StringSource(
+                "<addBankDepositRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<bankDeposit>" +
+                            "<depositId></depositId>" +
+                            "<depositName>depositName1</depositName>" +
+                            "<depositMinTerm>12</depositMinTerm>" +
+                            "<depositMinAmount>1000</depositMinAmount>" +
+                            "<depositCurrency>usd</depositCurrency>" +
+                            "<depositInterestRate>4</depositInterestRate>" +
+                            "<depositAddConditions>conditions1</depositAddConditions>" +
+                        "</bankDeposit>" +
+                "</addBankDepositRequest>");
+
+        Source responsePayload = new StringSource(
+                "<addBankDepositResponse xmlns=\"http://bank.brest.com/soap\">" +
+                        "<bankDeposit>" +
+                            "<depositId>1</depositId>" +
+                            "<depositName>depositName1</depositName>" +
+                            "<depositMinTerm>12</depositMinTerm>" +
+                            "<depositMinAmount>1000</depositMinAmount>" +
+                            "<depositCurrency>usd</depositCurrency>" +
+                            "<depositInterestRate>4</depositInterestRate>" +
+                            "<depositAddConditions>conditions1</depositAddConditions>" +
+                        "</bankDeposit>" +
+                "</addBankDepositResponse>");
 
         RequestCreator creator = RequestCreators.withPayload(requestPayload);
 
