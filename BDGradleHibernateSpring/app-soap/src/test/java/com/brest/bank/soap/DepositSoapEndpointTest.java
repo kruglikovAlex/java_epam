@@ -397,14 +397,37 @@ public class DepositSoapEndpointTest {
 
         Source requestPayload = new StringSource(
                 "<getBankDepositsFromToMinTermRequest xmlns='http://bank.brest.com/soap'>" +
-                        "<fromTerm>-1</fromTerm>" +
+                        "<fromTerm>null</fromTerm>" +
                         "<toTerm>12</toTerm>" +
                 "</getBankDepositsFromToMinTermRequest>");
 
         Source responsePayload = new StringSource(
                 "<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
                         "<faultcode>SOAP-ENV:Server</faultcode>" +
-                        "<faultstring xml:lang=\"en\">java.lang.NullPointerException</faultstring>" +
+                        "<faultstring xml:lang=\"en\">The parameter can not be NULL</faultstring>" +
+                "</SOAP-ENV:Fault>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+    }
+
+    @Test
+    public void testGetBankDepositsFromNullToMinTerm() throws Exception {
+        LOGGER.debug("testGetBankDepositsFromNullToMinTerm() - run");
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositsFromToMinTermRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<fromTerm>10</fromTerm>" +
+                        "<toTerm>null</toTerm>" +
+                "</getBankDepositsFromToMinTermRequest>");
+
+        Source responsePayload = new StringSource(
+                "<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                        "<faultcode>SOAP-ENV:Server</faultcode>" +
+                        "<faultstring xml:lang=\"en\">The parameter can not be NULL</faultstring>" +
                 "</SOAP-ENV:Fault>");
 
         RequestCreator creator = RequestCreators.withPayload(requestPayload);
@@ -460,6 +483,204 @@ public class DepositSoapEndpointTest {
 
         verify(depositService);
     }
+
+    @Test
+    public void testRemoveBankDeposit(){
+        LOGGER.debug("testRemoveBankDeposit() - run");
+
+        expect(depositService.getBankDepositById(1L)).andReturn(DataFixture.getExistDeposit(1L));
+
+        depositService.deleteBankDeposit(1L);
+        expectLastCall();
+
+        expect(depositService.getBankDepositById(1L)).andReturn(null);
+
+        replay(depositService);
+
+        Source requestPayload = new StringSource(
+                "<deleteBankDepositRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<depositId>1</depositId>" +
+                "</deleteBankDepositRequest>");
+
+        Source responsePayload = new StringSource(
+                "<ns2:deleteBankDepositResponse xmlns:ns2=\"http://bank.brest.com/soap\">" +
+                        "<ns2:result>Bank Deposit removed</ns2:result>" +
+                "</ns2:deleteBankDepositResponse>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testRemoveEmptyBankDeposit(){
+        LOGGER.debug("testRemoveEmptyBankDeposit() - run");
+
+        expect(depositService.getBankDepositById(1L)).andReturn(null);
+
+        replay(depositService);
+
+        Source requestPayload = new StringSource(
+                "<deleteBankDepositRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<depositId>1</depositId>" +
+                "</deleteBankDepositRequest>");
+
+        Source responsePayload = new StringSource(
+                "<ns2:deleteBankDepositResponse xmlns:ns2=\"http://bank.brest.com/soap\">" +
+                        "<ns2:result>In the database there is no Deposit with such parameters</ns2:result>" +
+                "</ns2:deleteBankDepositResponse>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testInvalidRemovedBankDeposit(){
+        LOGGER.debug("testInvalidRemovedBankDeposit() - run");
+
+        expect(depositService.getBankDepositById(1L)).andReturn(DataFixture.getExistDeposit(1L));
+
+        depositService.deleteBankDeposit(1L);
+        expectLastCall();
+
+        expect(depositService.getBankDepositById(1L)).andReturn(DataFixture.getExistDeposit(1L));
+
+        replay(depositService);
+
+        Source requestPayload = new StringSource(
+                "<deleteBankDepositRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<depositId>1</depositId>" +
+                "</deleteBankDepositRequest>");
+
+        Source responsePayload = new StringSource(
+                "<ns2:deleteBankDepositResponse xmlns:ns2=\"http://bank.brest.com/soap\">" +
+                        "<ns2:result>Bank Deposit don't removed</ns2:result>" +
+                "</ns2:deleteBankDepositResponse>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testRemovedNullIdBankDeposit(){
+        LOGGER.debug("testRemovedNullIdBankDeposit() - run");
+
+        Long depositId = null;
+
+        Source requestPayload = new StringSource(
+                "<deleteBankDepositRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<depositId>" +
+                        depositId +
+                        "</depositId>" +
+                "</deleteBankDepositRequest>");
+
+        Source responsePayload = new StringSource(
+                "<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                        "<faultcode>SOAP-ENV:Server</faultcode>" +
+                        "<faultstring xml:lang=\"en\">The parameter can not be NULL</faultstring>" +
+                "</SOAP-ENV:Fault>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+
+    }
+
+    @Test
+    public void testUpdateBankDeposit() throws Exception {
+        LOGGER.debug("testUpdateBankDeposit() - run");
+
+        BankDeposit updateDeposit = DataFixture.getExistDeposit(1L);
+        updateDeposit.setDepositName("updateName1");
+
+        depositService.updateBankDeposit(anyObject(BankDeposit.class));
+        expectLastCall();
+
+        expect(depositService.getBankDepositById(1L)).andReturn(updateDeposit);
+
+        replay(depositService);
+
+        Source requestPayload = new StringSource(
+                "<updateBankDepositRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<bankDeposit>" +
+                            "<depositId>1</depositId>" +
+                            "<depositName>updateName1</depositName>" +
+                            "<depositMinTerm>12</depositMinTerm>" +
+                            "<depositMinAmount>1000</depositMinAmount>" +
+                            "<depositCurrency>usd</depositCurrency>" +
+                            "<depositInterestRate>4</depositInterestRate>" +
+                            "<depositAddConditions>conditions1</depositAddConditions>" +
+                        "</bankDeposit>" +
+                "</updateBankDepositRequest>");
+
+        Source responsePayload = new StringSource(
+                "<ns2:updateBankDepositResponse xmlns:ns2=\"http://bank.brest.com/soap\">" +
+                        "<ns2:bankDeposit>" +
+                            "<ns2:depositId>1</ns2:depositId>" +
+                            "<ns2:depositName>updateName1</ns2:depositName>" +
+                            "<ns2:depositMinTerm>12</ns2:depositMinTerm>" +
+                            "<ns2:depositMinAmount>1000</ns2:depositMinAmount>" +
+                            "<ns2:depositCurrency>usd</ns2:depositCurrency>" +
+                            "<ns2:depositInterestRate>4</ns2:depositInterestRate>" +
+                            "<ns2:depositAddConditions>conditions1</ns2:depositAddConditions>" +
+                        "</ns2:bankDeposit>" +
+                "</ns2:updateBankDepositResponse>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testUpdateBankDepositNullId() throws Exception {
+        LOGGER.debug("testUpdateBankDepositNullId() - run");
+
+        Source requestPayload = new StringSource(
+                "<updateBankDepositRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<bankDeposit>" +
+                            "<depositId></depositId>" +
+                            "<depositName>updateName1</depositName>" +
+                            "<depositMinTerm>12</depositMinTerm>" +
+                            "<depositMinAmount>1000</depositMinAmount>" +
+                            "<depositCurrency>usd</depositCurrency>" +
+                            "<depositInterestRate>4</depositInterestRate>" +
+                            "<depositAddConditions>conditions1</depositAddConditions>" +
+                        "</bankDeposit>" +
+                "</updateBankDepositRequest>");
+
+        Source responsePayload = new StringSource(
+                "<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                        "<faultcode>SOAP-ENV:Server</faultcode>" +
+                        "<faultstring xml:lang=\"en\">The parameter can not be NULL- depositId</faultstring>" +
+                "</SOAP-ENV:Fault>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+    }
+
 
     @Test
     public void testGetBankDepositorById() throws java.text.ParseException{

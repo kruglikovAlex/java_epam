@@ -240,11 +240,19 @@ public class DepositSoapEndpoint {
         return response;
     }
 
+    /**
+     * Adding Bank Deposit
+     *
+     * @param request XmlElement BankDeposit
+     * @return XmlElement added BankDeposit
+     * @throws IOException
+     */
     @PayloadRoot(localPart = "addBankDepositRequest", namespace = NAMESPACE_URI)
     @ResponsePayload
     public AddBankDepositResponse addBankDeposit(@RequestPayload AddBankDepositRequest request) throws IOException{
-        LOGGER.debug("addBankDepositRequest(deposit={})",request.getBankDeposit().getDepositId());
+        LOGGER.debug("addBankDepositRequest(depositId={})",request.getBankDeposit().getDepositId());
         Assert.notNull(request.getBankDeposit(),ERROR_METHOD_PARAM);
+        Assert.isNull(request.getBankDeposit().getDepositId(),ERROR_NULL_PARAM);
 
         AddBankDepositResponse response = new AddBankDepositResponse();
 
@@ -254,6 +262,49 @@ public class DepositSoapEndpoint {
 
         Assert.notNull(response.getBankDeposit(),ERROR_NULL_RESPONSE);
         LOGGER.debug("addBankDepositResponse(depositId={})",response.getBankDeposit().getDepositId());
+
+        return response;
+    }
+
+    /**
+     * Removing Bank Deposit
+     *
+     * @param request XmlElement Bank Deposit
+     * @return XmlElement result String
+     */
+    @PayloadRoot(localPart = "deleteBankDepositRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public DeleteBankDepositResponse deleteBankDeposit(@RequestPayload DeleteBankDepositRequest request){
+        LOGGER.debug("deleteBankDepositRequest(depositId={})",request.getDepositId());
+        Assert.notNull(request.getDepositId(),ERROR_METHOD_PARAM);
+
+        DeleteBankDepositResponse response = new DeleteBankDepositResponse();
+        try{
+            Assert.notNull(depositService.getBankDepositById(request.getDepositId()),ERROR_DEPOSIT);
+            depositService.deleteBankDeposit(request.getDepositId());
+            Assert.isNull(depositService.getBankDepositById(request.getDepositId()),"Bank Deposit don't removed");
+            response.setResult("Bank Deposit removed");
+        } catch (Exception e){
+            response.setResult(e.getMessage());
+        }
+        return response;
+    }
+
+    @PayloadRoot(localPart = "updateBankDepositRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public UpdateBankDepositResponse updateBankDeposit(@RequestPayload UpdateBankDepositRequest request){
+        LOGGER.debug("updateBankDepositRequest(depositId={})",request.getBankDeposit().getDepositId());
+        Assert.notNull(request,ERROR_METHOD_PARAM+"- Bank Deposit");
+        Assert.notNull(request.getBankDeposit().getDepositId(),ERROR_METHOD_PARAM+"- depositId");
+
+        UpdateBankDepositResponse response = new UpdateBankDepositResponse();
+
+        depositService.updateBankDeposit(xmlToDepositDao(request.getBankDeposit()));
+
+        response.setBankDeposit(depositDaoToXml(depositService.getBankDepositById(request.getBankDeposit().getDepositId())));
+
+        Assert.notNull(response.getBankDeposit(),ERROR_NULL_RESPONSE);
+        LOGGER.debug("updateBankDepositResponse(depositId={})",response.getBankDeposit().getDepositId());
 
         return response;
     }
