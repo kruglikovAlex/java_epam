@@ -241,6 +241,35 @@ public class DepositSoapEndpoint {
     }
 
     /**
+     * Get Bank Deposits from-to Interest Rate values
+     *
+     * @param request XmlElement: startRate and endRate
+     * @return response XmlElement Bank Deposits
+     */
+    @PayloadRoot(localPart = "getBankDepositsFromToInterestRateRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public GetBankDepositsFromToInterestRateResponse getBankDepositsFromToInterestRate(@RequestPayload GetBankDepositsFromToInterestRateRequest request){
+        LOGGER.debug("getBankDepositsFromToInterestRateRequest(from={}, to={})", request.getStartRate(),request.getEndRate());
+        Assert.notNull(request.getStartRate(),ERROR_METHOD_PARAM);
+        Assert.notNull(request.getEndRate(),ERROR_METHOD_PARAM);
+        Assert.isTrue(request.getStartRate()<=request.getEndRate(),ERROR_FROM_TO_PARAM);
+
+        deposits = new BankDeposits();
+        GetBankDepositsFromToInterestRateResponse response = new GetBankDepositsFromToInterestRateResponse();
+        int i = 0;
+        for(com.brest.bank.domain.BankDeposit dd:depositService
+                .getBankDepositsFromToInterestRate(request.getStartRate(),request.getEndRate())){
+            deposits.getBankDeposit().add(i,depositDaoToXml(dd));
+            i++;
+        }
+        response.setBankDeposits(deposits);
+        Assert.notEmpty(response.getBankDeposits().getBankDeposit(),ERROR_EMPTY_RESPONSE);
+        Assert.notNull(response.getBankDeposits(),ERROR_NULL_RESPONSE);
+
+        return response;
+    }
+
+    /**
      * Adding Bank Deposit
      *
      * @param request XmlElement BankDeposit
@@ -290,6 +319,12 @@ public class DepositSoapEndpoint {
         return response;
     }
 
+    /**
+     * Updating Bank Deposit
+     *
+     * @param request XmlElement Bank Deposit
+     * @return response XmlElement Bank Deposit
+     */
     @PayloadRoot(localPart = "updateBankDepositRequest", namespace = NAMESPACE_URI)
     @ResponsePayload
     public UpdateBankDepositResponse updateBankDeposit(@RequestPayload UpdateBankDepositRequest request){

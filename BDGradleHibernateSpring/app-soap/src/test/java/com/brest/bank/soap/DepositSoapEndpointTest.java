@@ -438,6 +438,112 @@ public class DepositSoapEndpointTest {
     }
 
     @Test
+    public void testGetBankDepositsFromToInterestRate() throws Exception {
+        LOGGER.debug("testGetBankDepositsFomToInterestRate() - run");
+
+        expect(depositService.getBankDepositsFromToInterestRate(2,4)).andReturn(DataFixture.getExistDeposits());
+        replay(depositService);
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositsFromToInterestRateRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<startRate>2</startRate>" +
+                        "<endRate>4</endRate>" +
+                "</getBankDepositsFromToInterestRateRequest>");
+
+        Source responsePayload = new StringSource(
+                "<ns2:getBankDepositsFromToInterestRateResponse xmlns:ns2=\"http://bank.brest.com/soap\">" +
+                        "<ns2:bankDeposits>" +
+                            "<ns2:bankDeposit>" +
+                                "<ns2:depositId>1</ns2:depositId>" +
+                                "<ns2:depositName>depositName1</ns2:depositName>" +
+                                "<ns2:depositMinTerm>12</ns2:depositMinTerm>" +
+                                "<ns2:depositMinAmount>1000</ns2:depositMinAmount>" +
+                                "<ns2:depositCurrency>usd</ns2:depositCurrency>" +
+                                "<ns2:depositInterestRate>4</ns2:depositInterestRate>" +
+                                "<ns2:depositAddConditions>conditions1</ns2:depositAddConditions>" +
+                            "</ns2:bankDeposit>" +
+                        "</ns2:bankDeposits>" +
+                "</ns2:getBankDepositsFromToInterestRateResponse>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testGetBankDepositsInvalidFromToInterestRate() throws Exception {
+        LOGGER.debug("testGetBankDepositsInvalidFomToInterestRate() - run");
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositsFromToInterestRateRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<startRate>4</startRate>" +
+                        "<endRate>2</endRate>" +
+                "</getBankDepositsFromToInterestRateRequest>");
+
+        Source responsePayload = new StringSource(
+                "<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                        "<faultcode>SOAP-ENV:Server</faultcode>" +
+                        "<faultstring xml:lang=\"en\">The first parameter should be less than the second</faultstring>" +
+                "</SOAP-ENV:Fault>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+    }
+
+    @Test
+    public void testGetBankDepositsNullFromToInterestRate() throws Exception {
+        LOGGER.debug("testGetBankDepositsNullFomToInterestRate() - run");
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositsFromToInterestRateRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<startRate>null</startRate>" +
+                        "<endRate>4</endRate>" +
+                "</getBankDepositsFromToInterestRateRequest>");
+
+        Source responsePayload = new StringSource(
+                "<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                        "<faultcode>SOAP-ENV:Server</faultcode>" +
+                        "<faultstring xml:lang=\"en\">The parameter can not be NULL</faultstring>" +
+                "</SOAP-ENV:Fault>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+    }
+
+    @Test
+    public void testGetBankDepositsFromNullToInterestRate() throws Exception {
+        LOGGER.debug("testGetBankDepositsFromNullToInterestRate() - run");
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositsFromToInterestRateRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<startRate>2</startRate>" +
+                        "<endRate>null</endRate>" +
+                "</getBankDepositsFromToInterestRateRequest>");
+
+        Source responsePayload = new StringSource(
+                "<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                        "<faultcode>SOAP-ENV:Server</faultcode>" +
+                        "<faultstring xml:lang=\"en\">The parameter can not be NULL</faultstring>" +
+                "</SOAP-ENV:Fault>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+    }
+
+    @Test
     public void testAddBankDeposit() throws Exception {
         LOGGER.debug("testAddBankDeposit() - run");
 
