@@ -112,6 +112,50 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+    <xsd:element name="getBankDepositsFromToInterestRateRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="startRate" nillable="true">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:int">
+                            <xsd:minInclusive value="1"/>
+                            <xsd:maxInclusive value="100"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="endRate" nillable="true">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:int">
+                            <xsd:minInclusive value="1"/>
+                            <xsd:maxInclusive value="100"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToInterestRateResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposits" type="tns:bankDeposits"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToDateDepositRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="startDate" nillable="true" type="xsd:date"/>
+                <xsd:element name="endDate" nillable="true" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToDateDepositResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposits" type="tns:bankDeposits"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="addBankDepositRequest">
         <xsd:complexType>
             <xsd:sequence>
