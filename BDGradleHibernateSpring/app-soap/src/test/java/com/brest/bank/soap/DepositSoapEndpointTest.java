@@ -27,12 +27,14 @@ import org.springframework.ws.test.server.ResponseMatchers;
 import org.springframework.xml.transform.StringSource;
 
 import javax.xml.transform.Source;
+import java.text.SimpleDateFormat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/spring-soap-Mock-test.xml"})
 public class DepositSoapEndpointTest {
 
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
     BankDepositService depositService;
@@ -529,6 +531,113 @@ public class DepositSoapEndpointTest {
                         "<startRate>2</startRate>" +
                         "<endRate>null</endRate>" +
                 "</getBankDepositsFromToInterestRateRequest>");
+
+        Source responsePayload = new StringSource(
+                "<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                        "<faultcode>SOAP-ENV:Server</faultcode>" +
+                        "<faultstring xml:lang=\"en\">The parameter can not be NULL</faultstring>" +
+                "</SOAP-ENV:Fault>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+    }
+
+    @Test
+    public void testGetBankDepositsFromToDateDeposit() throws Exception {
+        LOGGER.debug("testGetBankDepositsFomToDateDeposit() - run");
+
+        expect(depositService.getBankDepositsFromToDateDeposit(dateFormat.parse("2015-01-01"),
+                dateFormat.parse("2015-02-02"))).andReturn(DataFixture.getExistDeposits());
+        replay(depositService);
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositsFromToDateDepositRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<startDate>2015-01-01</startDate>" +
+                        "<endDate>2015-02-02</endDate>" +
+                "</getBankDepositsFromToDateDepositRequest>");
+
+        Source responsePayload = new StringSource(
+                "<ns2:getBankDepositsFromToDateDepositResponse xmlns:ns2=\"http://bank.brest.com/soap\">" +
+                        "<ns2:bankDeposits>" +
+                            "<ns2:bankDeposit>" +
+                                "<ns2:depositId>1</ns2:depositId>" +
+                                "<ns2:depositName>depositName1</ns2:depositName>" +
+                                "<ns2:depositMinTerm>12</ns2:depositMinTerm>" +
+                                "<ns2:depositMinAmount>1000</ns2:depositMinAmount>" +
+                                "<ns2:depositCurrency>usd</ns2:depositCurrency>" +
+                                "<ns2:depositInterestRate>4</ns2:depositInterestRate>" +
+                                "<ns2:depositAddConditions>conditions1</ns2:depositAddConditions>" +
+                            "</ns2:bankDeposit>" +
+                        "</ns2:bankDeposits>" +
+                "</ns2:getBankDepositsFromToDateDepositResponse>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testGetBankDepositsInvalidFromToDateDeposit() throws Exception {
+        LOGGER.debug("testGetBankDepositsInvalidFomToDateDeposit() - run");
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositsFromToDateDepositRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<startDate>2015-02-02</startDate>" +
+                        "<endDate>2015-01-01</endDate>" +
+                "</getBankDepositsFromToDateDepositRequest>");
+
+        Source responsePayload = new StringSource(
+                "<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                        "<faultcode>SOAP-ENV:Server</faultcode>" +
+                        "<faultstring xml:lang=\"en\">The first parameter should be less than the second</faultstring>" +
+                "</SOAP-ENV:Fault>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+    }
+
+    @Test
+    public void testGetBankDepositsNullFromToDateDeposit() throws Exception {
+        LOGGER.debug("testGetBankDepositsNullFomToDateDeposit() - run");
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositsFromToDateDepositRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<startDate>null</startDate>" +
+                        "<endDate>2015-01-01</endDate>" +
+                "</getBankDepositsFromToDateDepositRequest>");
+
+        Source responsePayload = new StringSource(
+                "<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                        "<faultcode>SOAP-ENV:Server</faultcode>" +
+                        "<faultstring xml:lang=\"en\">The parameter can not be NULL</faultstring>" +
+                "</SOAP-ENV:Fault>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+    }
+
+    @Test
+    public void testGetBankDepositsFromNullToDateDeposit() throws Exception {
+        LOGGER.debug("testGetBankDepositsNullFomToDateDeposit() - run");
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositsFromToDateDepositRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<startDate>2015-01-01</startDate>" +
+                        "<endDate>null</endDate>" +
+                "</getBankDepositsFromToDateDepositRequest>");
 
         Source responsePayload = new StringSource(
                 "<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +

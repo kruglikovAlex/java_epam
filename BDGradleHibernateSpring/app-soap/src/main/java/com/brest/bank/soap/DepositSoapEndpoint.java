@@ -34,7 +34,9 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.stream.StreamSource;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 
@@ -50,6 +52,8 @@ public class DepositSoapEndpoint {
     public static final String ERROR_EMPTY_RESPONSE = "Response is EMPTY";
 
     private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     private static final String NAMESPACE_URI = "http://bank.brest.com/soap";
 
@@ -261,6 +265,32 @@ public class DepositSoapEndpoint {
                 .getBankDepositsFromToInterestRate(request.getStartRate(),request.getEndRate())){
             deposits.getBankDeposit().add(i,depositDaoToXml(dd));
             i++;
+        }
+        response.setBankDeposits(deposits);
+        Assert.notEmpty(response.getBankDeposits().getBankDeposit(),ERROR_EMPTY_RESPONSE);
+        Assert.notNull(response.getBankDeposits(),ERROR_NULL_RESPONSE);
+
+        return response;
+    }
+
+    @PayloadRoot(localPart = "getBankDepositsFromToDateDepositRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public GetBankDepositsFromToDateDepositResponse getBankDepositsFromToDateDeposit(@RequestPayload GetBankDepositsFromToDateDepositRequest request){
+        LOGGER.debug("getBankDepositsFromToDateDepositRequest(from={}, to={})",request.getStartDate(),request.getEndDate());
+        Assert.notNull(request.getStartDate(),ERROR_METHOD_PARAM);
+        Assert.notNull(request.getEndDate(),ERROR_METHOD_PARAM);
+
+        Date dateStart = new Date(), dateEnd = new Date();
+        dateStart.setTime(request.getStartDate().toGregorianCalendar().getTimeInMillis());
+        dateEnd.setTime(request.getEndDate().toGregorianCalendar().getTimeInMillis());
+        LOGGER.debug("dateStart={}, dateEnd={}",dateStart,dateEnd);
+        Assert.isTrue(dateStart.before(dateEnd)||dateStart.equals(dateEnd),ERROR_FROM_TO_PARAM);
+
+        deposits = new BankDeposits();
+        GetBankDepositsFromToDateDepositResponse response = new GetBankDepositsFromToDateDepositResponse();
+        int i = 0;
+        for(com.brest.bank.domain.BankDeposit dd:depositService.getBankDepositsFromToDateDeposit(dateStart,dateEnd)){
+            deposits.getBankDeposit().add(i,depositDaoToXml(dd));
         }
         response.setBankDeposits(deposits);
         Assert.notEmpty(response.getBankDeposits().getBankDeposit(),ERROR_EMPTY_RESPONSE);
