@@ -90,10 +90,10 @@ public class DataFixture {
             list.put("depositCurrency", deposit.getDepositCurrency());
             list.put("depositInterestRate", deposit.getDepositInterestRate());
             list.put("depositAddConditions", deposit.getDepositAddConditions());
-            list.put("sumAmount", depositor.getDepositorAmountDeposit());
-            list.put("sumPlusAmount", depositor.getDepositorAmountPlusDeposit());
-            list.put("sumMinusAmount", depositor.getDepositorAmountMinusDeposit());
-            list.put("numDepositors", 1);
+            list.put("depositorAmountSum", depositor.getDepositorAmountDeposit());
+            list.put("depositorAmountPlusSum", depositor.getDepositorAmountPlusDeposit());
+            list.put("depositorAmountMinusSum", depositor.getDepositorAmountMinusDeposit());
+            list.put("depositorCount", 1);
         return list;
     }
 

@@ -35,10 +35,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
+import java.util.*;
 
 @Endpoint
 @ContextConfiguration(locations = {"classpath:/spring-soap.xml"})
@@ -64,6 +61,7 @@ public class DepositSoapEndpoint {
     BankDepositorService depositorService;
     ObjectFactory objectFactory = new ObjectFactory();
     private BankDeposit deposit;
+    private BankDepositReport depositReport;
     private BankDeposits deposits;
     private BankDepositor depositor;
     private BankDepositors depositors;
@@ -273,6 +271,12 @@ public class DepositSoapEndpoint {
         return response;
     }
 
+    /**
+     * Get Bank Deposits from-to date Bank Deposits
+     *
+     * @param request XmlElement: startDate and endDate
+     * @return response XmlElement Bank Deposits
+     */
     @PayloadRoot(localPart = "getBankDepositsFromToDateDepositRequest", namespace = NAMESPACE_URI)
     @ResponsePayload
     public GetBankDepositsFromToDateDepositResponse getBankDepositsFromToDateDeposit(@RequestPayload GetBankDepositsFromToDateDepositRequest request){
@@ -295,6 +299,59 @@ public class DepositSoapEndpoint {
         response.setBankDeposits(deposits);
         Assert.notEmpty(response.getBankDeposits().getBankDeposit(),ERROR_EMPTY_RESPONSE);
         Assert.notNull(response.getBankDeposits(),ERROR_NULL_RESPONSE);
+
+        return response;
+    }
+
+    /**
+     * Get Bank Deposits from-to date return Bank Deposits
+     *
+     * @param request XmlElement: startDate and endDate
+     * @return response XmlElement Bank Deposits
+     */
+    @PayloadRoot(localPart = "getBankDepositsFromToDateReturnDepositRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public GetBankDepositsFromToDateReturnDepositResponse getBankDepositsFromToDateReturnDeposit(@RequestPayload GetBankDepositsFromToDateReturnDepositRequest request){
+        LOGGER.debug("getBankDepositsFromToDateDepositRequest(from={}, to={})",request.getStartDate(),request.getEndDate());
+        Assert.notNull(request.getStartDate(),ERROR_METHOD_PARAM);
+        Assert.notNull(request.getEndDate(),ERROR_METHOD_PARAM);
+
+        Date dateStart = new Date(), dateEnd = new Date();
+        dateStart.setTime(request.getStartDate().toGregorianCalendar().getTimeInMillis());
+        dateEnd.setTime(request.getEndDate().toGregorianCalendar().getTimeInMillis());
+        LOGGER.debug("dateStart={}, dateEnd={}",dateStart,dateEnd);
+        Assert.isTrue(dateStart.before(dateEnd)||dateStart.equals(dateEnd),ERROR_FROM_TO_PARAM);
+
+        deposits = new BankDeposits();
+        GetBankDepositsFromToDateReturnDepositResponse response = new GetBankDepositsFromToDateReturnDepositResponse();
+        int i = 0;
+        for(com.brest.bank.domain.BankDeposit dd:depositService.getBankDepositsFromToDateReturnDeposit(dateStart,dateEnd)){
+            deposits.getBankDeposit().add(i,depositDaoToXml(dd));
+        }
+        response.setBankDeposits(deposits);
+        Assert.notEmpty(response.getBankDeposits().getBankDeposit(),ERROR_EMPTY_RESPONSE);
+        Assert.notNull(response.getBankDeposits(),ERROR_NULL_RESPONSE);
+
+        return response;
+    }
+
+    /**
+     * Get Bank Deposit with report about all bank depositors by depositName
+     *
+     * @param request XmlElement depositName
+     * @return XmlElement BankDepositReport
+     */
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getBankDepositByNameWithDepositorsRequest")
+    @ResponsePayload
+    public GetBankDepositByNameWithDepositorsResponse getBankDepositByNameWithDepositors(@RequestPayload GetBankDepositByNameWithDepositorsRequest request){
+        LOGGER.debug("getBankDepositByNameWithDepositorsRequest(depositName={})", request.getDepositName());
+        Assert.notNull(request.getDepositName(),ERROR_METHOD_PARAM);
+
+        GetBankDepositByNameWithDepositorsResponse response = new GetBankDepositByNameWithDepositorsResponse();
+        response.setBankDepositReport(depositReportDaoToXml(depositService.getBankDepositByNameWithDepositors(request.getDepositName())));
+
+        LOGGER.debug("getBankDepositByNameWithDepositorsResponse - depositName={}",response.getBankDepositReport().getDepositName());
+        Assert.notNull(response.getBankDepositReport(),ERROR_NULL_RESPONSE);
 
         return response;
     }
@@ -435,6 +492,30 @@ public class DepositSoapEndpoint {
             deposit.setDepositAddConditions(depositDao.getDepositAddConditions());
 
         return deposit;
+    }
+
+    /**
+     * Convert object of domain BankDeposit to soap BankDeposit
+     *
+     * @param depositReportDao - Map  - a bank deposit with a report on all relevant
+     * bank depositors
+     * @return XmlElement BankDepositReport
+     */
+    public BankDepositReport depositReportDaoToXml(Map depositReportDao){
+        depositReport = new BankDepositReport();
+            depositReport.setDepositId((Long)depositReportDao.get("depositId"));
+            depositReport.setDepositName(depositReportDao.get("depositName").toString());
+            depositReport.setDepositMinTerm((Integer)depositReportDao.get("depositMinTerm"));
+            depositReport.setDepositMinAmount((Integer)depositReportDao.get("depositMinAmount"));
+            depositReport.setDepositCurrency(depositReportDao.get("depositCurrency").toString());
+            depositReport.setDepositInterestRate((Integer)depositReportDao.get("depositInterestRate"));
+            depositReport.setDepositAddConditions(depositReportDao.get("depositAddConditions").toString());
+            depositReport.setDepositorCount((Integer)depositReportDao.get("depositorCount"));
+            depositReport.setDepositorAmountSum((Integer)depositReportDao.get("depositorAmountSum"));
+            depositReport.setDepositorAmountPlusSum((Integer)depositReportDao.get("depositorAmountPlusSum"));
+            depositReport.setDepositorAmountMinusSum((Integer)depositReportDao.get("depositorAmountMinusSum"));
+
+        return depositReport;
     }
 
     public com.brest.bank.domain.BankDeposit xmlToDepositDao(BankDeposit depositXml){
