@@ -6,11 +6,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.hibernate.Criteria;
+import org.hibernate.criterion.*;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Projection;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import javax.annotation.PostConstruct;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,23 +28,27 @@ import java.util.Map;
 @ContextConfiguration(locations = {"classpath:/spring-dao.xml"})
 public class BankDepositDaoImpl implements BankDepositDao {
 
-    private static final Logger LOGGER = LogManager.getLogger();
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
     public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
     public static final String ERROR_NULL_PARAM = "The parameter must be NULL";
     public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
-
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     @Autowired
     private SessionFactory sessionFactory;
 
+    private HibernateTemplate hibernateTemplate;
     private BankDeposit deposit;
     private List<BankDeposit> deposits;
+
+    @PostConstruct
+    public void init(){
+        hibernateTemplate = new HibernateTemplate(sessionFactory);
+    }
 
     /**
      * Set hibernate session factory
      *
-     * @param sessionFactory
+     * @param sessionFactory - Hibernate sessionFactory
      */
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -57,18 +60,20 @@ public class BankDepositDaoImpl implements BankDepositDao {
      */
     @Override
     @Transactional
-    public List<BankDeposit> getBankDepositsCriteria() {
+    public List<BankDeposit> getBankDepositsCriteria(){
         LOGGER.debug("getBankDepositsCriteria()");
         deposits = new ArrayList<BankDeposit>();
         //--- open session
-        sessionFactory.getCurrentSession().beginTransaction();
-        //--- query
-        for(Object d: sessionFactory.getCurrentSession()
-                .createCriteria(BankDeposit.class).list()){
+        hibernateTemplate.getSessionFactory().getCurrentSession().beginTransaction();
+        //--- query;
+        for(Object d: hibernateTemplate
+                .findByCriteria(DetachedCriteria
+                .forClass(BankDeposit.class)
+                .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY))){
             deposits.add((BankDeposit)d);
         }
         //--- close session
-        sessionFactory.getCurrentSession().getTransaction().commit();
+        hibernateTemplate.getSessionFactory().getCurrentSession().getTransaction().commit();
 
         LOGGER.debug("deposits:{}", deposits);
         return deposits;
@@ -85,13 +90,11 @@ public class BankDepositDaoImpl implements BankDepositDao {
         LOGGER.debug("getBankDepositByIdCriteria({})", id);
         Assert.notNull(id,ERROR_METHOD_PARAM);
         //--- open session
-        sessionFactory.getCurrentSession().beginTransaction();
+        hibernateTemplate.getSessionFactory().getCurrentSession().beginTransaction();
         //--- query
-        deposit = (BankDeposit)sessionFactory.getCurrentSession()
-                .createCriteria(BankDeposit.class)
-                .add(Restrictions.eq("depositId", id)).uniqueResult();
+        deposit = hibernateTemplate.get(BankDeposit.class,id);
         //--- close session
-        sessionFactory.getCurrentSession().getTransaction().commit();
+        hibernateTemplate.getSessionFactory().getCurrentSession().getTransaction().commit();
 
         LOGGER.debug("deposit:{}", deposit);
         return deposit;
@@ -108,13 +111,14 @@ public class BankDepositDaoImpl implements BankDepositDao {
         LOGGER.debug("getBankDepositByNameCriteria({})",name);
         Assert.notNull(name,ERROR_METHOD_PARAM);
         //--- open session
-        sessionFactory.getCurrentSession().beginTransaction();
+        hibernateTemplate.getSessionFactory().getCurrentSession().beginTransaction();
         //--- query
-        deposit = (BankDeposit)sessionFactory.getCurrentSession()
-                .createCriteria(BankDeposit.class)
-                .add(Restrictions.eq("depositName", name)).uniqueResult();
+        deposit = (BankDeposit) hibernateTemplate
+                .findByCriteria(DetachedCriteria.
+                        forClass(BankDeposit.class)
+                        .add(Restrictions.eq("depositName", name))).get(0);
         //--- close session
-        sessionFactory.getCurrentSession().getTransaction().commit();
+        hibernateTemplate.getSessionFactory().getCurrentSession().getTransaction().commit();
 
         LOGGER.debug("deposit:{}", deposit);
         return deposit;
