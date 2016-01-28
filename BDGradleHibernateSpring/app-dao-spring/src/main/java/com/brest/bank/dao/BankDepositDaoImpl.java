@@ -116,7 +116,8 @@ public class BankDepositDaoImpl implements BankDepositDao {
         deposit = (BankDeposit) hibernateTemplate
                 .findByCriteria(DetachedCriteria.
                         forClass(BankDeposit.class)
-                        .add(Restrictions.eq("depositName", name))).get(0);
+                        .add(Restrictions.eq("depositName", name)))
+                .get(0);
         //--- close session
         hibernateTemplate.getSessionFactory().getCurrentSession().getTransaction().commit();
 
