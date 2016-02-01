@@ -1,7 +1,7 @@
 package com.brest.bank.dao;
 
 import com.brest.bank.domain.BankDepositor;
-import com.brest.bank.util.HibernateUtil;
+import com.brest.bank.dao.HibernateUtil;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,21 +30,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = {"classpath:/spring-dao-test.xml"})
 public class BankDepositorDaoImplTest {
 
-    @Autowired
-    private BankDepositorDao depositorDao;
-
     private static final Logger LOGGER = LogManager.getLogger();
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
     private static final String ERROR_EMPTY_BD = "Data Base is empty";
     private static final String ERROR_SIZE = "Size can not be 0";
     private static final String ERROR_NULL = "The parameter can not be NULL";
-
-    private BankDepositor depositor;
-    private List<BankDepositor> depositors;
-
     Object result;
     Integer sizeBefore = 0, sizeAfter = 0;
+    @Autowired
+    private BankDepositorDao depositorDao;
+    private BankDepositor depositor;
+    private List<BankDepositor> depositors;
 
     @Before
     public void setUp() throws Exception {
