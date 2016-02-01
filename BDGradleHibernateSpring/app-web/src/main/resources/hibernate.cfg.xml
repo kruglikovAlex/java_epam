@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <!-- coonect DB-->
+        <property name="connection.driver_class">org.hsqldb.jdbcDriver</property>
+        <property name="connection.url">jdbc:hsqldb:mem:bankDepositDb</property>
+        <property name="connection.username">sa</property>
+        <property name="connection.password"></property>
+
+        <!-- pool connection JDBC -->
+        <property name="connection.pool_size">1</property>
+
+        <!-- SQL dialect-->
+        <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
+        <property name="hibernate.transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
+        <property name="hibernate.current_session_context_class">thread</property>
+        <!-- automatic drive context session library Hibernate-->
+        <property name="current_session_context_class">thread</property>
+
+        <!-- no cache second level-->
+        <property name="cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</property>
+
+        <!-- show query SQL generating Hibernate to consol-->
+        <property name="show_sql">true</property>
+
+        <!--Delete and recreate BD before start-->
+        <property name="hbm2ddl.auto">update</property>
+
+        <!-- mapping files-->
+        <mapping resource="BankDeposit.hbm.xml"/>
+        <mapping resource="BankDepositor.hbm.xml"/>
+
+    </session-factory>
+
+</hibernate-configuration>
