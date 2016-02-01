@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface BankDepositDao {
 
-    void setSessionFactory(SessionFactory sessionFactory);
+    //void setSessionFactory(SessionFactory sessionFactory);
 
    /**
     * Get all Bank Deposits
