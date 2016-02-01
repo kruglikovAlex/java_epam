@@ -3,7 +3,7 @@ package com.brest.bank.dao;
 import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
 
-import com.brest.bank.util.HibernateUtil;
+import com.brest.bank.dao.HibernateUtil;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,27 +31,22 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = {"classpath:/spring-dao-test.xml"})
 public class BankDepositDaoImplTest {
 
-    @Autowired
-    private BankDepositDao depositDao;
-
-    @Autowired
-    private BankDepositorDao depositorDao;
-
     private static final Logger LOGGER = LogManager.getLogger();
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
     private static final String ERROR_EMPTY_BD = "Data Base is empty";
     private static final String ERROR_SIZE = "Size can not be 0";
     private static final String ERROR_NULL = "The parameter can not be NULL";
     private static final String ERROR_EMPTY_RESULT = "The result can not be empty";
-
+    public Object result;
+    public Integer sizeBefore = 0, sizeAfter = 0;
+    @Autowired
+    private BankDepositDao depositDao;
+    @Autowired
+    private BankDepositorDao depositorDao;
     private BankDeposit deposit;
     private BankDepositor depositor;
     private List<BankDeposit> deposits;
     private List<BankDepositor> depositors;
-
-    public Object result;
-    public Integer sizeBefore = 0, sizeAfter = 0;
 
     @Before
     public void setUp() throws Exception {
@@ -213,6 +208,16 @@ public class BankDepositDaoImplTest {
         assertNotNull(ERROR_NULL,list);
 
         assertEquals(deposits.size(), list.size());
+        for (int i=0; i<list.size(); i++) {
+            LOGGER.debug("i-{}, deposits-{}, list-{}",i,deposits.get(i).getDepositId(), list.get(i).get("depositId"));
+            LOGGER.debug("i-{}, deposits-{}, list-{}",i,deposits.get(i).getDepositName(), list.get(i).get("depositName"));
+            LOGGER.debug("i-{}, deposits-{}, list-{}",i,deposits.get(i).getDepositMinTerm(), list.get(i).get("depositMinTerm"));
+            LOGGER.debug("i-{}, deposits-{}, list-{}",i,deposits.get(i).getDepositMinAmount(), list.get(i).get("depositMinAmount"));
+            LOGGER.debug("i-{}, deposits-{}, list-{}",i,deposits.get(i).getDepositCurrency(), list.get(i).get("depositCurrency"));
+            LOGGER.debug("i-{}, deposits-{}, list-{}",i,deposits.get(i).getDepositInterestRate(), list.get(i).get("depositInterestRate"));
+            LOGGER.debug("i-{}, deposits-{}, list-{}",i,deposits.get(i).getDepositAddConditions(), list.get(i).get("depositAddConditions"));
+            LOGGER.debug("i-{}, deposits-{}, list-{}",i,deposits.get(i).getDepositors(), list.get(i).get("depositors"));
+        }
 
         for (int i=0; i<list.size(); i++) {
             assertEquals(deposits.get(i).getDepositId(), list.get(i).get("depositId"));
