@@ -1,8 +1,8 @@
 package com.brest.bank.service;
 
 import com.brest.bank.dao.BankDepositDao;
-
 import com.brest.bank.dao.BankDepositorDao;
+
 import com.brest.bank.domain.BankDeposit;
 
 import com.brest.bank.domain.BankDepositor;
@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.util.Assert;
@@ -20,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
+//@ContextConfiguration(locations = {"classpath:/spring-services.xml"})
 public class BankDepositServiceImpl implements BankDepositService{
 
     public static final String ERROR_DB_EMPTY = "There is no RECORDS in the DataBase";
@@ -37,12 +39,12 @@ public class BankDepositServiceImpl implements BankDepositService{
     @Autowired
     private BankDepositorDao depositorDao;
 
-    @Override
+    @Autowired
     public void setDepositDao(BankDepositDao depositDao){
         this.depositDao = depositDao;
     }
 
-    @Override
+    @Autowired
     public void setDepositorDao(BankDepositorDao depositorDao){
         this.depositorDao = depositorDao;
     }
@@ -255,12 +257,7 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.notNull(name,ERROR_METHOD_PARAM);
         Map deposit = null;
         try{
-            BankDeposit existDeposit = depositDao.getBankDepositByNameCriteria(name);
-            if(existDeposit.getDepositors()!=null){
-                deposit = depositDao.getBankDepositByNameWithDepositors(name);
-            }else{
-                deposit = depositWithoutDepositors(existDeposit);
-            }
+            deposit = depositDao.getBankDepositByNameWithDepositors(name);
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositByNameWithDepositors({}), Exception:{}", name, e.toString());
         }
@@ -287,12 +284,7 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
         Map deposit = null;
         try{
-            BankDeposit existDeposit = depositDao.getBankDepositByNameCriteria(name);
-            if(existDeposit.getDepositors()!=null){
-                deposit = depositDao.getBankDepositByNameFromToDateDepositWithDepositors(name,startDate,endDate);
-            }else{
-                deposit = depositWithoutDepositors(existDeposit);
-            }
+            deposit = depositDao.getBankDepositByNameFromToDateDepositWithDepositors(name,startDate,endDate);
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositByNameFromToDateDepositWithDepositors({},{},{}), Exception:{}", name, e.toString());
         }
@@ -319,12 +311,7 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
         Map deposit = null;
         try{
-            BankDeposit existDeposit = depositDao.getBankDepositByNameCriteria(name);
-            if(existDeposit.getDepositors()!=null){
-                deposit = depositDao.getBankDepositByNameFromToDateReturnDepositWithDepositors(name, startDate, endDate);
-            }else{
-                deposit = depositWithoutDepositors(existDeposit);
-            }
+            deposit = depositDao.getBankDepositByNameFromToDateReturnDepositWithDepositors(name, startDate, endDate);
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositByNameFromToDateReturnDepositWithDepositors({},{},{}), Exception:{}", name,
                     dateFormat.format(startDate),dateFormat.format(endDate),e.toString());
@@ -346,12 +333,7 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.notNull(id,ERROR_METHOD_PARAM);
         Map deposit = null;
         try{
-            BankDeposit existDeposit = depositDao.getBankDepositByIdCriteria(id);
-            if(existDeposit.getDepositors()!=null){
-                deposit = depositDao.getBankDepositByIdWithDepositors(id);
-            }else{
-                deposit = depositWithoutDepositors(existDeposit);
-            }
+            deposit = depositDao.getBankDepositByIdWithDepositors(id);
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositByIdWithDepositors({}), Exception:{}",id, e.toString());
         }
@@ -378,12 +360,7 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
         Map deposit = null;
         try{
-            BankDeposit existDeposit = depositDao.getBankDepositByIdCriteria(id);
-            if(existDeposit.getDepositors()!=null){
-                deposit = depositDao.getBankDepositByIdFromToDateDepositWithDepositors(id,startDate,endDate);
-            }else{
-                deposit = depositWithoutDepositors(existDeposit);
-            }
+            deposit = depositDao.getBankDepositByIdFromToDateDepositWithDepositors(id,startDate,endDate);
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositByIdFromToDateDepositWithDepositors({},{},{}), Exception:{}", id,
                     dateFormat.format(startDate),dateFormat.format(endDate), e.toString());
@@ -411,12 +388,7 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
         Map deposit = null;
         try{
-            BankDeposit existDeposit = depositDao.getBankDepositByIdCriteria(id);
-            if(existDeposit.getDepositors()!=null){
-                deposit = depositDao.getBankDepositByIdFromToDateReturnDepositWithDepositors(id, startDate, endDate);
-            }else{
-                deposit = depositWithoutDepositors(existDeposit);
-            }
+            deposit = depositDao.getBankDepositByIdFromToDateReturnDepositWithDepositors(id, startDate, endDate);
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositByIdFromToDateReturnDepositWithDepositors({},{},{}), Exception:{}", id,
                     dateFormat.format(startDate),dateFormat.format(endDate), e.toString());
@@ -434,12 +406,7 @@ public class BankDepositServiceImpl implements BankDepositService{
         LOGGER.debug("getBankDepositsWithDepositors");
         List<Map> deposits = null;
         try{
-            List<BankDepositor> existDepositors = depositorDao.getBankDepositorsCriteria();
-            if(existDepositors!=null){
-                deposits = depositDao.getBankDepositsWithDepositors();
-            }else{
-                deposits = depositsWithoutDepositors(depositDao.getBankDepositsCriteria());
-            }
+            deposits = depositDao.getBankDepositsWithDepositors();
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositsWithDepositors(), Exception:{}", e.toString());
         }
@@ -464,12 +431,7 @@ public class BankDepositServiceImpl implements BankDepositService{
         Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
         List<Map> deposits = null;
         try{
-            List<BankDepositor> existDepositors = depositorDao.getBankDepositorsFromToDateDeposit(startDate,endDate);
-            if(existDepositors!=null){
-                deposits = depositDao.getBankDepositsFromToDateDepositWithDepositors(startDate, endDate);
-            }else{
-                deposits = depositsWithoutDepositors(depositDao.getBankDepositsCriteria());
-            }
+            deposits = depositDao.getBankDepositsFromToDateDepositWithDepositors(startDate, endDate);
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositsFromToDateDepositWithDepositors({},{}), Exception:{}",
                     dateFormat.format(startDate),dateFormat.format(endDate), e.toString());

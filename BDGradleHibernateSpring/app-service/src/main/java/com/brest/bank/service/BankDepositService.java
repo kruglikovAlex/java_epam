@@ -11,18 +11,6 @@ import java.util.Map;
 public interface BankDepositService {
 
     /**
-     *
-     * @param depositDao
-     */
-    void setDepositDao(BankDepositDao depositDao);
-
-    /**
-     *
-     * @param depositorDao
-     */
-    void setDepositorDao(BankDepositorDao depositorDao);
-
-    /**
      * Get all Bank Deposits
      *
      * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
