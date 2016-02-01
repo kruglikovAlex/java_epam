@@ -31,7 +31,7 @@ public class BankDepositorServiceImplMockTest {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
-    BankDepositorService bankDepositorService;
+    BankDepositorService depositorService;
 
     @Autowired
     BankDepositorDao depositorDao;
@@ -54,7 +54,7 @@ public class BankDepositorServiceImplMockTest {
         expect(depositorDao.getBankDepositorsCriteria()).andReturn(depositors);
         replay(depositorDao);
 
-        List<BankDepositor> result = bankDepositorService.getBankDepositors();
+        List<BankDepositor> result = depositorService.getBankDepositors();
         LOGGER.debug("result: {}",result);
 
         verify(depositorDao);
@@ -72,7 +72,7 @@ public class BankDepositorServiceImplMockTest {
                 dateFormat.parse("2015-09-09"))).andReturn(depositors);
         replay(depositorDao);
 
-        List<BankDepositor> result = bankDepositorService.getBankDepositorsFromToDateDeposit(dateFormat.parse("2015-01-01"),
+        List<BankDepositor> result = depositorService.getBankDepositorsFromToDateDeposit(dateFormat.parse("2015-01-01"),
                 dateFormat.parse("2015-09-09"));
         LOGGER.debug("result: {}",result);
 
@@ -90,7 +90,7 @@ public class BankDepositorServiceImplMockTest {
         expect(depositorDao.getBankDepositorByIdCriteria(1L)).andReturn(depositor);
         replay(depositorDao);
 
-        BankDepositor result = bankDepositorService.getBankDepositorById(1L);
+        BankDepositor result = depositorService.getBankDepositorById(1L);
         LOGGER.debug("result={}",result);
 
         verify(depositorDao);
@@ -107,7 +107,7 @@ public class BankDepositorServiceImplMockTest {
         expect(depositorDao.getBankDepositorByNameCriteria("depositorName1")).andReturn(depositor);
         replay(depositorDao);
 
-        BankDepositor result = bankDepositorService.getBankDepositorByName("depositorName1");
+        BankDepositor result = depositorService.getBankDepositorByName("depositorName1");
         LOGGER.debug("result={}",result);
 
         verify(depositorDao);
@@ -128,7 +128,7 @@ public class BankDepositorServiceImplMockTest {
 
         replay(depositorDao);
 
-        bankDepositorService.addBankDepositor(1L, depositor);
+        depositorService.addBankDepositor(1L, depositor);
 
         verify(depositorDao);
     }
@@ -146,8 +146,8 @@ public class BankDepositorServiceImplMockTest {
 
         replay(depositorDao);
 
-        bankDepositorService.addBankDepositor(1L, depositor);
-        bankDepositorService.addBankDepositor(2L, depositor);
+        depositorService.addBankDepositor(1L, depositor);
+        depositorService.addBankDepositor(2L, depositor);
 
         verify(depositorDao);
     }
@@ -163,7 +163,7 @@ public class BankDepositorServiceImplMockTest {
         expect(depositorDao.getBankDepositorByNameCriteria(depositor.getDepositorName())).andReturn(depositor);
         replay(depositorDao);
 
-        bankDepositorService.addBankDepositor(1L, depositor);
+        depositorService.addBankDepositor(1L, depositor);
 
         verify(depositorDao);
     }
@@ -180,7 +180,7 @@ public class BankDepositorServiceImplMockTest {
 
         replay(depositorDao);
 
-        bankDepositorService.addBankDepositor(1L,depositor);
+        depositorService.addBankDepositor(1L,depositor);
 
         verify(depositorDao);
     }
@@ -196,7 +196,7 @@ public class BankDepositorServiceImplMockTest {
         expect(depositorDao.getBankDepositorByNameCriteria("name")).andReturn(null);
         replay(depositorDao);
 
-        bankDepositorService.addBankDepositor(1L,depositor);
+        depositorService.addBankDepositor(1L,depositor);
 
         verify(depositorDao);
     }
@@ -213,7 +213,7 @@ public class BankDepositorServiceImplMockTest {
 
         replay(depositorDao);
 
-        bankDepositorService.addBankDepositor(1L,depositor);
+        depositorService.addBankDepositor(1L,depositor);
 
         verify(depositorDao);
     }
@@ -230,7 +230,7 @@ public class BankDepositorServiceImplMockTest {
 
         replay(depositorDao);
 
-        bankDepositorService.updateBankDepositor(depositor);
+        depositorService.updateBankDepositor(depositor);
 
         verify(depositorDao);
     }
@@ -247,7 +247,7 @@ public class BankDepositorServiceImplMockTest {
 
         replay(depositorDao);
 
-        bankDepositorService.updateBankDepositor(depositor);
+        depositorService.updateBankDepositor(depositor);
 
         verify(depositorDao);
     }
@@ -264,7 +264,7 @@ public class BankDepositorServiceImplMockTest {
 
         replay(depositorDao);
 
-        bankDepositorService.updateBankDepositor(depositor);
+        depositorService.updateBankDepositor(depositor);
 
         verify(depositorDao);
     }
@@ -281,13 +281,13 @@ public class BankDepositorServiceImplMockTest {
 
         replay(depositorDao);
 
-        bankDepositorService.removeBankDepositor(depositor.getDepositorId());
+        depositorService.removeBankDepositor(depositor.getDepositorId());
 
         verify(depositorDao);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testRemoveNullIdDepositor(){
-        bankDepositorService.removeBankDepositor(null);
+        depositorService.removeBankDepositor(null);
     }
 }

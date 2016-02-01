@@ -1,5 +1,6 @@
 package com.brest.bank.service;
 
+import com.brest.bank.dao.BankDepositorDao;
 import com.brest.bank.domain.BankDepositor;
 
 import java.util.Date;

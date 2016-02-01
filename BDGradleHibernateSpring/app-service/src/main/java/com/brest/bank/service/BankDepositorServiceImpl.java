@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.util.Assert;
@@ -19,23 +20,22 @@ import java.util.Date;
 import java.util.List;
 
 @Component
+//@ContextConfiguration(locations = {"classpath:/spring-services.xml"})
 public class BankDepositorServiceImpl implements BankDepositorService{
-
-    private static final Logger LOGGER = LogManager.getLogger();
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public static final String ERROR_DB_EMPTY = "There is no RECORDS in the DataBase";
     public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
     public static final String ERROR_NULL_PARAM = "The parameter must be NULL";
     public static final String ERROR_DEPOSITOR = "In the database there is no Depositor with such parameters";
     public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    @Autowired
+    private BankDepositorDao depositorDao;
 
     @Autowired
-    private BankDepositorDao bankDepositorDao;
-
-    @Autowired
-    public void setDepositorDao(BankDepositorDao bankDepositorDao){
-        this.bankDepositorDao = bankDepositorDao;
+    public void setDepositorDao(BankDepositorDao depositorDao){
+        this.depositorDao = depositorDao;
     }
     /**
      * Get all Bank Depositors
@@ -46,7 +46,7 @@ public class BankDepositorServiceImpl implements BankDepositorService{
     @Transactional
     public List<BankDepositor> getBankDepositors(){
         LOGGER.debug("getBankDepositors()");
-        List<BankDepositor> depositors = bankDepositorDao.getBankDepositorsCriteria();
+        List<BankDepositor> depositors = depositorDao.getBankDepositorsCriteria();
         Assert.notEmpty(depositors, ERROR_DB_EMPTY);
         return depositors;
     }
@@ -67,7 +67,7 @@ public class BankDepositorServiceImpl implements BankDepositorService{
         Assert.isTrue(start.before(end)||start.equals(end),ERROR_FROM_TO_PARAM);
         List<BankDepositor> depositors = null;
         try{
-            depositors = bankDepositorDao.getBankDepositorsFromToDateDeposit(start, end);
+            depositors = depositorDao.getBankDepositorsFromToDateDeposit(start, end);
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositorsFromToDateDeposit(start date={}, end date={}), error-{}",start,end,e.toString());
         }
@@ -87,7 +87,7 @@ public class BankDepositorServiceImpl implements BankDepositorService{
         Assert.notNull(depositorId,ERROR_METHOD_PARAM);
         BankDepositor depositor = null;
         try{
-            depositor = bankDepositorDao.getBankDepositorByIdCriteria(depositorId);
+            depositor = depositorDao.getBankDepositorByIdCriteria(depositorId);
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositorById({}), Exception:{}",depositorId,e.toString());
         }
@@ -107,7 +107,7 @@ public class BankDepositorServiceImpl implements BankDepositorService{
         Assert.notNull(depositorName,ERROR_METHOD_PARAM);
         BankDepositor depositor = null;
         try{
-            depositor = bankDepositorDao.getBankDepositorByNameCriteria(depositorName);
+            depositor = depositorDao.getBankDepositorByNameCriteria(depositorName);
         }catch (EmptyResultDataAccessException e){
             LOGGER.error("getBankDepositorById({}), Exception:{}",depositorName,e.toString());
         }
@@ -128,11 +128,11 @@ public class BankDepositorServiceImpl implements BankDepositorService{
         Assert.notNull(depositor,ERROR_METHOD_PARAM);
         Assert.isNull(depositor.getDepositorId(),ERROR_NULL_PARAM);
         Assert.notNull(depositor.getDepositorName(),ERROR_METHOD_PARAM);
-        BankDepositor existingDepositor = bankDepositorDao.getBankDepositorByNameCriteria(depositor.getDepositorName());
+        BankDepositor existingDepositor = depositorDao.getBankDepositorByNameCriteria(depositor.getDepositorName());
         if(existingDepositor != null){
             throw new IllegalArgumentException("Bank Depositor is present in DB");
         }
-        bankDepositorDao.addBankDepositor(depositId,depositor);
+        depositorDao.addBankDepositor(depositId,depositor);
     }
 
     /**
@@ -149,14 +149,14 @@ public class BankDepositorServiceImpl implements BankDepositorService{
         Assert.notNull(depositor.getDepositorName(),ERROR_METHOD_PARAM);
         BankDepositor existingDepositor;
         try {
-            existingDepositor = bankDepositorDao.getBankDepositorByIdCriteria(depositor.getDepositorId());
+            existingDepositor = depositorDao.getBankDepositorByIdCriteria(depositor.getDepositorId());
         } catch (EmptyResultDataAccessException e) {
             LOGGER.warn("Error method dao.getBankDepositorByIdCriteria() in service.updateBankDepositor(), Exception:{}",
                     e.toString());
             throw new IllegalArgumentException(ERROR_DEPOSITOR);
         }
         if (existingDepositor != null) {
-            bankDepositorDao.updateBankDepositor(depositor);
+            depositorDao.updateBankDepositor(depositor);
         } else {
             LOGGER.warn(ERROR_DEPOSITOR + "- method: updateBankDepositor()");
             throw new IllegalArgumentException(ERROR_DEPOSITOR);
@@ -173,7 +173,7 @@ public class BankDepositorServiceImpl implements BankDepositorService{
     public void removeBankDepositor(Long id){
         LOGGER.debug("removeBankDepositor(depositorId={})",id);
         Assert.notNull(id,ERROR_METHOD_PARAM);
-        Assert.notNull(bankDepositorDao.getBankDepositorByIdCriteria(id),ERROR_DEPOSITOR+": depositorId");
-        bankDepositorDao.removeBankDepositor(id);
+        Assert.notNull(depositorDao.getBankDepositorByIdCriteria(id),ERROR_DEPOSITOR+": depositorId");
+        depositorDao.removeBankDepositor(id);
     }
 }
