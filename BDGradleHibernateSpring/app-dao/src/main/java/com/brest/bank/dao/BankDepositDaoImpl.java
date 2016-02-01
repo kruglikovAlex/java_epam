@@ -1,7 +1,6 @@
 package com.brest.bank.dao;
 
 import com.brest.bank.domain.BankDeposit;
-import com.brest.bank.util.HibernateUtil;
 import org.hibernate.Criteria;
 
 import org.apache.logging.log4j.Logger;
@@ -12,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
+import org.hibernate.sql.JoinType;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 
 
@@ -23,13 +23,11 @@ import org.springframework.util.Assert;
 @Component
 public class BankDepositDaoImpl implements BankDepositDao {
 
-    private static final Logger LOGGER = LogManager.getLogger();
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
     public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
     public static final String ERROR_NULL_PARAM = "The parameter must be NULL";
     public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
-
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private BankDeposit deposit;
     private List<BankDeposit> deposits;
 
@@ -45,8 +43,18 @@ public class BankDepositDaoImpl implements BankDepositDao {
         //--- open session
         HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
         //--- query
+        String[] properties = HibernateUtil.getSessionFactory()
+                .getClassMetadata(BankDeposit.class)
+                .getPropertyNames();
         for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
-                .createCriteria(BankDeposit.class).list()){
+                .createCriteria(BankDeposit.class, "deposit")
+                .createAlias("depositors", "depositor",JoinType.LEFT_OUTER_JOIN)
+                .setProjection(Projections.distinct(Projections.projectionList()
+                        .add(Projections.property("deposit.depositId"), "depositId")
+                        .add(formProjection(properties))
+                ))
+                .setResultTransformer(new AliasToBeanResultTransformer(BankDeposit.class))
+                .list()){
             deposits.add((BankDeposit)d);
         }
         //--- close session
@@ -69,9 +77,19 @@ public class BankDepositDaoImpl implements BankDepositDao {
         //--- open session
         HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
         //--- query
+        String[] properties = HibernateUtil.getSessionFactory()
+                .getClassMetadata(BankDeposit.class)
+                .getPropertyNames();
         deposit = (BankDeposit)HibernateUtil.getSessionFactory().getCurrentSession()
-                .createCriteria(BankDeposit.class)
-                .add(Restrictions.eq("depositId", id)).uniqueResult();
+                .createCriteria(BankDeposit.class, "deposit")
+                .add(Restrictions.idEq(id))
+                .createAlias("depositors", "depositor",JoinType.LEFT_OUTER_JOIN)
+                .setProjection(Projections.distinct(Projections.projectionList()
+                        .add(Projections.property("deposit.depositId"), "depositId")
+                        .add(formProjection(properties))
+                ))
+                .setResultTransformer(new AliasToBeanResultTransformer(BankDeposit.class))
+                .uniqueResult();
         //--- close session
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
@@ -92,9 +110,19 @@ public class BankDepositDaoImpl implements BankDepositDao {
         //--- open session
         HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
         //--- query
+        String[] properties = HibernateUtil.getSessionFactory()
+                .getClassMetadata(BankDeposit.class)
+                .getPropertyNames();
         deposit = (BankDeposit)HibernateUtil.getSessionFactory().getCurrentSession()
-                .createCriteria(BankDeposit.class)
-                .add(Restrictions.eq("depositName", name)).uniqueResult();
+                .createCriteria(BankDeposit.class, "deposit")
+                .add(Restrictions.eq("depositName",name))
+                .createAlias("depositors", "depositor",JoinType.LEFT_OUTER_JOIN)
+                .setProjection(Projections.distinct(Projections.projectionList()
+                        .add(Projections.property("deposit.depositId"), "depositId")
+                        .add(formProjection(properties))
+                ))
+                .setResultTransformer(new AliasToBeanResultTransformer(BankDeposit.class))
+                .uniqueResult();
         //--- close session
         HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
@@ -117,9 +145,18 @@ public class BankDepositDaoImpl implements BankDepositDao {
             //--- open session
             HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
             //--- query
+            String[] properties = HibernateUtil.getSessionFactory()
+                    .getClassMetadata(BankDeposit.class)
+                    .getPropertyNames();
             for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
-                    .createCriteria(BankDeposit.class)
+                    .createCriteria(BankDeposit.class,"deposit")
                     .add(Restrictions.eq("depositCurrency",currency))
+                    .createAlias("depositors", "depositor",JoinType.LEFT_OUTER_JOIN)
+                    .setProjection(Projections.distinct(Projections.projectionList()
+                            .add(Projections.property("deposit.depositId"), "depositId")
+                            .add(formProjection(properties))
+                    ))
+                    .setResultTransformer(new AliasToBeanResultTransformer(BankDeposit.class))
                     .list()){
                 deposits.add((BankDeposit)d);
             }
@@ -150,9 +187,18 @@ public class BankDepositDaoImpl implements BankDepositDao {
             //--- open session
             HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
             //--- query
+            String[] properties = HibernateUtil.getSessionFactory()
+                    .getClassMetadata(BankDeposit.class)
+                    .getPropertyNames();
             for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
-                    .createCriteria(BankDeposit.class)
+                    .createCriteria(BankDeposit.class,"deposit")
                     .add(Restrictions.eq("depositInterestRate",rate))
+                    .createAlias("depositors", "depositor",JoinType.LEFT_OUTER_JOIN)
+                    .setProjection(Projections.distinct(Projections.projectionList()
+                            .add(Projections.property("deposit.depositId"), "depositId")
+                            .add(formProjection(properties))
+                    ))
+                    .setResultTransformer(new AliasToBeanResultTransformer(BankDeposit.class))
                     .list()){
                 deposits.add((BankDeposit)d);
             }
@@ -184,9 +230,18 @@ public class BankDepositDaoImpl implements BankDepositDao {
             //--- open session
             HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
             //--- query
+            String[] properties = HibernateUtil.getSessionFactory()
+                    .getClassMetadata(BankDeposit.class)
+                    .getPropertyNames();
             for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
-                    .createCriteria(BankDeposit.class)
+                    .createCriteria(BankDeposit.class,"deposit")
                     .add(Restrictions.between("depositMinTerm",fromTerm,toTerm))
+                    .createAlias("depositors", "depositor",JoinType.LEFT_OUTER_JOIN)
+                    .setProjection(Projections.distinct(Projections.projectionList()
+                            .add(Projections.property("deposit.depositId"), "depositId")
+                            .add(formProjection(properties))
+                    ))
+                    .setResultTransformer(new AliasToBeanResultTransformer(BankDeposit.class))
                     .list()){
                 deposits.add((BankDeposit)d);
             }
@@ -218,9 +273,18 @@ public class BankDepositDaoImpl implements BankDepositDao {
             //--- open session
             HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
             //--- query
+            String[] properties = HibernateUtil.getSessionFactory()
+                    .getClassMetadata(BankDeposit.class)
+                    .getPropertyNames();
             for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
-                    .createCriteria(BankDeposit.class)
+                    .createCriteria(BankDeposit.class,"deposit")
                     .add(Restrictions.between("depositInterestRate",startRate,endRate))
+                    .createAlias("depositors", "depositor",JoinType.LEFT_OUTER_JOIN)
+                    .setProjection(Projections.distinct(Projections.projectionList()
+                            .add(Projections.property("deposit.depositId"), "depositId")
+                            .add(formProjection(properties))
+                    ))
+                    .setResultTransformer(new AliasToBeanResultTransformer(BankDeposit.class))
                     .list()){
                 deposits.add((BankDeposit)d);
             }
@@ -256,7 +320,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
                     .getClassMetadata(BankDeposit.class)
                     .getPropertyNames();
             for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
-                    .createCriteria(BankDeposit.class)
+                    .createCriteria(BankDeposit.class,"deposit")
                     .createAlias("depositors","depositor")
                     .add(Restrictions.between("depositor.depositorDateDeposit", startDate, endDate))
                     .setProjection(Projections.distinct(Projections.projectionList()
@@ -301,7 +365,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
                     .getClassMetadata(BankDeposit.class)
                     .getPropertyNames();
             for(Object d: HibernateUtil.getSessionFactory().getCurrentSession()
-                    .createCriteria(BankDeposit.class)
+                    .createCriteria(BankDeposit.class,"deposit")
                     .createAlias("depositors","depositor")
                     .add(Restrictions.between("depositor.depositorDateReturnDeposit", startDate, endDate))
                     .setProjection(Projections.distinct(Projections.projectionList()
@@ -344,7 +408,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
             list = (Map)HibernateUtil.getSessionFactory().getCurrentSession()
                     .createCriteria(BankDeposit.class,"deposit")
                     .add(Restrictions.eq("deposit.depositName",name))
-                    .createAlias("depositors","depositor")
+                    .createAlias("depositors","depositor", JoinType.LEFT_OUTER_JOIN)
                     .setProjection(Projections.distinct(Projections.projectionList()
                             .add(Projections.property("deposit.depositId"),"depositId")
                             .add(formProjection(properties))
@@ -393,7 +457,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
             list = (Map)HibernateUtil.getSessionFactory().getCurrentSession()
                     .createCriteria(BankDeposit.class,"deposit")
                     .add(Restrictions.eq("deposit.depositName",name))
-                    .createAlias("depositors","depositor")
+                    .createAlias("depositors","depositor",JoinType.LEFT_OUTER_JOIN)
                     .add(Restrictions.between("depositor.depositorDateDeposit",startDate,endDate))
                     .setProjection(Projections.distinct(Projections.projectionList()
                                     .add(Projections.property("deposit.depositId"), "depositId")
@@ -445,7 +509,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
             list = (Map)HibernateUtil.getSessionFactory().getCurrentSession()
                     .createCriteria(BankDeposit.class,"deposit")
                     .add(Restrictions.eq("deposit.depositName",name))
-                    .createAlias("depositors","depositor")
+                    .createAlias("depositors","depositor",JoinType.LEFT_OUTER_JOIN)
                     .add(Restrictions.between("depositor.depositorDateReturnDeposit",startDate,endDate))
                     .setProjection(Projections.distinct(Projections.projectionList()
                                     .add(Projections.property("deposit.depositId"), "depositId")
@@ -491,7 +555,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
             list = (Map)HibernateUtil.getSessionFactory().getCurrentSession()
                     .createCriteria(BankDeposit.class, "deposit")
                     .add(Restrictions.eq("deposit.depositId", id))
-                    .createAlias("depositors", "depositor")
+                    .createAlias("depositors", "depositor",JoinType.LEFT_OUTER_JOIN)
                     .setProjection(Projections.distinct(Projections.projectionList()
                                     .add(Projections.property("deposit.depositId"), "depositId")
                                     .add(formProjection(properties))
@@ -539,7 +603,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
             list = (Map)HibernateUtil.getSessionFactory().getCurrentSession()
                     .createCriteria(BankDeposit.class, "deposit")
                     .add(Restrictions.eq("deposit.depositId",id))
-                    .createAlias("depositors","depositor")
+                    .createAlias("depositors","depositor",JoinType.LEFT_OUTER_JOIN)
                     .add(Restrictions.between("depositor.depositorDateDeposit",startDate,endDate))
                     .setProjection(Projections.distinct(Projections.projectionList()
                             .add(Projections.property("deposit.depositId"),"depositId")
@@ -589,7 +653,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
             list = (Map)HibernateUtil.getSessionFactory().getCurrentSession()
                     .createCriteria(BankDeposit.class,"deposit")
                     .add(Restrictions.eq("deposit.depositId",id))
-                    .createAlias("depositors","depositor")
+                    .createAlias("depositors","depositor",JoinType.LEFT_OUTER_JOIN)
                     .add(Restrictions.between("depositor.depositorDateReturnDeposit",startDate,endDate))
                     .setProjection(Projections.distinct(Projections.projectionList()
                             .add(Projections.property("deposit.depositId"),"depositId")
@@ -631,7 +695,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
             //--- query
             list = HibernateUtil.getSessionFactory().getCurrentSession()
                     .createCriteria(BankDeposit.class, "deposit")
-                    .createAlias("depositors", "depositor")
+                    .createAlias("depositors", "depositor",JoinType.LEFT_OUTER_JOIN)
                     .setProjection(Projections.distinct(Projections.projectionList()
                                     .add(Projections.property("deposit.depositId"), "depositId")
                                     .add(formProjection(properties))
@@ -676,7 +740,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
                     .getClassMetadata(BankDeposit.class).getPropertyNames();
             list = HibernateUtil.getSessionFactory().getCurrentSession()
                     .createCriteria(BankDeposit.class, "deposit")
-                    .createAlias("depositors", "depositor")
+                    .createAlias("depositors", "depositor",JoinType.LEFT_OUTER_JOIN)
                     .add(Restrictions.between("depositor.depositorDateDeposit",startDate,endDate))
                     .setProjection(Projections.distinct(Projections.projectionList()
                                     .add(Projections.property("deposit.depositId"),"depositId")
@@ -723,7 +787,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
                     .getClassMetadata(BankDeposit.class).getPropertyNames();
             list = HibernateUtil.getSessionFactory().getCurrentSession()
                     .createCriteria(BankDeposit.class, "deposit")
-                    .createAlias("depositors", "depositor")
+                    .createAlias("depositors", "depositor",JoinType.LEFT_OUTER_JOIN)
                     .add(Restrictions.between("depositor.depositorDateReturnDeposit",startDate,endDate))
                     .setProjection(Projections.distinct(Projections.projectionList()
                                     .add(Projections.property("deposit.depositId"),"depositId")
@@ -763,7 +827,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
             list = HibernateUtil.getSessionFactory().getCurrentSession()
                     .createCriteria(BankDeposit.class, "deposit")
                     .add(Restrictions.eq("deposit.depositCurrency", currency))
-                    .createAlias("depositors", "depositor")
+                    .createAlias("depositors", "depositor",JoinType.LEFT_OUTER_JOIN)
                     .setProjection(Projections.distinct(Projections.projectionList()
                                     .add(Projections.property("deposit.depositId"), "depositId")
                                     .add(formProjection(properties))
@@ -815,7 +879,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
             list = HibernateUtil.getSessionFactory().getCurrentSession()
                     .createCriteria(BankDeposit.class, "deposit")
                     .add(Restrictions.eq("deposit.depositCurrency", currency))
-                    .createAlias("depositors", "depositor")
+                    .createAlias("depositors", "depositor",JoinType.LEFT_OUTER_JOIN)
                     .add(Restrictions.between("depositor.depositorDateDeposit",startDate,endDate))
                     .setProjection(Projections.distinct(Projections.projectionList()
                                     .add(Projections.property("deposit.depositId"), "depositId")
@@ -868,7 +932,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
             list = HibernateUtil.getSessionFactory().getCurrentSession()
                     .createCriteria(BankDeposit.class, "deposit")
                     .add(Restrictions.eq("deposit.depositCurrency", currency))
-                    .createAlias("depositors", "depositor")
+                    .createAlias("depositors", "depositor",JoinType.LEFT_OUTER_JOIN)
                     .add(Restrictions.between("depositor.depositorDateReturnDeposit",startDate,endDate))
                     .setProjection(Projections.distinct(Projections.projectionList()
                                     .add(Projections.property("deposit.depositId"), "depositId")
