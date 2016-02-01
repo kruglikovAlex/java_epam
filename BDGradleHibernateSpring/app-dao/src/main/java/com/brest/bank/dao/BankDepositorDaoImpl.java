@@ -3,8 +3,6 @@ package com.brest.bank.dao;
 import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
 
-import com.brest.bank.util.HibernateUtil;
-
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.hibernate.criterion.*;
@@ -19,11 +17,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class BankDepositorDaoImpl implements BankDepositorDao {
 
-    private static final Logger LOGGER = LogManager.getLogger();
-
     public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
     public static final String ERROR_NULL_PARAM = "The parameter must be NULL";
-
+    private static final Logger LOGGER = LogManager.getLogger();
     private BankDepositor depositor;
     private List<BankDepositor> depositors = new ArrayList<BankDepositor>();
 
@@ -202,7 +198,7 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
                     .setParameter("pid", depositId)
                     .uniqueResult();
 
-            theDeposit.getDepositors().add(depositor);
+            theDeposit.setToDepositors(depositor);//.getDepositors().add(depositor);
 
             HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
