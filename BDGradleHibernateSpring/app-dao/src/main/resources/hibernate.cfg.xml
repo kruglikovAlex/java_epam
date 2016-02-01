@@ -29,8 +29,8 @@
         <property name="hbm2ddl.auto">update</property>
 
         <!-- файл отображения-->
-        <mapping resource="com/brest/bank/dao/BankDeposit.hbm.xml"/>
-        <mapping resource="com/brest/bank/dao/BankDepositor.hbm.xml"/>
+        <mapping resource="BankDeposit.hbm.xml"/>
+        <mapping resource="BankDepositor.hbm.xml"/>
 
     </session-factory>
 
