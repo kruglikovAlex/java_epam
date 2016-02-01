@@ -6,6 +6,7 @@ import com.brest.bank.domain.BankDepositor;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class DataFixture {
 
@@ -28,6 +29,18 @@ public class DataFixture {
      */
     public static BankDeposit getExistDeposit(Long id){
         return new BankDeposit(id,"depositName1",12,1000,"usd",4,"conditions1",new HashSet());
+    }
+
+    /**
+     * Get an exists Bank Deposit with fixed parameters and depositors
+     *
+     * @param id Long - id of the Bank Deposit to return
+     * @return BankDeposit with fixed parameters for tests
+     */
+    public static BankDeposit getExistDepositWithDepositor(Long id) throws ParseException{
+        BankDeposit deposit =  new BankDeposit(id,"depositName1",12,1000,"usd",4,"conditions1",new HashSet());
+        deposit.getDepositors().add(getExistDepositor(1L));
+        return deposit;
     }
 
     /**
@@ -90,10 +103,35 @@ public class DataFixture {
             list.put("depositCurrency", deposit.getDepositCurrency());
             list.put("depositInterestRate", deposit.getDepositInterestRate());
             list.put("depositAddConditions", deposit.getDepositAddConditions());
+            list.put("numDepositors", 1);
             list.put("sumAmount", depositor.getDepositorAmountDeposit());
             list.put("sumPlusAmount", depositor.getDepositorAmountPlusDeposit());
             list.put("sumMinusAmount", depositor.getDepositorAmountMinusDeposit());
-            list.put("numDepositors", 1);
+        return list;
+    }
+
+    /**
+     * Get exist Bank Deposit with all Bank Depositors (null)
+     *
+     * @param id Long - id of Bank Deposit
+     * @returne Map - a bank deposit with a report on all relevant
+     * bank depositors
+     * @throws ParseException
+     */
+    public static Map getExistDepositAllNullDepositors(Long id) throws ParseException{
+        BankDeposit deposit = getExistDeposit(id);
+        Map<String, Object> list = new HashMap<String, Object>(11);
+        list.put("depositId", deposit.getDepositId());
+        list.put("depositName", deposit.getDepositName());
+        list.put("depositMinTerm", deposit.getDepositMinTerm());
+        list.put("depositMinAmount", deposit.getDepositMinAmount());
+        list.put("depositCurrency", deposit.getDepositCurrency());
+        list.put("depositInterestRate", deposit.getDepositInterestRate());
+        list.put("depositAddConditions", deposit.getDepositAddConditions());
+        list.put("numDepositors", 0);
+        list.put("sumAmount", 0);
+        list.put("sumPlusAmount", 0);
+        list.put("sumMinusAmount", 0);
         return list;
     }
 
@@ -107,6 +145,19 @@ public class DataFixture {
     public static List<Map> getExistAllDepositsAllDepositors() throws ParseException{
         List<Map> deposits = new ArrayList<Map>();
         deposits.add(getExistDepositAllDepositors(1L, 1L));
+        return deposits;
+    }
+
+    /**
+     * Get all Bank Deposits with all Bank Depositors (null)
+     *
+     * @return List<Map> - a list of bank deposits with a report on all relevant
+     * bank depositors
+     * @throws ParseException
+     */
+    public static List<Map> getExistAllDepositsAllNullDepositors() throws ParseException{
+        List<Map> deposits = new ArrayList<Map>();
+        deposits.add(getExistDepositAllNullDepositors(1L));
         return deposits;
     }
 
@@ -157,6 +208,16 @@ public class DataFixture {
     public static List<BankDepositor> getDepositors() throws ParseException{
         List<BankDepositor> depositors = new ArrayList<BankDepositor>();
         depositors.add(getNewDepositor());
+        return depositors;
+    }
+
+    /**
+     * Get empty Bank Depositors
+     *
+     * @return List<BankDepositor> - a list containing all of the Bank Depositors in the database
+     */
+    public static List<BankDepositor> getEmptyDepositors() throws ParseException{
+        List<BankDepositor> depositors = new ArrayList<BankDepositor>();
         return depositors;
     }
 
