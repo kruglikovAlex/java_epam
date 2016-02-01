@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
+//@ContextConfiguration(locations = {"classpath:/spring-rest.xml"})
 @RequestMapping("/deposit")
-@ContextConfiguration(locations = {"classpath:/spring-rest.xml"})
 public class DepositRestController {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -255,7 +255,7 @@ public class DepositRestController {
      * @throws ParseException
      */
     @ResponseBody
-    @RequestMapping(value = "report/nameDate/{name},{startDate},{endDate}",method = RequestMethod.GET)
+            @RequestMapping(value = "report/nameDate/{name},{startDate},{endDate}",method = RequestMethod.GET)
     public ResponseEntity<Map> getBankDepositByNameFromToDateDepositWithDepositors(@PathVariable String name,
                                                                                    @PathVariable String startDate,
                                                                                    @PathVariable String endDate)

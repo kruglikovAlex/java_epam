@@ -20,9 +20,9 @@ import java.util.Date;
 import java.util.List;
 
 @Controller
+//@ContextConfiguration(locations = {"classpath:/spring-rest.xml"})
 @RequestMapping("/depositor")
-@ContextConfiguration(locations = {"classpath*:/spring-rest-mock-test.xml"})
-public class DepositorRestController {
+public class    DepositorRestController {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");

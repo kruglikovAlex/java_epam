@@ -33,16 +33,12 @@ import java.text.SimpleDateFormat;
 public class DepositRestControllerMockTest {
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-    private MockMvc mockMvc;
-
-    private ObjectMapper objectMapper;
-
     @Resource
     DepositRestController depositRestController;
-
     @Autowired
     BankDepositService depositService;
+    private MockMvc mockMvc;
+    private ObjectMapper objectMapper;
 
     @Before
     public void setUp(){
@@ -466,19 +462,6 @@ public class DepositRestControllerMockTest {
     }
 
     @Test
-    public void testAddNullDeposit() throws Exception{
-        ObjectMapper objectMapper = new ObjectMapper();
-        String nullDeposit = objectMapper.writeValueAsString(null);
-
-        this.mockMvc.perform(post("/deposit/")
-                .content(nullDeposit)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isNotModified())
-                .andExpect(content().string("\"Can not be added to the database NULL deposit\""));
-    }
-
-    @Test
     public void testAddEmptyDeposit() throws Exception{
         objectMapper = new ObjectMapper();
         String emptyDeposit = objectMapper.writeValueAsString(new BankDeposit(null,null,0,0,null,0,null,null));
@@ -511,22 +494,6 @@ public class DepositRestControllerMockTest {
                 .andExpect(content().string("\"a bank Deposit updated\""));
 
         verify(depositService);
-    }
-
-    @Test
-    public void testUpdateNullDeposit() throws Exception{
-        objectMapper = new ObjectMapper();
-        String nullDeposit = objectMapper.writeValueAsString(null);
-
-        ResultActions result = this.mockMvc.perform(put("/deposit/")
-                .content(nullDeposit)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON));
-
-        result.andDo(print())
-                .andExpect(status().isNotModified())
-                .andExpect(content().string("\"Can not be updated NULL deposit\""));
-
     }
 
     @Test

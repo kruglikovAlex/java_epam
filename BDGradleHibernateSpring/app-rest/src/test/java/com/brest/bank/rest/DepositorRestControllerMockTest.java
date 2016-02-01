@@ -5,6 +5,7 @@ import com.brest.bank.service.BankDepositorService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.commons.logging.Log;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.After;
@@ -184,24 +185,10 @@ public class DepositorRestControllerMockTest {
     }
 
     @Test
-    public void addNullBankDepositorRestTest() throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String depositorJson = objectMapper.writeValueAsString(DataFixture.getNullDepositor());
-
-        this.mockMvc.perform(
-                post("/depositor/1")
-                        .content(depositorJson)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("\"Can not be added to the database NULL depositor\""));
-    }
-
-    @Test
     public void addEmptyBankDepositorRestTest() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         String depositorJson = objectMapper.writeValueAsString(DataFixture.getEmptyDepositor());
+        LOGGER.debug("depositorJson: {}",depositorJson);
 
         this.mockMvc.perform(
                 post("/depositor/1")
@@ -247,22 +234,6 @@ public class DepositorRestControllerMockTest {
                 .andExpect(content().string("\"a bank depositor updated\""));
 
         verify(depositorService);
-    }
-
-    @Test
-    public void testUpdateNullDepositor() throws Exception{
-
-        objectMapper = new ObjectMapper();
-        String depositorJson = objectMapper.writeValueAsString(DataFixture.getNullDepositor());
-
-        ResultActions result = this.mockMvc.perform(put("/depositor/")
-                .content(depositorJson)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON));
-
-        result.andDo(print())
-                .andExpect(status().isNotModified())
-                .andExpect(content().string("\"Can not be updated NULL depositor\""));
     }
 
     @Test
