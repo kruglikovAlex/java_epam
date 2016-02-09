@@ -1,5 +1,117 @@
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://bank.brest.com/soap"
            targetNamespace="http://bank.brest.com/soap" elementFormDefault="qualified">
+    <xsd:complexType name="bankDeposit">
+        <xsd:sequence>
+            <xsd:element name="depositId" nillable="true" type="xsd:long"/>
+            <xsd:element name='depositName'>
+                <xsd:simpleType>
+                    <xsd:restriction base='xsd:string'>
+                        <xsd:pattern value='[A-Z][a-z]+[0-9]*' />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name='depositMinTerm'>
+                <xsd:simpleType>
+                    <xsd:restriction base='xsd:int'>
+                        <xsd:minInclusive value='1' />
+                        <xsd:maxInclusive value='480' />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name='depositMinAmount'>
+                <xsd:simpleType>
+                    <xsd:restriction base='xsd:int'>
+                        <xsd:minInclusive value='100' />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name='depositCurrency'>
+                <xsd:simpleType>
+                    <xsd:restriction base='xsd:string'>
+                        <xsd:pattern value='[A-Z]{3}' />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name='depositInterestRate'>
+                <xsd:simpleType>
+                    <xsd:restriction base='xsd:int'>
+                        <xsd:minInclusive value='1' />
+                        <xsd:maxInclusive value='100' />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name='depositAddConditions'>
+                <xsd:simpleType>
+                    <xsd:restriction base='xsd:string'>
+                        <xsd:pattern value='[A-Z][a-z]+[0-9]*' />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="bankDepositReport">
+        <xsd:sequence>
+            <xsd:element name="depositId" nillable="true" type="xsd:long"/>
+            <xsd:element name='depositName'>
+                <xsd:simpleType>
+                    <xsd:restriction base='xsd:string'>
+                        <xsd:pattern value='[A-Z][a-z]+[0-9]*' />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name='depositMinTerm'>
+                <xsd:simpleType>
+                    <xsd:restriction base='xsd:int'>
+                        <xsd:minInclusive value='1' />
+                        <xsd:maxInclusive value='480' />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name='depositMinAmount'>
+                <xsd:simpleType>
+                    <xsd:restriction base='xsd:int'>
+                        <xsd:minInclusive value='100' />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name='depositCurrency'>
+                <xsd:simpleType>
+                    <xsd:restriction base='xsd:string'>
+                        <xsd:pattern value='[A-Z]{3}' />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name='depositInterestRate'>
+                <xsd:simpleType>
+                    <xsd:restriction base='xsd:int'>
+                        <xsd:minInclusive value='1' />
+                        <xsd:maxInclusive value='100' />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name='depositAddConditions'>
+                <xsd:simpleType>
+                    <xsd:restriction base='xsd:string'>
+                        <xsd:pattern value='[A-Z][a-z]+[0-9]*' />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="depositorCount" type="xsd:int"/>
+            <xsd:element name="depositorAmountSum" type="xsd:int"/>
+            <xsd:element name="depositorAmountPlusSum" type="xsd:int"/>
+            <xsd:element name="depositorAmountMinusSum" type="xsd:int"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="bankDeposits">
+        <xsd:sequence>
+            <xsd:element name="bankDeposit" type="tns:bankDeposit" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="bankDepositsReport">
+        <xsd:sequence>
+            <xsd:element name="bankDepositReport" type="tns:bankDepositReport" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
     <xsd:element name="getBankDepositsRequest"/>
     <xsd:element name="getBankDepositsResponse">
         <xsd:complexType>
@@ -277,116 +389,5 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
-    <xsd:complexType name="bankDeposit">
-        <xsd:sequence>
-            <xsd:element name="depositId" nillable="true" type="xsd:long"/>
-            <xsd:element name='depositName'>
-                <xsd:simpleType>
-                    <xsd:restriction base='xsd:string'>
-                        <xsd:pattern value='[A-Z][a-z]+[0-9]*' />
-                    </xsd:restriction>
-                </xsd:simpleType>
-            </xsd:element>
-            <xsd:element name='depositMinTerm'>
-                <xsd:simpleType>
-                    <xsd:restriction base='xsd:int'>
-                        <xsd:minInclusive value='1' />
-                        <xsd:maxInclusive value='480' />
-                    </xsd:restriction>
-                </xsd:simpleType>
-            </xsd:element>
-            <xsd:element name='depositMinAmount'>
-                <xsd:simpleType>
-                    <xsd:restriction base='xsd:int'>
-                        <xsd:minInclusive value='100' />
-                    </xsd:restriction>
-                </xsd:simpleType>
-            </xsd:element>
-            <xsd:element name='depositCurrency'>
-                <xsd:simpleType>
-                    <xsd:restriction base='xsd:string'>
-                        <xsd:pattern value='[A-Z]{3}' />
-                    </xsd:restriction>
-                </xsd:simpleType>
-            </xsd:element>
-            <xsd:element name='depositInterestRate'>
-                <xsd:simpleType>
-                    <xsd:restriction base='xsd:int'>
-                        <xsd:minInclusive value='1' />
-                        <xsd:maxInclusive value='100' />
-                    </xsd:restriction>
-                </xsd:simpleType>
-            </xsd:element>
-            <xsd:element name='depositAddConditions'>
-                <xsd:simpleType>
-                    <xsd:restriction base='xsd:string'>
-                        <xsd:pattern value='[A-Z][a-z]+[0-9]*' />
-                    </xsd:restriction>
-                </xsd:simpleType>
-            </xsd:element>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="bankDepositReport">
-        <xsd:sequence>
-            <xsd:element name="depositId" nillable="true" type="xsd:long"/>
-            <xsd:element name='depositName'>
-                <xsd:simpleType>
-                    <xsd:restriction base='xsd:string'>
-                        <xsd:pattern value='[A-Z][a-z]+[0-9]*' />
-                    </xsd:restriction>
-                </xsd:simpleType>
-            </xsd:element>
-            <xsd:element name='depositMinTerm'>
-                <xsd:simpleType>
-                    <xsd:restriction base='xsd:int'>
-                        <xsd:minInclusive value='1' />
-                        <xsd:maxInclusive value='480' />
-                    </xsd:restriction>
-                </xsd:simpleType>
-            </xsd:element>
-            <xsd:element name='depositMinAmount'>
-                <xsd:simpleType>
-                    <xsd:restriction base='xsd:int'>
-                        <xsd:minInclusive value='100' />
-                    </xsd:restriction>
-                </xsd:simpleType>
-            </xsd:element>
-            <xsd:element name='depositCurrency'>
-                <xsd:simpleType>
-                    <xsd:restriction base='xsd:string'>
-                        <xsd:pattern value='[A-Z]{3}' />
-                    </xsd:restriction>
-                </xsd:simpleType>
-            </xsd:element>
-            <xsd:element name='depositInterestRate'>
-                <xsd:simpleType>
-                    <xsd:restriction base='xsd:int'>
-                        <xsd:minInclusive value='1' />
-                        <xsd:maxInclusive value='100' />
-                    </xsd:restriction>
-                </xsd:simpleType>
-            </xsd:element>
-            <xsd:element name='depositAddConditions'>
-                <xsd:simpleType>
-                    <xsd:restriction base='xsd:string'>
-                        <xsd:pattern value='[A-Z][a-z]+[0-9]*' />
-                    </xsd:restriction>
-                </xsd:simpleType>
-            </xsd:element>
-            <xsd:element name="depositorCount" type="xsd:int"/>
-            <xsd:element name="depositorAmountSum" type="xsd:int"/>
-            <xsd:element name="depositorAmountPlusSum" type="xsd:int"/>
-            <xsd:element name="depositorAmountMinusSum" type="xsd:int"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="bankDeposits">
-        <xsd:sequence>
-            <xsd:element name="bankDeposit" type="tns:bankDeposit" minOccurs="0" maxOccurs="unbounded"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="bankDepositsReport">
-        <xsd:sequence>
-            <xsd:element name="bankDepositReport" type="tns:bankDepositReport" minOccurs="0" maxOccurs="unbounded"/>
-        </xsd:sequence>
-    </xsd:complexType>
+
 </xsd:schema>

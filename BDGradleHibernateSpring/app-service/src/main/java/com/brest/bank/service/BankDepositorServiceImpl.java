@@ -9,18 +9,15 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import org.springframework.util.Assert;
-
-import java.text.SimpleDateFormat;
 
 import java.util.Date;
 import java.util.List;
 
 @Component
-//@ContextConfiguration(locations = {"classpath:/spring-services.xml"})
+@Service
 public class BankDepositorServiceImpl implements BankDepositorService{
 
     public static final String ERROR_DB_EMPTY = "There is no RECORDS in the DataBase";
@@ -28,8 +25,9 @@ public class BankDepositorServiceImpl implements BankDepositorService{
     public static final String ERROR_NULL_PARAM = "The parameter must be NULL";
     public static final String ERROR_DEPOSITOR = "In the database there is no Depositor with such parameters";
     public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
+
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
     @Autowired
     private BankDepositorDao depositorDao;
 
