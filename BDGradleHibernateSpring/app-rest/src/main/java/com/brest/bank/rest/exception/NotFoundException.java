@@ -15,6 +15,7 @@ public class NotFoundException extends RuntimeException {
         super(message);
         this.objectId = objectId;
     }
+
     public String getObjectId() {
         return objectId;
     }

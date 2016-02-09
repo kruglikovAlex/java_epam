@@ -3,42 +3,27 @@ package com.brest.bank.soap;
 import com.brest.bank.service.BankDepositService;
 import com.brest.bank.service.BankDepositorService;
 
-import com.brest.bank.util.BankDeposit;
-import com.brest.bank.util.BankDepositor;
-
-import org.apache.commons.io.input.XmlStreamReader;
+import com.brest.bank.util.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 
 import org.springframework.util.Assert;
 
-import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.server.endpoint.annotation.*;
-
-import com.brest.bank.util.*;
-import org.springframework.ws.soap.SoapHeader;
-import org.springframework.ws.soap.SoapHeaderElement;
-import org.springframework.ws.test.client.RequestMatchers;
-import org.springframework.ws.test.server.RequestCreator;
-import org.springframework.ws.test.server.ResponseMatchers;
-import org.springframework.xml.transform.StringSource;
 
 import javax.xml.bind.*;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.namespace.QName;
-import javax.xml.transform.stream.StreamSource;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Endpoint
-@ContextConfiguration(locations = {"classpath:/spring-soap.xml"})
+//@ContextConfiguration(locations = {"classpath:/spring-soap.xml"})
 public class DepositSoapEndpoint {
 
     public static final String ERROR_NULL_RESPONSE = "Response is NULL";
@@ -59,7 +44,7 @@ public class DepositSoapEndpoint {
 
     @Autowired
     BankDepositorService depositorService;
-    ObjectFactory objectFactory = new ObjectFactory();
+
     private BankDeposit deposit;
     private BankDepositReport depositReport;
     private BankDeposits deposits;
@@ -351,6 +336,73 @@ public class DepositSoapEndpoint {
         response.setBankDepositReport(depositReportDaoToXml(depositService.getBankDepositByNameWithDepositors(request.getDepositName())));
 
         LOGGER.debug("getBankDepositByNameWithDepositorsResponse - depositName={}",response.getBankDepositReport().getDepositName());
+        Assert.notNull(response.getBankDepositReport(),ERROR_NULL_RESPONSE);
+
+        return response;
+    }
+
+    /**
+     * Get Bank Deposits by depositName from-to date Bank Deposit of depositors
+     *
+     * @param request XmlElements: depositName, startDate deposit, endDate deposit
+     * @return response XmlElement BankDepositReport
+     */
+    @PayloadRoot(localPart = "getBankDepositByNameFromToDateDepositWithDepositorsRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public GetBankDepositByNameFromToDateDepositWithDepositorsResponse getBankDepositByNameFromToDateDepositWithDepositors(
+            @RequestPayload GetBankDepositByNameFromToDateDepositWithDepositorsRequest request){
+        LOGGER.debug("getBankDepositByNameFromToDateDepositWithDepositorsRequest(deposiName={}, startDate={}, endDate={})",
+                request.getDepositName(),request.getStartDate(),request.getEndDate());
+        Assert.notNull(request.getDepositName(),ERROR_METHOD_PARAM);
+        Assert.notNull(request.getStartDate(),ERROR_METHOD_PARAM);
+        Assert.notNull(request.getEndDate(),ERROR_METHOD_PARAM);
+
+        Date dateStart=new Date(), dateEnd=new Date();
+        dateStart.setTime(request.getStartDate().toGregorianCalendar().getTimeInMillis());
+        dateEnd.setTime(request.getEndDate().toGregorianCalendar().getTimeInMillis());
+        Assert.isTrue(dateStart.before(dateEnd)||dateStart.equals(dateEnd),ERROR_FROM_TO_PARAM);
+
+        GetBankDepositByNameFromToDateDepositWithDepositorsResponse response =
+                new GetBankDepositByNameFromToDateDepositWithDepositorsResponse();
+
+        response.setBankDepositReport(depositReportDaoToXml(depositService
+                .getBankDepositByNameFromToDateDepositWithDepositors(request.getDepositName(),dateStart,dateEnd)));
+        LOGGER.debug("getBankDepositByNameFromToDateDepositWithDepositorsResponse - depositName={}",
+                response.getBankDepositReport().getDepositName());
+        Assert.notNull(response.getBankDepositReport(),ERROR_NULL_RESPONSE);
+
+        return response;
+    }
+
+    /**
+     * Get Bank Deposits by depositName from-to date return Bank Deposit of depositors
+     *
+     * @param request XmlElements: depositName, startDate deposit, endDate deposit
+     * @return response XmlElement BankDepositReport
+     */
+    @PayloadRoot(localPart = "getBankDepositByNameFromToDateReturnDepositWithDepositorsRequest",
+            namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public GetBankDepositByNameFromToDateReturnDepositWithDepositorsResponse getBankDepositByNameFromToDateReturnDepositWithDepositors(
+            @RequestPayload GetBankDepositByNameFromToDateReturnDepositWithDepositorsRequest request){
+        LOGGER.debug("getBankDepositByNameFromToDateReturnDepositWithDepositorsRequest(deposiName={}, startDate={}, endDate={})",
+                request.getDepositName(),request.getStartDate(),request.getEndDate());
+        Assert.notNull(request.getDepositName(),ERROR_METHOD_PARAM);
+        Assert.notNull(request.getStartDate(),ERROR_METHOD_PARAM);
+        Assert.notNull(request.getEndDate(),ERROR_METHOD_PARAM);
+
+        Date dateStart=new Date(), dateEnd=new Date();
+        dateStart.setTime(request.getStartDate().toGregorianCalendar().getTimeInMillis());
+        dateEnd.setTime(request.getEndDate().toGregorianCalendar().getTimeInMillis());
+        Assert.isTrue(dateStart.before(dateEnd)||dateStart.equals(dateEnd),ERROR_FROM_TO_PARAM);
+
+        GetBankDepositByNameFromToDateReturnDepositWithDepositorsResponse response =
+                new GetBankDepositByNameFromToDateReturnDepositWithDepositorsResponse();
+
+        response.setBankDepositReport(depositReportDaoToXml(depositService
+                .getBankDepositByNameFromToDateReturnDepositWithDepositors(request.getDepositName(),dateStart,dateEnd)));
+        LOGGER.debug("getBankDepositByNameFromToDateDepositWithDepositorsResponse - depositName={}",
+                response.getBankDepositReport().getDepositName());
         Assert.notNull(response.getBankDepositReport(),ERROR_NULL_RESPONSE);
 
         return response;

@@ -4,6 +4,6 @@ include 'app-dao'
 //include 'app-dao-spring'
 include 'app-service'
 include 'app-rest'
-//include 'app-soap'
+include 'app-soap'
 include 'app-web'
 
