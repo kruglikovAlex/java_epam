@@ -20,7 +20,6 @@
     <mvc:resources mapping="/resources/**" location="/resources/" />
     <context:component-scan base-package="com.brest.bank"/>
 
-
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
@@ -79,4 +78,9 @@
         </property>
     </bean>
 
+    <!--
+    <bean id="bankDao" class="net.gryszko.spock.dao.BankDaoHibernateImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    -->
 </beans>

@@ -5,23 +5,21 @@ import com.brest.bank.dao.BankDepositorDao;
 
 import com.brest.bank.domain.BankDeposit;
 
-import com.brest.bank.domain.BankDepositor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import org.springframework.util.Assert;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
-//@ContextConfiguration(locations = {"classpath:/spring-services.xml"})
+@Service
 public class BankDepositServiceImpl implements BankDepositService{
 
     public static final String ERROR_DB_EMPTY = "There is no RECORDS in the DataBase";

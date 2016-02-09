@@ -11,7 +11,7 @@ war {
 dependencies {
 
     compile project(":app-rest")
-    //compile project(":app-soap")
+    compile project(":app-soap")
 
     compile('org.javassist:javassist:3.12.1.GA')
     compile('commons-io:commons-io:2.4')
@@ -28,6 +28,11 @@ dependencies {
 
     compile('org.springframework:spring-web:4.2.4.RELEASE')
     compile('org.springframework:spring-webmvc:4.2.4.RELEASE')
+
+    compile('org.springframework.ws:spring-ws-core:2.2.4.RELEASE')
+    compile('org.springframework.ws:spring-xml:2.2.4.RELEASE')
+
+    compile('org.apache.axis2:axis2-java2wsdl:1.6.4')
 
     compile('javax.servlet:javax.servlet-api:3.1.0')
 
