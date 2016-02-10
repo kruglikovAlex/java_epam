@@ -347,6 +347,52 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+    <xsd:element name="getBankDepositByIdWithDepositorsRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositId" type="xsd:long"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByIdWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositReport" type="tns:bankDepositReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByIdFromToDateDepositWithDepositorsRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositId" type="xsd:long"/>
+                <xsd:element name="startDate" type="xsd:date"/>
+                <xsd:element name="endDate" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByIdFromToDateDepositWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositReport" type="tns:bankDepositReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByIdFromToDateReturnDepositWithDepositorsRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositId" type="xsd:long"/>
+                <xsd:element name="startDate" type="xsd:date"/>
+                <xsd:element name="endDate" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByIdFromToDateReturnDepositWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositReport" type="tns:bankDepositReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="addBankDepositRequest">
         <xsd:complexType>
             <xsd:sequence>
