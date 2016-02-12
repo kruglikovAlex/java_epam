@@ -27,6 +27,7 @@ import org.springframework.ws.test.server.ResponseMatchers;
 import org.springframework.xml.transform.StringSource;
 
 import javax.xml.transform.Source;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -1025,7 +1026,7 @@ public class DepositSoapEndpointTest {
                         "<depositId>1</depositId>" +
                         "<startDate>2015-01-01</startDate>" +
                         "<endDate>2015-02-02</endDate>" +
-                        "</getBankDepositByIdFromToDateReturnDepositWithDepositorsRequest>");
+                "</getBankDepositByIdFromToDateReturnDepositWithDepositorsRequest>");
 
         Source responsePayload = new StringSource(
                 "<ns2:getBankDepositByIdFromToDateReturnDepositWithDepositorsResponse xmlns:ns2=\"http://bank.brest.com/soap\">" +
@@ -1043,6 +1044,91 @@ public class DepositSoapEndpointTest {
                             "<ns2:depositorAmountMinusSum>100</ns2:depositorAmountMinusSum>" +
                         "</ns2:bankDepositReport>" +
                 "</ns2:getBankDepositByIdFromToDateReturnDepositWithDepositorsResponse>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+
+        verify(depositService);
+    }
+
+   @Test
+   public void testGetBankDepositsWithDepositors() throws ParseException{
+       LOGGER.debug("testGetBankDepositsWithDepositors - run");
+
+       expect(depositService.getBankDepositsWithDepositors())
+               .andReturn(DataFixture.getExistAllDepositsAllDepositors());
+
+       replay(depositService);
+
+       Source requestPayload = new StringSource(
+               "<getBankDepositsWithDepositorsRequest xmlns='http://bank.brest.com/soap'>" +
+               "</getBankDepositsWithDepositorsRequest>");
+
+       Source responsePayload = new StringSource(
+               "<ns2:getBankDepositsWithDepositorsResponse xmlns:ns2=\"http://bank.brest.com/soap\">" +
+                       "<ns2:bankDepositsReport>" +
+                            "<ns2:bankDepositReport>" +
+                                "<ns2:depositId>1</ns2:depositId>" +
+                                "<ns2:depositName>depositName1</ns2:depositName>" +
+                                "<ns2:depositMinTerm>12</ns2:depositMinTerm>" +
+                                "<ns2:depositMinAmount>1000</ns2:depositMinAmount>" +
+                                "<ns2:depositCurrency>usd</ns2:depositCurrency>" +
+                                "<ns2:depositInterestRate>4</ns2:depositInterestRate>" +
+                                "<ns2:depositAddConditions>conditions1</ns2:depositAddConditions>" +
+                                "<ns2:depositorCount>1</ns2:depositorCount>" +
+                                "<ns2:depositorAmountSum>1000</ns2:depositorAmountSum>" +
+                                "<ns2:depositorAmountPlusSum>100</ns2:depositorAmountPlusSum>" +
+                                "<ns2:depositorAmountMinusSum>100</ns2:depositorAmountMinusSum>" +
+                            "</ns2:bankDepositReport>" +
+                       "</ns2:bankDepositsReport>" +
+               "</ns2:getBankDepositsWithDepositorsResponse>");
+
+       RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+       this.mockClient
+               .sendRequest(creator)
+               .andExpect(ResponseMatchers.payload(responsePayload));
+
+       verify(depositService);
+   }
+
+    @Test
+    public void testGetBankDepositsFromToDateDepositWithDepositors() throws ParseException{
+        LOGGER.debug("testGetBankDepositsFromToDateDepositWithDepositors - run");
+
+        expect(depositService.getBankDepositsFromToDateDepositWithDepositors(dateFormat.parse("2015-01-01"),
+                dateFormat.parse("2015-02-02")))
+                .andReturn(DataFixture.getExistAllDepositsAllDepositors());
+
+        replay(depositService);
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositsFromToDateDepositWithDepositorsRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<startDate>2015-01-01</startDate>" +
+                        "<endDate>2015-02-02</endDate>" +
+                "</getBankDepositsFromToDateDepositWithDepositorsRequest>");
+
+        Source responsePayload = new StringSource(
+                "<ns2:getBankDepositsFromToDateDepositWithDepositorsResponse xmlns:ns2=\"http://bank.brest.com/soap\">" +
+                        "<ns2:bankDepositsReport>" +
+                        "<ns2:bankDepositReport>" +
+                        "<ns2:depositId>1</ns2:depositId>" +
+                        "<ns2:depositName>depositName1</ns2:depositName>" +
+                        "<ns2:depositMinTerm>12</ns2:depositMinTerm>" +
+                        "<ns2:depositMinAmount>1000</ns2:depositMinAmount>" +
+                        "<ns2:depositCurrency>usd</ns2:depositCurrency>" +
+                        "<ns2:depositInterestRate>4</ns2:depositInterestRate>" +
+                        "<ns2:depositAddConditions>conditions1</ns2:depositAddConditions>" +
+                        "<ns2:depositorCount>1</ns2:depositorCount>" +
+                        "<ns2:depositorAmountSum>1000</ns2:depositorAmountSum>" +
+                        "<ns2:depositorAmountPlusSum>100</ns2:depositorAmountPlusSum>" +
+                        "<ns2:depositorAmountMinusSum>100</ns2:depositorAmountMinusSum>" +
+                        "</ns2:bankDepositReport>" +
+                        "</ns2:bankDepositsReport>" +
+                "</ns2:getBankDepositsFromToDateDepositWithDepositorsResponse>");
 
         RequestCreator creator = RequestCreators.withPayload(requestPayload);
 

@@ -50,6 +50,7 @@ public class DepositSoapEndpoint {
     private BankDeposits deposits;
     private BankDepositor depositor;
     private BankDepositors depositors;
+    private BankDepositsReport depositsReport;
 
     @Autowired
     public DepositSoapEndpoint(BankDepositService depositService,BankDepositorService depositorService){
@@ -494,6 +495,71 @@ public class DepositSoapEndpoint {
         Assert.notNull(response.getBankDepositReport());
         LOGGER.debug("getBankDepositByIdFromToDateReturnDepositWithDepositorsResponse - depositName={}",
                 response.getBankDepositReport().getDepositName());
+
+        return response;
+    }
+
+    /**
+     * Get all Bank Deposits with report about all Bank Depositors
+     *
+     * @return XmlElement List<Map>
+     */
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getBankDepositsWithDepositorsRequest")
+    @ResponsePayload
+    public GetBankDepositsWithDepositorsResponse getBankDepositsWithDepositors(){
+        LOGGER.debug("getBankDepositsWithDepositorsRequest");
+
+        depositsReport = new BankDepositsReport();
+        GetBankDepositsWithDepositorsResponse response = new GetBankDepositsWithDepositorsResponse();
+        int i = 0;
+        for (Map dd:depositService.getBankDepositsWithDepositors()
+                ) {
+            depositsReport.getBankDepositReport().add(i,depositReportDaoToXml(dd));
+            i++;
+        }
+        response.setBankDepositsReport(depositsReport);
+        Assert.notNull(response.getBankDepositsReport(),ERROR_NULL_RESPONSE);
+        Assert.notEmpty(response.getBankDepositsReport().getBankDepositReport(),ERROR_EMPTY_RESPONSE);
+
+        return response;
+    }
+
+    /**
+     * Get all Bank Deposits with report about all Bank Depositors from-to date Bank Deposit
+     *
+     * @param request mlElements: startDate deposit, endDate deposit
+     * @return XmlElement List<Map>
+     */
+    @PayloadRoot(localPart = "getBankDepositsFromToDateDepositWithDepositorsRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public GetBankDepositsFromToDateDepositWithDepositorsResponse getBankDepositsFromToDateDepositWithDepositors(
+            @RequestPayload GetBankDepositsFromToDateDepositWithDepositorsRequest request){
+        LOGGER.debug("getBankDepositsFromToDateDepositWithDepositorsRequest(startDate={}, endDate={})",
+                request.getStartDate(),request.getEndDate());
+
+        Assert.notNull(request.getStartDate(),ERROR_METHOD_PARAM);
+        Assert.notNull(request.getEndDate(),ERROR_METHOD_PARAM);
+
+        Date dateStart=new Date(), dateEnd=new Date();
+        dateStart.setTime(request.getStartDate().toGregorianCalendar().getTimeInMillis());
+        dateEnd.setTime(request.getEndDate().toGregorianCalendar().getTimeInMillis());
+
+        Assert.isTrue(dateStart.before(dateEnd)||dateStart.equals(dateEnd),ERROR_FROM_TO_PARAM);
+
+        depositsReport = new BankDepositsReport();
+
+        GetBankDepositsFromToDateDepositWithDepositorsResponse response =
+                new GetBankDepositsFromToDateDepositWithDepositorsResponse();
+
+        int i = 0;
+        for(Map dd: depositService.getBankDepositsFromToDateDepositWithDepositors(dateStart,dateEnd)
+                ){
+            depositsReport.getBankDepositReport().add(i,depositReportDaoToXml(dd));
+            i++;
+        }
+        response.setBankDepositsReport(depositsReport);
+        Assert.notNull(response.getBankDepositsReport(),ERROR_NULL_RESPONSE);
+        Assert.notEmpty(response.getBankDepositsReport().getBankDepositReport(),ERROR_EMPTY_RESPONSE);
 
         return response;
     }
