@@ -1140,6 +1140,92 @@ public class DepositSoapEndpointTest {
     }
 
     @Test
+    public void testGetBankDepositsFromToDateReturnDepositWithDepositors() throws ParseException{
+        LOGGER.debug("testGetBankDepositsFromToDateReturnDepositWithDepositors - run");
+
+        expect(depositService.getBankDepositsFromToDateReturnDepositWithDepositors(dateFormat.parse("2015-01-01"),
+                dateFormat.parse("2015-02-02")))
+                .andReturn(DataFixture.getExistAllDepositsAllDepositors());
+
+        replay(depositService);
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositsFromToDateReturnDepositWithDepositorsRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<startDate>2015-01-01</startDate>" +
+                        "<endDate>2015-02-02</endDate>" +
+                "</getBankDepositsFromToDateReturnDepositWithDepositorsRequest>");
+
+        Source responsePayload = new StringSource(
+                "<ns2:getBankDepositsFromToDateReturnDepositWithDepositorsResponse xmlns:ns2=\"http://bank.brest.com/soap\">" +
+                        "<ns2:bankDepositsReport>" +
+                            "<ns2:bankDepositReport>" +
+                                "<ns2:depositId>1</ns2:depositId>" +
+                                "<ns2:depositName>depositName1</ns2:depositName>" +
+                                "<ns2:depositMinTerm>12</ns2:depositMinTerm>" +
+                                "<ns2:depositMinAmount>1000</ns2:depositMinAmount>" +
+                                "<ns2:depositCurrency>usd</ns2:depositCurrency>" +
+                                "<ns2:depositInterestRate>4</ns2:depositInterestRate>" +
+                                "<ns2:depositAddConditions>conditions1</ns2:depositAddConditions>" +
+                                "<ns2:depositorCount>1</ns2:depositorCount>" +
+                                "<ns2:depositorAmountSum>1000</ns2:depositorAmountSum>" +
+                                "<ns2:depositorAmountPlusSum>100</ns2:depositorAmountPlusSum>" +
+                                "<ns2:depositorAmountMinusSum>100</ns2:depositorAmountMinusSum>" +
+                            "</ns2:bankDepositReport>" +
+                        "</ns2:bankDepositsReport>" +
+                "</ns2:getBankDepositsFromToDateReturnDepositWithDepositorsResponse>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+
+        verify(depositService);
+    }
+
+    @Test
+    public void testGetBankDepositsByCurrencyWithDepositors() throws ParseException{
+        LOGGER.debug("testGetBankDepositsByCurrencyWithDepositors - run");
+
+        expect(depositService.getBankDepositsByCurrencyWithDepositors("usd"))
+                .andReturn(DataFixture.getExistAllDepositsAllDepositors());
+
+        replay(depositService);
+
+        Source requestPayload = new StringSource(
+                "<getBankDepositsByCurrencyWithDepositorsRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<depositCurrency>usd</depositCurrency>" +
+                "</getBankDepositsByCurrencyWithDepositorsRequest>");
+
+        Source responsePayload = new StringSource(
+                "<ns2:getBankDepositsByCurrencyWithDepositorsResponse xmlns:ns2=\"http://bank.brest.com/soap\">" +
+                        "<ns2:bankDepositsReport>" +
+                            "<ns2:bankDepositReport>" +
+                                "<ns2:depositId>1</ns2:depositId>" +
+                                "<ns2:depositName>depositName1</ns2:depositName>" +
+                                "<ns2:depositMinTerm>12</ns2:depositMinTerm>" +
+                                "<ns2:depositMinAmount>1000</ns2:depositMinAmount>" +
+                                "<ns2:depositCurrency>usd</ns2:depositCurrency>" +
+                                "<ns2:depositInterestRate>4</ns2:depositInterestRate>" +
+                                "<ns2:depositAddConditions>conditions1</ns2:depositAddConditions>" +
+                                "<ns2:depositorCount>1</ns2:depositorCount>" +
+                                "<ns2:depositorAmountSum>1000</ns2:depositorAmountSum>" +
+                                "<ns2:depositorAmountPlusSum>100</ns2:depositorAmountPlusSum>" +
+                                "<ns2:depositorAmountMinusSum>100</ns2:depositorAmountMinusSum>" +
+                            "</ns2:bankDepositReport>" +
+                        "</ns2:bankDepositsReport>" +
+                "</ns2:getBankDepositsByCurrencyWithDepositorsResponse>");
+
+        RequestCreator creator = RequestCreators.withPayload(requestPayload);
+
+        this.mockClient
+                .sendRequest(creator)
+                .andExpect(ResponseMatchers.payload(responsePayload));
+
+        verify(depositService);
+    }
+
+    @Test
     public void testAddBankDeposit() throws Exception {
         LOGGER.debug("testAddBankDeposit() - run");
 

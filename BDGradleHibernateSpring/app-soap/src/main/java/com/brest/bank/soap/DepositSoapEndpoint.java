@@ -436,7 +436,7 @@ public class DepositSoapEndpoint {
     /**
      * Get Bank Deposit by depositId from-to depositorDateDeposit with report about all bank depositors
      *
-     * @param request mlElements: depositId, startDate deposit, endDate deposit
+     * @param request XmlElements: depositId, startDate deposit, endDate deposit
      * @return response XmlElement BankDepositReport
      */
     @PayloadRoot(localPart = "getBankDepositByIdFromToDateDepositWithDepositorsRequest",namespace = NAMESPACE_URI)
@@ -469,7 +469,7 @@ public class DepositSoapEndpoint {
     /**
      * Get Bank Deposit by depositId from-to depositorDateReturnDeposit with report about all bank depositors
      *
-     * @param request mlElements: depositId, startDate deposit, endDate deposit
+     * @param request XmlElements: depositId, startDate deposit, endDate deposit
      * @return response XmlElement BankDepositReport
      */
     @PayloadRoot(localPart = "getBankDepositByIdFromToDateReturnDepositWithDepositorsRequest",namespace = NAMESPACE_URI)
@@ -527,7 +527,7 @@ public class DepositSoapEndpoint {
     /**
      * Get all Bank Deposits with report about all Bank Depositors from-to date Bank Deposit
      *
-     * @param request mlElements: startDate deposit, endDate deposit
+     * @param request XmlElements: startDate deposit, endDate deposit
      * @return XmlElement List<Map>
      */
     @PayloadRoot(localPart = "getBankDepositsFromToDateDepositWithDepositorsRequest", namespace = NAMESPACE_URI)
@@ -553,6 +553,78 @@ public class DepositSoapEndpoint {
 
         int i = 0;
         for(Map dd: depositService.getBankDepositsFromToDateDepositWithDepositors(dateStart,dateEnd)
+                ){
+            depositsReport.getBankDepositReport().add(i,depositReportDaoToXml(dd));
+            i++;
+        }
+        response.setBankDepositsReport(depositsReport);
+        Assert.notNull(response.getBankDepositsReport(),ERROR_NULL_RESPONSE);
+        Assert.notEmpty(response.getBankDepositsReport().getBankDepositReport(),ERROR_EMPTY_RESPONSE);
+
+        return response;
+    }
+
+    /**
+     * Get all Bank Deposits with report about all Bank Depositors from-to date return Bank Deposit
+     *
+     * @param request XmlElements: startDate deposit, endDate deposit
+     * @return XmlElement List<Map>
+     */
+    @PayloadRoot(localPart = "getBankDepositsFromToDateReturnDepositWithDepositorsRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public GetBankDepositsFromToDateReturnDepositWithDepositorsResponse getBankDepositsFromToDateReturnDepositWithDepositors(
+            @RequestPayload GetBankDepositsFromToDateReturnDepositWithDepositorsRequest request){
+        LOGGER.debug("getBankDepositsFromToDateReturnDepositWithDepositorsRequest(startDate={}, endDate={})",
+                request.getStartDate(),request.getEndDate());
+
+        Assert.notNull(request.getStartDate(),ERROR_METHOD_PARAM);
+        Assert.notNull(request.getEndDate(),ERROR_METHOD_PARAM);
+
+        Date dateStart=new Date(), dateEnd=new Date();
+        dateStart.setTime(request.getStartDate().toGregorianCalendar().getTimeInMillis());
+        dateEnd.setTime(request.getEndDate().toGregorianCalendar().getTimeInMillis());
+
+        Assert.isTrue(dateStart.before(dateEnd)||dateStart.equals(dateEnd),ERROR_FROM_TO_PARAM);
+
+        depositsReport = new BankDepositsReport();
+
+        GetBankDepositsFromToDateReturnDepositWithDepositorsResponse response =
+                new GetBankDepositsFromToDateReturnDepositWithDepositorsResponse();
+
+        int i = 0;
+        for(Map dd: depositService.getBankDepositsFromToDateReturnDepositWithDepositors(dateStart,dateEnd)
+                ){
+            depositsReport.getBankDepositReport().add(i,depositReportDaoToXml(dd));
+            i++;
+        }
+        response.setBankDepositsReport(depositsReport);
+        Assert.notNull(response.getBankDepositsReport(),ERROR_NULL_RESPONSE);
+        Assert.notEmpty(response.getBankDepositsReport().getBankDepositReport(),ERROR_EMPTY_RESPONSE);
+
+        return response;
+    }
+
+    /**
+     * Get Bank Deposits by currency with report about all Bank Depositors
+     *
+     * @param request XmlElement: depositCurrency
+     * @return XmlElement List<Map>
+     */
+    @PayloadRoot(localPart = "getBankDepositsByCurrencyWithDepositorsRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public GetBankDepositsByCurrencyWithDepositorsResponse getBankDepositsByCurrencyWithDepositors(
+            @RequestPayload GetBankDepositsByCurrencyWithDepositorsRequest request){
+        LOGGER.debug("getBankDepositsByCurrencyWithDepositorsRequest(currency={})",request.getDepositCurrency());
+
+        Assert.notNull(request.getDepositCurrency(),ERROR_METHOD_PARAM);
+
+        depositsReport = new BankDepositsReport();
+
+        GetBankDepositsByCurrencyWithDepositorsResponse response =
+                new GetBankDepositsByCurrencyWithDepositorsResponse();
+
+        int i = 0;
+        for(Map dd: depositService.getBankDepositsByCurrencyWithDepositors(request.getDepositCurrency())
                 ){
             depositsReport.getBankDepositReport().add(i,depositReportDaoToXml(dd));
             i++;
