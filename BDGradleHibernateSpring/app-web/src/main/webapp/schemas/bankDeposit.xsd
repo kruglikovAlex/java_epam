@@ -393,6 +393,108 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+    <xsd:element name="getBankDepositsWithDepositorsRequest"/>
+    <xsd:element name="getBankDepositsWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositsReport" type="tns:bankDepositsReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToDateDepositWithDepositorsRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="startDate" type="xsd:date"/>
+                <xsd:element name="endDate" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToDateDepositWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositsReport" type="tns:bankDepositsReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToDateReturnDepositWithDepositorsRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="startDate" type="xsd:date"/>
+                <xsd:element name="endDate" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToDateReturnDepositWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositsReport" type="tns:bankDepositsReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsByCurrencyWithDepositorsRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositCurrency">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:pattern value="[A-Z]{3}"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsByCurrencyWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositsReport" type="tns:bankDepositsReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsByCurrencyFromToDateDepositWithDepositorsRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositCurrency">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:pattern value="[A-Z]{3}"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="startDate" type="xsd:date"/>
+                <xsd:element name="endDate" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositsReport" type="tns:bankDepositsReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositCurrency">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:pattern value="[A-Z]{3}"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="startDate" type="xsd:date"/>
+                <xsd:element name="endDate" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositsReport" type="tns:bankDepositsReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="addBankDepositRequest">
         <xsd:complexType>
             <xsd:sequence>
