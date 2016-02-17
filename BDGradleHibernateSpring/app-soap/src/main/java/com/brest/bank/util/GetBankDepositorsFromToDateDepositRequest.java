@@ -42,13 +42,13 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "startDate",
     "endDate"
 })
-@XmlRootElement(name = "getBankDepositsFromToDateReturnDepositRequest")
-public class GetBankDepositsFromToDateReturnDepositRequest {
+@XmlRootElement(name = "getBankDepositorsFromToDateDepositRequest")
+public class GetBankDepositorsFromToDateDepositRequest {
 
-    @XmlElement(required = true, nillable = true)
+    @XmlElement(required = true)
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar startDate;
-    @XmlElement(required = true, nillable = true)
+    @XmlElement(required = true)
     @XmlSchemaType(name = "date")
     protected XMLGregorianCalendar endDate;
 

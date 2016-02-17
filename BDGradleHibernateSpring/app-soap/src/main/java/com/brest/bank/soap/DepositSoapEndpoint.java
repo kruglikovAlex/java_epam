@@ -23,7 +23,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Endpoint
-//@ContextConfiguration(locations = {"classpath:/spring-soap.xml"})
 public class DepositSoapEndpoint {
 
     public static final String ERROR_NULL_RESPONSE = "Response is NULL";
@@ -637,6 +636,92 @@ public class DepositSoapEndpoint {
     }
 
     /**
+     * Get Bank Deposits by currency with report about all Bank Depositors from-to date Bank Deposit
+     *
+     * @param request XmlElement: depositCurrency, startDate deposit, endDate deposit
+     * @return XmlElement List<Map>
+     */
+    @PayloadRoot(localPart = "getBankDepositsByCurrencyFromToDateDepositWithDepositorsRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public GetBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse getBankDepositsByCurrencyFromToDateDepositWithDepositors(
+            @RequestPayload GetBankDepositsByCurrencyFromToDateDepositWithDepositorsRequest request){
+        LOGGER.debug("getBankDepositsByCurrencyFromToDateDepositWithDepositorsRequest(currency={}, startDate={}, endDate={})",
+                request.getDepositCurrency(),request.getStartDate(),request.getEndDate());
+
+        Assert.notNull(request.getDepositCurrency(),ERROR_METHOD_PARAM);
+        Assert.notNull(request.getStartDate(),ERROR_METHOD_PARAM);
+        Assert.notNull(request.getEndDate(),ERROR_METHOD_PARAM);
+
+        Date dateStart=new Date(), dateEnd=new Date();
+        dateStart.setTime(request.getStartDate().toGregorianCalendar().getTimeInMillis());
+        dateEnd.setTime(request.getEndDate().toGregorianCalendar().getTimeInMillis());
+
+        Assert.isTrue(dateStart.before(dateEnd)||dateStart.equals(dateEnd),ERROR_FROM_TO_PARAM);
+
+        depositsReport = new BankDepositsReport();
+
+        GetBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse response =
+                new GetBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse();
+
+        int i = 0;
+        for(Map dd: depositService.getBankDepositsByCurrencyFromToDateDepositWithDepositors(request.getDepositCurrency(),dateStart,dateEnd)
+                ){
+            depositsReport.getBankDepositReport().add(i,depositReportDaoToXml(dd));
+            i++;
+        }
+        response.setBankDepositsReport(depositsReport);
+        Assert.notNull(response.getBankDepositsReport(),ERROR_NULL_RESPONSE);
+        Assert.notEmpty(response.getBankDepositsReport().getBankDepositReport(),ERROR_EMPTY_RESPONSE);
+
+        return response;
+    }
+
+    /**
+     * Get Bank Deposits by currency with report about all Bank Depositors from-to date Bank Deposit
+     *
+     * @param request XmlElement: depositCurrency, startDate deposit, endDate deposit
+     * @return XmlElement List<Map>
+     */
+    @PayloadRoot(localPart = "getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsRequest",
+            namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public GetBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsResponse getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(
+            @RequestPayload GetBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsRequest request){
+        LOGGER.debug("getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsRequest(currency={}, startDate={}, endDate={})",
+                request.getDepositCurrency(),request.getStartDate(),request.getEndDate());
+
+        Assert.notNull(request.getDepositCurrency(),ERROR_METHOD_PARAM);
+        Assert.notNull(request.getStartDate(),ERROR_METHOD_PARAM);
+        Assert.notNull(request.getEndDate(),ERROR_METHOD_PARAM);
+
+        Date dateStart=new Date(), dateEnd=new Date();
+        dateStart.setTime(request.getStartDate().toGregorianCalendar().getTimeInMillis());
+        dateEnd.setTime(request.getEndDate().toGregorianCalendar().getTimeInMillis());
+
+        Assert.isTrue(dateStart.before(dateEnd)||dateStart.equals(dateEnd),ERROR_FROM_TO_PARAM);
+
+        depositsReport = new BankDepositsReport();
+
+        GetBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsResponse response =
+                new GetBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsResponse();
+
+        int i = 0;
+        for(Map dd: depositService.getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(
+                                                request.getDepositCurrency(),
+                                                dateStart,
+                                                dateEnd)
+                ){
+            depositsReport.getBankDepositReport().add(i,depositReportDaoToXml(dd));
+            i++;
+        }
+        response.setBankDepositsReport(depositsReport);
+        Assert.notNull(response.getBankDepositsReport(),ERROR_NULL_RESPONSE);
+        Assert.notEmpty(response.getBankDepositsReport().getBankDepositReport(),ERROR_EMPTY_RESPONSE);
+
+        return response;
+    }
+
+    /**
      * Adding Bank Deposit
      *
      * @param request XmlElement BankDeposit
@@ -696,7 +781,7 @@ public class DepositSoapEndpoint {
     @ResponsePayload
     public UpdateBankDepositResponse updateBankDeposit(@RequestPayload UpdateBankDepositRequest request){
         LOGGER.debug("updateBankDepositRequest(depositId={})",request.getBankDeposit().getDepositId());
-        Assert.notNull(request,ERROR_METHOD_PARAM+"- Bank Deposit");
+        Assert.notNull(request,ERROR_METHOD_PARAM +"- Bank Deposit");
         Assert.notNull(request.getBankDeposit().getDepositId(),ERROR_METHOD_PARAM+"- depositId");
 
         UpdateBankDepositResponse response = new UpdateBankDepositResponse();
@@ -734,6 +819,35 @@ public class DepositSoapEndpoint {
     }
 
     /**
+     * Get Bank Depositor by depositId
+     *
+     * @param request XmlElement depositId
+     * @return XmlElement BankDepositor
+     * @throws DatatypeConfigurationException
+     */
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getBankDepositorByIdDepositRequest")
+    @ResponsePayload
+    public GetBankDepositorByIdDepositResponse getBankDepositorByIdDeposit(@RequestPayload GetBankDepositorByIdDepositRequest request)
+            throws DatatypeConfigurationException{
+        LOGGER.debug("getBankDepositorByIdDepositRequest - deposiId={}",request.getDepositId());
+        Assert.notNull(request.getDepositId(),ERROR_METHOD_PARAM);
+
+        depositors = new BankDepositors();
+
+        GetBankDepositorByIdDepositResponse response = new GetBankDepositorByIdDepositResponse();
+        int i = 0;
+        for(com.brest.bank.domain.BankDepositor dd:depositorService.getBankDepositorByIdDeposit(request.getDepositId())){
+            depositors.getBankDepositor().add(i,depositorDaoToXml(dd));
+        }
+        response.setBankDepositors(depositors);
+
+        Assert.notEmpty(response.getBankDepositors().getBankDepositor(),ERROR_EMPTY_RESPONSE);
+        Assert.notNull(response.getBankDepositors(),ERROR_NULL_RESPONSE);
+
+        return response;
+    }
+
+    /**
      * Get Bank Depositor by depositorName
      *
      * @param request XmlElement depositorName
@@ -752,6 +866,99 @@ public class DepositSoapEndpoint {
         LOGGER.debug("getBankDepositorByNameResponse - depositorName={}",response.getBankDepositor().getDepositorName());
 
         Assert.notNull(response.getBankDepositor(),ERROR_NULL_RESPONSE);
+        return response;
+    }
+
+    /**
+     * Get Bank Depositors from-to date return Bank Deposits
+     *
+     * @param request XmlElement: startDate and endDate
+     * @return response XmlElement Bank Depositors
+     */
+    @PayloadRoot(localPart = "getBankDepositorsFromToDateDepositRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public GetBankDepositorsFromToDateDepositResponse getBankDepositorsFromToDateDeposit(@RequestPayload GetBankDepositorsFromToDateDepositRequest request)
+            throws DatatypeConfigurationException{
+        LOGGER.debug("getBankDepositorsFromToDateDepositRequest(from={}, to={})",request.getStartDate(),request.getEndDate());
+        Assert.notNull(request.getStartDate(),ERROR_METHOD_PARAM);
+        Assert.notNull(request.getEndDate(),ERROR_METHOD_PARAM);
+
+        Date dateStart = new Date(), dateEnd = new Date();
+        dateStart.setTime(request.getStartDate().toGregorianCalendar().getTimeInMillis());
+        dateEnd.setTime(request.getEndDate().toGregorianCalendar().getTimeInMillis());
+        LOGGER.debug("dateStart={}, dateEnd={}",dateStart,dateEnd);
+        Assert.isTrue(dateStart.before(dateEnd)||dateStart.equals(dateEnd),ERROR_FROM_TO_PARAM);
+
+        depositors = new BankDepositors();
+        GetBankDepositorsFromToDateDepositResponse response = new GetBankDepositorsFromToDateDepositResponse();
+        int i = 0;
+        for(com.brest.bank.domain.BankDepositor dd:depositorService.getBankDepositorsFromToDateDeposit(dateStart,dateEnd)){
+            depositors.getBankDepositor().add(i,depositorDaoToXml(dd));
+        }
+        response.setBankDepositors(depositors);
+        Assert.notEmpty(response.getBankDepositors().getBankDepositor(),ERROR_EMPTY_RESPONSE);
+        Assert.notNull(response.getBankDepositors(),ERROR_NULL_RESPONSE);
+
+        return response;
+    }
+
+    /**
+     * Get Bank Depositors from-to date return Bank Deposits
+     *
+     * @param request XmlElement: startDate and endDate
+     * @return response XmlElement Bank Depositors
+     */
+    @PayloadRoot(localPart = "getBankDepositorsFromToDateReturnDepositRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public GetBankDepositorsFromToDateReturnDepositResponse getBankDepositorsFromToDateReturnDeposit(@RequestPayload GetBankDepositorsFromToDateReturnDepositRequest request)
+            throws DatatypeConfigurationException{
+        LOGGER.debug("getBankDepositorsFromToDateReturnDepositRequest(from={}, to={})",request.getStartDate(),request.getEndDate());
+        Assert.notNull(request.getStartDate(),ERROR_METHOD_PARAM);
+        Assert.notNull(request.getEndDate(),ERROR_METHOD_PARAM);
+
+        Date dateStart = new Date(), dateEnd = new Date();
+        dateStart.setTime(request.getStartDate().toGregorianCalendar().getTimeInMillis());
+        dateEnd.setTime(request.getEndDate().toGregorianCalendar().getTimeInMillis());
+        LOGGER.debug("dateStart={}, dateEnd={}",dateStart,dateEnd);
+        Assert.isTrue(dateStart.before(dateEnd)||dateStart.equals(dateEnd),ERROR_FROM_TO_PARAM);
+
+        depositors = new BankDepositors();
+        GetBankDepositorsFromToDateReturnDepositResponse response = new GetBankDepositorsFromToDateReturnDepositResponse();
+        int i = 0;
+        for(com.brest.bank.domain.BankDepositor dd:depositorService.getBankDepositorsFromToDateReturnDeposit(dateStart,dateEnd)){
+            depositors.getBankDepositor().add(i,depositorDaoToXml(dd));
+        }
+        response.setBankDepositors(depositors);
+        Assert.notEmpty(response.getBankDepositors().getBankDepositor(),ERROR_EMPTY_RESPONSE);
+        Assert.notNull(response.getBankDepositors(),ERROR_NULL_RESPONSE);
+
+        return response;
+    }
+
+    /**
+     * Adding Bank Depositor
+     *
+     * @param request XmlElement: depositId, BankDepositor
+     * @return XmlElement added BankDepositor
+     * @throws IOException
+     */
+    @PayloadRoot(localPart = "addBankDepositorRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public AddBankDepositorResponse addBankDepositor(@RequestPayload AddBankDepositorRequest request) throws DatatypeConfigurationException{
+        LOGGER.debug("addBankDepositorRequest(depositId={}, depositorId={})",request.getDepositId(),request.getBankDepositor().getDepositorId());
+        Assert.notNull(request.getDepositId(),ERROR_METHOD_PARAM);
+        Assert.notNull(request.getBankDepositor(),ERROR_METHOD_PARAM);
+        Assert.isNull(request.getBankDepositor().getDepositorId(),ERROR_NULL_PARAM +"- depositorId");
+
+        AddBankDepositorResponse response = new AddBankDepositorResponse();
+
+        depositorService.addBankDepositor(request.getDepositId(),xmlToDepositorDao(request.getBankDepositor()));
+
+        response.setBankDepositor(depositorDaoToXml(depositorService.getBankDepositorByName(request.getBankDepositor().getDepositorName())));
+
+        Assert.notNull(response.getBankDepositor(),ERROR_NULL_RESPONSE);
+        LOGGER.debug("addBankDepositorResponse(depositorId={})",response.getBankDepositor().getDepositorId());
+
         return response;
     }
 
@@ -790,23 +997,23 @@ public class DepositSoapEndpoint {
             depositReport.setDepositCurrency(depositReportDao.get("depositCurrency").toString());
             depositReport.setDepositInterestRate((Integer)depositReportDao.get("depositInterestRate"));
             depositReport.setDepositAddConditions(depositReportDao.get("depositAddConditions").toString());
-            depositReport.setDepositorCount((Integer)depositReportDao.get("depositorCount"));
-            depositReport.setDepositorAmountSum((Integer)depositReportDao.get("depositorAmountSum"));
-            depositReport.setDepositorAmountPlusSum((Integer)depositReportDao.get("depositorAmountPlusSum"));
-            depositReport.setDepositorAmountMinusSum((Integer)depositReportDao.get("depositorAmountMinusSum"));
+            depositReport.setDepositorCount(Integer.parseInt(depositReportDao.get("depositorCount").toString()));
+            depositReport.setDepositorAmountSum(Integer.parseInt(depositReportDao.get("depositorAmountSum").toString()));
+            depositReport.setDepositorAmountPlusSum(Integer.parseInt(depositReportDao.get("depositorAmountPlusSum").toString()));
+            depositReport.setDepositorAmountMinusSum(Integer.parseInt(depositReportDao.get("depositorAmountMinusSum").toString()));
 
         return depositReport;
     }
 
     public com.brest.bank.domain.BankDeposit xmlToDepositDao(BankDeposit depositXml){
         com.brest.bank.domain.BankDeposit deposit = new com.brest.bank.domain.BankDeposit();
-        deposit.setDepositId(depositXml.getDepositId());
-        deposit.setDepositName(depositXml.getDepositName());
-        deposit.setDepositMinTerm(depositXml.getDepositMinTerm());
-        deposit.setDepositMinAmount(depositXml.getDepositMinAmount());
-        deposit.setDepositCurrency(depositXml.getDepositCurrency());
-        deposit.setDepositInterestRate(depositXml.getDepositInterestRate());
-        deposit.setDepositAddConditions(depositXml.getDepositAddConditions());
+            deposit.setDepositId(depositXml.getDepositId());
+            deposit.setDepositName(depositXml.getDepositName());
+            deposit.setDepositMinTerm(depositXml.getDepositMinTerm());
+            deposit.setDepositMinAmount(depositXml.getDepositMinAmount());
+            deposit.setDepositCurrency(depositXml.getDepositCurrency());
+            deposit.setDepositInterestRate(depositXml.getDepositInterestRate());
+            deposit.setDepositAddConditions(depositXml.getDepositAddConditions());
 
         LOGGER.debug("depositDao - {}",deposit.toString());
         return deposit;
@@ -849,6 +1056,27 @@ public class DepositSoapEndpoint {
             depositor.setDepositorDateReturnDeposit(xmlDateReturnDeposit);
             depositor.setDepositorMarkReturnDeposit(depositorDao.getDepositorMarkReturnDeposit());
 
+        return depositor;
+    }
+
+    public com.brest.bank.domain.BankDepositor xmlToDepositorDao(BankDepositor depositorXml){
+        Date depositorDate, depositorDateReturn;
+
+        depositorDate = depositorXml.getDepositorDateDeposit().toGregorianCalendar().getTime();
+        depositorDateReturn = depositorXml.getDepositorDateReturnDeposit().toGregorianCalendar().getTime();
+
+        com.brest.bank.domain.BankDepositor depositor = new com.brest.bank.domain.BankDepositor();
+            depositor.setDepositorId(depositorXml.getDepositorId());
+            depositor.setDepositorName(depositorXml.getDepositorName());
+            depositor.setDepositorDateDeposit(depositorDate);
+            depositor.setDepositorAmountDeposit(depositorXml.getDepositorAmountDeposit());
+            depositor.setDepositorAmountPlusDeposit(depositorXml.getDepositorAmountPlusDeposit());
+            depositor.setDepositorAmountMinusDeposit(depositorXml.getDepositorAmountMinusDeposit());
+            depositor.setDepositorDateReturnDeposit(depositorDateReturn);
+            depositor.setDepositorMarkReturnDeposit(depositorXml.getDepositorMarkReturnDeposit());
+
+
+        LOGGER.debug("depositorDao - {}",depositor.toString());
         return depositor;
     }
 

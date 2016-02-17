@@ -83,6 +83,26 @@ public class BankDepositorServiceImplMockTest {
     }
 
     @Test
+    public void testGetBankDepositorsFromToDateReturnDeposit() throws Exception {
+        List<BankDepositor> depositors = DataFixture.getExistDepositors();
+        LOGGER.debug("depositors: {}", depositors);
+
+        expect(depositorDao.getBankDepositorsFromToDateReturnDeposit(dateFormat.parse("2015-01-01"),
+                dateFormat.parse("2015-09-09"))).andReturn(depositors);
+        replay(depositorDao);
+
+        List<BankDepositor> result = depositorService
+                .getBankDepositorsFromToDateReturnDeposit(dateFormat.parse("2015-01-01"),
+                                                        dateFormat.parse("2015-09-09"));
+        LOGGER.debug("result: {}",result);
+
+        verify(depositorDao);
+
+        assertEquals(depositors,result);
+        assertSame(depositors,result);
+    }
+
+    @Test
     public void testGetBankDepositorById() throws Exception {
         BankDepositor depositor = DataFixture.getExistDepositor(1L);
         LOGGER.debug("depositor={}",depositor);
@@ -97,6 +117,23 @@ public class BankDepositorServiceImplMockTest {
 
         assertEquals(depositor,result);
         assertSame(depositor,result);
+    }
+
+    @Test
+    public void testGetBankDepositorByIdDeposit() throws Exception {
+        List<BankDepositor> depositors = DataFixture.getExistDepositors();
+        LOGGER.debug("depositors={}",depositors);
+
+        expect(depositorDao.getBankDepositorByIdDepositCriteria(1L)).andReturn(depositors);
+        replay(depositorDao);
+
+        List<BankDepositor> result = depositorService.getBankDepositorByIdDeposit(1L);
+        LOGGER.debug("result={}",result);
+
+        verify(depositorDao);
+
+        assertEquals(depositors,result);
+        assertSame(depositors,result);
     }
 
     @Test

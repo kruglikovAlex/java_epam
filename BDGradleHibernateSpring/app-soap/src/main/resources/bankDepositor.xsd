@@ -2,7 +2,7 @@
             targetNamespace="http://bank.brest.com/soap" elementFormDefault="qualified">
     <xsd:complexType name="bankDepositor">
         <xsd:sequence>
-            <xsd:element name="depositorId" type="xsd:long"/>
+            <xsd:element name="depositorId" nillable="true" type="xsd:long"/>
             <xsd:element name="depositorName">
                 <xsd:simpleType>
                     <xsd:restriction base="xsd:string">
@@ -55,6 +55,36 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+    <xsd:element name="getBankDepositorsFromToDateDepositRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="startDate" type="xsd:date"/>
+                <xsd:element name="endDate" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositorsFromToDateDepositResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositors" type="tns:bankDepositors"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositorsFromToDateReturnDepositRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="startDate" type="xsd:date"/>
+                <xsd:element name="endDate" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositorsFromToDateReturnDepositResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositors" type="tns:bankDepositors"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
     <xsd:element name="getBankDepositorByIdRequest">
         <xsd:complexType>
             <xsd:sequence>
@@ -66,6 +96,20 @@
         <xsd:complexType>
             <xsd:sequence>
                 <xsd:element name="bankDepositor" type="tns:bankDepositor"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositorByIdDepositRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositId" type="xsd:long"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositorByIdDepositResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositors" type="tns:bankDepositors"/>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
@@ -89,5 +133,19 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
-
+    <xsd:element name="addBankDepositorRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositId" type="xsd:long"/>
+                <xsd:element name="bankDepositor" type="tns:bankDepositor"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="addBankDepositorResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositor" type="tns:bankDepositor"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
 </xsd:schema>

@@ -37,8 +37,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "depositId"
 })
-@XmlRootElement(name = "getBankDepositByIdRequest")
-public class GetBankDepositByIdRequest {
+@XmlRootElement(name = "getBankDepositorByIdDepositRequest")
+public class GetBankDepositorByIdDepositRequest {
 
     protected long depositId;
 

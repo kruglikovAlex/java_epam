@@ -10,6 +10,7 @@ package com.brest.bank.util;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -24,7 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="depositId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="bankDepositors" type="{http://bank.brest.com/soap}bankDepositors"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,27 +36,36 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "depositId"
+    "bankDepositors"
 })
-@XmlRootElement(name = "getBankDepositByIdRequest")
-public class GetBankDepositByIdRequest {
+@XmlRootElement(name = "getBankDepositorByIdDepositResponse")
+public class GetBankDepositorByIdDepositResponse {
 
-    protected long depositId;
+    @XmlElement(required = true)
+    protected BankDepositors bankDepositors;
 
     /**
-     * Gets the value of the depositId property.
+     * Gets the value of the bankDepositors property.
      * 
+     * @return
+     *     possible object is
+     *     {@link BankDepositors }
+     *     
      */
-    public long getDepositId() {
-        return depositId;
+    public BankDepositors getBankDepositors() {
+        return bankDepositors;
     }
 
     /**
-     * Sets the value of the depositId property.
+     * Sets the value of the bankDepositors property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link BankDepositors }
+     *     
      */
-    public void setDepositId(long value) {
-        this.depositId = value;
+    public void setBankDepositors(BankDepositors value) {
+        this.bankDepositors = value;
     }
 
 }

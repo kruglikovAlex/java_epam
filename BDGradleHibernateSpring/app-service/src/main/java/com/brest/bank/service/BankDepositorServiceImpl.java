@@ -73,6 +73,29 @@ public class BankDepositorServiceImpl implements BankDepositorService{
     }
 
     /**
+     * Get all Bank Depositors from-to Date return Deposit
+     *
+     * @param start Date - start value of the date return deposit (startDate < endDate)
+     * @param end Date - end value of the date deposit (startDate < endDate)
+     * @return List<BankDepositors> a list of all bank depositors with the specified task`s date return deposit
+     */
+    @Override
+    @Transactional
+    public List<BankDepositor> getBankDepositorsFromToDateReturnDeposit(Date start, Date end){
+        LOGGER.debug("getBankDepositorsFromToDateReturnDeposit(start date={}, end date={})",start,end);
+        Assert.notNull(start,ERROR_METHOD_PARAM);
+        Assert.notNull(end,ERROR_METHOD_PARAM);
+        Assert.isTrue(start.before(end)||start.equals(end),ERROR_FROM_TO_PARAM);
+        List<BankDepositor> depositors = null;
+        try{
+            depositors = depositorDao.getBankDepositorsFromToDateReturnDeposit(start, end);
+        }catch (EmptyResultDataAccessException e){
+            LOGGER.error("getBankDepositorsFromToDateReturnDeposit(start date={}, end date={}), error-{}",start,end,e.toString());
+        }
+        return depositors;
+    }
+
+    /**
      * Get Bank Depositor by ID
      *
      * @param depositorId  Long - id of the Bank Depositor to return
@@ -90,6 +113,20 @@ public class BankDepositorServiceImpl implements BankDepositorService{
             LOGGER.error("getBankDepositorById({}), Exception:{}",depositorId,e.toString());
         }
         return depositor;
+    }
+
+    @Override
+    @Transactional
+    public List<BankDepositor> getBankDepositorByIdDeposit(Long depositId){
+        LOGGER.debug("getBankDepositorByIdDeposit(depositId={})",depositId);
+        Assert.notNull(depositId,ERROR_METHOD_PARAM);
+        List<BankDepositor> depositors = null;
+        try{
+            depositors = depositorDao.getBankDepositorByIdDepositCriteria(depositId);
+        }catch (EmptyResultDataAccessException e){
+            LOGGER.error("getBankDepositorByIdDeposit(depositId={}), error-{}",depositId,e.toString());
+        }
+        return depositors;
     }
 
     /**

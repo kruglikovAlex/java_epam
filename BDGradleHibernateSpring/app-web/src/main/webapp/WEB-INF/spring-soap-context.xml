@@ -20,7 +20,7 @@
     <context:component-scan base-package="com.brest.bank"/>
 
     <!-- Add automatic WSDL generation support -->
-    <bean id="soapService" class="org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition">
+    <bean id="soapService" class="org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition" lazy-init="true">
         <property name="schema" ref="schema" />
         <property name="portTypeName" value="soapService" />
         <property name="locationUri" value="/soap" />
@@ -28,7 +28,25 @@
     </bean>
 
     <bean id="schema" class="org.springframework.xml.xsd.SimpleXsdSchema">
-        <property name="xsd" value="/schemas/bankDeposit.xsd" />
+        <property name="xsd" value="/schemas/bankDepositService.xsd" />
+    </bean>
+<!--
+    <bean id="schema2" class="org.springframework.xml.xsd.SimpleXsdSchema">
+        <property name="xsd" value="/schemas/bankDepositor.xsd" />
     </bean>
 
+
+    <bean id="schemaCollection" class="org.springframework.xml.xsd.CommonsXsdSchemaCollection">
+        <description>
+            This bean wrap the messages.xsd (which imports types.xsd), and inlines them as a one.
+        </description>
+        <property name="xsds">
+            <list>
+                <value>/schemas/bankDeposit.xsd</value>
+                <value>/schemas/bankDepositor.xsd</value>
+            </list>
+        </property>
+        <property name="inline" value="true"/>
+    </bean>
+-->
 </beans>
