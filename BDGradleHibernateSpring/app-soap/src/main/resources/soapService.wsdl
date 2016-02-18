@@ -533,34 +533,6 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
-    <xsd:element name="updateBankDepositorRequest">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element name="bankDepositor" type="tns:bankDepositor"/>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
-    <xsd:element name="updateBankDepositorResponse">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element name="bankDepositor" type="tns:bankDepositor"/>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
-    <xsd:element name="deleteBankDepositorRequest">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element name="depositorId" nillable="true" type="xsd:long"/>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
-    <xsd:element name="deleteBankDepositorResponse">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element name="result" type="xsd:string"/>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
 </xsd:schema>
   </wsdl:types>
   <wsdl:message name="getBankDepositsByCurrencyWithDepositorsRequest">
@@ -647,10 +619,6 @@
     <wsdl:part element="sch:addBankDepositRequest" name="addBankDepositRequest">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="updateBankDepositorRequest">
-    <wsdl:part element="sch:updateBankDepositorRequest" name="updateBankDepositorRequest">
-    </wsdl:part>
-  </wsdl:message>
   <wsdl:message name="getBankDepositorsFromToDateDepositRequest">
     <wsdl:part element="sch:getBankDepositorsFromToDateDepositRequest" name="getBankDepositorsFromToDateDepositRequest">
     </wsdl:part>
@@ -721,10 +689,6 @@
   </wsdl:message>
   <wsdl:message name="getBankDepositsFromToDateDepositResponse">
     <wsdl:part element="sch:getBankDepositsFromToDateDepositResponse" name="getBankDepositsFromToDateDepositResponse">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="deleteBankDepositorRequest">
-    <wsdl:part element="sch:deleteBankDepositorRequest" name="deleteBankDepositorRequest">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsResponse">
@@ -805,14 +769,6 @@
   </wsdl:message>
   <wsdl:message name="getBankDepositByIdFromToDateReturnDepositWithDepositorsResponse">
     <wsdl:part element="sch:getBankDepositByIdFromToDateReturnDepositWithDepositorsResponse" name="getBankDepositByIdFromToDateReturnDepositWithDepositorsResponse">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="deleteBankDepositorResponse">
-    <wsdl:part element="sch:deleteBankDepositorResponse" name="deleteBankDepositorResponse">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="updateBankDepositorResponse">
-    <wsdl:part element="sch:updateBankDepositorResponse" name="updateBankDepositorResponse">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="getBankDepositsFromToDateDepositWithDepositorsResponse">
@@ -930,12 +886,6 @@
       <wsdl:output message="tns:getBankDepositByNameWithDepositorsResponse" name="getBankDepositByNameWithDepositorsResponse">
     </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateBankDepositor">
-      <wsdl:input message="tns:updateBankDepositorRequest" name="updateBankDepositorRequest">
-    </wsdl:input>
-      <wsdl:output message="tns:updateBankDepositorResponse" name="updateBankDepositorResponse">
-    </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="getBankDeposits">
       <wsdl:input message="tns:getBankDepositsRequest" name="getBankDepositsRequest">
     </wsdl:input>
@@ -982,12 +932,6 @@
       <wsdl:input message="tns:getBankDepositsFromToDateDepositRequest" name="getBankDepositsFromToDateDepositRequest">
     </wsdl:input>
       <wsdl:output message="tns:getBankDepositsFromToDateDepositResponse" name="getBankDepositsFromToDateDepositResponse">
-    </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="deleteBankDepositor">
-      <wsdl:input message="tns:deleteBankDepositorRequest" name="deleteBankDepositorRequest">
-    </wsdl:input>
-      <wsdl:output message="tns:deleteBankDepositorResponse" name="deleteBankDepositorResponse">
     </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors">
@@ -1182,15 +1126,6 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="updateBankDepositor">
-      <soap:operation soapAction=""/>
-      <wsdl:input name="updateBankDepositorRequest">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="updateBankDepositorResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="getBankDeposits">
       <soap:operation soapAction=""/>
       <wsdl:input name="getBankDepositsRequest">
@@ -1260,15 +1195,6 @@
         <soap:body use="literal"/>
       </wsdl:input>
       <wsdl:output name="getBankDepositsFromToDateDepositResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="deleteBankDepositor">
-      <soap:operation soapAction=""/>
-      <wsdl:input name="deleteBankDepositorRequest">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="deleteBankDepositorResponse">
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>

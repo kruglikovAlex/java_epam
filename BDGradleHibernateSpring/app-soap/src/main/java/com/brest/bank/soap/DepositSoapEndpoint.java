@@ -963,6 +963,57 @@ public class DepositSoapEndpoint {
     }
 
     /**
+     * Removing Bank Depositor
+     *
+     * @param request XmlElement Bank Depositor
+     * @return XmlElement result String
+     */
+    @PayloadRoot(localPart = "deleteBankDepositorRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public DeleteBankDepositorResponse deleteBankDepositor(@RequestPayload DeleteBankDepositorRequest request){
+        LOGGER.debug("deleteBankDepositorRequest(depositorId={})",request.getDepositorId());
+        Assert.notNull(request.getDepositorId(),ERROR_METHOD_PARAM);
+
+        DeleteBankDepositorResponse response = new DeleteBankDepositorResponse();
+        try{
+            Assert.notNull(depositorService.getBankDepositorById(request.getDepositorId()),ERROR_DEPOSIT);
+            depositorService.removeBankDepositor(request.getDepositorId());
+            Assert.isNull(depositorService.getBankDepositorById(request.getDepositorId()),"Bank Depositor don't removed");
+            response.setResult("Bank Depositor with ID="+request.getDepositorId()+" - removed");
+        } catch (Exception e){
+            response.setResult(e.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * Updating Bank Depositor
+     *
+     * @param request XmlElement Bank Depositor
+     * @return response XmlElement Bank Depositor
+     */
+    @PayloadRoot(localPart = "updateBankDepositorRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public UpdateBankDepositorResponse updateBankDepositor(@RequestPayload UpdateBankDepositorRequest request)
+            throws DatatypeConfigurationException{
+        LOGGER.debug("updateBankDepositorRequest(depositorId={})",request.getBankDepositor().getDepositorId());
+        Assert.notNull(request,ERROR_METHOD_PARAM +"- Bank Deposit");
+        Assert.notNull(request.getBankDepositor().getDepositorId(),ERROR_METHOD_PARAM +"- depositorId");
+
+        UpdateBankDepositorResponse response = new UpdateBankDepositorResponse();
+
+        depositorService.updateBankDepositor(xmlToDepositorDao(request.getBankDepositor()));
+
+        response.setBankDepositor(depositorDaoToXml(depositorService.getBankDepositorById(request.getBankDepositor().getDepositorId())));
+
+        Assert.notNull(response.getBankDepositor(),ERROR_NULL_RESPONSE);
+        LOGGER.debug("updateBankDepositorResponse(depositorId={})",response.getBankDepositor().getDepositorId());
+
+        return response;
+    }
+
+
+    /**
      * Convert object of domain BankDeposit to soap BankDeposit
      *
      * @param depositDao - an entity of domain BankDeposit.class
