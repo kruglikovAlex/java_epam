@@ -532,4 +532,32 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+    <xsd:element name="updateBankDepositorRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositor" type="tns:bankDepositor"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="updateBankDepositorResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositor" type="tns:bankDepositor"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="deleteBankDepositorRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositorId" nillable="true" type="xsd:long"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="deleteBankDepositorResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="result" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
 </xsd:schema>
