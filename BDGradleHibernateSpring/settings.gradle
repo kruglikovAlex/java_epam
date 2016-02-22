@@ -1,9 +1,11 @@
 rootProject.name = 'BDGradleHibernateSpring'
 include 'app-core'
 include 'app-dao'
-//include 'app-dao-spring'
+include 'app-dao-spring'
 include 'app-service'
 include 'app-rest'
 include 'app-soap'
 include 'app-web'
+include 'app-client-rest'
+include 'app-client-soap'
 
