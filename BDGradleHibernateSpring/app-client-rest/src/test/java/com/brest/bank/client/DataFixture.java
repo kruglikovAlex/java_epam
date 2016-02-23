@@ -145,7 +145,7 @@ public class DataFixture {
      * @return BankDepositor with fixed parameters for tests
      */
     public static BankDepositor getExistDepositor(Long id) throws ParseException{
-        return new BankDepositor(id,"depositorName1",
+        return new BankDepositor(id,"depositorName"+id,
                 dateFormat.parse("2015-01-01"),1000,100,100,dateFormat.parse("2015-09-09"),0,null);
     }
 

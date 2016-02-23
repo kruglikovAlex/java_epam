@@ -34,7 +34,7 @@ public interface BankDepositService {
     BankDeposit getBankDepositByName(String depositName);
 
     /**
-     * Get Bank Deposit by Currency
+     * Get Bank Deposits by Currency
      *
      * @param currency String - currency of the Bank Deposits to return
      * @return List<BankDeposit> - a list containing all of the Bank Deposits with the specified

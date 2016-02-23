@@ -579,7 +579,7 @@ public class DepositRestController {
      * Deleting Bank Deposit by ID
      *
      * @param depositId Long - id of the Bank Deposit to be removed
-     * @return
+     * @return ResponseEntity
      */
     @RequestMapping(value = "/id/{depositId}", method = RequestMethod.DELETE)
     @ResponseBody

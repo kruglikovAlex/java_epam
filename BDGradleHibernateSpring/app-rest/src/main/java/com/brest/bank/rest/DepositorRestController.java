@@ -73,6 +73,31 @@ public class    DepositorRestController {
     }
 
     /**
+     * Get all Bank Depositors from-to Date return Deposit
+     *
+     * @param start String - start value of the date return deposit (startDate < endDate)
+     * @param end String - end value of the date return deposit (startDate < endDate)
+     * @return RespnseEntity List<BankDepositors> a list of all bank depositors with the specified task`s date return
+     * deposit
+     * @throws ParseException
+     */
+    @ResponseBody
+    @RequestMapping(value = "/allDateReturn/{start},{end}",method = RequestMethod.GET)
+    public ResponseEntity<List<BankDepositor>> getBankDepositorsFromToDateReturnDeposit(@PathVariable String start,
+                                                                                  @PathVariable String end)
+            throws ParseException{
+        LOGGER.debug("getBankDepositorsFromToDateReturnDeposit(start={},end={})",start,end);
+        try{
+            List<BankDepositor> depositors = depositorService.getBankDepositorsFromToDateReturnDeposit(
+                    dateFormat.parse(start),dateFormat.parse(end));
+            return new ResponseEntity<List<BankDepositor>>(depositors,HttpStatus.FOUND);
+        }catch (Exception e){
+            LOGGER.error("getBankDepositorsFromToDateReturnDeposit(start={},end={}), Exception:{}",start,end,e.getMessage());
+            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
      * Get Bank Depositor by ID
      *
      * @param depositorId  Long - id of the Bank Depositor to return
@@ -87,6 +112,25 @@ public class    DepositorRestController {
             return new ResponseEntity<BankDepositor>(depositor,HttpStatus.FOUND);
         }catch (Exception e){
             LOGGER.error("getBankDepositorById(depositorId={}), Exception:{}",depositorId,e.getMessage());
+            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
+     * Get Bank Depositor by ID deposit
+     *
+     * @param depositId  Long - id of the Bank Deposit
+     * @return ResponseEntity List<BankDepositor> with the specified id from the database
+     */
+    @ResponseBody
+    @RequestMapping(value = "/idDeposit/{depositId}",method = RequestMethod.GET)
+    public ResponseEntity<List<BankDepositor>> getBankDepositorByIdDeposit(@PathVariable Long depositId){
+        LOGGER.debug("getBankDepositorByIdDeposit(depositId={})",depositId);
+        try{
+            List<BankDepositor> depositor = depositorService.getBankDepositorByIdDeposit(depositId);
+            return new ResponseEntity<List<BankDepositor>>(depositor,HttpStatus.FOUND);
+        }catch (Exception e){
+            LOGGER.error("getBankDepositorByIdDeposit(depositId={}), Exception:{}",depositId,e.getMessage());
             return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
         }
     }
@@ -157,6 +201,12 @@ public class    DepositorRestController {
         }
     }
 
+    /**
+     * Deleting Bank Depositor by ID
+     *
+     * @param depositorId Long - id of the Bank Depositor to be removed
+     * @return ResponseEntity
+     */
     @ResponseBody
     @RequestMapping(value = "/{depositorId}",method = RequestMethod.DELETE)
     public ResponseEntity removeBankDepositor(@PathVariable Long depositorId){

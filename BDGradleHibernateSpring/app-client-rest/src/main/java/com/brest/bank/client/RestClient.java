@@ -1,6 +1,7 @@
 package com.brest.bank.client;
 
 import com.brest.bank.domain.BankDeposit;
+import com.brest.bank.domain.BankDepositor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -371,5 +372,132 @@ public class RestClient {
     public void updateDeposit(BankDeposit deposit){
         LOGGER.debug("updateDeposit {}, {}",host+"/deposit",deposit);
         restTemplate.put(host+"/deposit",deposit);
+    }
+
+    /**
+     * Deleting Bank Deposit by ID
+     *
+     * @link http://<host:port>/<project_name-version>/<client_name>/deposit/id/{deposiId}
+     * @param depositId Long - id of the Bank Deposit to be removed
+     */
+    public void removeDeposit(Long depositId){
+        LOGGER.debug("removeDeposit {}",host+"/deposit/id/"+depositId);
+        restTemplate.delete(host+"/deposit/id/"+depositId);
+    }
+
+    /**
+     * Get all Bank Depositors
+     *
+     * @link http://<host:port>/<project_name-version>/<client_name>/depositor/all
+     * @return
+     */
+    public BankDepositor[] getBankDepositors(){
+        LOGGER.debug("getBankDepositors {}",host+"/depositor/all");
+        return restTemplate.getForObject(host+"/depositor/all",BankDepositor[].class);
+    }
+
+    /**
+     * Get all Bank Depositors from-to Date Deposit
+     *
+     * @link http://<host:port>/<project_name-version>/<client_name>/depositor/allDate/{start},{end}
+     * @param start Date - start value of the date deposit (startDate < endDate)
+     * @param end Date - end value of the date deposit (startDate < endDate)
+     * @return BankDepositor[]
+     */
+    public BankDepositor[] getBankDepositorsFromToDateDeposit(Date start, Date end){
+        LOGGER.debug("getBankDepositorsFromToDateDeposit {}",
+                host+"/depositor/allDate/"+dateFormat.format(start)+","+dateFormat.format(end));
+        Assert.isTrue(start.before(end)||start.equals(end),ERROR_FROM_TO_PARAM);
+
+        return restTemplate.getForObject(host+"/depositor/allDate/"+dateFormat.format(start)+","+dateFormat.format(end),BankDepositor[].class);
+    }
+
+    /**
+     * Get all Bank Depositors from-to Date return Deposit
+     *
+     * @link http://<host:port>/<project_name-version>/<client_name>/depositor/allDateReturn/{start},{end}
+     * @param start Date - start value of the date return deposit (startDate < endDate)
+     * @param end Date - end value of the date return deposit (startDate < endDate)
+     * @return BankDepositor[]
+     */
+    public BankDepositor[] getBankDepositorsFromToDateReturnDeposit(Date start, Date end){
+        LOGGER.debug("getBankDepositorsFromToDateReturnDeposit {}",
+                host+"/depositor/allDateReturn/"+dateFormat.format(start)+","+dateFormat.format(end));
+        Assert.isTrue(start.before(end)||start.equals(end),ERROR_FROM_TO_PARAM);
+
+        return restTemplate.getForObject(host+"/depositor/allDateReturn/"+dateFormat.format(start)+","+dateFormat.format(end),BankDepositor[].class);
+    }
+
+    /**
+     * Get Bank Depositor by ID
+     *
+     * @link http://<host:port>/<project_name-version>/<client_name>/depositor/id/{depositorId}
+     * @param depositorId Long - id of the Bank Depositor to return
+     * @return BankDepositor
+     */
+    public BankDepositor getBankDepositorById(Long depositorId){
+        LOGGER.debug("getBankDepositorById {}",host+"/depositor/id/"+depositorId);
+
+        return restTemplate.getForObject(host+"/depositor/id/"+depositorId,BankDepositor.class);
+    }
+
+    /**
+     * Get Bank Depositor by ID Deposit
+     *
+     * @link http://<host:port>/<project_name-version>/<client_name>/depositor/idDeposit/{depositId}
+     * @param depositId Long - id of the Bank Deposit
+     * @return BankDepositor[]
+     */
+    public BankDepositor[] getBankDepositorByIdDeposit(Long depositId){
+        LOGGER.debug("getBankDepositorByIdDeposit {}",host+"/depositor/idDeposit/"+depositId);
+
+        return restTemplate.getForObject(host+"/depositor/idDeposit/"+depositId,BankDepositor[].class);
+    }
+
+    /**
+     * Get Bank Depositor by Name Deposit
+     *
+     * @link http://<host:port>/<project_name-version>/<client_name>/depositor/name/{depositorName}
+     * @param depositorName String - name of the Bank Depositor to return
+     * @return BankDepositor
+     */
+    public BankDepositor getBankDepositorByName(String depositorName){
+        LOGGER.debug("getBankDepositorByName {}",host+"/depositor/name/"+depositorName);
+
+        return restTemplate.getForObject(host+"/depositor/name/"+depositorName,BankDepositor.class);
+    }
+
+    /**
+     * Adding Bank Depositor
+     *
+     * @link http://<host:port>/<project_name-version>/<client_name>/depositor/{depositId}
+     * @param depositId id of Bank Deposit
+     * @param depositor BankDepositor - Bank Depositor to be inserted to the database
+     */
+    public void addBankDepositor(Long depositId, BankDepositor depositor){
+        LOGGER.debug("addBankDepositor {}, {}",host+"/depositor/"+depositId, depositor);
+        restTemplate.postForObject(host+"/depositor/"+depositId,depositor,Object.class);
+    }
+
+    /**
+     * Updating Bank Depositor
+     *
+     * @link http://<host:port>/<project_name-version>/<client_name>/depositor
+     * @param depositor BankDepositor - Bank Depositor to be stored in the database
+     */
+    public void updateBankDepositor(BankDepositor depositor){
+        LOGGER.debug("updateBankDepositor {}, {}",host+"/depositor", depositor);
+        restTemplate.put(host+"/depositor",depositor,Object.class);
+    }
+
+    /**
+     * Deleting Bank Depositor by ID
+     *
+     * @link http://<host:port>/<project_name-version>/<client_name>/depositor/{depositorId}
+     * @param depositorId Long - id of the Bank Depositor to be removed
+     */
+    public void removeBankDepositor(Long depositorId){
+        LOGGER.debug("removeBankDepositor {}",host+"/depositor/"+depositorId);
+        restTemplate.delete(host+"/depositor/"+depositorId,Object.class);
     }
 }

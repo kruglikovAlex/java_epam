@@ -1,6 +1,7 @@
 package com.brest.bank.client;
 
 import com.brest.bank.domain.BankDeposit;
+import com.brest.bank.domain.BankDepositor;
 import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
@@ -13,6 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.match.MockRestRequestMatchers;
 import org.springframework.util.Assert;
+
+import javax.xml.crypto.Data;
 
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
@@ -666,9 +669,240 @@ public class RestClientTest {
                 .andExpect(MockRestRequestMatchers.method(HttpMethod.PUT))
                 .andExpect(MockRestRequestMatchers.content().contentType("application/json;charset=UTF-8"))
                 .andExpect(MockRestRequestMatchers.content()
-                        .string("{\"depositId\":1,\"depositName\":\"depositName1\",\"depositMinTerm\":12,\"depositMinAmount\":1000,\"depositCurrency\":\"usd\",\"depositInterestRate\":4,\"depositAddConditions\":\"conditions1\",\"depositors\":[]}"))
+                        .string("{\"depositId\":1,\"depositName\":\"update\",\"depositMinTerm\":12,\"depositMinAmount\":1000,\"depositCurrency\":\"usd\",\"depositInterestRate\":4,\"depositAddConditions\":\"conditions1\",\"depositors\":[]}"))
                 .andRespond(withSuccess("",MediaType.APPLICATION_JSON));
 
-        restClient.updateDeposit(DataFixture.getExistDeposit(1L));
+        BankDeposit deposit = DataFixture.getExistDeposit(1L);
+        deposit.setDepositName("update");
+        restClient.updateDeposit(deposit);
+    }
+
+    @Test
+    public void removeDepositTest(){
+        mockServer.expect(requestTo(HOST+"/deposit/id/1"))
+                .andExpect(MockRestRequestMatchers.method(HttpMethod.DELETE))
+                .andRespond(withSuccess("",MediaType.APPLICATION_JSON));
+
+        restClient.removeDeposit(1L);
+    }
+
+    @Test
+    public void getBankDepositorsTest() throws ParseException{
+        mockServer.expect(requestTo(HOST+"/depositor/all"))
+                .andExpect(MockRestRequestMatchers.method(HttpMethod.GET))
+                .andRespond(withSuccess("[{\"depositorId\":1,\"depositorName\":\"depositorName1\",\"depositorDateDeposit\":\"2015-01-01\",\"depositorAmountDeposit\":1000,\"depositorAmountPlusDeposit\":100,\"depositorAmountMinusDeposit\":100,\"depositorDateReturnDeposit\":\"2015-09-09\",\"depositorMarkReturnDeposit\":0}," +
+                        "{\"depositorId\":2,\"depositorName\":\"depositorName2\",\"depositorDateDeposit\":\"2015-01-01\",\"depositorAmountDeposit\":1000,\"depositorAmountPlusDeposit\":100,\"depositorAmountMinusDeposit\":100,\"depositorDateReturnDeposit\":\"2015-09-09\",\"depositorMarkReturnDeposit\":0}," +
+                        "{\"depositorId\":3,\"depositorName\":\"depositorName3\",\"depositorDateDeposit\":\"2015-01-01\",\"depositorAmountDeposit\":1000,\"depositorAmountPlusDeposit\":100,\"depositorAmountMinusDeposit\":100,\"depositorDateReturnDeposit\":\"2015-09-09\",\"depositorMarkReturnDeposit\":0}]",
+                        MediaType.APPLICATION_JSON));
+
+        BankDepositor[] depositors = restClient.getBankDepositors();
+
+        Assert.isTrue(depositors.length == 3);
+        assertNotNull(depositors[0]);
+        assertNotNull(depositors[1]);
+        assertNotNull(depositors[2]);
+
+
+        assertNotNull(depositors[0].getDepositorId());
+        assertEquals(new Long(1),depositors[0].getDepositorId());
+
+        assertNotNull(depositors[0].getDepositorName());
+        assertEquals("depositorName1",depositors[0].getDepositorName());
+
+        assertNotNull(depositors[0].getDepositorDateDeposit());
+        assertEquals("2015-01-01",dateFormat.format(depositors[0].getDepositorDateDeposit()));
+
+        assertNotNull(depositors[0].getDepositorAmountDeposit());
+        assertEquals(1000,depositors[0].getDepositorAmountDeposit());
+
+        assertNotNull(depositors[0].getDepositorAmountPlusDeposit());
+        assertEquals(100,depositors[0].getDepositorAmountPlusDeposit());
+
+        assertNotNull(depositors[0].getDepositorAmountMinusDeposit());
+        assertEquals(100,depositors[0].getDepositorAmountMinusDeposit());
+
+        assertNotNull(depositors[0].getDepositorDateReturnDeposit());
+        assertEquals("2015-09-09",dateFormat.format(depositors[0].getDepositorDateReturnDeposit()));
+
+        assertNotNull(depositors[0].getDepositorMarkReturnDeposit());
+        assertEquals(0,depositors[0].getDepositorMarkReturnDeposit());
+
+        assertEquals(DataFixture.getExistDepositor(1L).toString(),depositors[0].toString());
+        assertEquals(DataFixture.getExistDepositor(2L).toString(),depositors[1].toString());
+        assertEquals(DataFixture.getExistDepositor(3L).toString(),depositors[2].toString());
+    }
+
+    @Test
+    public void getBankDepositorsFromToDateDepositTest() throws ParseException{
+        mockServer.expect(requestTo(HOST+"/depositor/allDate/2015-01-01,2015-02-02"))
+                .andExpect(MockRestRequestMatchers.method(HttpMethod.GET))
+                .andRespond(withSuccess("[{\"depositorId\":1,\"depositorName\":\"depositorName1\",\"depositorDateDeposit\":\"2015-01-01\",\"depositorAmountDeposit\":1000,\"depositorAmountPlusDeposit\":100,\"depositorAmountMinusDeposit\":100,\"depositorDateReturnDeposit\":\"2015-09-09\",\"depositorMarkReturnDeposit\":0}," +
+                                "{\"depositorId\":2,\"depositorName\":\"depositorName2\",\"depositorDateDeposit\":\"2015-01-01\",\"depositorAmountDeposit\":1000,\"depositorAmountPlusDeposit\":100,\"depositorAmountMinusDeposit\":100,\"depositorDateReturnDeposit\":\"2015-09-09\",\"depositorMarkReturnDeposit\":0}," +
+                                "{\"depositorId\":3,\"depositorName\":\"depositorName3\",\"depositorDateDeposit\":\"2015-01-01\",\"depositorAmountDeposit\":1000,\"depositorAmountPlusDeposit\":100,\"depositorAmountMinusDeposit\":100,\"depositorDateReturnDeposit\":\"2015-09-09\",\"depositorMarkReturnDeposit\":0}]",
+                        MediaType.APPLICATION_JSON));
+
+        BankDepositor[] depositors = restClient
+                .getBankDepositorsFromToDateDeposit(dateFormat.parse("2015-01-01"),dateFormat.parse("2015-02-02"));
+
+        Assert.isTrue(depositors.length == 3);
+        assertNotNull(depositors[0]);
+        assertNotNull(depositors[1]);
+        assertNotNull(depositors[2]);
+
+
+        assertNotNull(depositors[0].getDepositorId());
+        assertEquals(new Long(1),depositors[0].getDepositorId());
+
+        assertNotNull(depositors[0].getDepositorName());
+        assertEquals("depositorName1",depositors[0].getDepositorName());
+
+        assertNotNull(depositors[0].getDepositorDateDeposit());
+        assertEquals("2015-01-01",dateFormat.format(depositors[0].getDepositorDateDeposit()));
+
+        assertNotNull(depositors[0].getDepositorAmountDeposit());
+        assertEquals(1000,depositors[0].getDepositorAmountDeposit());
+
+        assertNotNull(depositors[0].getDepositorAmountPlusDeposit());
+        assertEquals(100,depositors[0].getDepositorAmountPlusDeposit());
+
+        assertNotNull(depositors[0].getDepositorAmountMinusDeposit());
+        assertEquals(100,depositors[0].getDepositorAmountMinusDeposit());
+
+        assertNotNull(depositors[0].getDepositorDateReturnDeposit());
+        assertEquals("2015-09-09",dateFormat.format(depositors[0].getDepositorDateReturnDeposit()));
+
+        assertNotNull(depositors[0].getDepositorMarkReturnDeposit());
+        assertEquals(0,depositors[0].getDepositorMarkReturnDeposit());
+
+        assertEquals(DataFixture.getExistDepositor(1L).toString(),depositors[0].toString());
+        assertEquals(DataFixture.getExistDepositor(2L).toString(),depositors[1].toString());
+        assertEquals(DataFixture.getExistDepositor(3L).toString(),depositors[2].toString());
+    }
+
+    @Test
+    public void getBankDepositorsFromToDateReturnDepositTest() throws ParseException{
+        mockServer.expect(requestTo(HOST+"/depositor/allDateReturn/2015-01-01,2015-02-02"))
+                .andExpect(MockRestRequestMatchers.method(HttpMethod.GET))
+                .andRespond(withSuccess("[{\"depositorId\":1,\"depositorName\":\"depositorName1\",\"depositorDateDeposit\":\"2015-01-01\",\"depositorAmountDeposit\":1000,\"depositorAmountPlusDeposit\":100,\"depositorAmountMinusDeposit\":100,\"depositorDateReturnDeposit\":\"2015-09-09\",\"depositorMarkReturnDeposit\":0}," +
+                                "{\"depositorId\":2,\"depositorName\":\"depositorName2\",\"depositorDateDeposit\":\"2015-01-01\",\"depositorAmountDeposit\":1000,\"depositorAmountPlusDeposit\":100,\"depositorAmountMinusDeposit\":100,\"depositorDateReturnDeposit\":\"2015-09-09\",\"depositorMarkReturnDeposit\":0}," +
+                                "{\"depositorId\":3,\"depositorName\":\"depositorName3\",\"depositorDateDeposit\":\"2015-01-01\",\"depositorAmountDeposit\":1000,\"depositorAmountPlusDeposit\":100,\"depositorAmountMinusDeposit\":100,\"depositorDateReturnDeposit\":\"2015-09-09\",\"depositorMarkReturnDeposit\":0}]",
+                        MediaType.APPLICATION_JSON));
+
+        BankDepositor[] depositors = restClient
+                .getBankDepositorsFromToDateReturnDeposit(dateFormat.parse("2015-01-01"),dateFormat.parse("2015-02-02"));
+
+        Assert.isTrue(depositors.length == 3);
+        assertNotNull(depositors[0]);
+        assertNotNull(depositors[1]);
+        assertNotNull(depositors[2]);
+
+
+        assertNotNull(depositors[0].getDepositorId());
+        assertEquals(new Long(1),depositors[0].getDepositorId());
+
+        assertNotNull(depositors[0].getDepositorName());
+        assertEquals("depositorName1",depositors[0].getDepositorName());
+
+        assertNotNull(depositors[0].getDepositorDateDeposit());
+        assertEquals("2015-01-01",dateFormat.format(depositors[0].getDepositorDateDeposit()));
+
+        assertNotNull(depositors[0].getDepositorAmountDeposit());
+        assertEquals(1000,depositors[0].getDepositorAmountDeposit());
+
+        assertNotNull(depositors[0].getDepositorAmountPlusDeposit());
+        assertEquals(100,depositors[0].getDepositorAmountPlusDeposit());
+
+        assertNotNull(depositors[0].getDepositorAmountMinusDeposit());
+        assertEquals(100,depositors[0].getDepositorAmountMinusDeposit());
+
+        assertNotNull(depositors[0].getDepositorDateReturnDeposit());
+        assertEquals("2015-09-09",dateFormat.format(depositors[0].getDepositorDateReturnDeposit()));
+
+        assertNotNull(depositors[0].getDepositorMarkReturnDeposit());
+        assertEquals(0,depositors[0].getDepositorMarkReturnDeposit());
+
+        assertEquals(DataFixture.getExistDepositor(1L).toString(),depositors[0].toString());
+        assertEquals(DataFixture.getExistDepositor(2L).toString(),depositors[1].toString());
+        assertEquals(DataFixture.getExistDepositor(3L).toString(),depositors[2].toString());
+    }
+
+    @Test
+    public void getBankDepositorByIdTest() throws ParseException{
+        mockServer.expect(requestTo(HOST+"/depositor/id/1"))
+                .andExpect(MockRestRequestMatchers.method(HttpMethod.GET))
+                .andRespond(withSuccess("{\"depositorId\":1,\"depositorName\":\"depositorName1\",\"depositorDateDeposit\":\"2015-01-01\",\"depositorAmountDeposit\":1000,\"depositorAmountPlusDeposit\":100,\"depositorAmountMinusDeposit\":100,\"depositorDateReturnDeposit\":\"2015-09-09\",\"depositorMarkReturnDeposit\":0}",
+                        MediaType.APPLICATION_JSON));
+
+        BankDepositor depositor = restClient.getBankDepositorById(1L);
+
+        assertEquals(DataFixture.getExistDepositor(1L).toString(),depositor.toString());
+    }
+
+    @Test
+    public void getBankDepositorByIdDepositTest() throws ParseException{
+        mockServer.expect(requestTo(HOST+"/depositor/idDeposit/1"))
+                .andExpect(MockRestRequestMatchers.method(HttpMethod.GET))
+                .andRespond(withSuccess("[{\"depositorId\":1,\"depositorName\":\"depositorName1\",\"depositorDateDeposit\":\"2015-01-01\",\"depositorAmountDeposit\":1000,\"depositorAmountPlusDeposit\":100,\"depositorAmountMinusDeposit\":100,\"depositorDateReturnDeposit\":\"2015-09-09\",\"depositorMarkReturnDeposit\":0}," +
+                                "{\"depositorId\":2,\"depositorName\":\"depositorName2\",\"depositorDateDeposit\":\"2015-01-01\",\"depositorAmountDeposit\":1000,\"depositorAmountPlusDeposit\":100,\"depositorAmountMinusDeposit\":100,\"depositorDateReturnDeposit\":\"2015-09-09\",\"depositorMarkReturnDeposit\":0}," +
+                                "{\"depositorId\":3,\"depositorName\":\"depositorName3\",\"depositorDateDeposit\":\"2015-01-01\",\"depositorAmountDeposit\":1000,\"depositorAmountPlusDeposit\":100,\"depositorAmountMinusDeposit\":100,\"depositorDateReturnDeposit\":\"2015-09-09\",\"depositorMarkReturnDeposit\":0}]",
+                        MediaType.APPLICATION_JSON));
+
+        BankDepositor[] depositors = restClient.getBankDepositorByIdDeposit(1L);
+
+        Assert.isTrue(depositors.length == 3);
+        assertNotNull(depositors[0]);
+        assertNotNull(depositors[1]);
+        assertNotNull(depositors[2]);
+
+        assertEquals(DataFixture.getExistDepositor(1L).toString(),depositors[0].toString());
+        assertEquals(DataFixture.getExistDepositor(2L).toString(),depositors[1].toString());
+        assertEquals(DataFixture.getExistDepositor(3L).toString(),depositors[2].toString());
+    }
+
+    @Test
+    public void getBankDepositorByNameTest() throws ParseException{
+        mockServer.expect(requestTo(HOST+"/depositor/name/depositorName1"))
+                .andExpect(MockRestRequestMatchers.method(HttpMethod.GET))
+                .andRespond(withSuccess("{\"depositorId\":1,\"depositorName\":\"depositorName1\",\"depositorDateDeposit\":\"2015-01-01\",\"depositorAmountDeposit\":1000,\"depositorAmountPlusDeposit\":100,\"depositorAmountMinusDeposit\":100,\"depositorDateReturnDeposit\":\"2015-09-09\",\"depositorMarkReturnDeposit\":0}",
+                        MediaType.APPLICATION_JSON));
+
+        BankDepositor depositor = restClient.getBankDepositorByName("depositorName1");
+
+        assertEquals(DataFixture.getExistDepositor(1L).toString(),depositor.toString());
+    }
+
+    @Test
+    public void addBankDepositorTest() throws ParseException{
+        mockServer.expect(requestTo(HOST+"/depositor/1"))
+                .andExpect(MockRestRequestMatchers.method(HttpMethod.POST))
+                .andExpect(MockRestRequestMatchers.content().contentType("application/json;charset=UTF-8"))
+                .andExpect(MockRestRequestMatchers.content()
+                        .string("{\"depositorId\":null,\"depositorName\":\"depositorName1\",\"depositorDateDeposit\":1420059600000,\"depositorAmountDeposit\":1000,\"depositorAmountPlusDeposit\":100,\"depositorAmountMinusDeposit\":100,\"depositorDateReturnDeposit\":1441746000000,\"depositorMarkReturnDeposit\":0,\"depositId\":null,\"deposit\":null}"))
+                .andRespond(withSuccess("",MediaType.APPLICATION_JSON));
+
+        restClient.addBankDepositor(1L,DataFixture.getNewDepositor());
+    }
+
+    @Test
+    public void updateBankDepositorTest() throws ParseException{
+        mockServer.expect(requestTo(HOST+"/depositor"))
+                .andExpect(MockRestRequestMatchers.method(HttpMethod.PUT))
+                .andExpect(MockRestRequestMatchers.content().contentType("application/json;charset=UTF-8"))
+                .andExpect(MockRestRequestMatchers.content()
+                        .string("{\"depositorId\":1,\"depositorName\":\"update\",\"depositorDateDeposit\":1420059600000,\"depositorAmountDeposit\":1000,\"depositorAmountPlusDeposit\":100,\"depositorAmountMinusDeposit\":100,\"depositorDateReturnDeposit\":1441746000000,\"depositorMarkReturnDeposit\":0,\"depositId\":null,\"deposit\":null}"))
+                .andRespond(withSuccess("",MediaType.APPLICATION_JSON));
+
+        BankDepositor depositor = DataFixture.getExistDepositor(1L);
+        depositor.setDepositorName("update");
+        restClient.updateBankDepositor(depositor);
+    }
+
+    @Test
+    public void removeBankDepositorTest(){
+        mockServer.expect(requestTo(HOST+"/depositor/1"))
+                .andExpect(MockRestRequestMatchers.method(HttpMethod.DELETE))
+                .andRespond(withSuccess("",MediaType.APPLICATION_JSON));
+
+        restClient.removeBankDepositor(1L);
     }
 }
