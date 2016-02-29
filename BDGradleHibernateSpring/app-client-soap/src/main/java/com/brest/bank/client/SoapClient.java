@@ -2,6 +2,7 @@ package com.brest.bank.client;
 
 
 import com.brest.bank.util.*;
+import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,13 +17,16 @@ import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import org.springframework.xml.transform.StringResult;
 import org.springframework.xml.transform.StringSource;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class SoapClient extends WebServiceGatewaySupport{
 
@@ -31,14 +35,6 @@ public class SoapClient extends WebServiceGatewaySupport{
     public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
 
     public String host;
-
-    SourceExtractor<GetBankDepositsResponse> responseExtractor = new SourceExtractor<GetBankDepositsResponse>() {
-        @Override
-        public GetBankDepositsResponse extractData(Source inSource) throws IOException, TransformerException
-        {
-            return (GetBankDepositsResponse) (getWebServiceTemplate().getUnmarshaller().unmarshal(inSource));
-        }
-    };
 
     /**
      *Get all Bank deposits
@@ -153,5 +149,87 @@ public class SoapClient extends WebServiceGatewaySupport{
 
         return response.getBankDeposits();
     }
+
+    /**
+     * Get Bank Deposits from-to INTEREST RATE values
+     *
+     * @param fromRate Integer - start value of the interest rate (0% < startRate <= 100%)
+     * @param toRate Integer - end value of the interest rate (0% < endRate <= 100%)
+     * @return XmlElement BankDeposits with the specified depositInterestRate from the database
+     */
+    public BankDeposits getBankDepositsFromToInterestRate(Integer fromRate, Integer toRate){
+        LOGGER.debug("getBankDepositsFromToInterestRateRequest(from={}, to={})",fromRate,toRate);
+        Assert.isTrue(fromRate<=toRate,ERROR_FROM_TO_PARAM);
+
+        GetBankDepositsFromToInterestRateRequest request = new GetBankDepositsFromToInterestRateRequest();
+        request.setStartRate(fromRate);
+        request.setEndRate(toRate);
+
+        GetBankDepositsFromToInterestRateResponse response = (GetBankDepositsFromToInterestRateResponse)getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("getBankDepositsFromToInterestRateResponse"));
+
+        return response.getBankDeposits();
+    }
+
+    /**
+     * Get Bank Deposits from-to INTEREST RATE values
+     *
+     * @param fromRate Integer - start value of the interest rate (0% < startRate <= 100%)
+     * @param toRate Integer - end value of the interest rate (0% < endRate <= 100%)
+     * @return XmlElement BankDeposits with the specified depositInterestRate from the database
+     */
+    public BankDeposits getBankDepositsFromToInterestRate(Integer fromRate, Integer toRate){
+        LOGGER.debug("getBankDepositsFromToInterestRateRequest(from={}, to={})",fromRate,toRate);
+        Assert.isTrue(fromRate<=toRate,ERROR_FROM_TO_PARAM);
+
+        GetBankDepositsFromToInterestRateRequest request = new GetBankDepositsFromToInterestRateRequest();
+        request.setStartRate(fromRate);
+        request.setEndRate(toRate);
+
+        GetBankDepositsFromToInterestRateResponse response = (GetBankDepositsFromToInterestRateResponse)getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("getBankDepositsFromToInterestRateResponse"));
+
+        return response.getBankDeposits();
+    }
+
+    /**
+     * Get Bank Deposits from-to Date Deposit values
+     *
+     * @param start Date - start value of the date deposit (startDate < endDate)
+     * @param end Date - end value of the date deposit (endDate > startDate)
+     * @return XmlElement BankDeposits with the specified depositorDateDeposit from the database
+     */
+    public BankDeposits getBankDepositsFromToDateDeposit(Date start, Date end) throws DatatypeConfigurationException, ParseException{
+        LOGGER.debug("getBankDepositsFromToDateDepositRequest(start={}, end={})",dateFormat.format(start),
+                dateFormat.format(end));
+        Assert.isTrue(start.before(end)||start.equals(end));
+
+        GregorianCalendar dateStart = new GregorianCalendar();
+        GregorianCalendar dateEnd = new GregorianCalendar();
+        dateStart.setTimeInMillis(start.getTime());
+        dateStart.setTimeZone(TimeZone.getDefault());
+        dateEnd.setTimeInMillis(end.getTime());
+        dateEnd.setTimeZone(TimeZone.getDefault());
+        XMLGregorianCalendar dateStartXml = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateStart);
+        XMLGregorianCalendar dateEndXml = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateEnd);
+
+        GetBankDepositsFromToDateDepositRequest request = new GetBankDepositsFromToDateDepositRequest();
+        request.setStartDate(dateStartXml);
+        request.setEndDate(dateEndXml);
+
+        GetBankDepositsFromToDateDepositResponse response = (GetBankDepositsFromToDateDepositResponse)getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("getBankDepositsFromToDateDepositResponse"));
+
+        return response.getBankDeposits();
+    }    SourceExtractor<GetBankDepositsResponse> responseExtractor = new SourceExtractor<GetBankDepositsResponse>() {
+        @Override
+        public GetBankDepositsResponse extractData(Source inSource) throws IOException, TransformerException
+        {
+            return (GetBankDepositsResponse) (getWebServiceTemplate().getUnmarshaller().unmarshal(inSource));
+        }
+    };
 
 }

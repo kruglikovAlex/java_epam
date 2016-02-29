@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.ws.test.client.MockWebServiceServer;
 import org.springframework.xml.transform.StringSource;
 
+import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 
@@ -24,6 +25,8 @@ import static org.springframework.ws.test.client.RequestMatchers.*;
 import static org.springframework.ws.test.client.ResponseCreators.*;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -33,6 +36,7 @@ import static org.junit.Assert.*;
 public class SoapClientTest {
 
     public static final Logger LOGGER = LogManager.getLogger();
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
 
     private static final String HOST = "http://host/";
 
@@ -238,6 +242,69 @@ public class SoapClientTest {
 
         assertEquals(DataFixture.getExistDeposit(1L).toString(),xmlEntityToString(deposits.getBankDeposit().get(0)));
 
+    }
+
+    @Test
+    public void testGetBankDepositsFromToInterestRate(){
+        Source requestPayload = new StringSource(
+                "<getBankDepositsFromToInterestRateRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<startRate>2</startRate>" +
+                        "<endRate>4</endRate>" +
+                        "</getBankDepositsFromToInterestRateRequest>");
+
+        Source responsePayload = new StringSource(
+                "<ns2:getBankDepositsFromToInterestRateResponse xmlns:ns2=\"http://bank.brest.com/soap\">" +
+                        "<ns2:bankDeposits>" +
+                            "<ns2:bankDeposit>" +
+                                "<ns2:depositId>1</ns2:depositId>" +
+                                "<ns2:depositName>depositName1</ns2:depositName>" +
+                                "<ns2:depositMinTerm>12</ns2:depositMinTerm>" +
+                                "<ns2:depositMinAmount>1000</ns2:depositMinAmount>" +
+                                "<ns2:depositCurrency>usd</ns2:depositCurrency>" +
+                                "<ns2:depositInterestRate>4</ns2:depositInterestRate>" +
+                                "<ns2:depositAddConditions>conditions1</ns2:depositAddConditions>" +
+                            "</ns2:bankDeposit>" +
+                        "</ns2:bankDeposits>" +
+                "</ns2:getBankDepositsFromToInterestRateResponse>");
+
+        mockServer.expect(payload(requestPayload)).andRespond(withPayload(responsePayload));
+
+        BankDeposits deposits = soapClient.getBankDepositsFromToInterestRate(2,4);
+        LOGGER.debug("Response - deposits - {}",xmlEntityToString(deposits.getBankDeposit().get(0)));
+
+        assertEquals(DataFixture.getExistDeposit(1L).toString(),xmlEntityToString(deposits.getBankDeposit().get(0)));
+    }
+
+    @Test
+    public void testGetBankDepositsFromToDateDeposit() throws DatatypeConfigurationException, ParseException{
+        Source requestPayload = new StringSource(
+                "<getBankDepositsFromToDateDepositRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<startDate>2015-01-01+03:00</startDate>" +
+                        "<endDate>2015-01-02+03:00</endDate>" +
+                "</getBankDepositsFromToDateDepositRequest>");
+
+        Source responsePayload = new StringSource(
+                "<ns2:getBankDepositsFromToDateDepositResponse xmlns:ns2=\"http://bank.brest.com/soap\">" +
+                        "<ns2:bankDeposits>" +
+                            "<ns2:bankDeposit>" +
+                                "<ns2:depositId>1</ns2:depositId>" +
+                                "<ns2:depositName>depositName1</ns2:depositName>" +
+                                "<ns2:depositMinTerm>12</ns2:depositMinTerm>" +
+                                "<ns2:depositMinAmount>1000</ns2:depositMinAmount>" +
+                                "<ns2:depositCurrency>usd</ns2:depositCurrency>" +
+                                "<ns2:depositInterestRate>4</ns2:depositInterestRate>" +
+                                "<ns2:depositAddConditions>conditions1</ns2:depositAddConditions>" +
+                            "</ns2:bankDeposit>" +
+                        "</ns2:bankDeposits>" +
+                "</ns2:getBankDepositsFromToDateDepositResponse>");
+
+        mockServer.expect(payload(requestPayload)).andRespond(withPayload(responsePayload));
+
+        BankDeposits deposits = soapClient.getBankDepositsFromToDateDeposit(dateFormat.parse("2015-01-01"),
+                dateFormat.parse("2015-01-02"));
+        LOGGER.debug("Response - deposits - {}",xmlEntityToString(deposits.getBankDeposit().get(0)));
+
+        assertEquals(DataFixture.getExistDeposit(1L).toString(),xmlEntityToString(deposits.getBankDeposit().get(0)));
     }
 
     public String xmlEntityToString(BankDeposit deposit){
