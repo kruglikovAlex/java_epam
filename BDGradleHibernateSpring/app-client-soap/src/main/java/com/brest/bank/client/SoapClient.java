@@ -1,0 +1,157 @@
+package com.brest.bank.client;
+
+
+import com.brest.bank.util.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import org.dom4j.io.XMLResult;
+import org.springframework.util.Assert;
+import org.springframework.ws.WebServiceMessage;
+import org.springframework.ws.client.core.SourceExtractor;
+import org.springframework.ws.client.core.WebServiceMessageCallback;
+import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.client.core.SoapActionCallback;
+import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
+import org.springframework.xml.transform.StringResult;
+import org.springframework.xml.transform.StringSource;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+public class SoapClient extends WebServiceGatewaySupport{
+
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+    public static final Logger LOGGER = LogManager.getLogger();
+    public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
+
+    public String host;
+
+    SourceExtractor<GetBankDepositsResponse> responseExtractor = new SourceExtractor<GetBankDepositsResponse>() {
+        @Override
+        public GetBankDepositsResponse extractData(Source inSource) throws IOException, TransformerException
+        {
+            return (GetBankDepositsResponse) (getWebServiceTemplate().getUnmarshaller().unmarshal(inSource));
+        }
+    };
+
+    /**
+     *Get all Bank deposits
+     *
+     * @return XmlElement BankDeposits
+     */
+    public BankDeposits getBankDeposits(){
+        Source requestPayload = new StringSource(
+                "<getBankDepositsRequest xmlns='http://bank.brest.com/soap'>" +
+                "</getBankDepositsRequest>");
+
+        LOGGER.debug("getBankDepositsRequest - \n{}",requestPayload);
+
+        GetBankDepositsResponse response = getWebServiceTemplate()
+                .sendSourceAndReceive(requestPayload,
+                        new SoapActionCallback("getBankDepositsResponse"),
+                        responseExtractor);
+
+        return response.getBankDeposits();
+    }
+
+    /**
+     * Get Bank Deposit by id deposit
+     *
+     * @param depositId Long - id of the Bank Deposit to return
+     * @return XmlElement BankDeposit with the specified id from the database
+     */
+    public BankDeposit getBankDepositById(Long depositId){
+        LOGGER.debug("getBankDepositByIdRequest(depositId={})",depositId);
+        GetBankDepositByIdRequest request = new GetBankDepositByIdRequest();
+        request.setDepositId(depositId);
+
+        GetBankDepositByIdResponse response = (GetBankDepositByIdResponse) getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("getBankDepositByIdResponse"));
+
+        return response.getBankDeposit();
+    }
+
+    /**
+     * Get Bank Deposit by id deposit
+     *
+     * @param depositName String - name of the Bank Deposit to return
+     * @return XmlElement BankDeposit with the specified id from the database
+     */
+    public BankDeposit getBankDepositByName(String depositName){
+        LOGGER.debug("getBankDepositByNameRequest(depositName={})",depositName);
+        GetBankDepositByNameRequest request = new GetBankDepositByNameRequest();
+        request.setDepositName(depositName);
+
+        GetBankDepositByNameResponse response = (GetBankDepositByNameResponse) getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("getBankDepositByNameResponse"));
+
+        return response.getBankDeposit();
+    }
+
+    /**
+     * Get Bank Deposits by currency
+     *
+     * @param currency String - currency of the Bank Deposit to return
+     * @return XmlElement BankDeposits with the specified depositCurrency from the database
+     */
+    public BankDeposits getBankDepositsByCurrency(String currency){
+        LOGGER.debug("getBankDepositsByCurrencyRequest(depositCurrency={})",currency);
+        GetBankDepositsByCurrencyRequest request = new GetBankDepositsByCurrencyRequest();
+        request.setDepositCurrency(currency);
+
+        GetBankDepositsByCurrencyResponse response = (GetBankDepositsByCurrencyResponse)getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("getBankDepositsByCurrencyResponse"));
+
+        return response.getBankDeposits();
+    }
+
+    /**
+     * Get Bank Deposits by interest rate
+     *
+     * @param rate Integer - interest rate of the Bank Deposits to return
+     * @return XmlElement BankDeposits with the specified depositInterestRate from the database
+     */
+    public BankDeposits getBankDepositsByInterestRate(Integer rate){
+        LOGGER.debug("getBankDepositsByInterestRateRequest(depositInterestRate={})",rate);
+        GetBankDepositsByInterestRateRequest request = new GetBankDepositsByInterestRateRequest();
+        request.setDepositInterestRate(rate);
+
+        GetBankDepositsByInterestRateResponse response = (GetBankDepositsByInterestRateResponse)getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("getBankDepositsByInterestRateResponse"));
+
+        return response.getBankDeposits();
+    }
+
+    /**
+     * Get Bank Deposits from-to MIN TERM values
+     *
+     * @param fromTerm Integer - start value of the min term (count month)
+     * @param toTerm Integer - end value of the min term (count month)
+     * @return XmlElement BankDeposits with the specified depositMinTerm from the database
+     */
+    public BankDeposits getBankDepositsFromToMinTerm(Integer fromTerm, Integer toTerm){
+        LOGGER.debug("getBankDepositsFromToMinTermRequest(from={}, to={})",fromTerm,toTerm);
+        Assert.isTrue(fromTerm<=toTerm,ERROR_FROM_TO_PARAM);
+
+        GetBankDepositsFromToMinTermRequest request = new GetBankDepositsFromToMinTermRequest();
+            request.setFromTerm(fromTerm);
+            request.setToTerm(toTerm);
+
+        GetBankDepositsFromToMinTermResponse response = (GetBankDepositsFromToMinTermResponse)getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("getBankDepositsFromToMinTermResponse"));
+
+        return response.getBankDeposits();
+    }
+
+}
