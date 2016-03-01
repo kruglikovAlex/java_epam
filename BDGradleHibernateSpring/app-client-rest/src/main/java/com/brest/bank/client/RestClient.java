@@ -189,7 +189,7 @@ public class RestClient {
      * @link http://<host:port>/<project_name-version>/<client_name>/deposit/report/nameDate/{depositName},{start},{end}
      * @param depositName String - name of the Bank Deposit to return
      * @param start Date - start value of the date deposit (startDate < endDate)
-     * @param end String - end value of the date deposit (endDate > startDate)
+     * @param end Date - end value of the date deposit (endDate > startDate)
      * @return Map<K,V>
      */
     public Map getBankDepositByNameFromToDateDepositWithDepositors(String depositName, Date start, Date end){
@@ -206,7 +206,7 @@ public class RestClient {
      * @link http://<host:port>/<project_name-version>/<client_name>/deposit/report/nameDateReturn/{depositName},{start},{end}
      * @param depositName String - name of the Bank Deposit to return
      * @param start Date - start value of the date return deposit (startDate < endDate)
-     * @param end String - end value of the date return deposit (endDate > startDate)
+     * @param end Date - end value of the date return deposit (endDate > startDate)
      * @return Map<K,V>
      */
     public Map getBankDepositByNameFromToDateReturnDepositWithDepositors(String depositName, Date start, Date end){
