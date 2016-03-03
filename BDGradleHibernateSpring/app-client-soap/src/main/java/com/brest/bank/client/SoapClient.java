@@ -1,30 +1,24 @@
 package com.brest.bank.client;
 
-
 import com.brest.bank.util.*;
-import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import org.dom4j.io.XMLResult;
 import org.springframework.util.Assert;
-import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.client.core.SourceExtractor;
-import org.springframework.ws.client.core.WebServiceMessageCallback;
-import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
-import org.springframework.xml.transform.StringResult;
 import org.springframework.xml.transform.StringSource;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
+
 import java.io.IOException;
-import java.text.ParseException;
+
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -35,6 +29,7 @@ public class SoapClient extends WebServiceGatewaySupport{
     public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
 
     public String host;
+
     SourceExtractor<GetBankDepositsResponse> responseExtractor = new SourceExtractor<GetBankDepositsResponse>() {
         @Override
         public GetBankDepositsResponse extractData(Source inSource) throws IOException, TransformerException
@@ -189,27 +184,31 @@ public class SoapClient extends WebServiceGatewaySupport{
     /**
      * Get Bank Deposits from-to Date Deposit values
      *
-     * @param start Date - start value of the date deposit (startDate < endDate)
-     * @param end Date - end value of the date deposit (endDate > startDate)
+     * @param startDate Date - start value of the date deposit (startDate < endDate)
+     * @param endDate Date - end value of the date deposit (endDate > startDate)
      * @return XmlElement BankDeposits with the specified depositorDateDeposit from the database
      */
-    public BankDeposits getBankDepositsFromToDateDeposit(Date start, Date end) throws DatatypeConfigurationException, ParseException{
-        LOGGER.debug("getBankDepositsFromToDateDepositRequest(start={}, end={})",dateFormat.format(start),
-                dateFormat.format(end));
-        Assert.isTrue(start.before(end)||start.equals(end));
+    public BankDeposits getBankDepositsFromToDateDeposit(Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositsFromToDateDepositRequest(start={}, end={})",dateFormat.format(startDate),
+                dateFormat.format(endDate));
+        Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
 
-        GregorianCalendar dateStart = new GregorianCalendar();
-        GregorianCalendar dateEnd = new GregorianCalendar();
-        dateStart.setTimeInMillis(start.getTime());
-        dateStart.setTimeZone(TimeZone.getDefault());
-        dateEnd.setTimeInMillis(end.getTime());
-        dateEnd.setTimeZone(TimeZone.getDefault());
-        XMLGregorianCalendar dateStartXml = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateStart);
-        XMLGregorianCalendar dateEndXml = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateEnd);
+        XMLGregorianCalendar xmlStartDate,xmlEndDate;
+        String strStartDate = dateFormat.format(startDate);
+        String strEndDate = dateFormat.format(endDate);
+        LOGGER.debug("strStartDate-{}, strEndDate-{}",strStartDate,strEndDate);
+        try {
+            xmlStartDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strStartDate);
+            xmlEndDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strEndDate);
+            LOGGER.debug("xmlStartDate-{}, xmlEndDate-{}",xmlStartDate,xmlEndDate);
+        }
+        catch (  DatatypeConfigurationException e) {
+            throw new RuntimeException(e);
+        }
 
         GetBankDepositsFromToDateDepositRequest request = new GetBankDepositsFromToDateDepositRequest();
-        request.setStartDate(dateStartXml);
-        request.setEndDate(dateEndXml);
+        request.setStartDate(xmlStartDate);
+        request.setEndDate(xmlEndDate);
 
         GetBankDepositsFromToDateDepositResponse response = (GetBankDepositsFromToDateDepositResponse)getWebServiceTemplate()
                 .marshalSendAndReceive(request,
@@ -221,27 +220,31 @@ public class SoapClient extends WebServiceGatewaySupport{
     /**
      * Get Bank Deposits from-to Date Return Deposit values
      *
-     * @param start Date - start value of the date return deposit (startDate < endDate)
-     * @param end Date - end value of the date return deposit (endDate > startDate)
+     * @param startDate Date - start value of the date return deposit (startDate < endDate)
+     * @param endDate Date - end value of the date return deposit (endDate > startDate)
      * @return XmlElement BankDeposits with the specified depositorDateReturnDeposit from the database
      */
-    public BankDeposits getBankDepositsFromToDateReturnDeposit(Date start, Date end) throws DatatypeConfigurationException, ParseException{
-        LOGGER.debug("getBankDepositsFromToDateReturnDepositRequest(start={}, end={})",dateFormat.format(start),
-                dateFormat.format(end));
-        Assert.isTrue(start.before(end)||start.equals(end));
+    public BankDeposits getBankDepositsFromToDateReturnDeposit(Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositsFromToDateReturnDepositRequest(start={}, end={})",dateFormat.format(startDate),
+                dateFormat.format(endDate));
+        Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
 
-        GregorianCalendar dateStart = new GregorianCalendar();
-        GregorianCalendar dateEnd = new GregorianCalendar();
-        dateStart.setTimeInMillis(start.getTime());
-        dateStart.setTimeZone(TimeZone.getDefault());
-        dateEnd.setTimeInMillis(end.getTime());
-        dateEnd.setTimeZone(TimeZone.getDefault());
-        XMLGregorianCalendar dateStartXml = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateStart);
-        XMLGregorianCalendar dateEndXml = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateEnd);
+        XMLGregorianCalendar xmlStartDate,xmlEndDate;
+        String strStartDate = dateFormat.format(startDate);
+        String strEndDate = dateFormat.format(endDate);
+        LOGGER.debug("strStartDate-{}, strEndDate-{}",strStartDate,strEndDate);
+        try {
+            xmlStartDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strStartDate);
+            xmlEndDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strEndDate);
+            LOGGER.debug("xmlStartDate-{}, xmlEndDate-{}",xmlStartDate,xmlEndDate);
+        }
+        catch (  DatatypeConfigurationException e) {
+            throw new RuntimeException(e);
+        }
 
         GetBankDepositsFromToDateReturnDepositRequest request = new GetBankDepositsFromToDateReturnDepositRequest();
-        request.setStartDate(dateStartXml);
-        request.setEndDate(dateEndXml);
+        request.setStartDate(xmlStartDate);
+        request.setEndDate(xmlEndDate);
 
         GetBankDepositsFromToDateReturnDepositResponse response = (GetBankDepositsFromToDateReturnDepositResponse)getWebServiceTemplate()
                 .marshalSendAndReceive(request,
@@ -276,29 +279,33 @@ public class SoapClient extends WebServiceGatewaySupport{
      * @param startDate Date - start value of the date deposit (startDate < endDate)
      * @param endDate Date - end value of the date deposit (endDate > startDate)
      * @return XmlElement BankDepositReport
-     * @throws DatatypeConfigurationException
      */
     public BankDepositReport getBankDepositByNameFromToDateDepositWithDepositors(String depositName,
                                                                                  Date startDate,
-                                                                                 Date endDate) throws DatatypeConfigurationException{
+                                                                                 Date endDate){
         LOGGER.debug("getBankDepositByNameFromToDateDepositWithDepositorsRequest(name={}, startDate={}, endDate={})",
                 depositName, dateFormat.format(startDate), dateFormat.format(endDate));
+        Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
+
+        XMLGregorianCalendar xmlStartDate,xmlEndDate;
+        String strStartDate = dateFormat.format(startDate);
+        String strEndDate = dateFormat.format(endDate);
+        LOGGER.debug("strStartDate-{}, strEndDate-{}",strStartDate,strEndDate);
+        try {
+            xmlStartDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strStartDate);
+            xmlEndDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strEndDate);
+            LOGGER.debug("xmlStartDate-{}, xmlEndDate-{}",xmlStartDate,xmlEndDate);
+        }
+        catch (  DatatypeConfigurationException e) {
+            throw new RuntimeException(e);
+        }
 
         GetBankDepositByNameFromToDateDepositWithDepositorsRequest request =
                 new GetBankDepositByNameFromToDateDepositWithDepositorsRequest();
         request.setDepositName(depositName);
 
-        GregorianCalendar dateStart = new GregorianCalendar();
-        GregorianCalendar dateEnd = new GregorianCalendar();
-        dateStart.setTimeInMillis(startDate.getTime());
-        dateStart.setTimeZone(TimeZone.getDefault());
-        dateEnd.setTimeInMillis(endDate.getTime());
-        dateEnd.setTimeZone(TimeZone.getDefault());
-        XMLGregorianCalendar dateStartXml = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateStart);
-        XMLGregorianCalendar dateEndXml = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateEnd);
-
-        request.setStartDate(dateStartXml);
-        request.setEndDate(dateEndXml);
+        request.setStartDate(xmlStartDate);
+        request.setEndDate(xmlEndDate);
 
         GetBankDepositByNameFromToDateDepositWithDepositorsResponse response =
                 (GetBankDepositByNameFromToDateDepositWithDepositorsResponse)getWebServiceTemplate()
@@ -315,29 +322,33 @@ public class SoapClient extends WebServiceGatewaySupport{
      * @param startDate Date - start value of the date return deposit (startDate < endDate)
      * @param endDate Date - end value of the date return deposit (endDate > startDate)
      * @return XmlElement BankDepositReport
-     * @throws DatatypeConfigurationException
      */
     public BankDepositReport getBankDepositByNameFromToDateReturnDepositWithDepositors(String depositName,
                                                                                  Date startDate,
-                                                                                 Date endDate) throws DatatypeConfigurationException{
+                                                                                 Date endDate){
         LOGGER.debug("getBankDepositByNameFromToDateReturnDepositWithDepositorsRequest(name={}, startDate={}, endDate={})",
                 depositName, dateFormat.format(startDate), dateFormat.format(endDate));
+        Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
+
+        XMLGregorianCalendar xmlStartDate,xmlEndDate;
+        String strStartDate = dateFormat.format(startDate);
+        String strEndDate = dateFormat.format(endDate);
+        LOGGER.debug("strStartDate-{}, strEndDate-{}",strStartDate,strEndDate);
+        try {
+            xmlStartDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strStartDate);
+            xmlEndDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strEndDate);
+            LOGGER.debug("xmlStartDate-{}, xmlEndDate-{}",xmlStartDate,xmlEndDate);
+        }
+        catch (  DatatypeConfigurationException e) {
+            throw new RuntimeException(e);
+        }
 
         GetBankDepositByNameFromToDateReturnDepositWithDepositorsRequest request =
                 new GetBankDepositByNameFromToDateReturnDepositWithDepositorsRequest();
         request.setDepositName(depositName);
 
-        GregorianCalendar dateStart = new GregorianCalendar();
-        GregorianCalendar dateEnd = new GregorianCalendar();
-        dateStart.setTimeInMillis(startDate.getTime());
-        dateStart.setTimeZone(TimeZone.getDefault());
-        dateEnd.setTimeInMillis(endDate.getTime());
-        dateEnd.setTimeZone(TimeZone.getDefault());
-        XMLGregorianCalendar dateStartXml = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateStart);
-        XMLGregorianCalendar dateEndXml = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateEnd);
-
-        request.setStartDate(dateStartXml);
-        request.setEndDate(dateEndXml);
+        request.setStartDate(xmlStartDate);
+        request.setEndDate(xmlEndDate);
 
         GetBankDepositByNameFromToDateReturnDepositWithDepositorsResponse response =
                 (GetBankDepositByNameFromToDateReturnDepositWithDepositorsResponse)getWebServiceTemplate()
@@ -373,29 +384,32 @@ public class SoapClient extends WebServiceGatewaySupport{
      * @param startDate Date - start value of the date deposit (startDate < endDate)
      * @param endDate Date - end value of the date deposit (endDate > startDate)
      * @return XmlElement BankDepositReport
-     * @throws DatatypeConfigurationException
      */
     public BankDepositReport getBankDepositByIdFromToDateDepositWithDepositors(Long depositId,
                                                                                Date startDate,
-                                                                               Date endDate) throws DatatypeConfigurationException{
+                                                                               Date endDate){
         LOGGER.debug("getBankDepositByIdFromToDateDepositWithDepositorsRequest(id={}, startDate={}, endDate={})",
                 depositId, dateFormat.format(startDate), dateFormat.format(endDate));
+        Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
+
+        XMLGregorianCalendar xmlStartDate,xmlEndDate;
+        String strStartDate = dateFormat.format(startDate);
+        String strEndDate = dateFormat.format(endDate);
+        LOGGER.debug("strStartDate-{}, strEndDate-{}",strStartDate,strEndDate);
+        try {
+            xmlStartDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strStartDate);
+            xmlEndDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strEndDate);
+            LOGGER.debug("xmlStartDate-{}, xmlEndDate-{}",xmlStartDate,xmlEndDate);
+        }catch (DatatypeConfigurationException e){
+            throw new RuntimeException(e);
+        }
 
         GetBankDepositByIdFromToDateDepositWithDepositorsRequest request =
                 new GetBankDepositByIdFromToDateDepositWithDepositorsRequest();
         request.setDepositId(depositId);
 
-        GregorianCalendar dateStart = new GregorianCalendar();
-        GregorianCalendar dateEnd = new GregorianCalendar();
-        dateStart.setTimeInMillis(startDate.getTime());
-        dateStart.setTimeZone(TimeZone.getDefault());
-        dateEnd.setTimeInMillis(endDate.getTime());
-        dateEnd.setTimeZone(TimeZone.getDefault());
-        XMLGregorianCalendar dateStartXml = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateStart);
-        XMLGregorianCalendar dateEndXml = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateEnd);
-
-        request.setStartDate(dateStartXml);
-        request.setEndDate(dateEndXml);
+        request.setStartDate(xmlStartDate);
+        request.setEndDate(xmlEndDate);
 
         GetBankDepositByIdFromToDateDepositWithDepositorsResponse response =
                 (GetBankDepositByIdFromToDateDepositWithDepositorsResponse)getWebServiceTemplate()
@@ -412,29 +426,33 @@ public class SoapClient extends WebServiceGatewaySupport{
      * @param startDate Date - start value of the date return deposit (startDate < endDate)
      * @param endDate Date - end value of the date return deposit (endDate > startDate)
      * @return XmlElement BankDepositReport
-     * @throws DatatypeConfigurationException
      */
     public BankDepositReport getBankDepositByIdFromToDateReturnDepositWithDepositors(Long depositId,
                                                                                        Date startDate,
-                                                                                       Date endDate) throws DatatypeConfigurationException{
+                                                                                       Date endDate) {
         LOGGER.debug("getBankDepositByIdFromToDateReturnDepositWithDepositorsRequest(id={}, startDate={}, endDate={})",
                 depositId, dateFormat.format(startDate), dateFormat.format(endDate));
+        Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
+
+        XMLGregorianCalendar xmlStartDate,xmlEndDate;
+        String strStartDate = dateFormat.format(startDate);
+        String strEndDate = dateFormat.format(endDate);
+        LOGGER.debug("strStartDate-{}, strEndDate-{}",strStartDate,strEndDate);
+        try {
+            xmlStartDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strStartDate);
+            xmlEndDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strEndDate);
+            LOGGER.debug("xmlStartDate-{}, xmlEndDate-{}",xmlStartDate,xmlEndDate);
+        }
+        catch (  DatatypeConfigurationException e) {
+            throw new RuntimeException(e);
+        }
 
         GetBankDepositByIdFromToDateReturnDepositWithDepositorsRequest request =
                 new GetBankDepositByIdFromToDateReturnDepositWithDepositorsRequest();
         request.setDepositId(depositId);
 
-        GregorianCalendar dateStart = new GregorianCalendar();
-        GregorianCalendar dateEnd = new GregorianCalendar();
-        dateStart.setTimeInMillis(startDate.getTime());
-        dateStart.setTimeZone(TimeZone.getDefault());
-        dateEnd.setTimeInMillis(endDate.getTime());
-        dateEnd.setTimeZone(TimeZone.getDefault());
-        XMLGregorianCalendar dateStartXml = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateStart);
-        XMLGregorianCalendar dateEndXml = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateEnd);
-
-        request.setStartDate(dateStartXml);
-        request.setEndDate(dateEndXml);
+        request.setStartDate(xmlStartDate);
+        request.setEndDate(xmlEndDate);
 
         GetBankDepositByIdFromToDateReturnDepositWithDepositorsResponse response =
                 (GetBankDepositByIdFromToDateReturnDepositWithDepositorsResponse)getWebServiceTemplate()
@@ -464,4 +482,188 @@ public class SoapClient extends WebServiceGatewaySupport{
         return response.getBankDepositsReport();
     }
 
+    /**
+     * Get Bank Deposit from-to Date Deposit with depositors
+     *
+     * @param startDate Date - start value of the date deposit (startDate < endDate)
+     * @param endDate Date - end value of the date deposit (startDate < endDate)
+     * @return XmlElement BankDepositsReport
+     */
+    public BankDepositsReport getBankDepositsFromToDateDepositWithDepositors(Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositsFromToDateDepositWithDepositorsRequest(start={}, end={})",
+                dateFormat.format(startDate),dateFormat.format(endDate));
+        Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
+
+        XMLGregorianCalendar xmlStartDate,xmlEndDate;
+        String strStartDate = dateFormat.format(startDate);
+        String strEndDate = dateFormat.format(endDate);
+        LOGGER.debug("strStartDate-{}, strEndDate-{}",strStartDate,strEndDate);
+        try {
+            xmlStartDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strStartDate);
+            xmlEndDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strEndDate);
+            LOGGER.debug("xmlStartDate-{}, xmlEndDate-{}",xmlStartDate,xmlEndDate);
+        }
+        catch (  DatatypeConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+
+        GetBankDepositsFromToDateDepositWithDepositorsRequest request =
+                new GetBankDepositsFromToDateDepositWithDepositorsRequest();
+
+        request.setStartDate(xmlStartDate);
+        request.setEndDate(xmlEndDate);
+
+        GetBankDepositsFromToDateDepositWithDepositorsResponse response =
+                (GetBankDepositsFromToDateDepositWithDepositorsResponse)getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("getBankDepositsFromToDateDepositWithDepositorsResponse"));
+
+        return response.getBankDepositsReport();
+    }
+
+    /**
+     * Get Bank Deposit from-to Date Return Deposit with depositors
+     *
+     * @param startDate Date - start value of the date return deposit (startDate < endDate)
+     * @param endDate Date - end value of the date return deposit (startDate < endDate)
+     * @return XmlElement BankDepositsReport
+     */
+    public BankDepositsReport getBankDepositsFromToDateReturnDepositWithDepositors(Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositsFromToDateReturnDepositWithDepositorsRequest(start={}, end={})",
+                dateFormat.format(startDate),dateFormat.format(endDate));
+        Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
+
+        XMLGregorianCalendar xmlStartDate,xmlEndDate;
+        String strStartDate = dateFormat.format(startDate);
+        String strEndDate = dateFormat.format(endDate);
+        LOGGER.debug("strStartDate-{}, strEndDate-{}",strStartDate,strEndDate);
+        try {
+            xmlStartDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strStartDate);
+            xmlEndDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strEndDate);
+            LOGGER.debug("xmlStartDate-{}, xmlEndDate-{}",xmlStartDate,xmlEndDate);
+        }
+        catch (  DatatypeConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+
+        GetBankDepositsFromToDateReturnDepositWithDepositorsRequest request =
+                new GetBankDepositsFromToDateReturnDepositWithDepositorsRequest();
+
+        request.setStartDate(xmlStartDate);
+        request.setEndDate(xmlEndDate);
+
+        GetBankDepositsFromToDateReturnDepositWithDepositorsResponse response =
+                (GetBankDepositsFromToDateReturnDepositWithDepositorsResponse)getWebServiceTemplate()
+                        .marshalSendAndReceive(request,
+                                new SoapActionCallback("getBankDepositsFromToDateReturnDepositWithDepositorsResponse"));
+
+        return response.getBankDepositsReport();
+    }
+
+    /**
+     * Get Bank Deposit by Currency with depositors
+     *
+     * @param depositCurrency String - Currency of the Bank Deposit to return
+     * @return XmlElement BankDepositsReport
+     */
+    public BankDepositsReport getBankDepositsByCurrencyWithDepositors(String depositCurrency){
+        LOGGER.debug("getBankDepositsByCurrencyWithDepositorsRequest(currency={})",depositCurrency);
+
+        GetBankDepositsByCurrencyWithDepositorsRequest request =
+                new GetBankDepositsByCurrencyWithDepositorsRequest();
+        request.setDepositCurrency(depositCurrency);
+
+        GetBankDepositsByCurrencyWithDepositorsResponse response =
+                (GetBankDepositsByCurrencyWithDepositorsResponse)getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("getBankDepositsByCurrencyWithDepositorsResponse"));
+
+        return response.getBankDepositsReport();
+    }
+
+    /**
+     * Get Bank Deposit from-to Date Deposit by Currency with depositors
+     *
+     * @param depositCurrency String - Currency of the Bank Deposit to return
+     * @param startDate Date - start value of the date deposit (startDate < endDate)
+     * @param endDate Date - end value of the date deposit (startDate < endDate)
+     * @return XmlElement BankDepositsReport
+     */
+    public BankDepositsReport getBankDepositsByCurrencyFromToDateDepositWithDepositors(String depositCurrency,
+                                                                                       Date startDate,
+                                                                                       Date endDate){
+        LOGGER.debug("getBankDepositsByCurrencyFromToDateDepositWithDepositorsRequest(currency={}, " +
+                "start={}, end={}",depositCurrency,dateFormat.format(startDate),dateFormat.format(endDate));
+
+        Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
+
+        XMLGregorianCalendar xmlStartDate,xmlEndDate;
+        String strStartDate = dateFormat.format(startDate);
+        String strEndDate = dateFormat.format(endDate);
+        LOGGER.debug("strStartDate-{}, strEndDate-{}",strStartDate,strEndDate);
+        try {
+            xmlStartDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strStartDate);
+            xmlEndDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strEndDate);
+            LOGGER.debug("xmlStartDate-{}, xmlEndDate-{}",xmlStartDate,xmlEndDate);
+        }
+        catch (  DatatypeConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+
+        GetBankDepositsByCurrencyFromToDateDepositWithDepositorsRequest request =
+                new GetBankDepositsByCurrencyFromToDateDepositWithDepositorsRequest();
+        request.setDepositCurrency(depositCurrency);
+        request.setStartDate(xmlStartDate);
+        request.setEndDate(xmlEndDate);
+
+        GetBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse response =
+                (GetBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse)getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("getBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse"));
+
+        return response.getBankDepositsReport();
+    }
+
+    /**
+     * Get Bank Deposit from-to Date Return Deposit by Currency with depositors
+     *
+     * @param depositCurrency String - Currency of the Bank Deposit to return
+     * @param startDate Date - start value of the date return deposit (startDate < endDate)
+     * @param endDate Date - end value of the date return deposit (startDate < endDate)
+     * @return XmlElement BankDepositsReport
+     */
+    public BankDepositsReport getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(String depositCurrency,
+                                                                                       Date startDate,
+                                                                                       Date endDate){
+        LOGGER.debug("getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsRequest(currency={}, " +
+                "start={}, end={}",depositCurrency,dateFormat.format(startDate),dateFormat.format(endDate));
+
+        Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
+
+        XMLGregorianCalendar xmlStartDate,xmlEndDate;
+        String strStartDate = dateFormat.format(startDate);
+        String strEndDate = dateFormat.format(endDate);
+        LOGGER.debug("strStartDate-{}, strEndDate-{}",strStartDate,strEndDate);
+        try {
+            xmlStartDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strStartDate);
+            xmlEndDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strEndDate);
+            LOGGER.debug("xmlStartDate-{}, xmlEndDate-{}",xmlStartDate,xmlEndDate);
+        }
+        catch (  DatatypeConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+
+        GetBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsRequest request =
+                new GetBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsRequest();
+        request.setDepositCurrency(depositCurrency);
+        request.setStartDate(xmlStartDate);
+        request.setEndDate(xmlEndDate);
+
+        GetBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsResponse response =
+                (GetBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsResponse)getWebServiceTemplate()
+                        .marshalSendAndReceive(request,
+                                new SoapActionCallback("getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsResponse"));
+
+        return response.getBankDepositsReport();
+    }
 }
