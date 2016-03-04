@@ -1,7 +1,10 @@
 package com.brest.bank.client;
 
+import com.brest.bank.domain.*;
 import com.brest.bank.util.*;
 
+import com.brest.bank.util.BankDeposit;
+import com.brest.bank.util.BankDepositor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,6 +47,15 @@ public class SoapClient extends WebServiceGatewaySupport{
             return (GetBankDepositsWithDepositorsResponse) (getWebServiceTemplate().getUnmarshaller().unmarshal(inSource));
         }
     };
+
+    SourceExtractor<GetBankDepositorsResponse> responseExtractorDepositor = new SourceExtractor<GetBankDepositorsResponse>() {
+        @Override
+        public GetBankDepositorsResponse extractData(Source inSource) throws IOException, TransformerException
+        {
+            return (GetBankDepositorsResponse) (getWebServiceTemplate().getUnmarshaller().unmarshal(inSource));
+        }
+    };
+
 
     /**
      *Get all Bank deposits
@@ -665,5 +677,195 @@ public class SoapClient extends WebServiceGatewaySupport{
                                 new SoapActionCallback("getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsResponse"));
 
         return response.getBankDepositsReport();
+    }
+
+    /**
+     * Add Bank Deposit
+     *
+     * @param deposit BankDeposit - Bank Deposit to be stored in the database
+     * @return XmlElement BankDeposit
+     */
+    public BankDeposit addDeposit(com.brest.bank.domain.BankDeposit deposit){
+        LOGGER.debug("addBankDepositRequest(deposit={})",deposit);
+
+        BankDeposit xmlDeposit = new BankDeposit();
+            xmlDeposit.setDepositId(deposit.getDepositId());
+            xmlDeposit.setDepositName(deposit.getDepositName());
+            xmlDeposit.setDepositMinTerm(deposit.getDepositMinTerm());
+            xmlDeposit.setDepositMinAmount(deposit.getDepositMinAmount());
+            xmlDeposit.setDepositCurrency(deposit.getDepositCurrency());
+            xmlDeposit.setDepositInterestRate(deposit.getDepositInterestRate());
+            xmlDeposit.setDepositAddConditions(deposit.getDepositAddConditions());
+
+        AddBankDepositRequest request = new AddBankDepositRequest();
+        request.setBankDeposit(xmlDeposit);
+
+        AddBankDepositResponse response = (AddBankDepositResponse)getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("addBankDepositResponse"));
+
+        return response.getBankDeposit();
+    }
+
+    /**
+     * Updating Bank Deposit
+     *
+     * @param deposit BankDeposit - Bank Deposit to be stored in the database
+     * @return XmlElement BankDeposit
+     */
+    public BankDeposit updateDeposit(com.brest.bank.domain.BankDeposit deposit){
+        LOGGER.debug("updateBankDepositRequest(deposit={})",deposit);
+
+        BankDeposit xmlDeposit = new BankDeposit();
+        xmlDeposit.setDepositId(deposit.getDepositId());
+        xmlDeposit.setDepositName(deposit.getDepositName());
+        xmlDeposit.setDepositMinTerm(deposit.getDepositMinTerm());
+        xmlDeposit.setDepositMinAmount(deposit.getDepositMinAmount());
+        xmlDeposit.setDepositCurrency(deposit.getDepositCurrency());
+        xmlDeposit.setDepositInterestRate(deposit.getDepositInterestRate());
+        xmlDeposit.setDepositAddConditions(deposit.getDepositAddConditions());
+
+        UpdateBankDepositRequest request = new UpdateBankDepositRequest();
+        request.setBankDeposit(xmlDeposit);
+
+        UpdateBankDepositResponse response = (UpdateBankDepositResponse)getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("updateBankDepositResponse"));
+
+        return response.getBankDeposit();
+    }
+
+    /**
+     * Deleting Bank Deposit by ID
+     *
+     * @param depositId Long - id of the Bank Deposit to be removed
+     * @return result String
+     */
+    public String removeDeposit(Long depositId){
+        LOGGER.debug("deleteBankDepositRequest(depositId={})",depositId);
+
+        DeleteBankDepositRequest request = new DeleteBankDepositRequest();
+        request.setDepositId(depositId);
+
+        DeleteBankDepositResponse response = (DeleteBankDepositResponse)getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("deleteBankDepositResponse"));
+
+        return response.getResult();
+    }
+
+    /**
+     *Get all Bank depositors
+     *
+     * @return XmlElement BankDepositors
+     */
+    public BankDepositors getBankDepositors(){
+        Source requestPayload = new StringSource(
+                "<getBankDepositorsRequest xmlns='http://bank.brest.com/soap'>" +
+                "</getBankDepositorsRequest>");
+
+        LOGGER.debug("getBankDepositorsRequest - \n{}",requestPayload);
+
+        GetBankDepositorsResponse response = getWebServiceTemplate()
+                .sendSourceAndReceive(requestPayload,
+                        new SoapActionCallback("getBankDepositorsResponse"),
+                        responseExtractorDepositor);
+
+        return response.getBankDepositors();
+    }
+
+    /**
+     * Get all Bank Depositors from-to Date Deposit
+     *
+     * @param startDate Date - start value of the date deposit (startDate < endDate)
+     * @param endDate Date - end value of the date deposit (startDate < endDate)
+     * @return XmlElement BankDepositors
+     */
+    public BankDepositors getBankDepositorsFromToDateDeposit(Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositorsFromToDateDepositRequest(start={}, end={}", dateFormat.format(startDate),
+                dateFormat.format(endDate));
+
+        Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
+
+        XMLGregorianCalendar xmlStartDate,xmlEndDate;
+        String strStartDate = dateFormat.format(startDate);
+        String strEndDate = dateFormat.format(endDate);
+        LOGGER.debug("strStartDate-{}, strEndDate-{}",strStartDate,strEndDate);
+        try {
+            xmlStartDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strStartDate);
+            xmlEndDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strEndDate);
+            LOGGER.debug("xmlStartDate-{}, xmlEndDate-{}",xmlStartDate,xmlEndDate);
+        }
+        catch (  DatatypeConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+
+        GetBankDepositorsFromToDateDepositRequest request = new GetBankDepositorsFromToDateDepositRequest();
+        request.setStartDate(xmlStartDate);
+        request.setEndDate(xmlEndDate);
+
+        GetBankDepositorsFromToDateDepositResponse response =
+                (GetBankDepositorsFromToDateDepositResponse)getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("getBankDepositorsFromToDateDepositResponse"));
+
+        return response.getBankDepositors();
+    }
+
+    /**
+     * Get all Bank Depositors from-to Date Return Deposit
+     *
+     * @param startDate Date - start value of the date return deposit (startDate < endDate)
+     * @param endDate Date - end value of the date return deposit (startDate < endDate)
+     * @return XmlElement BankDepositors
+     */
+    public BankDepositors getBankDepositorsFromToDateReturnDeposit(Date startDate, Date endDate){
+        LOGGER.debug("getBankDepositorsFromToDateReturnDepositRequest(start={}, end={}", dateFormat.format(startDate),
+                dateFormat.format(endDate));
+
+        Assert.isTrue(startDate.before(endDate)||startDate.equals(endDate),ERROR_FROM_TO_PARAM);
+
+        XMLGregorianCalendar xmlStartDate,xmlEndDate;
+        String strStartDate = dateFormat.format(startDate);
+        String strEndDate = dateFormat.format(endDate);
+        LOGGER.debug("strStartDate-{}, strEndDate-{}",strStartDate,strEndDate);
+        try {
+            xmlStartDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strStartDate);
+            xmlEndDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(strEndDate);
+            LOGGER.debug("xmlStartDate-{}, xmlEndDate-{}",xmlStartDate,xmlEndDate);
+        }
+        catch (  DatatypeConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+
+        GetBankDepositorsFromToDateReturnDepositRequest request = new GetBankDepositorsFromToDateReturnDepositRequest();
+        request.setStartDate(xmlStartDate);
+        request.setEndDate(xmlEndDate);
+
+        GetBankDepositorsFromToDateReturnDepositResponse response =
+                (GetBankDepositorsFromToDateReturnDepositResponse)getWebServiceTemplate()
+                        .marshalSendAndReceive(request,
+                                new SoapActionCallback("getBankDepositorsFromToDateReturnDepositResponse"));
+
+        return response.getBankDepositors();
+    }
+
+    /**
+     * Get Bank Depositor by ID
+     *
+     * @param depositorId Long - id of the Bank Depositor to return
+     * @return XmlElement BankDepositor
+     */
+    public BankDepositor getBankDepositorById(Long depositorId){
+        LOGGER.debug("getBankDepositorByIdRequest(id={})",depositorId);
+
+        GetBankDepositorByIdRequest request = new GetBankDepositorByIdRequest();
+        request.setDepositorId(depositorId);
+
+        GetBankDepositorByIdResponse response = (GetBankDepositorByIdResponse)getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("getBankDepositorByIdResponse"));
+
+        return response.getBankDepositor();
     }
 }

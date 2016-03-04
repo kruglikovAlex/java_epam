@@ -30,6 +30,10 @@ public class DataFixture {
         return new BankDeposit(id,"depositName1",12,1000,"usd",4,"conditions1",new HashSet());
     }
 
+    public static BankDeposit getExistUpdateDeposit(Long id){
+        return new BankDeposit(id,"updateName1",12,1000,"usd",4,"conditions1",new HashSet());
+    }
+
     /**
      * Get a Bank Deposit with null parameters
      *
