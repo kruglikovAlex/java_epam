@@ -906,4 +906,113 @@ public class SoapClient extends WebServiceGatewaySupport{
 
         return  response.getBankDepositor();
     }
+
+    /**
+     * Adding Bank Depositor
+     *
+     * @param depositId id of Bank Deposit
+     * @param depositor BankDepositor - Bank Depositor to be inserted to the database
+     * @return XmlElement BankDepositor
+     */
+    public BankDepositor addBankDepositor(Long depositId, com.brest.bank.domain.BankDepositor depositor){
+        LOGGER.debug("ddBankDepositorRequest(depositId={}, depositor={})",depositId,depositor);
+
+        XMLGregorianCalendar xmlDateDeposit, xmlDateReturnDeposit;
+
+        String strStartDate = dateFormat.format(depositor.getDepositorDateDeposit());
+        String strEndDate = dateFormat.format(depositor.getDepositorDateReturnDeposit());
+        LOGGER.debug("strStartDate-{}, strEndDate-{}",strStartDate,strEndDate);
+
+        try {
+            xmlDateDeposit = DatatypeFactory.newInstance().newXMLGregorianCalendar(strStartDate);
+            xmlDateReturnDeposit = DatatypeFactory.newInstance().newXMLGregorianCalendar(strEndDate);
+            LOGGER.debug("xmlDateDeposit-{}, xmlDateReturnDeposit-{}",xmlDateDeposit,xmlDateReturnDeposit);
+        }
+        catch (  DatatypeConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+
+        BankDepositor xmlDepositor = new BankDepositor();
+            xmlDepositor.setDepositorId(depositor.getDepositorId());
+            xmlDepositor.setDepositorName(depositor.getDepositorName());
+            xmlDepositor.setDepositorDateDeposit(xmlDateDeposit);
+            xmlDepositor.setDepositorAmountDeposit(depositor.getDepositorAmountDeposit());
+            xmlDepositor.setDepositorAmountPlusDeposit(depositor.getDepositorAmountPlusDeposit());
+            xmlDepositor.setDepositorAmountMinusDeposit(depositor.getDepositorAmountMinusDeposit());
+            xmlDepositor.setDepositorDateReturnDeposit(xmlDateReturnDeposit);
+            xmlDepositor.setDepositorMarkReturnDeposit(depositor.getDepositorMarkReturnDeposit());
+
+        AddBankDepositorRequest request = new AddBankDepositorRequest();
+        request.setDepositId(depositId);
+        request.setBankDepositor(xmlDepositor);
+
+        AddBankDepositorResponse response = (AddBankDepositorResponse)getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("addBankDepositorResponse"));
+
+        return response.getBankDepositor();
+    }
+
+    /**
+     * Updating Bank Depositor
+     *
+     * @param depositor BankDepositor - Bank Depositor to be stored in the database
+     * @return XmlElement BankDepositor
+     */
+    public BankDepositor updateBankDepositor(com.brest.bank.domain.BankDepositor depositor){
+        LOGGER.debug("updateBankDepositorRequest(depositor={})",depositor);
+
+        XMLGregorianCalendar xmlDateDeposit, xmlDateReturnDeposit;
+
+        String strStartDate = dateFormat.format(depositor.getDepositorDateDeposit());
+        String strEndDate = dateFormat.format(depositor.getDepositorDateReturnDeposit());
+        LOGGER.debug("strStartDate-{}, strEndDate-{}",strStartDate,strEndDate);
+
+        try {
+            xmlDateDeposit = DatatypeFactory.newInstance().newXMLGregorianCalendar(strStartDate);
+            xmlDateReturnDeposit = DatatypeFactory.newInstance().newXMLGregorianCalendar(strEndDate);
+            LOGGER.debug("xmlDateDeposit-{}, xmlDateReturnDeposit-{}",xmlDateDeposit,xmlDateReturnDeposit);
+        }
+        catch (  DatatypeConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+
+        BankDepositor xmlDepositor = new BankDepositor();
+            xmlDepositor.setDepositorId(depositor.getDepositorId());
+            xmlDepositor.setDepositorName(depositor.getDepositorName());
+            xmlDepositor.setDepositorDateDeposit(xmlDateDeposit);
+            xmlDepositor.setDepositorAmountDeposit(depositor.getDepositorAmountDeposit());
+            xmlDepositor.setDepositorAmountPlusDeposit(depositor.getDepositorAmountPlusDeposit());
+            xmlDepositor.setDepositorAmountMinusDeposit(depositor.getDepositorAmountMinusDeposit());
+            xmlDepositor.setDepositorDateReturnDeposit(xmlDateReturnDeposit);
+            xmlDepositor.setDepositorMarkReturnDeposit(depositor.getDepositorMarkReturnDeposit());
+
+        UpdateBankDepositorRequest request = new UpdateBankDepositorRequest();
+        request.setBankDepositor(xmlDepositor);
+
+        UpdateBankDepositorResponse response = (UpdateBankDepositorResponse)getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("updateBankDepositorResponse"));
+
+        return response.getBankDepositor();
+    }
+
+    /**
+     * Deleting Bank Depositor by ID
+     *
+     * @param depositorId Long - id of the Bank Depositor to be removed
+     * @return result String
+     */
+    public String removeBankDepositor(Long depositorId){
+        LOGGER.debug("deleteBankDepositorRequest(depositorId={})",depositorId);
+
+        DeleteBankDepositorRequest request = new DeleteBankDepositorRequest();
+        request.setDepositorId(depositorId);
+
+        DeleteBankDepositorResponse response = (DeleteBankDepositorResponse)getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("deleteBankDepositorResponse"));
+
+        return response.getResult();
+    }
 }

@@ -30,6 +30,12 @@ public class DataFixture {
         return new BankDeposit(id,"depositName1",12,1000,"usd",4,"conditions1",new HashSet());
     }
 
+    /**
+     * Get an exists update Bank Deposit with fixed parameters
+     *
+     * @param id Long - id of the Bank Deposit to return
+     * @return BankDeposit with fixed parameters for tests
+     */
     public static BankDeposit getExistUpdateDeposit(Long id){
         return new BankDeposit(id,"updateName1",12,1000,"usd",4,"conditions1",new HashSet());
     }
@@ -151,6 +157,17 @@ public class DataFixture {
      */
     public static BankDepositor getExistDepositor(Long id) throws ParseException{
         return new BankDepositor(id,"depositorName"+id,
+                dateFormat.parse("2015-01-01"),1000,100,100,dateFormat.parse("2015-09-09"),0,null);
+    }
+
+    /**
+     * Get an exists update Bank Depositor with fixed parameters
+     *
+     * @param id Long - id of the Bank Depositor to return
+     * @return BankDepositor with fixed parameters for tests
+     */
+    public static BankDepositor getExistUpdateDepositor(Long id) throws ParseException{
+        return new BankDepositor(id,"updateName"+id,
                 dateFormat.parse("2015-01-01"),1000,100,100,dateFormat.parse("2015-09-09"),0,null);
     }
 
