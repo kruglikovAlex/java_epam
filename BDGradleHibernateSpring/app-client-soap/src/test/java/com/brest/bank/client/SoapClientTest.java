@@ -1092,6 +1092,84 @@ public class SoapClientTest {
                 "depositorDateReturnDeposit=2015-09-09Z, depositorMarkReturnDeposit=0}",xmlEntityToString(depositor));
     }
 
+    @Test
+    public void testGetBankDepositorByIdDeposit(){
+        Source requestPayload = new StringSource(
+                "<getBankDepositorByIdDepositRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<depositId>1</depositId>" +
+                "</getBankDepositorByIdDepositRequest>");
+
+        Source responsePayload = new StringSource(
+                "<ns2:getBankDepositorByIdDepositResponse xmlns:ns2=\"http://bank.brest.com/soap\">" +
+                        "<ns2:bankDepositors>" +
+                            "<ns2:bankDepositor>" +
+                                "<ns2:depositorId>2</ns2:depositorId>" +
+                                "<ns2:depositorName>depositorName1</ns2:depositorName>" +
+                                "<ns2:depositorDateDeposit>2015-01-01Z</ns2:depositorDateDeposit>" +
+                                "<ns2:depositorAmountDeposit>1000</ns2:depositorAmountDeposit>" +
+                                "<ns2:depositorAmountPlusDeposit>100</ns2:depositorAmountPlusDeposit>" +
+                                "<ns2:depositorAmountMinusDeposit>100</ns2:depositorAmountMinusDeposit>" +
+                                "<ns2:depositorDateReturnDeposit>2015-09-09Z</ns2:depositorDateReturnDeposit>" +
+                                "<ns2:depositorMarkReturnDeposit>0</ns2:depositorMarkReturnDeposit>" +
+                            "</ns2:bankDepositor>" +
+                            "<ns2:bankDepositor>" +
+                                "<ns2:depositorId>1</ns2:depositorId>" +
+                                "<ns2:depositorName>depositorName1</ns2:depositorName>" +
+                                "<ns2:depositorDateDeposit>2015-01-01Z</ns2:depositorDateDeposit>" +
+                                "<ns2:depositorAmountDeposit>1000</ns2:depositorAmountDeposit>" +
+                                "<ns2:depositorAmountPlusDeposit>100</ns2:depositorAmountPlusDeposit>" +
+                                "<ns2:depositorAmountMinusDeposit>100</ns2:depositorAmountMinusDeposit>" +
+                                "<ns2:depositorDateReturnDeposit>2015-09-09Z</ns2:depositorDateReturnDeposit>" +
+                                "<ns2:depositorMarkReturnDeposit>0</ns2:depositorMarkReturnDeposit>" +
+                        "</ns2:bankDepositor>" +
+                        "</ns2:bankDepositors>" +
+                "</ns2:getBankDepositorByIdDepositResponse>");
+
+        mockServer.expect(payload(requestPayload)).andRespond(withPayload(responsePayload));
+
+        BankDepositors depositors = soapClient.getBankDepositorByIdDeposit(1L);
+        LOGGER.debug("Response - depositors - {}",xmlEntityToString(depositors.getBankDepositor().get(1)));
+
+        assertEquals("BankDepositor: { depositorId=1, depositorName=depositorName1, depositorDateDeposit=2015-01-01Z, " +
+                "depositorAmountDeposit=1000, depositorAmountPlusDeposit=100, depositorAmountMinusDeposit=100, " +
+                "depositorDateReturnDeposit=2015-09-09Z, depositorMarkReturnDeposit=0}",xmlEntityToString(depositors.getBankDepositor().get(1)));
+
+    }
+
+    @Test
+    public void testGetBankDepositorByName() throws ParseException{
+        Source requestPayload = new StringSource(
+                "<getBankDepositorByNameRequest xmlns='http://bank.brest.com/soap'>" +
+                        "<depositorName>depositorName1</depositorName>" +
+                        "</getBankDepositorByNameRequest>");
+
+        Source responsePayload = new StringSource(
+                "<getBankDepositorByNameResponse xmlns=\"http://bank.brest.com/soap\">" +
+                        "<bankDepositor>" +
+                        "<depositorId>1</depositorId>" +
+                        "<depositorName>depositorName1</depositorName>" +
+                        "<depositorDateDeposit>2015-01-01Z</depositorDateDeposit>" +
+                        "<depositorAmountDeposit>1000</depositorAmountDeposit>" +
+                        "<depositorAmountPlusDeposit>100</depositorAmountPlusDeposit>" +
+                        "<depositorAmountMinusDeposit>100</depositorAmountMinusDeposit>" +
+                        "<depositorDateReturnDeposit>2015-09-09Z</depositorDateReturnDeposit>" +
+                        "<depositorMarkReturnDeposit>0</depositorMarkReturnDeposit>" +
+                        "</bankDepositor>" +
+                        "</getBankDepositorByNameResponse>");
+
+        mockServer.expect(payload(requestPayload)).andRespond(withPayload(responsePayload));
+
+        BankDepositor depositor = soapClient.getBankDepositorByName("depositorName1");
+        LOGGER.debug("Response - depositor - {}",xmlEntityToString(depositor));
+
+        assertEquals(DataFixture.getExistDepositor(1L).getDepositorId(),depositor.getDepositorId());
+        assertEquals(DataFixture.getExistDepositor(1L).getDepositorName(),depositor.getDepositorName());
+        assertEquals("BankDepositor: { depositorId=1, depositorName=depositorName1, depositorDateDeposit=2015-01-01Z, " +
+                "depositorAmountDeposit=1000, depositorAmountPlusDeposit=100, depositorAmountMinusDeposit=100, " +
+                "depositorDateReturnDeposit=2015-09-09Z, depositorMarkReturnDeposit=0}",xmlEntityToString(depositor));
+
+    }
+
     public String xmlEntityToString(BankDeposit deposit){
         return new String("BankDeposit: { depositId="+deposit.getDepositId()
                + ", depositName="+deposit.getDepositName()

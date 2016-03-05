@@ -868,4 +868,42 @@ public class SoapClient extends WebServiceGatewaySupport{
 
         return response.getBankDepositor();
     }
+
+    /**
+     * Get Bank Depositor by ID Deposit
+     *
+     * @param depositId Long - id of the Bank Deposit
+     * @return XmlElement BankDepositors
+     */
+    public BankDepositors getBankDepositorByIdDeposit(Long depositId){
+        LOGGER.debug("getBankDepositorByIdDepositRequest(depositId={})",depositId);
+
+        GetBankDepositorByIdDepositRequest request = new GetBankDepositorByIdDepositRequest();
+        request.setDepositId(depositId);
+
+        GetBankDepositorByIdDepositResponse response = (GetBankDepositorByIdDepositResponse)getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("getBankDepositorByIdDepositResponse"));
+
+        return response.getBankDepositors();
+    }
+
+    /**
+     * Get Bank Depositor by Name Deposit
+     *
+     * @param depositorName String - name of the Bank Depositor to return
+     * @return XmlElement BankDepositor
+     */
+    public BankDepositor getBankDepositorByName(String depositorName){
+        LOGGER.debug("getBankDepositorByNameRequest(depositorName={}",depositorName);
+
+        GetBankDepositorByNameRequest request = new GetBankDepositorByNameRequest();
+        request.setDepositorName(depositorName);
+
+        GetBankDepositorByNameResponse response = (GetBankDepositorByNameResponse)getWebServiceTemplate()
+                .marshalSendAndReceive(request,
+                        new SoapActionCallback("getBankDepositorByNameResponse"));
+
+        return  response.getBankDepositor();
+    }
 }
