@@ -236,7 +236,7 @@ public class RestClient {
      * @param depositId Long - depositId of the Bank Deposit to return
      * @param start Date - start value of the date deposit (startDate < endDate)
      * @param end Date - end value of the date deposit (endDate > startDate)
-     * @return
+     * @return Map
      */
     public Map getBankDepositByIdFromToDateDepositWithDepositors(Long depositId, Date start, Date end){
         LOGGER.debug("getBankDepositByIdFromToDateDepositWithDepositors {}",
@@ -253,7 +253,7 @@ public class RestClient {
      * @param depositId Long - depositId of the Bank Deposit to return
      * @param start Date - start value of the date return deposit (startDate < endDate)
      * @param end Date - end value of the date return deposit (endDate > startDate)
-     * @return
+     * @return Map
      */
     public Map getBankDepositByIdFromToDateReturnDepositWithDepositors(Long depositId, Date start, Date end){
         LOGGER.debug("getBankDepositByIdFromToDateReturnDepositWithDepositors {}",
