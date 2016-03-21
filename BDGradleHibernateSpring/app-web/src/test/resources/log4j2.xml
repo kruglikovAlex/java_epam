@@ -18,6 +18,10 @@
             <AppenderRef ref="Console"/>
             <AppenderRef ref="File"/>
         </Logger>
+
+        <Logger name="org.mockito" level="DEBUG">
+            <AppenderRef ref="Console"/>
+        </Logger>
 <!--
         <Logger name="com.brest.bank.validator" level="DEBUG">
             <AppenderRef ref="Console"/>

@@ -27,47 +27,7 @@ public class DataFixture {
      * @return BankDeposit with fixed parameters for tests
      */
     public static BankDeposit getExistDeposit(Long id){
-        return new BankDeposit(id,"depositName1",12,1000,"usd",4,"conditions1",new HashSet());
-    }
-
-    /**
-     * Get a Bank Deposit with null parameters
-     *
-     * @return BankDeposit with null parameters
-     */
-    public static BankDeposit getNullDeposit() {
-        return null;
-    }
-
-    /**
-     * Get empty Bank Deposit
-     *
-     * @return BankDeposit empty
-     */
-    public static BankDeposit getEmptyDeposit() {
-        return new BankDeposit();
-    }
-
-    /**
-     * Get all Bank Deposits
-     *
-     * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
-     */
-    public static List<BankDeposit> getDeposits(){
-        List<BankDeposit> deposits = new ArrayList<BankDeposit>();
-        deposits.add(getNewDeposit());
-        return deposits;
-    }
-
-    /**
-     * Get exist Bank Deposits
-     *
-     * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
-     */
-    public static List<BankDeposit> getExistDeposits(){
-        List<BankDeposit> deposits = new ArrayList<BankDeposit>();
-        deposits.add(getExistDeposit(1L));
-        return deposits;
+        return new BankDeposit(id,"depositName"+id,12,1000,"usd",4,"conditions"+id,new HashSet());
     }
 
     /**
@@ -90,24 +50,12 @@ public class DataFixture {
             list.put("depositCurrency", deposit.getDepositCurrency());
             list.put("depositInterestRate", deposit.getDepositInterestRate());
             list.put("depositAddConditions", deposit.getDepositAddConditions());
-            list.put("sumAmount", depositor.getDepositorAmountDeposit());
-            list.put("sumPlusAmount", depositor.getDepositorAmountPlusDeposit());
-            list.put("sumMinusAmount", depositor.getDepositorAmountMinusDeposit());
-            list.put("numDepositors", 1);
-        return list;
-    }
+            list.put("depositorCount", 1);
+            list.put("depositorAmountSum", depositor.getDepositorAmountDeposit());
+            list.put("depositorAmountPlusSum", depositor.getDepositorAmountPlusDeposit());
+            list.put("depositorAmountMinusSum", depositor.getDepositorAmountMinusDeposit());
 
-    /**
-     * Get all Bank Deposits with all Bank Depositors
-     *
-     * @return List<Map> - a list of bank deposits with a report on all relevant
-     * bank depositors
-     * @throws ParseException
-     */
-    public static List<Map> getExistAllDepositsAllDepositors() throws ParseException{
-        List<Map> deposits = new ArrayList<Map>();
-        deposits.add(getExistDepositAllDepositors(1L, 1L));
-        return deposits;
+        return list;
     }
 
     /**
@@ -118,24 +66,6 @@ public class DataFixture {
     public static BankDepositor getNewDepositor() throws ParseException{
         return new BankDepositor(null,"depositorName1",
                 dateFormat.parse("2015-01-01"),1000,100,100,dateFormat.parse("2015-09-09"),0,null);
-    }
-
-    /**
-     * Get a Bank Depositor with null parameters
-     *
-     * @return BankDepositor with null parameters
-     */
-    public static BankDepositor getNullDepositor() {
-        return null;
-    }
-
-    /**
-     * Get empty Bank Depositor
-     *
-     * @return BankDepositor empty
-     */
-    public static BankDepositor getEmptyDepositor() {
-        return new BankDepositor(null,null,null,0,0,0,null,0,null);
     }
 
     /**
@@ -157,19 +87,6 @@ public class DataFixture {
     public static List<BankDepositor> getDepositors() throws ParseException{
         List<BankDepositor> depositors = new ArrayList<BankDepositor>();
         depositors.add(getNewDepositor());
-        return depositors;
-    }
-
-    /**
-     * Get exist Bank Depositors
-     *
-     * @return List<BankDepositor> - a list containing all of the Bank Depositors in the database
-     * @throws ParseException
-     */
-    public static List<BankDepositor> getExistDepositors() throws ParseException{
-        List<BankDepositor> depositors = new ArrayList<BankDepositor>();
-            depositors.add(getExistDepositor(1L));
-            depositors.add(getExistDepositor(2L));
         return depositors;
     }
 }
