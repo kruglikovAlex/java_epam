@@ -87,7 +87,7 @@ public class DataConfig {
      * bank depositors
      * @throws ParseException
      */
-    public static List<Map> getExistAllDepositsAllDepositors() throws ParseException{
+    public static List<Map> getEmptyAllDepositsAllDepositors() throws ParseException{
         List<Map> deposits = new ArrayList<Map>();
         deposits.add(getEmptyDepositAllDepositors());
         return deposits;
