@@ -144,6 +144,7 @@ public class DataFixture {
     public static List<Map> getExistAllDepositsAllDepositors() throws ParseException{
         List<Map> deposits = new ArrayList<Map>();
         deposits.add(getExistDepositAllDepositors(1L, 1L));
+        deposits.add(getExistDepositAllDepositors(2L, 2L));
         return deposits;
     }
 

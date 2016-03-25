@@ -34,6 +34,7 @@ public class BankDepositController {
     public static final String ERROR_NULL_PARAM = "The parameter must be NULL";
     public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
     public static final String ERROR_STRING_METHOD_PARAM = "The string parameter can not be empty";
+    public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
     private static final Logger LOGGER = LogManager.getLogger();
     @Autowired
     BankDepositService depositService;
@@ -228,6 +229,176 @@ public class BankDepositController {
     }
 
     /**
+     * Get Bank Deposits by ID with depositors from-to Date Deposit values
+     *
+     * @param redirectAttributes
+     * @param depositId Long - depositId of the Bank Deposit to return
+     * @param startDate String - start value of the date deposit (startDate < endDate)
+     * @param endDate String - end value of the date deposit (endDate > startDate)
+     * @param status
+     * @return ModelAndView "mainFrame"
+     * @throws ParseException
+     */
+    @RequestMapping(value = {"/filterByIdFromToDateDeposit"}, method = RequestMethod.GET)
+    public ModelAndView filterByIdFromToDateDeposit(RedirectAttributes redirectAttributes,
+                                                    @RequestParam("depositId") Long depositId,
+                                                    @RequestParam("startDateDeposit") String startDate,
+                                                    @RequestParam("endDateDeposit") String endDate,
+                                                    SessionStatus status) throws ParseException
+    {
+        LOGGER.debug("filterByIdFromToDateDeposit(depositId={},start={},end={})",depositId,startDate,endDate);
+        status.setComplete();
+        try{
+            Assert.notNull(depositId,ERROR_METHOD_PARAM);
+            Assert.hasLength(startDate,ERROR_STRING_METHOD_PARAM);
+            Assert.hasLength(endDate,ERROR_METHOD_PARAM);
+
+            Date dateStart = dateFormat.parse(startDate), dateEnd = dateFormat.parse(endDate);
+            Assert.isTrue(dateStart.before(dateEnd)||dateStart.equals(dateEnd),ERROR_FROM_TO_PARAM);
+
+            LOGGER.debug("getBankDepositByIdFromToDateDepositWithDepositors(depositId={},start={},end={})"
+                    ,depositId,startDate,endDate);
+            deposits.add(depositService.getBankDepositByIdFromToDateDepositWithDepositors(depositId,dateStart,dateEnd));
+            LOGGER.debug("deposits - {}",deposits.get(0));
+
+            idDeposit = (Long)deposits.get(0).get("depositId");
+            Assert.notNull(idDeposit,"idDeposit can not be NULL");
+
+            try{
+                LOGGER.debug("getBankDepositorByIdDepositFromToDateDeposit(depositId={})",depositId);
+                for(BankDepositor dep:depositorService.getBankDepositorByIdDeposit(depositId)){
+                    if( ( dep.getDepositorDateDeposit().after(dateStart)
+                            &dep.getDepositorDateDeposit().before(dateEnd) )
+                            ||dep.getDepositorDateDeposit().equals(dateStart)
+                            ||dep.getDepositorDateDeposit().equals(dateEnd) ){
+                        depositors.add(dep);
+                        LOGGER.debug("depositor - {}",dep);
+                    }
+                }
+
+                year = startDate.substring(0,4);
+                LOGGER.debug("year={}",year);
+            }catch (Exception e){
+                LOGGER.debug("getBankDepositorByIdDeposit(depositId={}), Exception:{}", depositId,e.toString());
+                redirectAttributes.addFlashAttribute( "message", e.getMessage());
+
+                depositors = DataConfig.getEmptyDepositors();
+                LOGGER.debug("depositors - {}",depositors.get(0));
+                year = dateFormat.format(Calendar.getInstance().getTime()).substring(0,4);
+                LOGGER.debug("year={}",year);
+            }
+        }catch (Exception e){
+            LOGGER.debug("filterByIdFromToDateDeposit({},{},{}), Exception:{}", depositId,startDate,endDate,e.toString());
+            redirectAttributes.addFlashAttribute( "message", e.getMessage());
+
+            deposits = DataConfig.getEmptyAllDepositsAllDepositors();
+            LOGGER.debug("deposits - {}",deposits.get(0));
+
+            depositors = DataConfig.getEmptyDepositors();
+            LOGGER.debug("depositors - {}",depositors.get(0));
+
+            idDeposit = 1L;
+            LOGGER.debug("idDeposit={}",idDeposit);
+
+            year = dateFormat.format(Calendar.getInstance().getTime()).substring(0,4);
+            LOGGER.debug("year={}",year);
+        }
+
+        ModelAndView view = new ModelAndView("mainFrame");
+        view.addObject("deposits",deposits);
+        view.addObject("depositors",depositors);
+        view.addObject("year",year);
+        view.addObject("idDeposit",idDeposit);
+
+        return view;
+    }
+
+    /**
+     * Get Bank Deposits by ID with depositors from-to Date return Deposit values
+     *
+     * @param redirectAttributes
+     * @param depositId Long - depositId of the Bank Deposit to return
+     * @param startDate String - start value of the date return deposit (startDate < endDate)
+     * @param endDate String - end value of the date return deposit (endDate > startDate)
+     * @param status
+     * @return ModelAndView "mainFrame"
+     * @throws ParseException
+     */
+    @RequestMapping(value = {"/filterByIdFromToDateReturnDeposit"}, method = RequestMethod.GET)
+    public ModelAndView filterByIdFromToDateReturnDeposit(RedirectAttributes redirectAttributes,
+                                                          @RequestParam("depositId") Long depositId,
+                                                          @RequestParam("startDateReturnDeposit") String startDate,
+                                                          @RequestParam("endDateReturnDeposit") String endDate,
+                                                          SessionStatus status) throws ParseException
+    {
+        LOGGER.debug("filterByIdFromToDateReturnDeposit(depositId={},start={},end={})",depositId,startDate,endDate);
+        status.setComplete();
+        try{
+            Assert.notNull(depositId,ERROR_METHOD_PARAM);
+            Assert.hasLength(startDate,ERROR_STRING_METHOD_PARAM);
+            Assert.hasLength(endDate,ERROR_METHOD_PARAM);
+
+            Date dateStart = dateFormat.parse(startDate), dateEnd = dateFormat.parse(endDate);
+            Assert.isTrue(dateStart.before(dateEnd)||dateStart.equals(dateEnd),ERROR_FROM_TO_PARAM);
+
+            LOGGER.debug("getBankDepositByIdFromToDateReturnDepositWithDepositors(depositId={},start={},end={})"
+                    ,depositId,startDate,endDate);
+            deposits.add(depositService.getBankDepositByIdFromToDateReturnDepositWithDepositors(depositId,dateStart,dateEnd));
+            LOGGER.debug("deposits - {}",deposits.get(0));
+
+            idDeposit = (Long)deposits.get(0).get("depositId");
+            Assert.notNull(idDeposit,"idDeposit can not be NULL");
+
+            try{
+                LOGGER.debug("getBankDepositorByIdDepositFromToDateDeposit(depositId={})",depositId);
+                for(BankDepositor dep:depositorService.getBankDepositorByIdDeposit(depositId)){
+                    if( ( dep.getDepositorDateDeposit().after(dateStart)
+                            &dep.getDepositorDateDeposit().before(dateEnd) )
+                            ||dep.getDepositorDateDeposit().equals(dateStart)
+                            ||dep.getDepositorDateDeposit().equals(dateEnd) ){
+                        depositors.add(dep);
+                        LOGGER.debug("depositor - {}",dep);
+                    }
+                }
+
+                year = startDate.substring(0,4);
+                LOGGER.debug("year={}",year);
+            }catch (Exception e){
+                LOGGER.debug("getBankDepositorByIdDeposit(depositId={}), Exception:{}", depositId,e.toString());
+                redirectAttributes.addFlashAttribute( "message", e.getMessage());
+
+                depositors = DataConfig.getEmptyDepositors();
+                LOGGER.debug("depositors - {}",depositors.get(0));
+                year = dateFormat.format(Calendar.getInstance().getTime()).substring(0,4);
+                LOGGER.debug("year={}",year);
+            }
+        }catch (Exception e){
+            LOGGER.debug("filterByIdFromToDateReturnDeposit({},{},{}), Exception:{}", depositId,startDate,endDate,e.toString());
+            redirectAttributes.addFlashAttribute( "message", e.getMessage());
+
+            deposits = DataConfig.getEmptyAllDepositsAllDepositors();
+            LOGGER.debug("deposits - {}",deposits.get(0));
+
+            depositors = DataConfig.getEmptyDepositors();
+            LOGGER.debug("depositors - {}",depositors.get(0));
+
+            idDeposit = 1L;
+            LOGGER.debug("idDeposit={}",idDeposit);
+
+            year = dateFormat.format(Calendar.getInstance().getTime()).substring(0,4);
+            LOGGER.debug("year={}",year);
+        }
+
+        ModelAndView view = new ModelAndView("mainFrame");
+        view.addObject("deposits",deposits);
+        view.addObject("depositors",depositors);
+        view.addObject("year",year);
+        view.addObject("idDeposit",idDeposit);
+
+        return view;
+    }
+
+    /**
      * Get Bank Deposits by Name with depositors
      *
      * @param redirectAttributes
@@ -313,6 +484,7 @@ public class BankDepositController {
     {
         LOGGER.debug("filterByCurrency(depositCurrency={})",depositCurrency);
         status.setComplete();
+
         try{
             Assert.notNull(depositCurrency,ERROR_METHOD_PARAM);
             Assert.hasLength(depositCurrency,ERROR_STRING_METHOD_PARAM);
@@ -325,8 +497,12 @@ public class BankDepositController {
             Assert.notNull(idDeposit,"idDeposit can not be NULL");
 
             try{
-                LOGGER.debug("getBankDepositorByIdDeposit(depositId={})",deposits.get(0).get("depositId"));
-                depositors = depositorService.getBankDepositorByIdDeposit((Long)deposits.get(0).get("depositId"));
+
+                for(Map depositReport:deposits){
+                    LOGGER.debug("getBankDepositorByIdDeposit(depositId={})",depositReport.get("depositId"));
+                    depositors.addAll(depositorService
+                            .getBankDepositorByIdDeposit((Long)depositReport.get("depositId")));
+                }
                 LOGGER.debug("depositors - {}",depositors.get(0));
 
                 year = dateFormat.format(depositors.get(0).getDepositorDateDeposit()).substring(0,4);
@@ -381,35 +557,6 @@ public class BankDepositController {
     {
         LOGGER.debug("getListDepositsView()");
 
-        /*
-        Long idDeposit;
-        List<Map> deposits;
-        List<BankDepositor> depositors;
-        try{
-            deposits = depositService.getBankDepositsWithDepositors();
-            LOGGER.debug("deposits - {}",deposits.get(0));
-        }catch (Exception e){
-            deposits = DataConfig.getEmptyAllDepositsAllDepositors();
-            LOGGER.debug("deposits - {}",deposits.get(0));
-        }
-        try{
-            depositors = depositorService.getBankDepositors();
-            LOGGER.debug("depositors - {}",depositors.get(0));
-        }catch (Exception e){
-            depositors = DataConfig.getEmptyDepositors();
-            LOGGER.debug("depositors - {}",depositors.get(0));
-        }
-        if(deposits.get(0).get("depositId") == null){
-            idDeposit = 1L;
-            LOGGER.debug("depositId - {}",idDeposit);
-        }else{
-            idDeposit = (Long)deposits.get(0).get("depositId");
-            LOGGER.debug("depositId - {}",idDeposit);
-        }
-
-        String year = dateFormat.format(Calendar.getInstance().getTime()).substring(0,4);
-        LOGGER.debug("year - {}",year);
-*/
         status.setComplete();
         try{
             LOGGER.debug("getBankDepositsWithDepositors()");
