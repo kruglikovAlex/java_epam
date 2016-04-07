@@ -11,7 +11,7 @@
     }
 </style>
 <body>
- 	<form action='<spring:url value="/depositor/updateFormDepositor" > </spring:url>' method="POST" modelAttribute="depositor" commandName="depositor">
+ 	<form action='<spring:url value="/depositor/updateDepositor" > </spring:url>' method="POST" modelAttribute="depositor" commandName="depositor">
     	<form:form method="GET" modelAttribute="depositor">
 			<h1><spring:message code="update.depositor" /></h1>
         	<ul>
@@ -22,8 +22,6 @@
             	        <span class="error">
             	            <form:errors id="errordepositorName" path="depositorName" size="100"/>
             	        </span><br/>
-                <label path="depositorIdDeposit">Id Deposit:</label>
-                	<input type="text" id="depositorIdDeposit" name="depositorIdDeposit" value='<c:out value="${depositor.depositorIdDeposit}"/>' hidden/><br/>
                 <label path="depositorDateDeposit:">Date Deposit, (yyyy-mm-dd):</label>
                 	<input type="text" id="depositorDateDeposit" name="depositorDateDeposit"
                 	pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size="10" value='<fmt:formatDate value="${depositor.depositorDateDeposit}" type="both" pattern="yyyy-MM-dd"/>' />
@@ -69,7 +67,7 @@
             if(this.value == null || this.value == '') {
                 document.getElementById('error'+this.name).style.border=  "1px dotted red"
                 document.getElementById('error'+this.name).style.fontSize = "x-large";
-                alert('The fild '+ this.name+' is empty!!!');
+                alert('The field '+ this.name+' is empty!!!');
             }
         }
         depositorName.onchange = nullInt;

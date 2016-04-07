@@ -11,7 +11,7 @@
     }
 </style>
 <body>
- 	<form action='<spring:url value="/deposit/updateFormDeposit" > </spring:url>' method="POST" modelAttribute="deposit" commandName="deposit">
+ 	<form action='<spring:url value="/deposit/updateDeposit" > </spring:url>' method="POST" modelAttribute="deposit" commandName="deposit">
     	<form:form method="get" modelAttribute="deposit">
 			<h1><spring:message code="update.deposit" /></h1>
         	<ul>
