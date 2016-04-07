@@ -7,14 +7,15 @@ import com.brest.bank.service.BankDepositorService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.beans.propertyeditors.CustomNumberEditor;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.Assert;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +37,17 @@ public class BankDepositorController {
     private static final Logger LOGGER = LogManager.getLogger();
     @Autowired
     private BankDepositorService depositorService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder)
+    {
+        String datePattern="yyyy-MM-dd";
+        SimpleDateFormat dateFormat=new SimpleDateFormat(datePattern);
+        dateFormat.setLenient(false);
+        binder.registerCustomEditor(Date.class,new CustomDateEditor(dateFormat,true,datePattern.length()));
+        binder.registerCustomEditor(String.class,new StringTrimmerEditor(true));
+        binder.registerCustomEditor(Integer.class,null,new CustomNumberEditor(Integer.class,null,true));
+    }
 
     @RequestMapping(value={"/inputDepositor"}, method = RequestMethod.GET)
     public ModelAndView getInputFormDepositor(ModelMap model,
@@ -55,21 +68,24 @@ public class BankDepositorController {
 
     @RequestMapping(value={"/submitDataDepositor"}, method = RequestMethod.POST)
     public ModelAndView postInputFormDepositor(ModelMap model,
-                                               @RequestParam("idDeposit") Long depositId,
+                                               @ModelAttribute("idDeposit") String depositId,
                                                @ModelAttribute("depositor") BankDepositor depositor,
                                                BindingResult result,
-                                               SessionStatus status)
+                                               SessionStatus status//,
+                                               //@RequestParam("idDeposit") String depositId
+    )
     {
         LOGGER.debug("postInputFormDepositor({},{},{},{})", depositId,depositor,result,status);
         status.setComplete();
         Assert.isNull(depositor.getDepositorId(),ERROR_NULL_PARAM);
         try {
             LOGGER.debug("depositorService.addBankDepositor({},{})", depositId, depositor);
-            depositorService.addBankDepositor(depositId, depositor);
+
+            depositorService.addBankDepositor(Long.parseLong(depositId), depositor);
             return new ModelAndView("redirect:/deposit/main");
         }catch(Exception e) {
             LOGGER.debug("postInputFormDepositor(), Exception:{}", e.toString());
-            return new ModelAndView("redirect:/submitDataDepositor?idDeposit=" + depositId);
+            return new ModelAndView("redirect:/inputDepositor?idDeposit=" + depositId);
         }
     }
 
@@ -129,7 +145,7 @@ public class BankDepositorController {
      * @param depositorId
      * @return
      */
-    @RequestMapping(value = {"/deleteDepositor"}, method = RequestMethod.DELETE)
+    @RequestMapping(value = {"/deleteDepositor"}, method = RequestMethod.GET)
     public ModelAndView deleteDepositor(RedirectAttributes redirectAttributes,
                                         @RequestParam("depositorId") Long depositorId)
     {

@@ -122,7 +122,7 @@ public class BankDepositControllerMockTest {
     @Test
     public void testDeleteDeposit() throws Exception{
         LOGGER.debug("testDeleteDeposit() - start");
-        mockMvc.perform(delete("/deposit/deleteDeposit?depositId={id}",1L))
+        mockMvc.perform(get("/deposit/deleteDeposit?depositId={id}",1L))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("/deposit/main"));
 
@@ -624,8 +624,6 @@ public class BankDepositControllerMockTest {
         verify(depositorService).getBankDepositorByIdDeposit(1L);
     }
 
-    //============
-
     @Test
     public void testFilterByNameFromToDateDeposit() throws Exception{
         LOGGER.debug("testFilterByNameFromToDateDeposit() - start");
@@ -986,7 +984,6 @@ public class BankDepositControllerMockTest {
                         ,dateFormat.parse("2015-01-01"),dateFormat.parse("2015-06-06"));
         verify(depositorService).getBankDepositorByIdDeposit(1L);
     }
-    //============
 
     @Test
     public void testFilterByCurrencyEmptyRequestParameter() throws Exception{
@@ -1064,6 +1061,367 @@ public class BankDepositControllerMockTest {
                 .andExpect(status().isOk());
 
         verify(depositService).getBankDepositsByCurrencyWithDepositors("usd");
+        verify(depositorService).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByCurrencyFromToDateDeposit() throws Exception{
+        LOGGER.debug("testFilterByCurrencyFromToDateDeposit() - start");
+        when(depositService.getBankDepositsByCurrencyFromToDateDepositWithDepositors("usd"
+                ,dateFormat.parse("2015-01-01")
+                ,dateFormat.parse("2015-06-06")))
+                .thenReturn(DataFixture.getExistAllDepositsAllDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataFixture.getExistDepositors());
+        mockMvc.perform(get("/deposit/filterByCurrencyFromToDateDeposit?depositCurrency={currency}&startDateDeposit={start}&endDateDeposit={end}", "usd","2015-01-01","2015-06-06"))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",
+                                dateFormat.format(DataFixture.getExistDepositors()
+                                        .get(0).getDepositorDateDeposit()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService)
+                .getBankDepositsByCurrencyFromToDateDepositWithDepositors("usd",
+                        dateFormat.parse("2015-01-01"),dateFormat.parse("2015-06-06"));
+        verify(depositorService).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByCurrencyFromToDateDepositEmptyFirstRequestParameter() throws Exception{
+        LOGGER.debug("testFilterByCurrencyFromToDateDepositEmptyFirstRequestParameter() - start");
+        when(depositService.getBankDepositsByCurrencyFromToDateDepositWithDepositors(""
+                ,dateFormat.parse("2015-01-01")
+                ,dateFormat.parse("2015-06-06")))
+                .thenReturn(DataFixture.getExistAllDepositsAllDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataFixture.getExistDepositors());
+        mockMvc.perform(get("/deposit/filterByCurrencyFromToDateDeposit?depositCurrency={currency}&startDateDeposit={start}&endDateDeposit={end}","","2015-01-01","2015-06-06"))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",
+                                dateFormat.format(Calendar.getInstance().getTime()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService,never())
+                .getBankDepositsByCurrencyFromToDateDepositWithDepositors("",
+                        dateFormat.parse("2015-01-01"),dateFormat.parse("2015-06-06"));
+        verify(depositorService,never()).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByCurrencyFromToDateDepositErrorFromToParameter() throws Exception{
+        LOGGER.debug("testFilterByCurrencyFromToDateDepositErrorFromToParameter() - start");
+        when(depositService.getBankDepositsByCurrencyFromToDateDepositWithDepositors("usd"
+                ,dateFormat.parse("2015-06-06")
+                ,dateFormat.parse("2015-01-01")))
+                .thenReturn(DataFixture.getExistAllDepositsAllDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataFixture.getExistDepositors());
+        mockMvc.perform(get("/deposit/filterByCurrencyFromToDateDeposit?depositCurrency={currency}&startDateDeposit={start}&endDateDeposit={end}","usd","2015-06-06","2015-01-01"))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",
+                                dateFormat.format(Calendar.getInstance().getTime()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService,never())
+                .getBankDepositsByCurrencyFromToDateDepositWithDepositors("usd",
+                        dateFormat.parse("2015-06-06"),dateFormat.parse("2015-01-01"));
+        verify(depositorService,never()).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByCurrencyFromToDateDepositEmptySecondRequestParameter() throws Exception{
+        LOGGER.debug("testFilterByCurrencyFromToDateDepositEmptySecondRequestParameter() - start");
+        when(depositService.getBankDepositsByCurrencyFromToDateDepositWithDepositors("usd"
+                ,null
+                ,dateFormat.parse("2015-06-06")))
+                .thenReturn(DataFixture.getExistAllDepositsAllDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataFixture.getExistDepositors());
+        mockMvc.perform(get("/deposit/filterByCurrencyFromToDateDeposit?depositCurrency={currency}&startDateDeposit={start}&endDateDeposit={end}","usd","","2015-06-06"))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",
+                                dateFormat.format(Calendar.getInstance().getTime()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService,never())
+                .getBankDepositsByCurrencyFromToDateDepositWithDepositors("usd",null,dateFormat.parse("2015-06-06"));
+        verify(depositorService,never()).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByCurrencyFromToDateDepositEmptyThirdRequestParameter() throws Exception{
+        LOGGER.debug("testFilterByCurrencyFromToDateDepositEmptyThirdRequestParameter() - start");
+        when(depositService.getBankDepositsByCurrencyFromToDateDepositWithDepositors("usd"
+                ,dateFormat.parse("2015-01-01")
+                ,null))
+                .thenReturn(DataFixture.getExistAllDepositsAllDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataFixture.getExistDepositors());
+        mockMvc.perform(get("/deposit/filterByCurrencyFromToDateDeposit?depositCurrency={currency}&startDateDeposit={start}&endDateDeposit={end}","usd","2015-01-01",""))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",
+                                dateFormat.format(Calendar.getInstance().getTime()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService,never())
+                .getBankDepositsByCurrencyFromToDateDepositWithDepositors("usd",dateFormat.parse("2015-01-01"),null);
+        verify(depositorService,never()).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByCurrencyFromToDateDepositEmptyBD() throws Exception{
+        LOGGER.debug("testFilterByCurrencyFromToDateDepositEmptyBD() - start");
+        when(depositService.getBankDepositsByCurrencyFromToDateDepositWithDepositors("usd"
+                ,dateFormat.parse("2015-01-01")
+                ,dateFormat.parse("2015-06-06")))
+                .thenReturn(DataConfig.getEmptyAllDepositsAllDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataFixture.getExistDepositors());
+        mockMvc.perform(get("/deposit/filterByCurrencyFromToDateDeposit?depositCurrency={currency}&startDateDeposit={start}&endDateDeposit={end}","usd","2015-01-01","2015-06-06"))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",
+                                dateFormat.format(Calendar.getInstance().getTime()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService)
+                .getBankDepositsByCurrencyFromToDateDepositWithDepositors("usd"
+                        ,dateFormat.parse("2015-01-01"),dateFormat.parse("2015-06-06"));
+        verify(depositorService,never()).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByCurrencyFromToDateDepositEmptyDepositors() throws Exception{
+        LOGGER.debug("testFilterByCurrencyFromToDateDepositEmptyBD() - start");
+        when(depositService.getBankDepositsByCurrencyFromToDateDepositWithDepositors("usd"
+                ,dateFormat.parse("2015-01-01")
+                ,dateFormat.parse("2015-06-06")))
+                .thenReturn(DataFixture.getExistAllDepositsAllNullDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataConfig.getEmptyDepositors());
+        mockMvc.perform(get("/deposit/filterByCurrencyFromToDateDeposit?depositCurrency={currency}&startDateDeposit={start}&endDateDeposit={end}","usd","2015-01-01","2015-06-06"))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year","2015"))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService)
+                .getBankDepositsByCurrencyFromToDateDepositWithDepositors("usd"
+                        ,dateFormat.parse("2015-01-01"),dateFormat.parse("2015-06-06"));
+        verify(depositorService).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByCurrencyFromToDateReturnDeposit() throws Exception{
+        LOGGER.debug("testFilterByCurrencyFromToDateReturnDeposit() - start");
+        when(depositService.getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors("usd"
+                ,dateFormat.parse("2015-01-01")
+                ,dateFormat.parse("2015-06-06")))
+                .thenReturn(DataFixture.getExistAllDepositsAllDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataFixture.getExistDepositors());
+        mockMvc.perform(get("/deposit/filterByCurrencyFromToDateReturnDeposit?depositCurrency={currency}&startDateReturnDeposit={start}&endDateReturnDeposit={end}","usd","2015-01-01","2015-06-06"))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",
+                                dateFormat.format(DataFixture.getExistDepositors()
+                                        .get(0).getDepositorDateDeposit()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService)
+                .getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors("usd",
+                        dateFormat.parse("2015-01-01"),dateFormat.parse("2015-06-06"));
+        verify(depositorService).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByCurrencyFromToDateReturnDepositEmptyFirstRequestParameter() throws Exception{
+        LOGGER.debug("testFilterByCurrencyFromToDateReturnDepositEmptyFirstRequestParameter() - start");
+        when(depositService.getBankDepositsByCurrencyFromToDateDepositWithDepositors(""
+                ,dateFormat.parse("2015-01-01")
+                ,dateFormat.parse("2015-06-06")))
+                .thenReturn(DataFixture.getExistAllDepositsAllDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataFixture.getExistDepositors());
+        mockMvc.perform(get("/deposit/filterByCurrencyFromToDateReturnDeposit?depositCurrency={currency}&startDateReturnDeposit={start}&endDateReturnDeposit={end}","","2015-01-01","2015-06-06"))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",
+                                dateFormat.format(Calendar.getInstance().getTime()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService,never())
+                .getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors("",
+                        dateFormat.parse("2015-01-01"),dateFormat.parse("2015-06-06"));
+        verify(depositorService,never()).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByCurrencyFromToDateReturnDepositErrorFromToParameter() throws Exception{
+        LOGGER.debug("testFilterByCurrencyFromToDateReturnDepositErrorFromToParameter() - start");
+        when(depositService.getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors("usd"
+                ,dateFormat.parse("2015-06-06")
+                ,dateFormat.parse("2015-01-01")))
+                .thenReturn(DataFixture.getExistAllDepositsAllDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataFixture.getExistDepositors());
+        mockMvc.perform(get("/deposit/filterByCurrencyFromToDateReturnDeposit?depositCurrency={currency}&startDateReturnDeposit={start}&endDateReturnDeposit={end}","usd","2015-06-06","2015-01-01"))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",
+                                dateFormat.format(Calendar.getInstance().getTime()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService,never())
+                .getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors("usd",
+                        dateFormat.parse("2015-06-06"),dateFormat.parse("2015-01-01"));
+        verify(depositorService,never()).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByCurrencyFromToDateReturnDepositEmptySecondRequestParameter() throws Exception{
+        LOGGER.debug("testFilterByCurrencyFromToDateReturnDepositEmptySecondRequestParameter() - start");
+        when(depositService.getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors("usd"
+                ,null
+                ,dateFormat.parse("2015-06-06")))
+                .thenReturn(DataFixture.getExistAllDepositsAllDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataFixture.getExistDepositors());
+        mockMvc.perform(get("/deposit/filterByCurrencyFromToDateReturnDeposit?depositCurrency={currency}&startDateReturnDeposit={start}&endDateReturnDeposit={end}","usd","","2015-06-06"))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",
+                                dateFormat.format(Calendar.getInstance().getTime()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService,never())
+                .getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors("usd",null,dateFormat.parse("2015-06-06"));
+        verify(depositorService,never()).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByCurrencyFromToDateReturnDepositEmptyThirdRequestParameter() throws Exception{
+        LOGGER.debug("testFilterByCurrencyFromToDateReturnDepositEmptyThirdRequestParameter() - start");
+        when(depositService.getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors("usd"
+                ,dateFormat.parse("2015-01-01")
+                ,null))
+                .thenReturn(DataFixture.getExistAllDepositsAllDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataFixture.getExistDepositors());
+        mockMvc.perform(get("/deposit/filterByCurrencyFromToDateReturnDeposit?depositCurrency={currency}&startDateReturnDeposit={start}&endDateReturnDeposit={end}","usd","2015-01-01",""))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",
+                                dateFormat.format(Calendar.getInstance().getTime()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService,never())
+                .getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors("usd"
+                        ,dateFormat.parse("2015-01-01"),null);
+        verify(depositorService,never()).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByCurrencyFromToDateReturnDepositEmptyBD() throws Exception{
+        LOGGER.debug("testFilterByCurrencyFromToDateReturnDepositEmptyBD() - start");
+        when(depositService.getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors("usd"
+                ,dateFormat.parse("2015-01-01")
+                ,dateFormat.parse("2015-06-06")))
+                .thenReturn(DataConfig.getEmptyAllDepositsAllDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataFixture.getExistDepositors());
+        mockMvc.perform(get("/deposit/filterByCurrencyFromToDateReturnDeposit?depositCurrency={currency}&startDateReturnDeposit={start}&endDateReturnDeposit={end}","usd","2015-01-01","2015-06-06"))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",
+                                dateFormat.format(Calendar.getInstance().getTime()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService)
+                .getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors("usd"
+                        ,dateFormat.parse("2015-01-01"),dateFormat.parse("2015-06-06"));
+        verify(depositorService,never()).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByCurrencyFromToDateReturnDepositEmptyDepositors() throws Exception{
+        LOGGER.debug("testFilterByCurrencyFromToDateReturnDepositEmptyBD() - start");
+        when(depositService.getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors("usd"
+                ,dateFormat.parse("2015-01-01")
+                ,dateFormat.parse("2015-06-06")))
+                .thenReturn(DataFixture.getExistAllDepositsAllNullDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataConfig.getEmptyDepositors());
+        mockMvc.perform(get("/deposit/filterByCurrencyFromToDateReturnDeposit?depositCurrency={currency}&startDateReturnDeposit={start}&endDateReturnDeposit={end}","usd","2015-01-01","2015-06-06"))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year","2015"))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService)
+                .getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors("usd"
+                        ,dateFormat.parse("2015-01-01"),dateFormat.parse("2015-06-06"));
         verify(depositorService).getBankDepositorByIdDeposit(1L);
     }
 

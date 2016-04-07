@@ -5,26 +5,33 @@
         <title>Deposits list</title>
     </head>
     <body>
-        <form action='<c:url value="/submitDataDeposit"/>' method="POST">
+        <form action='<c:url value="/deposit/submitDataDeposit"/>' method="POST">
+            <h1><spring:message code="deposit.create" /></h1>
             <input type="hidden" name="depositId" value='<c:out value="${deposit.depositId}"/>'/>
             <table>
                 <tr>
-                    <td>Deposit name:</td><td><input type="text" name="depositName" value='<c:out value="${deposit.depositName}"/>'/></td>
+                    <td>Deposit name:</td>
+                    <td><input type="text" name="depositName" value='<c:out value="${deposit.depositName}"/>'/></td>
                 </tr>
                 <tr>
-                    <td>Min term deposit:</td><td><input type="text" name="depositMinTerm" value='<c:out value="${deposit.depositMinTerm}"/>'/></td>
+                    <td>Min term deposit:</td>
+                    <td><input type="text" name="depositMinTerm" value='<c:out value="${deposit.depositMinTerm}"/>'/></td>
                 </tr>
                 <tr>
-                    <td>Min amount deposit:</td><td><input type="text" name="depositMinAmount" value='<c:out value="${deposit.depositMinAmount}"/>'/><td>
+                    <td>Min amount deposit:</td>
+                    <td><input type="text" name="depositMinAmount" value='<c:out value="${deposit.depositMinAmount}"/>'/><td>
                 </tr>
                 <tr>
-                    <td>Currency:</td><td><input type="text" name="depositCurrency" value='<c:out value="${deposit.depositCurrency}"/>'/></td>
+                    <td>Currency:</td>
+                    <td><input type="text" name="depositCurrency" value='<c:out value="${deposit.depositCurrency}"/>'/></td>
                 </tr>
                 <tr>
-                    <td>Interest rate:</td><td><input type="text" name="depositInterestRate" value='<c:out value="${deposit.depositInterestRate}"/>'/></td>
+                    <td>Interest rate:</td>
+                    <td><input type="text" name="depositInterestRate" value='<c:out value="${deposit.depositInterestRate}"/>'/></td>
                 </tr>
                 <tr>
-                    <td>Add conditions:</td><td><input type="text" name="depositAddConditions" value='<c:out value="${deposit.depositAddConditions}"/>'/></td>
+                    <td>Add conditions:</td>
+                    <td><input type="text" name="depositAddConditions" value='<c:out value="${deposit.depositAddConditions}"/>'/></td>
                 </tr>
             </table>
             <table>

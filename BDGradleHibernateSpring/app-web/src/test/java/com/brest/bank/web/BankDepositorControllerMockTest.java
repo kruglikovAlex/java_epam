@@ -68,8 +68,6 @@ public class BankDepositorControllerMockTest {
         BankDepositor dep = DataFixture.getNewDepositor();
         depositorService.addBankDepositor(1L,dep);
         LOGGER.debug("depositor-{}",dep);
-        LOGGER.debug("date-{}",dateFormat.parse("2015-01-01"));
-        LOGGER.debug("date-{}",dateFormat.parse("2015-09-09"));
         mockMvc.perform(post("/depositor/submitDataDepositor")
                 .param("idDeposit","1")
                 .param("depositorId", "")
@@ -81,7 +79,7 @@ public class BankDepositorControllerMockTest {
                 .param("depositorDateReturnDeposit","2015-09-09")
                 .param("depositorMarkReturnDeposit","0"))
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrl("/deposit/main"));
+                .andExpect(redirectedUrl("/deposit/main?idDeposit=1"));
 
         verify(depositorService).addBankDepositor(1L,dep);
     }
@@ -120,7 +118,7 @@ public class BankDepositorControllerMockTest {
     @Test
     public void testDeleteDepositor() throws Exception{
         LOGGER.debug("testDeleteDepositor() - start");
-        mockMvc.perform(delete("/depositor/deleteDepositor?depositorId={id}",1L))
+        mockMvc.perform(get("/depositor/deleteDepositor?depositorId={id}",1L))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("/deposit/main"));
 

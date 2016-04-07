@@ -1,0 +1,173 @@
+
+.scrolling-table th {
+    color: #E90E8B;
+    border-bottom: 1px solid #E90E8B;
+}
+
+.scrolling-table tr td {
+    padding: 2px 5px;
+    border-right: 1px solid #E90E8B;
+    border-bottom: 1px solid #E90E8B;
+    text-align: center;
+    color: #666;
+}
+
+.scrolling-table tr td:last-child {
+    border-right: none;
+}
+
+.scrolling-table tr:last-child td {
+    border-bottom: none;
+}
+
+.scrolling-table tbody {
+    display: block;
+    height: 350px;
+    width: 1200px;
+    overflow: hidden;
+    overflow-y: auto;
+}
+.scrolling-table tr {
+background: none;
+    display: table;
+    width: 1200px;
+    table-layout: fixed;
+}
+
+a.buttonDel {
+    display: inline-block;
+    font-family: arial,sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    color: rgb(68,68,68);
+    text-decoration: none;
+    user-select: none;
+    padding: .3em 1.5em;
+    outline: none;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 5px;
+    background: rgb(245,245,245) linear-gradient(#f4f4f4, #f1f1f1);
+    transition: all .218s ease 0s;
+  }
+a.buttonDel:hover {
+    color: rgb(24,24,24);
+    border: 1px solid rgb(198,198,198);
+    background: #f7f7f7 linear-gradient(#f7f7f7, #f1f1f1);
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+  }
+a.buttonDel:active {
+    color: rgb(51,51,51);
+    border: 1px solid rgb(204,204,204);
+    background: rgb(238,238,238) linear-gradient(rgb(238,238,238), rgb(224,224,224));
+    box-shadow: 0 1px 2px rgba(0,0,0,.1) inset;
+  }
+
+a.buttonFilter {
+    display: inline-block;
+    font-family: arial,sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    color: rgb(68,68,68);
+    text-decoration: none;
+    user-select: none;
+    padding: .8em 1.2em;
+    outline: none;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 2px;
+    background: rgb(245,245,245) linear-gradient(#f4f4f4, #f1f1f1);
+    transition: all .218s ease 0s;
+    }
+a.buttonFilter:hover {
+    color: rgb(24,24,24);
+    border: 1px solid rgb(198,198,198);
+    background: #f7f7f7 linear-gradient(#f7f7f7, #f1f1f1);
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+    }
+a.buttonFilter:active {
+    color: rgb(51,51,51);
+    border: 1px solid rgb(204,204,204);
+    background: rgb(238,238,238) linear-gradient(rgb(238,238,238), rgb(224,224,224));
+    box-shadow: 0 1px 2px rgba(0,0,0,.1) inset;
+    }
+a.buttonFilterBig {
+    display: inline-block;
+    font-family: arial,sans-serif;
+    font-size: 14px;
+    //font-weight: bold;
+    color: rgb(68,68,68);
+    text-decoration: none;
+    user-select: none;
+    padding: 1.0em 0.2em;
+    outline: yes;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 2px;
+    background: rgb(245,245,245) linear-gradient(#f4f4f4, #f1f1f1);
+    transition: all .218s ease 0s;
+    }
+a.buttonFilterBig:hover {
+    color: rgb(24,24,24);
+    border: 1px solid rgb(198,198,198);
+    background: #f7f7f7 linear-gradient(#f7f7f7, #f1f1f1);
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+    }
+a.buttonFilterBig:active {
+    color: rgb(51,51,51);
+    border: 1px solid rgb(204,204,204);
+    background: rgb(238,238,238) linear-gradient(rgb(238,238,238), rgb(224,224,224));
+    box-shadow: 0 1px 2px rgba(0,0,0,.1) inset;
+    }
+a.buttonAdd {
+    display: inline-block;
+    font-family: arial,sans-serif;
+    font-size: 14px;
+
+    color: rgb(68,68,68);
+    text-decoration: none;
+    user-select: none;
+    padding: .3em 1.5em;
+    outline: none;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 5px;
+    background: rgb(245,245,245) linear-gradient(#f4f4f4, #f1f1f1);
+    transition: all .218s ease 0s;
+  }
+a.buttonAdd:hover {
+    color: rgb(24,24,24);
+    border: 1px solid rgb(198,198,198);
+    background: #f7f7f7 linear-gradient(#f7f7f7, #f1f1f1);
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+  }
+a.buttonAdd:active {
+    color: rgb(51,51,51);
+    border: 1px solid rgb(204,204,204);
+    background: rgb(238,238,238) linear-gradient(rgb(238,238,238), rgb(224,224,224));
+    box-shadow: 0 1px 2px rgba(0,0,0,.1) inset;
+  }
+
+a.buttonUpd {
+    display: inline-block;
+    font-family: arial,sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    color: rgb(68,68,68);
+    text-decoration: none;
+    user-select: none;
+    padding: .3em 1.5em;
+    outline: none;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 5px;
+    background: rgb(245,245,245) linear-gradient(#f4f4f4, #f1f1f1);
+    transition: all .218s ease 0s;
+  }
+a.buttonUpd:hover {
+    color: rgb(24,24,24);
+    border: 1px solid rgb(198,198,198);
+    background: #f7f7f7 linear-gradient(#f7f7f7, #f1f1f1);
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+  }
+a.buttonUpd:active {
+    color: rgb(51,51,51);
+    border: 1px solid rgb(204,204,204);
+    background: rgb(238,238,238) linear-gradient(rgb(238,238,238), rgb(224,224,224));
+    box-shadow: 0 1px 2px rgba(0,0,0,.1) inset;
+  }
