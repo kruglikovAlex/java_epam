@@ -1,5 +1,6 @@
 package com.brest.bank.dao;
 
+import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
 import com.brest.bank.dao.HibernateUtil;
 
@@ -37,8 +38,13 @@ public class BankDepositorDaoImplTest {
     private static final String ERROR_NULL = "The parameter can not be NULL";
     Object result;
     Integer sizeBefore = 0, sizeAfter = 0;
+
     @Autowired
     private BankDepositorDao depositorDao;
+    @Autowired
+    private BankDepositDao depositDao;
+
+    private BankDeposit deposit;
     private BankDepositor depositor;
     private List<BankDepositor> depositors;
 
@@ -137,6 +143,12 @@ public class BankDepositorDaoImplTest {
         assertTrue(sizeAfter == sizeBefore+1);
     }
 
+    /**
+     * Get count rows in the DB
+     * @param name - Name of the Class entity
+     * @return Integer - count rows entity with the Class name
+     * @throws ClassNotFoundException
+     */
     public Integer rowCount(Class<?> name) throws ClassNotFoundException{
         HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
         //--- query
