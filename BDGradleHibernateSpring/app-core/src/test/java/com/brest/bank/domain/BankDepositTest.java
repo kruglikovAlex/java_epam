@@ -14,9 +14,8 @@ import static org.junit.Assert.assertTrue;
 
 public class BankDepositTest {
 
-    private static final Logger LOGGER = LogManager.getLogger();
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
+    private static final Logger LOGGER = LogManager.getLogger();
     BankDeposit deposit;
 
     @Before
@@ -67,7 +66,7 @@ public class BankDepositTest {
 
     @Test
     public void testGetDepositInterestRate() throws Exception {
-        LOGGER.debug("testGetDepositInterestRate({}%)", 9);
+        LOGGER.debug("testGetDepositInterestRate({})", 9);
         deposit.setDepositInterestRate(9);
 
         assertTrue(9 == deposit.getDepositInterestRate());
