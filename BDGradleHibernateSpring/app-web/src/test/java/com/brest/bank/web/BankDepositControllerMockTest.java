@@ -1065,6 +1065,246 @@ public class BankDepositControllerMockTest {
     }
 
     @Test
+    public void testFilterByTermEmptyRequestParameter() throws Exception{
+        LOGGER.debug("testFilterByTermEmptyRequestParameter() - start");
+        Long id = null;
+        when(depositService.getBankDepositsByTermWithDepositors(null)).thenReturn(DataConfig.getEmptyAllDepositsAllDepositors());
+        mockMvc.perform(get("/deposit/filterByTerm?depositMinTerm={term}",id))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",dateFormat.format(Calendar.getInstance().getTime()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService,never()).getBankDepositsByTermWithDepositors(null);
+    }
+
+    @Test
+    public void testFilterByTermEmptyBD() throws Exception{
+        LOGGER.debug("testFilterByTermEmptyBD() - start");
+        when(depositService.getBankDepositsByTermWithDepositors(10)).thenReturn(DataConfig.getEmptyAllDepositsAllDepositors());
+        mockMvc.perform(get("/deposit/filterByTerm?depositMinTerm={term}",10))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",dateFormat.format(Calendar.getInstance().getTime()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService).getBankDepositsByTermWithDepositors(10);
+        verify(depositorService,never()).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByTermEmptyDepositors() throws Exception{
+        LOGGER.debug("testFilterByTermEmptyDepositors() - start");
+        when(depositService.getBankDepositsByTermWithDepositors(12)).thenReturn(DataFixture.getExistAllDepositsAllNullDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataConfig.getEmptyDepositors());
+        mockMvc.perform(get("/deposit/filterByTerm?depositMinTerm={term}",12))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",dateFormat.format(Calendar.getInstance().getTime()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService).getBankDepositsByTermWithDepositors(12);
+        verify(depositorService).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByTerm() throws Exception{
+        LOGGER.debug("testFilterByTerm() - start");
+        when(depositService.getBankDepositsByTermWithDepositors(11)).thenReturn(DataFixture.getExistAllDepositsAllDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataFixture.getExistDepositors());
+        mockMvc.perform(get("/deposit/filterByTerm?depositMinTerm={term}",11))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",
+                                dateFormat.format(DataFixture.getExistDepositors()
+                                        .get(0).getDepositorDateDeposit()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService).getBankDepositsByTermWithDepositors(11);
+        verify(depositorService).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByAmountEmptyRequestParameter() throws Exception{
+        LOGGER.debug("testFilterByAmountEmptyRequestParameter() - start");
+        Integer amount = null;
+        when(depositService.getBankDepositsByAmountWithDepositors(null)).thenReturn(DataConfig.getEmptyAllDepositsAllDepositors());
+        mockMvc.perform(get("/deposit/filterByAmount?depositMinAmount={amount}",amount))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",dateFormat.format(Calendar.getInstance().getTime()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService,never()).getBankDepositsByAmountWithDepositors(null);
+    }
+
+    @Test
+    public void testFilterByAmountEmptyBD() throws Exception{
+        LOGGER.debug("testFilterByAmountEmptyBD() - start");
+        when(depositService.getBankDepositsByAmountWithDepositors(1000)).thenReturn(DataConfig.getEmptyAllDepositsAllDepositors());
+        mockMvc.perform(get("/deposit/filterByAmount?depositMinAmount={amount}",1000))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",dateFormat.format(Calendar.getInstance().getTime()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService).getBankDepositsByAmountWithDepositors(1000);
+        verify(depositorService,never()).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByAmountEmptyDepositors() throws Exception{
+        LOGGER.debug("testFilterByAmountEmptyDepositors() - start");
+        when(depositService.getBankDepositsByAmountWithDepositors(1000)).thenReturn(DataFixture.getExistAllDepositsAllNullDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataConfig.getEmptyDepositors());
+        mockMvc.perform(get("/deposit/filterByAmount?depositMinAmount={amount}",1000))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",dateFormat.format(Calendar.getInstance().getTime()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService).getBankDepositsByAmountWithDepositors(1000);
+        verify(depositorService).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByAmount() throws Exception{
+        LOGGER.debug("testFilterByAmount() - start");
+        when(depositService.getBankDepositsByAmountWithDepositors(1000)).thenReturn(DataFixture.getExistAllDepositsAllDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataFixture.getExistDepositors());
+        mockMvc.perform(get("/deposit/filterByAmount?depositMinAmount={amount}",1000))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",
+                                dateFormat.format(DataFixture.getExistDepositors()
+                                        .get(0).getDepositorDateDeposit()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService).getBankDepositsByAmountWithDepositors(1000);
+        verify(depositorService).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByRateEmptyRequestParameter() throws Exception{
+        LOGGER.debug("testFilterByRateEmptyRequestParameter() - start");
+        Integer rate = null;
+        when(depositService.getBankDepositsByRateWithDepositors(null)).thenReturn(DataConfig.getEmptyAllDepositsAllDepositors());
+        mockMvc.perform(get("/deposit/filterByRate?depositInterestRate={rate}",rate))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",dateFormat.format(Calendar.getInstance().getTime()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService,never()).getBankDepositsByRateWithDepositors(null);
+    }
+
+    @Test
+    public void testFilterByRateEmptyBD() throws Exception{
+        LOGGER.debug("testFilterByRateEmptyBD() - start");
+        when(depositService.getBankDepositsByRateWithDepositors(4)).thenReturn(DataConfig.getEmptyAllDepositsAllDepositors());
+        mockMvc.perform(get("/deposit/filterByRate?depositInterestRate={rate}",4))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",dateFormat.format(Calendar.getInstance().getTime()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService).getBankDepositsByRateWithDepositors(4);
+        verify(depositorService,never()).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByRateEmptyDepositors() throws Exception{
+        LOGGER.debug("testFilterByRateEmptyDepositors() - start");
+        when(depositService.getBankDepositsByRateWithDepositors(4)).thenReturn(DataFixture.getExistAllDepositsAllNullDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataConfig.getEmptyDepositors());
+        mockMvc.perform(get("/deposit/filterByRate?depositInterestRate={rate}",4))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",dateFormat.format(Calendar.getInstance().getTime()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService).getBankDepositsByRateWithDepositors(4);
+        verify(depositorService).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByRate() throws Exception{
+        LOGGER.debug("testFilterByRate() - start");
+        when(depositService.getBankDepositsByRateWithDepositors(4)).thenReturn(DataFixture.getExistAllDepositsAllDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataFixture.getExistDepositors());
+        mockMvc.perform(get("/deposit/filterByRate?depositInterestRate={rate}",4))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",
+                                dateFormat.format(DataFixture.getExistDepositors()
+                                        .get(0).getDepositorDateDeposit()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService).getBankDepositsByRateWithDepositors(4);
+        verify(depositorService).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
     public void testFilterByCurrencyFromToDateDeposit() throws Exception{
         LOGGER.debug("testFilterByCurrencyFromToDateDeposit() - start");
         when(depositService.getBankDepositsByCurrencyFromToDateDepositWithDepositors("usd"
@@ -1221,7 +1461,7 @@ public class BankDepositControllerMockTest {
 
     @Test
     public void testFilterByCurrencyFromToDateDepositEmptyDepositors() throws Exception{
-        LOGGER.debug("testFilterByCurrencyFromToDateDepositEmptyBD() - start");
+        LOGGER.debug("testFilterByCurrencyFromToDateDepositEmptyDepositors() - start");
         when(depositService.getBankDepositsByCurrencyFromToDateDepositWithDepositors("usd"
                 ,dateFormat.parse("2015-01-01")
                 ,dateFormat.parse("2015-06-06")))

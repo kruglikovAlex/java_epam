@@ -22,10 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/depositor")
@@ -34,12 +31,28 @@ public class BankDepositorController {
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     public static final String ERROR_NULL_PARAM = "The parameter must be NULL";
     public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
+    public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
     private static final Logger LOGGER = LogManager.getLogger();
+    @Autowired
+    BankDepositService depositService;
+
     @Autowired
     private BankDepositorService depositorService;
 
+    private BankDeposit deposit;
+    private BankDepositor depositor;
+    private List<Map> deposits = new ArrayList<Map>();
+    private List<BankDepositor> depositors = new ArrayList<BankDepositor>();
+    private Long idDeposit;
+    private String year;
+
+    /**
+     *
+     * @param binder
+     * @throws Exception
+     */
     @InitBinder
-    public void initBinder(WebDataBinder binder)
+    public void initBinder(WebDataBinder binder) throws Exception
     {
         String datePattern="yyyy-MM-dd";
         SimpleDateFormat dateFormat=new SimpleDateFormat(datePattern);
@@ -49,6 +62,14 @@ public class BankDepositorController {
         binder.registerCustomEditor(Integer.class,null,new CustomNumberEditor(Integer.class,null,true));
     }
 
+    /**
+     * Get form for input Bank Depositor
+     *
+     * @param model
+     * @param redirectAttributes
+     * @param depositId
+     * @return ModelAndView "depositorFrame"
+     */
     @RequestMapping(value={"/inputDepositor"}, method = RequestMethod.GET)
     public ModelAndView getInputFormDepositor(ModelMap model,
                                               RedirectAttributes redirectAttributes,
@@ -66,14 +87,22 @@ public class BankDepositorController {
         }
     }
 
+    /**
+     * Input Bank Depositor from fields of input form to the BD
+     *
+     * @param model
+     * @param depositId String - ID of Bank Deposit
+     * @param depositor BankDepositor - entity from field of input form
+     * @param result
+     * @param status
+     * @return ModelAndVie - redirect Url="/deposit/main"
+     */
     @RequestMapping(value={"/submitDataDepositor"}, method = RequestMethod.POST)
     public ModelAndView postInputFormDepositor(ModelMap model,
                                                @ModelAttribute("idDeposit") String depositId,
                                                @ModelAttribute("depositor") BankDepositor depositor,
                                                BindingResult result,
-                                               SessionStatus status//,
-                                               //@RequestParam("idDeposit") String depositId
-    )
+                                               SessionStatus status)
     {
         LOGGER.debug("postInputFormDepositor({},{},{},{})", depositId,depositor,result,status);
         status.setComplete();
@@ -90,10 +119,11 @@ public class BankDepositorController {
     }
 
     /**
-    *
+    * Get form for update Bank Depositor
+     *
     * @param redirectAttributes
-    * @param depositorId
-    * @return
+    * @param depositorId Long - Request parameter to get BankDepositor entity for updating
+    * @return ModelAndView "updateFromDepositor"
     */
     @RequestMapping(value={"/updateDepositor"}, method = RequestMethod.GET)
     public ModelAndView getUpdateFormDepositor(RedirectAttributes redirectAttributes,
@@ -114,11 +144,12 @@ public class BankDepositorController {
     }
 
     /**
+     * Update Bank Depositor from fields of update form to the BD
      *
      * @param map
-     * @param depositor
+     * @param depositor BankDepositor - entity from field of update form
      * @param status
-     * @return
+     * @return String - redirect Url="/deposit/main"
      */
     @RequestMapping(value = {"/updateDepositor"}, method = RequestMethod.POST)
     public String postUpdateFormDepositor(ModelMap map,
@@ -140,10 +171,11 @@ public class BankDepositorController {
     }
 
     /**
+     * Deleting Bank Depositor by ID
      *
      * @param redirectAttributes
-     * @param depositorId
-     * @return
+     * @param depositorId Long - Request parameter to delete BankDepositor entity from BD
+     * @return ModelAndView - redirect Url="/deposit/main"
      */
     @RequestMapping(value = {"/deleteDepositor"}, method = RequestMethod.GET)
     public ModelAndView deleteDepositor(RedirectAttributes redirectAttributes,
@@ -159,5 +191,225 @@ public class BankDepositorController {
             redirectAttributes.addFlashAttribute( "message", e.getMessage());
             return new ModelAndView("redirect:/deposit/main");
         }
+    }
+
+    /**
+     * Get Bank Deposit by Depositor ID with depositors
+     *
+     * @param redirectAttributes
+     * @param depositorId Long - depositorId of the Bank Depositor to return
+     * @param status
+     * @return ModelAndView "mainFrame"
+     * @throws ParseException
+     */
+    @RequestMapping(value = {"/filterById"}, method = RequestMethod.GET)
+    public ModelAndView filterById(RedirectAttributes redirectAttributes,
+                                   @RequestParam("depositorId") Long depositorId,
+                                   SessionStatus status) throws ParseException
+    {
+        LOGGER.debug("filterById(depositorId={})",depositorId);
+        status.setComplete();
+        try{
+            Assert.notNull(depositorId,ERROR_METHOD_PARAM);
+
+            LOGGER.debug("getBankDepositByDepositorIdWithDepositors(depositorId={})",depositorId);
+            deposits = new ArrayList<Map>();
+            deposits.add(depositService.getBankDepositByDepositorIdWithDepositors(depositorId));
+            LOGGER.debug("deposits - {}",deposits.get(0));
+
+            idDeposit = (Long)deposits.get(0).get("depositId");
+            Assert.notNull(idDeposit,"idDeposit can not be NULL");
+
+            try{
+                LOGGER.debug("getBankDepositorById(depositorId={})",depositorId);
+                depositors = new ArrayList<BankDepositor>();
+                depositors.add(depositorService.getBankDepositorById(depositorId));
+                LOGGER.debug("depositors - {}",depositors.get(0));
+
+                year = dateFormat.format(depositors.get(0).getDepositorDateDeposit()).substring(0,4);
+                LOGGER.debug("year={}",year);
+            }catch (Exception e){
+                LOGGER.debug("getBankDepositorById(depositorId={}), Exception:{}", depositorId,e.toString());
+                redirectAttributes.addFlashAttribute( "message", e.getMessage());
+
+                depositors = DataConfig.getEmptyDepositors();
+                LOGGER.debug("depositors - {}",depositors.get(0));
+                year = dateFormat.format(Calendar.getInstance().getTime()).substring(0,4);
+                LOGGER.debug("year={}",year);
+            }
+        }catch (Exception e){
+            LOGGER.debug("filterById({}), Exception:{}", depositorId,e.toString());
+            redirectAttributes.addFlashAttribute( "message", e.getMessage());
+
+            deposits = DataConfig.getEmptyAllDepositsAllDepositors();
+            LOGGER.debug("deposits - {}",deposits.get(0));
+
+            depositors = DataConfig.getEmptyDepositors();
+            LOGGER.debug("depositors - {}",depositors.get(0));
+
+            idDeposit = 1L;
+            LOGGER.debug("idDeposit={}",idDeposit);
+
+            year = dateFormat.format(Calendar.getInstance().getTime()).substring(0,4);
+            LOGGER.debug("year={}",year);
+        }
+
+        ModelAndView view = new ModelAndView("mainFrame");
+        view.addObject("deposits",deposits);
+        view.addObject("depositors",depositors);
+        view.addObject("year",year);
+        view.addObject("idDeposit",idDeposit);
+
+        return view;
+    }
+
+    /**
+     * Get Bank Deposit by Depositor ID with depositors
+     *
+     * @param redirectAttributes
+     * @param depositorName String - depositorName of the Bank Depositor to return
+     * @param status
+     * @return ModelAndView "mainFrame"
+     * @throws ParseException
+     */
+    @RequestMapping(value = {"/filterByName"}, method = RequestMethod.GET)
+    public ModelAndView filterByName(RedirectAttributes redirectAttributes,
+                                     @RequestParam("depositorName") String depositorName,
+                                     SessionStatus status) throws ParseException
+    {
+        LOGGER.debug("filterByName(depositorName={})",depositorName);
+        status.setComplete();
+        try{
+            Assert.notNull(depositorName,ERROR_METHOD_PARAM);
+
+            LOGGER.debug("getBankDepositByDepositorNameWithDepositors(depositorName={})",depositorName);
+            deposits = new ArrayList<Map>();
+            deposits.add(depositService.getBankDepositByDepositorNameWithDepositors(depositorName));
+            LOGGER.debug("deposits - {}",deposits.get(0));
+
+            idDeposit = (Long)deposits.get(0).get("depositId");
+            Assert.notNull(idDeposit,"idDeposit can not be NULL");
+
+            try{
+                LOGGER.debug("getBankDepositorByName(depositorName={})",depositorName);
+                depositors = new ArrayList<BankDepositor>();
+                depositors.add(depositorService.getBankDepositorByName(depositorName));
+                LOGGER.debug("depositors - {}",depositors.get(0));
+
+                year = dateFormat.format(depositors.get(0).getDepositorDateDeposit()).substring(0,4);
+                LOGGER.debug("year={}",year);
+            }catch (Exception e){
+                LOGGER.debug("getBankDepositorByName(depositorName={}), Exception:{}", depositorName,e.toString());
+                redirectAttributes.addFlashAttribute( "message", e.getMessage());
+
+                depositors = DataConfig.getEmptyDepositors();
+                LOGGER.debug("depositors - {}",depositors.get(0));
+                year = dateFormat.format(Calendar.getInstance().getTime()).substring(0,4);
+                LOGGER.debug("year={}",year);
+            }
+        }catch (Exception e){
+            LOGGER.debug("filterByName({}), Exception:{}", depositorName,e.toString());
+            redirectAttributes.addFlashAttribute( "message", e.getMessage());
+
+            deposits = DataConfig.getEmptyAllDepositsAllDepositors();
+            LOGGER.debug("deposits - {}",deposits.get(0));
+
+            depositors = DataConfig.getEmptyDepositors();
+            LOGGER.debug("depositors - {}",depositors.get(0));
+
+            idDeposit = 1L;
+            LOGGER.debug("idDeposit={}",idDeposit);
+
+            year = dateFormat.format(Calendar.getInstance().getTime()).substring(0,4);
+            LOGGER.debug("year={}",year);
+        }
+
+        ModelAndView view = new ModelAndView("mainFrame");
+        view.addObject("deposits",deposits);
+        view.addObject("depositors",depositors);
+        view.addObject("year",year);
+        view.addObject("idDeposit",idDeposit);
+
+        return view;
+    }
+
+    /**
+     * Get Bank Deposits by from-to Depositor Amount with depositors
+     *
+     * @param redirectAttributes
+     * @param from Integer - Amount of the Bank Depositor
+     * @param to Integer - Amount of the Bank Depositor
+     * @param status
+     * @return ModelAndView "mainFrame"
+     * @throws ParseException
+     */
+    @RequestMapping(value = {"/filterByAmount"}, method = RequestMethod.GET)
+    public ModelAndView filterByAmount(RedirectAttributes redirectAttributes,
+                                       @RequestParam("fromAmountDepositor") Integer from,
+                                       @RequestParam("toAmountDepositor") Integer to,
+                                       SessionStatus status) throws ParseException
+    {
+        LOGGER.debug("filterByAmount(from={}, to={})",from,to);
+        status.setComplete();
+        try{
+            Assert.notNull(from,ERROR_METHOD_PARAM);
+            Assert.notNull(to,ERROR_METHOD_PARAM);
+            Assert.isTrue(from<=to,ERROR_FROM_TO_PARAM);
+
+            LOGGER.debug("getBankDepositsByDepositorAmountWithDepositors(from={},to={})",from,to);
+            deposits = depositService.getBankDepositsByDepositorAmountWithDepositors(from, to);
+            LOGGER.debug("deposits - {}",deposits.get(0));
+
+            idDeposit = (Long)deposits.get(0).get("depositId");
+            Assert.notNull(idDeposit,"idDeposit can not be NULL");
+
+            try{
+                depositors = new ArrayList<BankDepositor>();
+                for(Map depositReport:deposits){
+                    LOGGER.debug("getBankDepositorByIdDeposit(depositId={})",depositReport.get("depositId"));
+                    for(BankDepositor depr:depositorService
+                            .getBankDepositorByIdDeposit((Long)depositReport.get("depositId"))){
+                        if((depr.getDepositorAmountDeposit()>=from)&(depr.getDepositorAmountDeposit()<=to)){
+                            depositors.add(depr);
+                        }
+                    }
+                }
+                LOGGER.debug("depositors - {}",depositors.get(0));
+
+                year = dateFormat.format(depositors.get(0).getDepositorDateDeposit()).substring(0,4);
+                LOGGER.debug("year={}",year);
+            }catch (Exception e){
+                LOGGER.debug("getBankDepositorByIdDeposit(), Exception:{}", e.toString());
+                redirectAttributes.addFlashAttribute( "message", e.getMessage());
+
+                depositors = DataConfig.getEmptyDepositors();
+                LOGGER.debug("depositors - {}",depositors.get(0));
+                year = dateFormat.format(Calendar.getInstance().getTime()).substring(0,4);
+                LOGGER.debug("year={}",year);
+            }
+        }catch (Exception e){
+            LOGGER.debug("filterByAmount(from={}, to={}), Exception:{}", from,to,e.toString());
+            redirectAttributes.addFlashAttribute( "message", e.getMessage());
+
+            deposits = DataConfig.getEmptyAllDepositsAllDepositors();
+            LOGGER.debug("deposits - {}",deposits.get(0));
+
+            depositors = DataConfig.getEmptyDepositors();
+            LOGGER.debug("depositors - {}",depositors.get(0));
+
+            idDeposit = 1L;
+            LOGGER.debug("idDeposit={}",idDeposit);
+
+            year = dateFormat.format(Calendar.getInstance().getTime()).substring(0,4);
+            LOGGER.debug("year={}",year);
+        }
+
+        ModelAndView view = new ModelAndView("mainFrame");
+        view.addObject("deposits",deposits);
+        view.addObject("depositors",depositors);
+        view.addObject("year",year);
+        view.addObject("idDeposit",idDeposit);
+
+        return view;
     }
 }

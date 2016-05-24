@@ -339,6 +339,47 @@ public class BankDepositServiceImpl implements BankDepositService{
     }
 
     /**
+     * Get Bank Deposit by Depositor ID with depositors
+     *
+     * @param id Long - depositorId of the Bank Depositor
+     * @return Map - a bank deposit with a report on all relevant
+     * bank depositors
+     */
+    @Override
+    @Transactional
+    public Map getBankDepositByDepositorIdWithDepositors(Long id){
+        LOGGER.debug("getBankDepositByDepositorIdWithDepositors(depositorId={})",id);
+        Assert.notNull(id,ERROR_METHOD_PARAM);
+        Map deposit = null;
+        try{
+            deposit = depositDao.getBankDepositByDepositorIdWithDepositors(id);
+        }catch (EmptyResultDataAccessException e){
+            LOGGER.error("getBankDepositByDepositorIdWithDepositors({}), Exception:{}",id, e.toString());
+        }
+        return deposit;
+    }
+
+    /**
+     * Get Bank Deposit by Depositor Name with depositors
+     *
+     * @param name String - depositorName of the Bank Depositor
+     * @return Map - a bank deposit with a report on all relevant
+     * bank depositors
+     */
+    @Override
+    @Transactional
+    public Map getBankDepositByDepositorNameWithDepositors(String name){
+        LOGGER.debug("getBankDepositByDepositorNameWithDepositors(depositorName={})",name);
+        Assert.notNull(name,ERROR_METHOD_PARAM);
+        Map deposit = null;
+        try{
+            deposit = depositDao.getBankDepositByDepositorNameWithDepositors(name);
+        }catch (EmptyResultDataAccessException e){
+            LOGGER.error("getBankDepositByDepositorNameWithDepositors({}), Exception:{}",name, e.toString());
+        }
+        return deposit;
+    }
+    /**
      * Get Bank Deposit by ID with depositor from-to Date Deposit values
      *
      * @param id Long - depositId of the Bank Deposit to return
@@ -395,11 +436,100 @@ public class BankDepositServiceImpl implements BankDepositService{
     }
 
     /**
-     * Get Bank Deposit with depositors
+     * Get Bank Deposits by Min Term with depositors
+     *
+     * @param term Integer - Min term of the Bank Deposit to return
+     * @return List<Map> a list of all bank deposits with a report on all relevant
+     * bank depositors with the specified task`s Min Term
+     */
+    @Override
+    @Transactional
+    public List<Map> getBankDepositsByTermWithDepositors(Integer term){
+        LOGGER.debug("getBankDepositsByTermWithDepositors(term={})",term);
+        Assert.notNull(term,ERROR_METHOD_PARAM);
+        List<Map> deposits = null;
+        try{
+            deposits = depositDao.getBankDepositsByTermWithDepositors(term);
+        }catch (EmptyResultDataAccessException e){
+            LOGGER.error("getBankDepositByTermWithDepositors({}), Exception:{}",term,e.toString());
+        }
+        return deposits;
+    }
+
+    /**
+     * Get Bank Deposits by Min Amount with depositors
+     *
+     * @param amount Integer - Min amount of the Bank Deposit to return
+     * @return List<Map> a list of all bank deposits with a report on all relevant
+     * bank depositors with the specified task`s Min Amount
+     */
+    @Override
+    @Transactional
+    public List<Map> getBankDepositsByAmountWithDepositors(Integer amount){
+        LOGGER.debug("getBankDepositsByAmountWithDepositors(amount={})",amount);
+        Assert.notNull(amount,ERROR_METHOD_PARAM);
+        List<Map> deposits = null;
+        try{
+            deposits = depositDao.getBankDepositsByAmountWithDepositors(amount);
+        }catch (EmptyResultDataAccessException e){
+            LOGGER.error("getBankDepositByAmountWithDepositors({}), Exception:{}",amount,e.toString());
+        }
+        return deposits;
+    }
+
+    /**
+     * Get Bank Deposits by from-to Depositor Amount with depositors
+     *
+     * @param from Integer - Amount of the Bank Depositor
+     * @param to Integer - Amount of the Bank Depositor
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    @Override
+    @Transactional
+    public List<Map> getBankDepositsByDepositorAmountWithDepositors(Integer from, Integer to){
+        LOGGER.debug("getBankDepositsByDepositorAmountWithDepositors(from={}, to={})",from,to);
+        Assert.notNull(from,ERROR_METHOD_PARAM);
+        Assert.notNull(to,ERROR_METHOD_PARAM);
+        Assert.isTrue(from<=to,ERROR_FROM_TO_PARAM);
+        List<Map> deposits = null;
+        try{
+            deposits = depositDao.getBankDepositsByDepositorAmountWithDepositors(from,to);
+        }catch (EmptyResultDataAccessException e){
+            LOGGER.error("getBankDepositsByDepositorAmountWithDepositors(from={},to={}), Exception:{}",from,to,e.toString());
+        }
+        return deposits;
+    }
+
+    /**
+     * Get Bank Deposits by Interest rate with depositors
+     *
+     * @param rate Integer - Intersest Rate of the Bank Deposit to return
+     * @return List<Map> a list of all bank deposits with a report on all relevant
+     * bank depositors with the specified task`s Interest Rate
+     */
+    @Override
+    @Transactional
+    public List<Map> getBankDepositsByRateWithDepositors(Integer rate){
+        LOGGER.debug("getBankDepositsByRateWithDepositors(rate={})",rate);
+        Assert.notNull(rate,ERROR_METHOD_PARAM);
+        List<Map> deposits = null;
+        try{
+            deposits = depositDao.getBankDepositsByRateWithDepositors(rate);
+        }catch (EmptyResultDataAccessException e){
+            LOGGER.error("getBankDepositByRateWithDepositors({}), Exception:{}",rate,e.toString());
+        }
+        return deposits;
+    }
+
+    /**
+     * Get Bank Deposits with depositors
      *
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
+    @Override
+    @Transactional
     public List<Map> getBankDepositsWithDepositors(){
         LOGGER.debug("getBankDepositsWithDepositors");
         List<Map> deposits = null;

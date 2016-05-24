@@ -153,6 +153,24 @@ public interface BankDepositService {
                                                           Date endDate);
 
     /**
+     * Get Bank Deposit by Depositor ID with depositors
+     *
+     * @param id Long - depositorId of the Bank Depositor
+     * @return Map - a bank deposit with a report on all relevant
+     * bank depositors
+     */
+    Map getBankDepositByDepositorIdWithDepositors(Long id);
+
+    /**
+     * Get Bank Deposit by Depositor Name with depositors
+     *
+     * @param name String - depositorName of the Bank Depositor
+     * @return Map - a bank deposit with a report on all relevant
+     * bank depositors
+     */
+    Map getBankDepositByDepositorNameWithDepositors(String name);
+
+    /**
      * Get Bank Deposits by ID with depositors from-to Date Return Deposit values
      *
      * @param id Long - depositId of the Bank Deposit to return
@@ -164,6 +182,43 @@ public interface BankDepositService {
     Map getBankDepositByIdFromToDateReturnDepositWithDepositors(Long id,
                                                                 Date startDate,
                                                                 Date endDate);
+
+    /**
+     * Get Bank Deposits by Min Term with depositors
+     *
+     * @param term Integer - Min term of the Bank Deposit to return
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    List<Map> getBankDepositsByTermWithDepositors(Integer term);
+
+    /**
+     * Get Bank Deposits by Min Amount with depositors
+     *
+     * @param amount Integer - Min amount of the Bank Deposit to return
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    List<Map> getBankDepositsByAmountWithDepositors(Integer amount);
+
+    /**
+     * Get Bank Deposits by from-to Depositor Amount with depositors
+     *
+     * @param from Integer - Amount of the Bank Depositor
+     * @param to Integer - Amount of the Bank Depositor
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    List<Map> getBankDepositsByDepositorAmountWithDepositors(Integer from, Integer to);
+
+    /**
+     * Get Bank Deposits by Interest Rate with depositors
+     *
+     * @param rate Integer - Interest Rate of the Bank Deposit to return
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    List<Map> getBankDepositsByRateWithDepositors(Integer rate);
 
     /**
      * Get Bank Deposit with depositors

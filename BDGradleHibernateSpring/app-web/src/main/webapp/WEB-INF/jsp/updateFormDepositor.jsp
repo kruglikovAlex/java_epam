@@ -11,6 +11,7 @@
     }
 </style>
 <body>
+    <link href='<c:url value="/resources/css/jquery-ui.css" />' rel="stylesheet">
  	<form action='<spring:url value="/depositor/updateDepositor" > </spring:url>' method="POST" modelAttribute="depositor" commandName="depositor">
     	<form:form method="GET" modelAttribute="depositor">
 			<h1><spring:message code="update.depositor" /></h1>
@@ -22,9 +23,9 @@
             	        <span class="error">
             	            <form:errors id="errordepositorName" path="depositorName" size="100"/>
             	        </span><br/>
-                <label path="depositorDateDeposit:">Date Deposit, (yyyy-mm-dd):</label>
+                <label path="depositorDateDeposit:">Date Deposit:</label>
                 	<input type="text" id="depositorDateDeposit" name="depositorDateDeposit"
-                	pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size="10" value='<fmt:formatDate value="${depositor.depositorDateDeposit}" type="both" pattern="yyyy-MM-dd"/>' />
+                	pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size="10" value='<fmt:formatDate value="${depositor.depositorDateDeposit}" type="both" pattern="yyyy-MM-dd"/>' class="datepicker"/>
                 	    <span class="error">
                 	        <form:errors id="errordepositorDateDeposit" path="depositorDateDeposit" size="100"/>
                 	    </span><br/>
@@ -43,9 +44,9 @@
                 	    <span class="error">
                 	        <form:errors id="errordepositorAmountMinusDeposit" path="depositorAmountMinusDeposit" size="100"/>
                 	    </span><br/>
-                <label path="depositorDateReturnDeposit:">Date Return, (yyyy-mm-dd):</label>
+                <label path="depositorDateReturnDeposit:">Date Return:</label>
                 	<input type="text" id="depositorDateReturnDeposit" name="depositorDateReturnDeposit"
-                    pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size="10" value='<fmt:formatDate value="${depositor.depositorDateReturnDeposit}" type="both" pattern="yyyy-MM-dd"/>'/>
+                    pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size="10" value='<fmt:formatDate value="${depositor.depositorDateReturnDeposit}" type="both" pattern="yyyy-MM-dd"/>' class="datepicker"/>
                 	    <span class="error">
                 	        <form:errors path="depositorDateReturnDeposit" size="100"/>
                 	    </span><br/>
@@ -61,6 +62,9 @@
     <script src='<c:url value="/resources/js/jquery-1.11.1.js"/>'></script>
     <script src='<c:url value="/resources/js/jquery.maskedinput.js"/>'></script>
     <script src='<c:url value="/resources/js/bankDeposit.js"/>'></script>
+    <script src='<c:url value="/resources/js/depositorFrame.js"/>'></script>
+    <script src='<c:url value="/resources/js/jquery-ui.js"/>'></script>
+    <script src='<c:url value="/resources/js/jquery-ui.min.js"/>'></script>
 
     <script>
         var nullInt = function () {

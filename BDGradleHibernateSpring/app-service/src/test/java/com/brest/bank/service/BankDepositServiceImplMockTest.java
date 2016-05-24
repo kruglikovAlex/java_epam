@@ -302,6 +302,42 @@ public class BankDepositServiceImplMockTest {
     }
 
     @Test
+    public void testGetBankDepositByDepositIdWithDepositors() throws Exception {
+        Map deposit = DataFixture.getExistDepositAllDepositors(1L,1L);
+        LOGGER.debug("deposit: {}",deposit);
+
+        expect(depositDao.getBankDepositByDepositorIdWithDepositors(1L)).andReturn(deposit);
+
+        replay(depositDao);
+
+        Map resultDeposit = depositService.getBankDepositByDepositorIdWithDepositors(1L);
+        LOGGER.debug("result deposit: {}",resultDeposit);
+
+        verify(depositDao);
+
+        assertEquals(deposit, resultDeposit);
+        assertSame(deposit, resultDeposit);
+    }
+
+    @Test
+    public void testGetBankDepositByDepositNameWithDepositors() throws Exception {
+        Map deposit = DataFixture.getExistDepositAllDepositors(1L,1L);
+        LOGGER.debug("deposit: {}",deposit);
+
+        expect(depositDao.getBankDepositByDepositorNameWithDepositors("depositorName1")).andReturn(deposit);
+
+        replay(depositDao);
+
+        Map resultDeposit = depositService.getBankDepositByDepositorNameWithDepositors("depositorName1");
+        LOGGER.debug("result deposit: {}",resultDeposit);
+
+        verify(depositDao);
+
+        assertEquals(deposit, resultDeposit);
+        assertSame(deposit, resultDeposit);
+    }
+
+    @Test
     public void testGetBankDepositByIdFromToDateDepositWithDepositors() throws Exception {
         Map deposit = DataFixture.getExistDepositAllDepositors(1L,2L);
         LOGGER.debug("deposit: {}",deposit);
@@ -390,6 +426,78 @@ public class BankDepositServiceImplMockTest {
                 depositService.getBankDepositsFromToDateReturnDepositWithDepositors(dateFormat.parse("2015-01-01"),
                         dateFormat.parse("2015-02-02"));
         LOGGER.debug("resultDeposits: {}",resultDeposits);
+
+        verify(depositDao);
+
+        assertEquals(deposits, resultDeposits);
+        assertSame(deposits, resultDeposits);
+    }
+
+    @Test
+    public void testGetBankDepositsByTermWithDepositors() throws Exception {
+        List<Map> deposits = DataFixture.getExistAllDepositsAllDepositors();
+        LOGGER.debug("deposit: {}",deposits);
+
+        expect(depositDao.getBankDepositsByTermWithDepositors(4)).andReturn(deposits);
+
+        replay(depositDao);
+
+        List<Map> resultDeposits = depositService.getBankDepositsByTermWithDepositors(4);
+        LOGGER.debug("result deposit: {}",resultDeposits);
+
+        verify(depositDao);
+
+        assertEquals(deposits, resultDeposits);
+        assertSame(deposits, resultDeposits);
+    }
+
+    @Test
+    public void testGetBankDepositsByAmountWithDepositors() throws Exception {
+        List<Map> deposits = DataFixture.getExistAllDepositsAllDepositors();
+        LOGGER.debug("deposit: {}",deposits);
+
+        expect(depositDao.getBankDepositsByAmountWithDepositors(1000)).andReturn(deposits);
+
+        replay(depositDao);
+
+        List<Map> resultDeposits = depositService.getBankDepositsByAmountWithDepositors(1000);
+        LOGGER.debug("result deposit: {}",resultDeposits);
+
+        verify(depositDao);
+
+        assertEquals(deposits, resultDeposits);
+        assertSame(deposits, resultDeposits);
+    }
+
+    @Test
+    public void testGetBankDepositsByDepositorAmountWithDepositors() throws Exception {
+        List<Map> deposits = DataFixture.getExistAllDepositsAllDepositors();
+        LOGGER.debug("deposit: {}",deposits);
+
+        expect(depositDao.getBankDepositsByDepositorAmountWithDepositors(1000,1100)).andReturn(deposits);
+
+        replay(depositDao);
+
+        List<Map> resultDeposits = depositService.getBankDepositsByDepositorAmountWithDepositors(1000,1100);
+        LOGGER.debug("result deposit: {}",resultDeposits);
+
+        verify(depositDao);
+
+        assertEquals(deposits, resultDeposits);
+        assertSame(deposits, resultDeposits);
+    }
+
+    @Test
+    public void testGetBankDepositsByRateWithDepositors() throws Exception {
+        List<Map> deposits = DataFixture.getExistAllDepositsAllDepositors();
+        LOGGER.debug("deposit: {}",deposits);
+
+        expect(depositDao.getBankDepositsByRateWithDepositors(4)).andReturn(deposits);
+
+        replay(depositDao);
+
+        List<Map> resultDeposits = depositService.getBankDepositsByRateWithDepositors(4);
+        LOGGER.debug("result deposit: {}",resultDeposits);
 
         verify(depositDao);
 

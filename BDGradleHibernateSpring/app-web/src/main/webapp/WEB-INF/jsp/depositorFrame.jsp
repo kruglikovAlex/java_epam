@@ -1,12 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
     <head>
-        <title>Depositors list</title>
+        <title>Depositor</title>
     </head>
     <body>
+        <link href='<c:url value="/resources/css/jquery-ui.css" />' rel="stylesheet">
+
         <form action='<spring:url value="/depositor/submitDataDepositor"> <spring:param name="idDeposit" value="${idDeposit}"/> </spring:url>' method="post" modelAttribute="depositor" commandName="depositor">
             <h1><spring:message code="depositor.create" /></h1>
             <input type="hidden" name="depositorId" value='<c:out value="${depositor.depositorId}"/>'/>
@@ -20,9 +23,9 @@
                     <td><input type="text" name="depositorName" value='<c:out value="${depositor.depositorName}"/>'/></td>
                 </tr>
                 <tr>
-                    <td>Date Deposit, (yyyy-mm-dd):</td>
+                    <td>Date Deposit:</td>
                     <td><input type="text" name="depositorDateDeposit"
-                    pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size="10" value='<fmt:formatDate value="${depositor.depositorDateDeposit}" type="both" pattern="yyyy-MM-dd"/>' /></td>
+                    pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size="10" value='<fmt:formatDate value="${depositor.depositorDateDeposit}" type="both" pattern="yyyy-MM-dd"/>' class="datepicker"/></td>
                 </tr>
                 <tr>
                     <td>Amount:</td>
@@ -37,9 +40,9 @@
                     <td><input type="text" name="depositorAmountMinusDeposit" value='<c:out value="${depositor.depositorAmountMinusDeposit}"/>'/></td>
                 </tr>
                 <tr>
-                    <td>Date Return, (yyyy-mm-dd):</td>
+                    <td>Date Return:</td>
                     <td><input type="text" name="depositorDateReturnDeposit"
-                    pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size="10" value='<fmt:formatDate value="${depositor.depositorDateReturnDeposit}" type="both" pattern="yyyy-MM-dd"/>'/></td>
+                     pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size="10" value='<fmt:formatDate value="${depositor.depositorDateReturnDeposit}" type="both" pattern="yyyy-MM-dd"/>'  class="datepicker"/></td>
                 </tr>
                 <tr>
                     <td>Mark return deposit:</td>
@@ -63,9 +66,12 @@
                 </tr>
             </table>
         </form>
-
-        <script src='<c:url value="/resources/js/jquery-1.11.1.js"/>'></script>
+        <script src='<c:url value="/resources/js/jquery-1.12.3.js"/>'></script>
+        <script src='<c:url value="/resources/js/jquery.min.js"/>'></script>
         <script src='<c:url value="/resources/js/jquery.maskedinput.js"/>'></script>
         <script src='<c:url value="/resources/js/bankDeposit.js"/>'></script>
+        <script src='<c:url value="/resources/js/depositorFrame.js"/>'></script>
+        <script src='<c:url value="/resources/js/jquery-ui.js"/>'></script>
+        <script src='<c:url value="/resources/js/jquery-ui.min.js"/>'></script>
     </body>
 </html>
