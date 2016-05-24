@@ -19,7 +19,7 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
 
     public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
     public static final String ERROR_NULL_PARAM = "The parameter must be NULL";
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(BankDepositorDaoImpl.class);
     private BankDepositor depositor;
     private List<BankDepositor> depositors = new ArrayList<BankDepositor>();
 
@@ -188,18 +188,26 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         Assert.isNull(depositor.getDepositorId(), ERROR_NULL_PARAM);
 
         try {
+            //--- open session
             HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
 
             HibernateUtil.getSessionFactory()
                     .getCurrentSession().save(depositor);
 
+            //--- get the Deposit
             BankDeposit theDeposit = (BankDeposit)HibernateUtil.getSessionFactory()
                     .getCurrentSession().createQuery("select p from BankDeposit p left join fetch p.depositors where p.depositId = :pid")
                     .setParameter("pid", depositId)
                     .uniqueResult();
-
+            //--- set the Depositor to the Deposit
             theDeposit.setToDepositors(depositor);//.getDepositors().add(depositor);
+            //--- set the Deposit to the Depositor
+            depositor.setDeposit(theDeposit);
+            //--- update the Depositor
+            HibernateUtil.getSessionFactory()
+                    .getCurrentSession().update(depositor);
 
+            //--- close session
             HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
 
         } catch (Exception e){
