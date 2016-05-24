@@ -78,9 +78,4 @@
         </property>
     </bean>
 
-    <!--
-    <bean id="bankDao" class="net.gryszko.spock.dao.BankDaoHibernateImpl">
-        <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>
-    -->
 </beans>
