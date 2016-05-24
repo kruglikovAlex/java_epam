@@ -9,7 +9,7 @@
         </File>
     </Appenders>
     <Loggers>
-        <Logger name="com.brest.bank.service" level="trace">
+        <Logger name="com.brest.bank.client" level="trace">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="File"/>
         </Logger>
