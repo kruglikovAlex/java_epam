@@ -1,15 +1,13 @@
 
 .scrolling-table th {
-    color: #E90E8B;
-    border-bottom: 1px solid #E90E8B;
+    border-bottom: 1px solid;
 }
 
 .scrolling-table tr td {
     padding: 2px 5px;
-    border-right: 1px solid #E90E8B;
-    border-bottom: 1px solid #E90E8B;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
     text-align: center;
-    color: #666;
 }
 
 .scrolling-table tr td:last-child {
@@ -38,7 +36,7 @@ a.buttonDel {
     display: inline-block;
     font-family: arial,sans-serif;
     font-size: 14px;
-    font-weight: bold;
+
     color: rgb(68,68,68);
     text-decoration: none;
     user-select: none;
@@ -65,15 +63,15 @@ a.buttonDel:active {
 a.buttonFilter {
     display: inline-block;
     font-family: arial,sans-serif;
-    font-size: 11px;
-    font-weight: bold;
+    font-size: 14px;
+
     color: rgb(68,68,68);
     text-decoration: none;
     user-select: none;
-    padding: .8em 1.2em;
+    padding: .3em 1.5em;
     outline: none;
     border: 1px solid rgba(0,0,0,.1);
-    border-radius: 2px;
+    border-radius: 5px;
     background: rgb(245,245,245) linear-gradient(#f4f4f4, #f1f1f1);
     transition: all .218s ease 0s;
     }
@@ -93,7 +91,7 @@ a.buttonFilterBig {
     display: inline-block;
     font-family: arial,sans-serif;
     font-size: 14px;
-    //font-weight: bold;
+
     color: rgb(68,68,68);
     text-decoration: none;
     user-select: none;
@@ -148,7 +146,7 @@ a.buttonUpd {
     display: inline-block;
     font-family: arial,sans-serif;
     font-size: 14px;
-    font-weight: bold;
+
     color: rgb(68,68,68);
     text-decoration: none;
     user-select: none;
