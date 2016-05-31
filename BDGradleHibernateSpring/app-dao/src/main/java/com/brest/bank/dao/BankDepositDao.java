@@ -284,6 +284,15 @@ import java.util.Map;
                                                                                    Date endDate);
 
      /**
+      * Get Bank Deposits by Depositor mark return with depositors
+      *
+      * @param markReturn Integer - Mark Return of the Bank Depositor
+      * @return List<Map> - a list of all bank deposits with a report on all relevant
+      * bank depositors
+      */
+     List<Map> getBankDepositsByDepositorMarkReturnWithDepositors(Integer markReturn);
+
+     /**
       * Get Bank Deposits by Variant Args with depositors
       *
       * @param args Object - Variant number of arguments

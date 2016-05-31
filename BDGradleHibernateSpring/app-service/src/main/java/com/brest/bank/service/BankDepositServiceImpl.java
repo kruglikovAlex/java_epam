@@ -27,6 +27,7 @@ public class BankDepositServiceImpl implements BankDepositService{
     public static final String ERROR_NULL_PARAM = "The parameter must be NULL";
     public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
     public static final String ERROR_DEPOSIT = "In the database there is no Deposit with such parameters";
+    public static final String ERROR_PARAM_VALUE = "The parameter must be '0' or '1'";
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -501,6 +502,27 @@ public class BankDepositServiceImpl implements BankDepositService{
         return deposits;
     }
 
+    /**
+     * Get Bank Deposits by Depositor mark return with depositors
+     *
+     * @param markReturn Integer - Mark Return of the Bank Depositor
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    @Override
+    @Transactional
+    public List<Map> getBankDepositsByDepositorMarkReturnWithDepositors(Integer markReturn){
+        LOGGER.debug("getBankDepositsByDepositorMarkReturnWithDepositors(markReturn={})",markReturn);
+        Assert.notNull(markReturn,ERROR_METHOD_PARAM);
+        Assert.isTrue(markReturn==0||markReturn==1,ERROR_PARAM_VALUE);
+        List<Map> deposits = null;
+        try{
+            deposits = depositDao.getBankDepositsByDepositorMarkReturnWithDepositors(markReturn);
+        }catch (EmptyResultDataAccessException e){
+            LOGGER.error("getBankDepositsByDepositorMarkReturnWithDepositors(markReturn={}), Exception:{}",markReturn,e.toString());
+        }
+        return deposits;
+    }
     /**
      * Get Bank Deposits by Interest rate with depositors
      *

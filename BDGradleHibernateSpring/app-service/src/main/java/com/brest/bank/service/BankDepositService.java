@@ -212,6 +212,15 @@ public interface BankDepositService {
     List<Map> getBankDepositsByDepositorAmountWithDepositors(Integer from, Integer to);
 
     /**
+     * Get Bank Deposits by Depositor mark return with depositors
+     *
+     * @param markReturn Integer - Mark Return of the Bank Depositor
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    List<Map> getBankDepositsByDepositorMarkReturnWithDepositors(Integer markReturn);
+
+    /**
      * Get Bank Deposits by Interest Rate with depositors
      *
      * @param rate Integer - Interest Rate of the Bank Deposit to return

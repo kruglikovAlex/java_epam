@@ -20,14 +20,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.util.Assert;
 
+import javax.management.relation.Relation;
+
 @Component
 public class BankDepositDaoImpl implements BankDepositDao {
 
     public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
     public static final String ERROR_NULL_PARAM = "The parameter must be NULL";
     public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
+    public static final String ERROR_PARAM_VALUE = "The parameter must be '0' or '1'";
+
     private static final Logger LOGGER = LogManager.getLogger(BankDepositDaoImpl.class);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
     private BankDeposit deposit;
     private BankDepositor depositor;
     private Set<BankDepositor> depositors;
@@ -731,7 +736,28 @@ public class BankDepositDaoImpl implements BankDepositDao {
             LOGGER.debug("argName/Value: {}",arg.toString());
         }
         LOGGER.debug(")");
+
         Assert.notNull(args,ERROR_METHOD_PARAM);
+
+        List<Object[]> listLe = new ArrayList<Object[]>();
+        List<Object[]> listGe = new ArrayList<Object[]>();
+
+        for(int i=0; i<args.length; i=i+2){
+            for(int j=i+2; j<args.length; j=j+2){
+                if(args[i].toString().equals(args[j].toString())){
+                    Object[] le = {args[i],args[i+1]};
+                    Object[] ge = {args[j],args[j+1]};
+                    listLe.add(le);
+                    listGe.add(ge);
+                    LOGGER.debug("le-{}",le);
+                    LOGGER.debug("ge-{}",ge);
+                }
+            }
+        }
+
+        LOGGER.debug("listLe.size({})",listLe.size());
+        LOGGER.debug("listGe.size({})",listGe.size());
+
         List list;
         try{
             //--- open session
@@ -739,26 +765,51 @@ public class BankDepositDaoImpl implements BankDepositDao {
             String[] properties = HibernateUtil.getSessionFactory()
                     .getClassMetadata(BankDeposit.class)
                     .getPropertyNames();
-            //--- query
+            //--- create criteria
             Map restrict = new HashMap();
             for(int i=0; i<args.length; i=i+2){
-                restrict.put(args[i].toString(),args[i+1]);
+                if(listLe.size()==0){
+                    restrict.put(args[i].toString(),args[i+1]);
+                }else{
+                    int count = 0;
+                    for(int j=0; j<listLe.size(); j++){
+                        if(!args[i].toString().equals(listLe.get(j)[0].toString())){
+                            count++;
+                        }
+                    }
+                    if(count==listLe.size()){
+                        restrict.put(args[i].toString(),args[i+1]);
+                    }
+                }
             }
-            list = HibernateUtil.getSessionFactory().getCurrentSession()
-                    .createCriteria(BankDeposit.class, "deposit")
-                    .createAlias("depositors", "depositor",JoinType.LEFT_OUTER_JOIN)
-                    .add(Restrictions.allEq(restrict))
-                    .setProjection(Projections.distinct(Projections.projectionList()
-                            .add(Projections.property("deposit.depositId"), "depositId")
-                            .add(formProjection(properties))
-                            .add(Projections.count("depositor.depositorId").as("depositorCount"))
-                            .add(Projections.sum("depositor.depositorAmountDeposit").as("depositorAmountSum"))
-                            .add(Projections.sum("depositor.depositorAmountPlusDeposit").as("depositorAmountPlusSum"))
-                            .add(Projections.sum("depositor.depositorAmountMinusDeposit").as("depositorAmountMinusSum"))
-                            .add(Projections.groupProperty("deposit.depositId"))
+            Criteria varArgs =  HibernateUtil.getSessionFactory().getCurrentSession()
+                    .createCriteria(BankDeposit.class, "deposit");
+
+            varArgs.createAlias("depositors", "depositor",JoinType.LEFT_OUTER_JOIN);
+            varArgs.add(Restrictions.allEq(restrict));
+
+            if(listLe.size()!=0&&listGe.size()!=0){
+                for(int i=0; i<listLe.size(); i++){
+                    LOGGER.debug("listLe.get({})[0]-{}",i,listLe.get(i)[0].toString());
+                    LOGGER.debug("listLe.get({})[1]-{}",i,listLe.get(i)[1].toString());
+                    LOGGER.debug("listGe.get({})[0]-{}",i,listGe.get(i)[0].toString());
+                    LOGGER.debug("listGe.get({})[1]-{}",i,listGe.get(i)[1].toString());
+                    varArgs.add(Restrictions.between(listLe.get(i)[0].toString(),listLe.get(i)[1],listGe.get(i)[1]));
+                }
+            }
+
+            varArgs.setProjection(Projections.distinct(Projections.projectionList()
+                    .add(Projections.property("deposit.depositId"), "depositId")
+                    .add(formProjection(properties))
+                    .add(Projections.count("depositor.depositorId").as("depositorCount"))
+                    .add(Projections.sum("depositor.depositorAmountDeposit").as("depositorAmountSum"))
+                    .add(Projections.sum("depositor.depositorAmountPlusDeposit").as("depositorAmountPlusSum"))
+                    .add(Projections.sum("depositor.depositorAmountMinusDeposit").as("depositorAmountMinusSum"))
+                    .add(Projections.groupProperty("deposit.depositId"))
                     ))
-                    .setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
-                    .list();
+                    .setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+            //--- query
+            list = varArgs.list();
             //--- close session
             HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
         }catch (Exception e){
@@ -951,6 +1002,52 @@ public class BankDepositDaoImpl implements BankDepositDao {
             LOGGER.error("error - getBankDepositsByDepositorAmountWithDepositors(from={}, to={}) - {}",from,to,e.toString());
             HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
             throw new IllegalArgumentException("error - getBankDepositsByDepositorAmountWithDepositors() "+e.toString());
+        }
+        return mapRow(list);
+    }
+
+    /**
+     * Get Bank Deposits by Depositor mark return with depositors
+     *
+     * @param markReturn Integer - Mark Return of the Bank Depositor
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    @Override
+    @Transactional
+    public List<Map> getBankDepositsByDepositorMarkReturnWithDepositors(Integer markReturn){
+        LOGGER.debug("getBankDepositsByDepositorMarkReturnWithDepositors(markReturn = {})", markReturn);
+        Assert.notNull(markReturn,ERROR_METHOD_PARAM);
+        Assert.isTrue(markReturn==0||markReturn==1,ERROR_PARAM_VALUE);
+        List list;
+        try{
+            //--- open session
+            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+            String[] properties = HibernateUtil.getSessionFactory()
+                    .getClassMetadata(BankDeposit.class)
+                    .getPropertyNames();
+            //--- query
+            list = HibernateUtil.getSessionFactory().getCurrentSession()
+                    .createCriteria(BankDeposit.class, "deposit")
+                    .createAlias("depositors", "depositor",JoinType.LEFT_OUTER_JOIN)
+                    .add(Restrictions.eq("depositor.depositorMarkReturnDeposit", markReturn))
+                    .setProjection(Projections.distinct(Projections.projectionList()
+                            .add(Projections.property("deposit.depositId"), "depositId")
+                            .add(formProjection(properties))
+                            .add(Projections.count("depositor.depositorId").as("depositorCount"))
+                            .add(Projections.sum("depositor.depositorAmountDeposit").as("depositorAmountSum"))
+                            .add(Projections.sum("depositor.depositorAmountPlusDeposit").as("depositorAmountPlusSum"))
+                            .add(Projections.sum("depositor.depositorAmountMinusDeposit").as("depositorAmountMinusSum"))
+                            .add(Projections.groupProperty("deposit.depositId"))
+                    ))
+                    .setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
+                    .list();
+            //--- close session
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositsByDepositorMarkReturnWithDepositors(markReturn={}) - {}",markReturn,e.toString());
+            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
+            throw new IllegalArgumentException("error - getBankDepositsByDepositorMarkReturnWithDepositors() "+e.toString());
         }
         return mapRow(list);
     }

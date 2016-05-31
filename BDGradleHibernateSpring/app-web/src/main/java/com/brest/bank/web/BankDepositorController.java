@@ -32,6 +32,7 @@ public class BankDepositorController {
     public static final String ERROR_NULL_PARAM = "The parameter must be NULL";
     public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
     public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
+    public static final String ERROR_PARAM_VALUE = "The parameter must be '0' or '1'";
     private static final Logger LOGGER = LogManager.getLogger();
     @Autowired
     BankDepositService depositService;
@@ -389,6 +390,83 @@ public class BankDepositorController {
             }
         }catch (Exception e){
             LOGGER.debug("filterByAmount(from={}, to={}), Exception:{}", from,to,e.toString());
+            redirectAttributes.addFlashAttribute( "message", e.getMessage());
+
+            deposits = DataConfig.getEmptyAllDepositsAllDepositors();
+            LOGGER.debug("deposits - {}",deposits.get(0));
+
+            depositors = DataConfig.getEmptyDepositors();
+            LOGGER.debug("depositors - {}",depositors.get(0));
+
+            idDeposit = 1L;
+            LOGGER.debug("idDeposit={}",idDeposit);
+
+            year = dateFormat.format(Calendar.getInstance().getTime()).substring(0,4);
+            LOGGER.debug("year={}",year);
+        }
+
+        ModelAndView view = new ModelAndView("mainFrame");
+        view.addObject("deposits",deposits);
+        view.addObject("depositors",depositors);
+        view.addObject("year",year);
+        view.addObject("idDeposit",idDeposit);
+
+        return view;
+    }
+
+    /**
+     * Get Bank Deposits by mark return  with depositors
+     *
+     * @param redirectAttributes
+     * @param markReturn Integer - Mark Return of the Bank Depositor
+     * @param status
+     * @return ModelAndView "mainFrame"
+     * @throws ParseException
+     */
+    @RequestMapping(value = {"/filterByMarkReturn"}, method = RequestMethod.GET)
+    public ModelAndView filterByMarkReturn(RedirectAttributes redirectAttributes,
+                                           @RequestParam("depositorMarkReturnDeposit") Integer markReturn,
+                                           SessionStatus status) throws ParseException
+    {
+        LOGGER.debug("filterByMarkReturn(markReturn={})",markReturn);
+        status.setComplete();
+        try{
+            Assert.notNull(markReturn,ERROR_METHOD_PARAM);
+            Assert.isTrue(markReturn==0||markReturn==1,ERROR_PARAM_VALUE);
+
+            LOGGER.debug("getBankDepositsByDepositorMarkReturnWithDepositors(markReturn={})",markReturn);
+            deposits = depositService.getBankDepositsByDepositorMarkReturnWithDepositors(markReturn);
+            LOGGER.debug("deposits - {}",deposits.get(0));
+
+            idDeposit = (Long)deposits.get(0).get("depositId");
+            Assert.notNull(idDeposit,"idDeposit can not be NULL");
+
+            try{
+                depositors = new ArrayList<BankDepositor>();
+                for(Map depositReport:deposits){
+                    LOGGER.debug("getBankDepositorByIdDeposit(depositId={})",depositReport.get("depositId"));
+                    for(BankDepositor depr:depositorService
+                            .getBankDepositorByIdDeposit((Long)depositReport.get("depositId"))){
+                        if(depr.getDepositorMarkReturnDeposit()==markReturn){
+                            depositors.add(depr);
+                        }
+                    }
+                }
+                LOGGER.debug("depositors - {}",depositors.get(0));
+
+                year = dateFormat.format(depositors.get(0).getDepositorDateDeposit()).substring(0,4);
+                LOGGER.debug("year={}",year);
+            }catch (Exception e){
+                LOGGER.debug("getBankDepositorByIdDeposit(), Exception:{}", e.toString());
+                redirectAttributes.addFlashAttribute( "message", e.getMessage());
+
+                depositors = DataConfig.getEmptyDepositors();
+                LOGGER.debug("depositors - {}",depositors.get(0));
+                year = dateFormat.format(Calendar.getInstance().getTime()).substring(0,4);
+                LOGGER.debug("year={}",year);
+            }
+        }catch (Exception e){
+            LOGGER.debug("filterByMarkReturn(markReturn={}), Exception:{}", markReturn,e.toString());
             redirectAttributes.addFlashAttribute( "message", e.getMessage());
 
             deposits = DataConfig.getEmptyAllDepositsAllDepositors();
