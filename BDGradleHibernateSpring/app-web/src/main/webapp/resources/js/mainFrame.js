@@ -241,23 +241,27 @@ $('#aFindByCriteria').click(function(){
         if($('input:checkbox[name=dateDeposit]').is(':checked')){
             if(url.length == len) url+='?';
             else url+="&";
-            url+='startDateDeposit='+$('#fStartDateDeposit').val()+'&endDateDeposit='+$('#fEndDateDeposit').val();
+            url+='depositor.depositorDateDeposit='+$('#fStartDateDeposit').val()+'&depositor.depositorDateDeposit='+$('#fEndDateDeposit').val();
         }
         if($('input:checkbox[name=dateReturnDeposit]').is(':checked')){
             if(url.length == len) url+='?';
             else url+="&";
-            url+='startDateReturnDeposit='+$('#fStartDateReturnDeposit').val()+'&endDateReturnDeposit='+$('#fEndDateReturnDeposit').val();
+            url+='depositor.depositorDateReturnDeposit='+$('#fStartDateReturnDeposit').val()+'&depositor.depositorDateReturnDeposit='+$('#fEndDateReturnDeposit').val();
         }
         if($('input:checkbox[name=idDepositor]').is(':checked')){
-            url='../depositor/filterById?depositorId='+$('#fIdD').val();
+            if(url.length == len) url+='?';
+            else url+="&";
+            url+='depositor.depositorId='+$('#fIdD').val();
         }
         if($('input:checkbox[name=nameDepositor]').is(':checked')){
-            url='../depositor/filterByName?depositorName='+$('#fNameD').val();
+            if(url.length == len) url+='?';
+            else url+="&";
+            url+='depositor.depositorName='+$('#fNameD').val();
         }
         if($('input:checkbox[name=amountDepositor]').is(':checked')){
             if(url.length == len) url+='?';
             else url+="&";
-            url+='../depositor/fromAmountDepositor='+$('#fFromAmount').val()+'&toAmountDepositor='+$('#fToAmount').val();
+            url+='depositor.depositorAmountDeposit='+$('#fFromAmount').val()+'&depositor.depositorAmountDeposit='+$('#fToAmount').val();
         }
     }
 

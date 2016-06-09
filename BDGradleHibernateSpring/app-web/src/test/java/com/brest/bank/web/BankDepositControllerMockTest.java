@@ -20,6 +20,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -27,10 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BankDepositControllerMockTest {
@@ -1481,6 +1479,33 @@ public class BankDepositControllerMockTest {
         verify(depositService)
                 .getBankDepositsByCurrencyFromToDateDepositWithDepositors("usd"
                         ,dateFormat.parse("2015-01-01"),dateFormat.parse("2015-06-06"));
+        verify(depositorService).getBankDepositorByIdDeposit(1L);
+    }
+
+    @Test
+    public void testFilterByCriteria() throws Exception{
+        LOGGER.debug("testFilterByCriteria() - start");
+        Object[] args = {"depositCurrency","usd"
+                ,"depositorDateDeposit","2015-01-01"
+                ,"depositorDateDeposit","2015-06-06"};
+        when(depositService.getBankDepositsByVarArgs(args))
+                .thenReturn(DataFixture.getExistAllDepositsAllDepositors());
+        when(depositorService.getBankDepositorByIdDeposit(1L)).thenReturn(DataFixture.getExistDepositors());
+        mockMvc.perform(get("/deposit/filterByCriteria?depositCurrency={currency}&depositorDateDeposit={start}&depositorDateDeposit={end}", "usd","2015-01-01","2015-06-06"))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("deposits"))
+                .andExpect(model().attributeExists("depositors"))
+                .andExpect(model().attributeExists("year"))
+                .andExpect(model()
+                        .attribute("year",
+                                dateFormat.format(DataFixture.getExistDepositors()
+                                        .get(0).getDepositorDateDeposit()).substring(0,4)))
+                .andExpect(model().attributeExists("idDeposit"))
+                .andExpect(model().attribute("idDeposit",1L))
+                .andExpect(status().isOk());
+
+        verify(depositService)
+                .getBankDepositsByVarArgs(args);
         verify(depositorService).getBankDepositorByIdDeposit(1L);
     }
 

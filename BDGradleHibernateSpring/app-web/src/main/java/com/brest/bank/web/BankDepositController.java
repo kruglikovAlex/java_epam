@@ -20,6 +20,7 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -1285,6 +1286,120 @@ public class BankDepositController {
             }
         }catch (Exception e){
             LOGGER.debug("filterByDateReturnDeposit({},{}), Exception:{}",startDate,endDate,e.toString());
+            redirectAttributes.addFlashAttribute( "message", e.getMessage());
+
+            deposits = DataConfig.getEmptyAllDepositsAllDepositors();
+            LOGGER.debug("deposits - {}",deposits.get(0));
+
+            depositors = DataConfig.getEmptyDepositors();
+            LOGGER.debug("depositors - {}",depositors.get(0));
+
+            idDeposit = 1L;
+            LOGGER.debug("idDeposit={}",idDeposit);
+
+            year = dateFormat.format(Calendar.getInstance().getTime()).substring(0,4);
+            LOGGER.debug("year={}",year);
+        }
+
+        ModelAndView view = new ModelAndView("mainFrame");
+        view.addObject("deposits",deposits);
+        view.addObject("depositors",depositors);
+        view.addObject("year",year);
+        view.addObject("idDeposit",idDeposit);
+
+        return view;
+    }
+
+    /**
+     * Get Bank Deposits by Amount with depositors
+     *
+     * @param redirectAttributes
+     * @param status
+     * @param request HttpServletRequest - Variant number of arguments
+     * @return ModelAndView "mainFrame"
+     * @throws ParseException
+     */
+    @RequestMapping(value = {"/filterByCriteria"}, method = RequestMethod.GET)
+    public ModelAndView filterByCriteria(RedirectAttributes redirectAttributes,
+                                         SessionStatus status,
+                                         HttpServletRequest request) throws ParseException
+    {
+        LOGGER.debug("filterByCriteria(request-{})",request);
+        Assert.notNull(request,ERROR_METHOD_PARAM+" - request");
+
+        Map<String, String[]> parameters = request.getParameterMap();
+
+        int number = 0;
+        for(String key : parameters.keySet()) {
+            number++;
+            System.out.println(key);
+            String[] vals = parameters.get(key);
+            number+=vals.length-1;
+            for(String val : vals) {
+                number++;
+                System.out.println(" -> " + val);
+            }
+        }
+
+        status.setComplete();
+
+        //==== Map<String,String[]> to Object...args
+        Object[] args = new Object[number];
+        int i=0;
+        for(String key : parameters.keySet()) {
+            if(i<number){
+                args[i]=key;
+                i++;
+                String[] vals = parameters.get(key);
+                int count = vals.length;
+                for(String val : vals) {
+                    count--;
+                    if(count == 0){
+                        args[i]=val;
+                        i++;
+                    } else{
+                        args[i]=val;
+                        i++;
+                        args[i]=key;
+                        i++;
+                    }
+                }
+            }
+        }
+
+        //====
+        try{
+            Assert.notNull(parameters,ERROR_METHOD_PARAM+" - parameters");
+            LOGGER.debug("getBankDepositsByVarArgs(parameters={} or args={})",parameters,args);
+            deposits = depositService.getBankDepositsByVarArgs(args);
+            LOGGER.debug("deposits - {}",deposits.get(0));
+
+            idDeposit = (Long)deposits.get(0).get("depositId");
+            Assert.notNull(idDeposit,"idDeposit can not be NULL");
+
+            try{
+                depositors = new ArrayList<BankDepositor>();
+                for(Map depositReport:deposits){
+                    LOGGER.debug("getBankDepositorByIdDeposit(depositId={})",depositReport.get("depositId"));
+                    depositors.addAll(depositorService
+                            .getBankDepositorByIdDeposit((Long)depositReport.get("depositId")));
+                }
+                LOGGER.debug("depositors - {}",depositors.get(0));
+
+                year = dateFormat.format(depositors.get(0).getDepositorDateDeposit()).substring(0,4);
+                LOGGER.debug("year={}",year);
+            }catch (Exception e){
+                LOGGER.debug("getBankDepositorByIdDeposit(depositId={}), Exception:{}",
+                        deposits.get(0).get("depositId"),e.toString());
+                redirectAttributes.addFlashAttribute( "message", e.getMessage());
+
+                depositors = DataConfig.getEmptyDepositors();
+                LOGGER.debug("depositors - {}",depositors.get(0));
+                year = dateFormat.format(Calendar.getInstance().getTime()).substring(0,4);
+                LOGGER.debug("year={}",year);
+            }
+        }catch (Exception e){
+            LOGGER.debug("filterByCriteria({}), Exception:{}", parameters,e.toString());
             redirectAttributes.addFlashAttribute( "message", e.getMessage());
 
             deposits = DataConfig.getEmptyAllDepositsAllDepositors();

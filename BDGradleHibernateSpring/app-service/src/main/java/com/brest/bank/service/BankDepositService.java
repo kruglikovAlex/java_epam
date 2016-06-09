@@ -230,6 +230,15 @@ public interface BankDepositService {
     List<Map> getBankDepositsByRateWithDepositors(Integer rate);
 
     /**
+     * Get Bank Deposits by Variant Args with depositors
+     *
+     * @param args Object - Variant number of arguments
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    List<Map> getBankDepositsByVarArgs(Object...args);
+
+    /**
      * Get Bank Deposit with depositors
      *
      * @return List<Map> - a list of all bank deposits with a report on all relevant

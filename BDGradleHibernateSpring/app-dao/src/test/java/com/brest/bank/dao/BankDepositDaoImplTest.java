@@ -1070,6 +1070,95 @@ public class BankDepositDaoImplTest {
     }
 
     @Test
+    public void testGetBankDepositsByVarArgsCurrencyInterestRateDateDepositArrayParam() throws ParseException{
+        int[]   sumAmountDeposit =      new int[]{0, 0},
+                sumAmountPlusDeposit =  new int[]{0, 0},
+                sumAmountMinusDeposit = new int[]{0, 0};
+
+        String nameAliasField1 = "deposit.depositCurrency";
+        String currency = "usd";
+        String nameAliasField2 = "deposit.depositInterestRate";
+        Integer interestRate = 4;
+        String nameAliasField3 = "depositor.depositorDateDeposit";
+        Date dateDepositFrom = dateFormat.parse("2015-12-04");
+        Date dateDepositTo = dateFormat.parse("2015-12-09");
+
+        deposits = new ArrayList<BankDeposit>();
+
+        List<BankDeposit> depositsIR = depositDao.getBankDepositsFromToInterestRateCriteria(interestRate,interestRate+2);
+        LOGGER.debug("depositsIR = {}", depositsIR);
+
+        List<BankDeposit> depositsIRCur = new ArrayList<BankDeposit>();
+        for(BankDeposit dIR:depositsIR){
+            for(BankDeposit d:depositDao.getBankDepositsByCurrencyCriteria(currency)){
+                if(dIR.toString().equals(d.toString())){
+                    depositsIRCur.add(dIR);
+                }
+            }
+        }
+        LOGGER.debug("deposits - IR = {}", depositsIRCur);
+
+        depositors = new ArrayList<BankDepositor>();
+
+        for(BankDeposit dIrCur:depositsIRCur){
+            for(BankDepositor d:depositorDao.getBankDepositorByIdDepositCriteria(dIrCur.getDepositId())){
+                if(d.getDepositorDateDeposit().equals(dateDepositFrom)
+                        ||d.getDepositorDateDeposit().equals(dateDepositTo)
+                        ||(d.getDepositorDateDeposit().after(dateDepositFrom)
+                        &d.getDepositorDateDeposit().before(dateDepositTo))
+                        ){
+                    depositors.add(d);
+                    if(!deposits.contains(dIrCur)){
+                        deposits.add(dIrCur);
+                    }
+                }
+            }
+        }
+
+        LOGGER.debug("deposits End={}",deposits);
+        LOGGER.debug("depositors End={}",depositors);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit[0] +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit[0] +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit[0] += depositor.getDepositorAmountMinusDeposit();
+        }
+
+        Object[] args = {nameAliasField1,currency,
+                nameAliasField2,"4",
+                nameAliasField2,"6",
+                nameAliasField3,"2015-12-04",
+                nameAliasField3,"2015-12-09"};
+
+        List<Map> list = depositDao.getBankDepositsByVarArgs(args);
+        LOGGER.debug("list = {}", list);
+
+        assertNotNull(ERROR_NULL,list);
+        assertTrue(ERROR_SIZE, deposits.size()==list.size());
+
+        int i = 0;
+        for (Map aList: list) {
+            assertEquals(deposits.get(i).getDepositId(), aList.get("depositId"));
+            assertEquals(deposits.get(i).getDepositName(), aList.get("depositName"));
+            assertEquals(deposits.get(i).getDepositMinTerm(), aList.get("depositMinTerm"));
+            assertEquals(deposits.get(i).getDepositMinAmount(), aList.get("depositMinAmount"));
+            assertEquals(deposits.get(i).getDepositCurrency(), aList.get("depositCurrency"));
+            assertEquals(deposits.get(i).getDepositInterestRate(), aList.get("depositInterestRate"));
+            assertEquals(deposits.get(i).getDepositAddConditions(), aList.get("depositAddConditions"));
+
+            sumAmountDeposit[1] +=      Integer.parseInt(aList.get("depositorAmountSum").toString());
+            sumAmountPlusDeposit[1] +=  Integer.parseInt(aList.get("depositorAmountPlusSum").toString());
+            sumAmountMinusDeposit[1] += Integer.parseInt(aList.get("depositorAmountMinusSum").toString());
+
+            i++;
+        }
+
+        assertTrue("Error sum amount", sumAmountDeposit[0] == sumAmountDeposit[1]);
+        assertTrue("Error sum plus amount", sumAmountPlusDeposit[0] == sumAmountPlusDeposit[1]);
+        assertTrue("Error sum minus amount", sumAmountMinusDeposit[0] == sumAmountMinusDeposit[1]);
+    }
+
+    @Test
     public void testGetBankDepositsByVarArgsCurrencyInterestRateDateReturnDeposit() throws ParseException{
         int[]   sumAmountDeposit =      new int[]{0, 0},
                 sumAmountPlusDeposit =  new int[]{0, 0},

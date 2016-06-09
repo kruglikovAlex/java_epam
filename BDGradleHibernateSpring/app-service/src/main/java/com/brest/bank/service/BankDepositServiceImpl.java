@@ -545,6 +545,27 @@ public class BankDepositServiceImpl implements BankDepositService{
     }
 
     /**
+     * Get Bank Deposits by Variant Args with depositors
+     *
+     * @param args Object - Variant number of arguments (deposit.{nameAliasField},{valueAliasField} or
+     *             depositor.{nameAliasField},{valueAliasField})
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    public List<Map> getBankDepositsByVarArgs(Object...args){
+        LOGGER.debug("getBankDepositsByVarArgs(args: {})",args);
+
+        Assert.notNull(args,ERROR_METHOD_PARAM);
+        List<Map> deposits = null;
+        try{
+            deposits = depositDao.getBankDepositsByVarArgs(args);
+        }catch (EmptyResultDataAccessException e){
+            LOGGER.error("getBankDepositsByVarArgs({}), Exception:{}",args,e.toString());
+        }
+        return deposits;
+    }
+
+    /**
      * Get Bank Deposits with depositors
      *
      * @return List<Map> - a list of all bank deposits with a report on all relevant

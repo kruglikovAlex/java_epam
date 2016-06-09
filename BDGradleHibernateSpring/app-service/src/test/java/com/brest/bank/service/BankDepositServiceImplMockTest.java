@@ -506,6 +506,42 @@ public class BankDepositServiceImplMockTest {
     }
 
     @Test
+    public void testGetBankDepositsByVarArgs() throws Exception {
+        List<Map> deposits = DataFixture.getExistAllDepositsAllDepositors();
+        LOGGER.debug("deposit: {}",deposits);
+
+        String nameAliasField1 = "deposit.depositCurrency";
+        String currency = "usd";
+        String nameAliasField2 = "deposit.depositInterestRate";
+        Integer interestRate = 5;
+        String nameAliasField3 = "depositor.depositorDateReturnDeposit";
+        Date dateReturnDepositFrom = dateFormat.parse("2015-12-04");
+        Date dateReturnDepositTo = dateFormat.parse("2015-12-09");
+
+        expect(depositDao.getBankDepositsByVarArgs(
+                nameAliasField1,currency,
+                nameAliasField2,interestRate,
+                nameAliasField2,interestRate+2,
+                nameAliasField3,dateReturnDepositFrom,
+                nameAliasField3,dateReturnDepositTo)).andReturn(deposits);
+
+        replay(depositDao);
+
+        List<Map> resultDeposits = depositService.getBankDepositsByVarArgs(
+                nameAliasField1,currency,
+                nameAliasField2,interestRate,
+                nameAliasField2,interestRate+2,
+                nameAliasField3,dateReturnDepositFrom,
+                nameAliasField3,dateReturnDepositTo);
+        LOGGER.debug("result deposit: {}",resultDeposits);
+
+        verify(depositDao);
+
+        assertEquals(deposits, resultDeposits);
+        assertSame(deposits, resultDeposits);
+    }
+
+    @Test
     public void testGetBankDepositsByCurrencyWithDepositors() throws Exception {
         List<Map> deposits = DataFixture.getExistAllDepositsAllDepositors();
         LOGGER.debug("deposit: {}",deposits);

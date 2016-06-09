@@ -8,6 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.hibernate.criterion.*;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -731,14 +733,23 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * bank depositors
      */
     public List<Map> getBankDepositsByVarArgs(Object...args){
-        LOGGER.debug("getBankDepositsByVarArgs(");
-        for(Object arg:args){
-            LOGGER.debug("argName/Value: {}",arg.toString());
-        }
-        LOGGER.debug(")");
-
+        LOGGER.debug("getBankDepositsByVarArgs(args: {})",args);
         Assert.notNull(args,ERROR_METHOD_PARAM);
 
+        //== convert String.class to Date.class or Integer.class
+        for(int i=0; i<args.length;i=i+2){
+            try{
+                args[i+1] = Integer.parseInt(args[i+1].toString());
+            } catch (Exception intE){
+                LOGGER.error("error - parseInt - {}, {}",args[i+1] ,intE.toString());
+                try{
+                    args[i+1] = dateFormat.parse(args[i+1].toString());
+                } catch (ParseException dateE){
+                    LOGGER.error("error - parseDate - {}, {}",args[i+1] ,dateE.toString());
+                }
+            }
+        }
+        //==
         List<Object[]> listLe = new ArrayList<Object[]>();
         List<Object[]> listGe = new ArrayList<Object[]>();
 
