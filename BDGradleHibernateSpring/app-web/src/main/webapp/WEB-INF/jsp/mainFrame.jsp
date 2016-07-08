@@ -30,7 +30,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td><b>Deposits list:</b>
+                            <td><b><spring:message code="deposit.list" /></b>
                                 <select name="depositId" size="3" multiple="true">
                                     <c:forEach var="deposit" items="${deposits}">
                                         <c:choose>
@@ -49,7 +49,7 @@
                                 </select>
                             </td>
                             <td class="controlDeposit" align=left COLSPAN="5">
-                                <a href='<spring:url value="/deposit/inputDeposit" > </spring:url>' class="buttonAdd">Add</a>
+                                <a href='<spring:url value="/deposit/depositFrame" > </spring:url>' class="buttonAdd">Add</a>
                                 <a href="#" id="aUpdate"></a>
                                 <a href="#" id="aDelete"></a>
                             </td>
@@ -62,7 +62,7 @@
                         </tr>
                     </table>
 
-                    <p/><b>List depositors for choose parameters:<b></br>
+                    <p/><b><spring:message code="depositor.list" /><b></br>
                     <table class="scrolling-table" border='1'>
                         <thead>
                             <th>&nbsp;</th>
@@ -173,7 +173,7 @@
 
                 var aUpdateHref='updateDeposit?depositId= '+$('#dId').val();
                 var aDeleteHref='deleteDeposit?depositId= '+$('#dId').val();
-                var aAddDepositorHref='../depositor/inputDepositor?idDeposit='+$('#dId').val();
+                var aAddDepositorHref='../depositor/depositorFrame?idDeposit='+$('#dId').val();
 
                 $('#aUpdate').text('Edit').attr('href',aUpdateHref).addClass('buttonUpd');
                 $('#aDelete').text('Delete').attr('href',aDeleteHref).addClass('buttonDel');
