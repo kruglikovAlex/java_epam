@@ -12,6 +12,7 @@
 </style>
 <body>
     <link href='<c:url value="/resources/css/jquery-ui.css" />' rel="stylesheet">
+
  	<form action='<spring:url value="/depositor/updateDepositor" > </spring:url>' method="POST" modelAttribute="depositor" commandName="depositor">
     	<form:form method="GET" modelAttribute="depositor">
 			<h1><spring:message code="update.depositor" /></h1>
@@ -59,53 +60,11 @@
     		<input id="submit" type="submit" name="submit"></form:form>
     </form>
 
-    <script src='<c:url value="/resources/js/jquery-1.11.1.js"/>'></script>
+    <script src='<c:url value="/resources/js/jquery.min.js"/>'></script>
     <script src='<c:url value="/resources/js/jquery.maskedinput.js"/>'></script>
-    <script src='<c:url value="/resources/js/bankDeposit.js"/>'></script>
-    <script src='<c:url value="/resources/js/depositorFrame.js"/>'></script>
     <script src='<c:url value="/resources/js/jquery-ui.js"/>'></script>
     <script src='<c:url value="/resources/js/jquery-ui.min.js"/>'></script>
+    <script src='<c:url value="/resources/js/depositorFrame.js"/>'></script>
 
-    <script>
-        var nullInt = function () {
-            if(this.value == null || this.value == '') {
-                document.getElementById('error'+this.name).style.border=  "1px dotted red"
-                document.getElementById('error'+this.name).style.fontSize = "x-large";
-                alert('The field '+ this.name+' is empty!!!');
-            }
-        }
-        depositorName.onchange = nullInt;
-        depositorName.onkeyup = nullInt;
-        depositorAmountDeposit.onchange = nullInt;
-        depositorAmountDeposit.onkeyup = nullInt;
-        depositorAmountPlusDeposit.onchange = nullInt;
-        depositorAmountPlusDeposit.onkeyup = nullInt;
-        depositorAmountMinusDeposit.onchange = nullInt;
-        depositorAmountMinusDeposit.onkeyup = nullInt;
-        depositorMarkReturnDeposit.onchange = nullInt;
-        depositorMarkReturnDeposit.onkeyup = nullInt;
-
-    </script>
-    <script>
-        var nullIntSubmit = function () {
-            if(depositorName.value == null || depositorName.value == '') {
-                depositorName.value = "Input Full name of depositor!";
-            }
-            if(depositorAmountDeposit.value == null || depositorAmountDeposit.value == '') {
-                depositorAmountDeposit.value = "0";
-            }
-            if(depositorAmountPlusDeposit.value == null || depositorAmountPlusDeposit.value == '') {
-                depositorAmountPlusDeposit.value = "0";
-            }
-            if(depositorAmountMinusDeposit.value == null || depositorAmountMinusDeposit.value == '') {
-                depositorAmountMinusDeposit.value = "0";
-            }
-            if(depositorMarkReturnDeposit.value == null || depositorMarkReturnDeposit.value == '') {
-                depositorMarkReturnDeposit.value = "0";
-            }
-        }
-        submit.onclick = nullIntSubmit;
-
-    </script>
 </body>
 </html>

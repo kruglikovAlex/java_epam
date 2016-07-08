@@ -55,40 +55,9 @@
  		</form:form>
  	</form>
 
-	<script src='<c:url value="/resources/js/jquery-1.11.1.js"/>'></script>
+	<script src='<c:url value="/resources/js/jquery.min.js"/>'></script>
+    <script src='<c:url value="/resources/js/jquery.maskedinput.js"/>'></script>
+    <script src='<c:url value="/resources/js/depositFrame.js"/>'></script>
 
-	<script>
-    	var nullInt = function () {
-        	if(this.value == null || this.value == '') {
-            	document.getElementById('error'+this.name).style.border=  "1px dotted red"
-            	document.getElementById('error'+this.name).style.fontSize = "x-large";
-            	alert('The fild '+ this.name+' is empty!!!');
-        	}
-    	}
-    	depositMinTerm.onchange = nullInt;
-    	depositMinTerm.onkeyup = nullInt;
-
-    	depositMinAmount.onchange = nullInt;
-    	depositMinAmount.onkeyup = nullInt;
-
-    	depositInterestRate.onchange = nullInt;
-    	depositInterestRate.onkeyup = nullInt;
-
-	</script>
-	<script>
-    	var nullIntSubmit = function () {
-            if(depositMinTerm.value == null || depositMinTerm.value == '') {
-                depositMinTerm.value = "0";
-            }
-            if(depositMinAmount.value == null || depositMinAmount.value == '') {
-                depositMinAmount.value = "0";
-            }
-            if(depositInterestRate.value == null || depositInterestRate.value == '') {
-                depositInterestRate.value = "0";
-            }
-    	}
-    	submit.onclick = nullIntSubmit;
-
-	</script>
 </body>
 </html>
