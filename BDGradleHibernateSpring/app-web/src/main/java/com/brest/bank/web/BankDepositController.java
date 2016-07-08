@@ -4,6 +4,8 @@ import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
 import com.brest.bank.service.BankDepositService;
 import com.brest.bank.service.BankDepositorService;
+import com.brest.bank.validator.BankDepositTypeEditor;
+import com.brest.bank.validator.BankDepositValidator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,11 +37,15 @@ public class BankDepositController {
     public static final String ERROR_STRING_METHOD_PARAM = "The string parameter can not be empty";
     public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
     private static final Logger LOGGER = LogManager.getLogger();
+
     @Autowired
     BankDepositService depositService;
 
     @Autowired
     BankDepositorService depositorService;
+
+    @Autowired
+    private BankDepositValidator depositValidator;
 
     private List<Map> deposits = new ArrayList<Map>();
     private List<BankDepositor> depositors = new ArrayList<BankDepositor>();
@@ -53,6 +59,7 @@ public class BankDepositController {
      */
     @InitBinder
     protected void initBinder(WebDataBinder binder) throws Exception {
+        binder.registerCustomEditor(BankDeposit.class, new BankDepositTypeEditor());
         binder.registerCustomEditor(Integer.class,null,new CustomNumberEditor(Integer.class,null,true));
     }
 
@@ -62,7 +69,7 @@ public class BankDepositController {
      * @param model
      * @return ModelAndView "depositFrame"
      */
-    @RequestMapping(value = "/inputDeposit", method = RequestMethod.GET)
+    @RequestMapping(value = "/depositFrame", method = RequestMethod.GET)
     public ModelAndView getInputFormDeposit(ModelMap model)
     {
         LOGGER.debug("getInputFormDeposit({})",model);
@@ -81,10 +88,22 @@ public class BankDepositController {
     @RequestMapping(value={"/submitDataDeposit"}, method = RequestMethod.POST)
     public String postInputFormDeposit( ModelMap model,
                                         @ModelAttribute("deposit") BankDeposit deposit,
+                                        BindingResult result,
                                         SessionStatus status)
     {
         status.setComplete();
         Assert.isNull(deposit.getDepositId(),ERROR_NULL_PARAM);
+
+        LOGGER.debug("depositValidator.validate({},{}, {})",deposit, result.getTarget(),result);
+        depositValidator.validate(deposit, result);
+
+        if (result.hasErrors()) {
+            LOGGER.debug("depositValidator.validate({},{})",deposit, result);
+            return  "depositFrame";
+        } else {
+            status.setComplete();
+        }
+
         try{
             LOGGER.debug("depositService.addBankDeposit({})",deposit);
             depositService.addBankDeposit(deposit);
@@ -137,9 +156,18 @@ public class BankDepositController {
                                         BindingResult result,
                                         SessionStatus status)
     {
-        LOGGER.debug("postUpdateFormDeposit({},{},{})",deposit, result, status);
-        status.setComplete();
         Assert.notNull(deposit.getDepositId(),ERROR_METHOD_PARAM);
+
+        LOGGER.debug("postUpdateFormDeposit({},{},{},{})",deposit, result.getTarget(),result, status);
+        depositValidator.validate(deposit, result);
+
+        if (result.hasErrors()) {
+            LOGGER.debug("depositValidator.validate({},{})",deposit, result);
+            return "updateDeposit";
+        } else {
+            status.setComplete();
+        }
+
         try{
             LOGGER.debug("depositService.updateBankDeposit({})",deposit);
             depositService.updateBankDeposit(deposit);
@@ -164,6 +192,7 @@ public class BankDepositController {
                                       SessionStatus status)
     {
         LOGGER.debug("deleteDeposit({})",depositId);
+        Assert.notNull(depositId,ERROR_METHOD_PARAM);
         status.setComplete();
         try{
             LOGGER.debug("deleteBankDeposit({})",depositId);
@@ -1324,20 +1353,20 @@ public class BankDepositController {
                                          SessionStatus status,
                                          HttpServletRequest request) throws ParseException
     {
-        LOGGER.debug("filterByCriteria(request-{})",request);
-        Assert.notNull(request,ERROR_METHOD_PARAM+" - request");
+        LOGGER.debug("filterByCriteria(requestURI-{}, queryString - {})",request.getRequestURI(),request.getQueryString());
+        Assert.notNull(request,ERROR_METHOD_PARAM +" - request");
 
         Map<String, String[]> parameters = request.getParameterMap();
 
         int number = 0;
         for(String key : parameters.keySet()) {
             number++;
-            System.out.println(key);
+            LOGGER.debug("key: {}",key);
             String[] vals = parameters.get(key);
             number+=vals.length-1;
             for(String val : vals) {
                 number++;
-                System.out.println(" -> " + val);
+                LOGGER.debug(" -> {}", val);
             }
         }
 
@@ -1367,7 +1396,6 @@ public class BankDepositController {
             }
         }
 
-        //====
         try{
             Assert.notNull(parameters,ERROR_METHOD_PARAM+" - parameters");
             LOGGER.debug("getBankDepositsByVarArgs(parameters={} or args={})",parameters,args);

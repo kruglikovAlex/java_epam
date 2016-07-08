@@ -4,6 +4,8 @@ import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
 import com.brest.bank.service.BankDepositService;
 import com.brest.bank.service.BankDepositorService;
+import com.brest.bank.validator.BankDepositorTypeEditor;
+import com.brest.bank.validator.BankDepositorValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,9 @@ public class BankDepositorController {
     @Autowired
     private BankDepositorService depositorService;
 
+    @Autowired
+    private BankDepositorValidator depositorValidator;
+
     private BankDeposit deposit;
     private BankDepositor depositor;
     private List<Map> deposits = new ArrayList<Map>();
@@ -61,20 +66,21 @@ public class BankDepositorController {
         binder.registerCustomEditor(Date.class,new CustomDateEditor(dateFormat,true,datePattern.length()));
         binder.registerCustomEditor(String.class,new StringTrimmerEditor(true));
         binder.registerCustomEditor(Integer.class,null,new CustomNumberEditor(Integer.class,null,true));
+        binder.registerCustomEditor(BankDepositor.class,new BankDepositorTypeEditor());
     }
 
     /**
      * Get form for input Bank Depositor
      *
      * @param model
-     * @param redirectAttributes
+     * //@param //redirectAttributes
      * @param depositId
      * @return ModelAndView "depositorFrame"
      */
-    @RequestMapping(value={"/inputDepositor"}, method = RequestMethod.GET)
+    @RequestMapping(value={"/depositorFrame"}, method = RequestMethod.GET)
     public ModelAndView getInputFormDepositor(ModelMap model,
                                               RedirectAttributes redirectAttributes,
-                                              @RequestParam("idDeposit")Long depositId)
+                                              @RequestParam("idDeposit") Long depositId) throws ParseException
     {
         LOGGER.debug("getInputFormDepositor(idDeposit={})",depositId);
         try {
@@ -99,23 +105,32 @@ public class BankDepositorController {
      * @return ModelAndVie - redirect Url="/deposit/main"
      */
     @RequestMapping(value={"/submitDataDepositor"}, method = RequestMethod.POST)
-    public ModelAndView postInputFormDepositor(ModelMap model,
-                                               @ModelAttribute("idDeposit") String depositId,
-                                               @ModelAttribute("depositor") BankDepositor depositor,
-                                               BindingResult result,
-                                               SessionStatus status)
+    public String postInputFormDepositor(ModelMap model,
+                                         @ModelAttribute("idDeposit") String depositId,
+                                         @ModelAttribute("depositor") BankDepositor depositor,
+                                         BindingResult result,
+                                         SessionStatus status) throws ParseException
     {
-        LOGGER.debug("postInputFormDepositor({},{},{},{})", depositId,depositor,result,status);
         status.setComplete();
         Assert.isNull(depositor.getDepositorId(),ERROR_NULL_PARAM);
+
+        LOGGER.debug("depositorValidator.validate({},{}, {})",depositor, result.getTarget(),result);
+        depositorValidator.validate(depositor, result);
+
+        if (result.hasErrors()) {
+            LOGGER.debug("depositorValidator.validate({},{})",depositor, result);
+            return "depositorFrame";
+        } else {
+            status.setComplete();
+        }
+
         try {
             LOGGER.debug("depositorService.addBankDepositor({},{})", depositId, depositor);
-
             depositorService.addBankDepositor(Long.parseLong(depositId), depositor);
-            return new ModelAndView("redirect:/deposit/main");
+            return "redirect:/deposit/main";
         }catch(Exception e) {
             LOGGER.debug("postInputFormDepositor(), Exception:{}", e.toString());
-            return new ModelAndView("redirect:/inputDepositor?idDeposit=" + depositId);
+            return "redirect:/depositorFrame?idDeposit=" + depositId;
         }
     }
 
@@ -130,6 +145,7 @@ public class BankDepositorController {
     public ModelAndView getUpdateFormDepositor(RedirectAttributes redirectAttributes,
                                                @RequestParam("depositorId")Long depositorId)
     {
+        Assert.notNull(depositorId,ERROR_METHOD_PARAM);
         LOGGER.debug("getUpdateFormDepositor({})", depositorId);
         try {
             BankDepositor depositor = depositorService.getBankDepositorById(depositorId);
@@ -158,7 +174,18 @@ public class BankDepositorController {
                                           BindingResult result,
                                           SessionStatus status)
     {
-        LOGGER.debug("postUpdateFormDepositor({},{},{})",depositor, result, status);
+        LOGGER.debug("depositorValidator.validate({},{},{})",depositor, result.getTarget(),result);
+        depositorValidator.validate(depositor, result);
+
+        if (result.hasErrors()) {
+            LOGGER.debug("depositorValidator.validate({},{})",depositor, result);
+
+            return "updateDepositor";
+        } else {
+            status.setComplete();
+        }
+
+        LOGGER.debug("postUpdateFormDepositor({})",depositor);
         status.setComplete();
         Assert.notNull(depositor.getDepositorId(),ERROR_METHOD_PARAM);
         try{
