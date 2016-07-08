@@ -190,6 +190,68 @@ public class BankDepositDaoImpl implements BankDepositDao{
         return deposits;
     }
 
+    /**
+     * Get Bank Deposits from-to INTEREST RATE values
+     *
+     * @param startRate Integer - start value of the interest rate (0% < startRate <= 100%)
+     * @param endRate Integer - end value of the interest rate (0% < endRate <= 100%)
+     * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
+     * with the specified task`s in of deterest rate of deposit
+     */
+    public List<BankDeposit> getBankDepositsFromToInterestRateCriteria(Integer startRate,
+                                                                       Integer endRate){
+        LOGGER.debug("getBankDepositsFromToInterestRateCriteria(from:{}, to:{})",startRate,endRate);
+        Assert.notNull(startRate, ERROR_METHOD_PARAM);
+        Assert.notNull(endRate, ERROR_METHOD_PARAM);
+        Assert.isTrue(startRate<=endRate,ERROR_FROM_TO_PARAM);
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            Map param = new HashMap();
+            param.put("startRate",startRate);
+            param.put("endRate",endRate);
+
+            deposits = (List<BankDeposit>)smc.queryForList("BankDeposit.getFromToInterestRate",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositsFromToInterestRateCriteria(from:{}, to:{}) - {}",startRate,endRate,e.toString());
+            throw new IllegalArgumentException("error - getBankDepositsFromToInterestRateCriteria() - {}"+e.toString());
+        }
+        LOGGER.debug("deposits: {}",deposits);
+        return deposits;
+    }
+
+    /**
+     * Get Bank Deposits from-to Date Deposit values
+     *
+     * @param startDate Date - start value of the date deposit (startDate < endDate)
+     * @param endDate Date - end value of the date deposit (endDate > startDate)
+     * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
+     * with the specified task`s date of deposit
+     */
+    public List<BankDeposit> getBankDepositsFromToDateDeposit(Date startDate,
+                                                              Date endDate){
+        LOGGER.debug("getBankDepositsFromToDateDeposit(from:{}, to:{})",dateFormat.format(startDate),
+                dateFormat.format(endDate));
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate),ERROR_FROM_TO_PARAM);
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            Map param = new HashMap();
+            param.put("startDate",startDate);
+            param.put("endDate",endDate);
+
+            deposits = (List<BankDeposit>)smc.queryForList("BankDeposit.getFromToDate",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositsFromToDateDeposit(from:{}, to:{}) - {}",dateFormat.format(startDate),
+                    dateFormat.format(endDate),e.toString());
+            throw new IllegalArgumentException("error - getBankDepositsFromToDateDeposit() - {}"+e.toString());
+        }
+        return deposits;
+    }
 
     /**
      * Adding Bank Deposit

@@ -68,8 +68,8 @@ public interface BankDepositDao {
     * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
     * with the specified task`s in of deterest rate of deposit
     */
-    //List<BankDeposit> getBankDepositsFromToInterestRateCriteria(Integer startRate,
-    //                                                            Integer endRate);
+    List<BankDeposit> getBankDepositsFromToInterestRateCriteria(Integer startRate,
+                                                                Integer endRate);
 
    /**
     * Get Bank Deposits from-to Date Deposit values
@@ -79,8 +79,8 @@ public interface BankDepositDao {
     * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
     * with the specified task`s date of deposit
     */
-    //List<BankDeposit> getBankDepositsFromToDateDeposit(Date startDate,
-     //                                                  Date endDate);
+    List<BankDeposit> getBankDepositsFromToDateDeposit(Date startDate,
+                                                       Date endDate);
 
    /**
     * Get Bank Deposits from-to Date Return Deposit values

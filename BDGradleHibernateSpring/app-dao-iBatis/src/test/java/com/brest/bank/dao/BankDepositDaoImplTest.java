@@ -115,6 +115,36 @@ public class BankDepositDaoImplTest {
     }
 
     @Test
+    public void testGetBankDepositFromToInterestRateCriteria() throws Exception{
+        deposits = depositDao.getBankDepositsFromToInterestRateCriteria(5,6);
+        LOGGER.debug("deposits: {}",deposits);
+
+        assertNotNull(ERROR_NULL,deposits);
+        assertEquals("[BankDeposit: { depositId=1, depositName=depositName1, depositMinTerm=13, depositMinAmount=200, " +
+                "depositCurrency=eur, depositInterestRate=5, depositAddConditions=condition1}, " +
+                "BankDeposit: { depositId=2, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
+                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}]",deposits.toString());
+    }
+
+    @Test
+    public void testGetBankDepositsBetweenDateDeposit() throws Exception {
+        Date startDate = dateFormat.parse("2015-12-01");
+        Date endDate = dateFormat.parse("2015-12-02");
+
+        deposits = depositDao.getBankDepositsFromToDateDeposit(startDate, endDate);
+        LOGGER.debug("deposits = {}", deposits);
+
+        assertFalse(ERROR_EMPTY_BD,deposits.isEmpty());
+        assertThat(ERROR_SIZE,deposits.size(), is(not(0)));
+        assertNotNull(ERROR_NULL,deposits);
+
+        assertEquals("[BankDeposit: { depositId=1, depositName=depositName1, depositMinTerm=13, depositMinAmount=200, " +
+                "depositCurrency=eur, depositInterestRate=5, depositAddConditions=condition1}, " +
+                "BankDeposit: { depositId=3, depositName=depositName3, depositMinTerm=15, depositMinAmount=400, " +
+                "depositCurrency=usd, depositInterestRate=7, depositAddConditions=condition3}]",deposits.toString());
+    }
+
+    @Test
     public void testRowCount(){
         Integer count = depositDao.rowCount();
         LOGGER.debug("count = {}",count);
