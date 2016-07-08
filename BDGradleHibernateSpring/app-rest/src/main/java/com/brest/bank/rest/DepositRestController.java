@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-//@ContextConfiguration(locations = {"classpath:/spring-rest.xml"})
 @RequestMapping("/deposit")
 public class DepositRestController {
 
