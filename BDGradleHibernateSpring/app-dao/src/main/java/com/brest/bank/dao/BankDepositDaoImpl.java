@@ -749,7 +749,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
                 }
             }
         }
-        //==
+
         List<Object[]> listLe = new ArrayList<Object[]>();
         List<Object[]> listGe = new ArrayList<Object[]>();
 
@@ -776,7 +776,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
             String[] properties = HibernateUtil.getSessionFactory()
                     .getClassMetadata(BankDeposit.class)
                     .getPropertyNames();
-            //--- create criteria
+            //--- create query criteria
             Map restrict = new HashMap();
             for(int i=0; i<args.length; i=i+2){
                 if(listLe.size()==0){
@@ -793,6 +793,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
                     }
                 }
             }
+
             Criteria varArgs =  HibernateUtil.getSessionFactory().getCurrentSession()
                     .createCriteria(BankDeposit.class, "deposit");
 
