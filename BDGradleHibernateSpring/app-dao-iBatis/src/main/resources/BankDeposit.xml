@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+        PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="BankDeposit">
+
+    <insert id="insert" parameterClass="com.brest.bank.domain.BankDeposit">
+        insert into BANKDEPOSIT (depositName, depositMinTerm, depositMinAmount, depositCurrency, depositInterestRate, depositAddConditions)
+        values (#depositName#, #depositMinTerm#, #depositMinAmount#, #depositCurrency#, #depositInterestRate#, #depositAddConditions#);
+    </insert>
+
+    <select id="getAll" resultClass="com.brest.bank.domain.BankDeposit">
+        select * from BANKDEPOSIT
+    </select>
+
+    <select id="getById" resultClass="com.brest.bank.domain.BankDeposit">
+        select * from BANKDEPOSIT
+        <dynamic prepend="WHERE">
+            <isNotEmpty property="depositId">
+                depositId = #depositId#
+            </isNotEmpty>
+        </dynamic>
+    </select>
+
+    <select id="getByName" resultClass="com.brest.bank.domain.BankDeposit">
+        select * from BANKDEPOSIT
+        <dynamic prepend="WHERE">
+            <isNotEmpty property="depositName">
+                depositName = #depositName#
+            </isNotEmpty>
+        </dynamic>
+    </select>
+
+    <select id="getByCurrency" resultClass="com.brest.bank.domain.BankDeposit">
+        select * from BANKDEPOSIT
+        <dynamic prepend="WHERE">
+            <isNotEmpty property="depositCurrency">
+                depositCurrency = #depositCurrency#
+            </isNotEmpty>
+        </dynamic>
+    </select>
+
+    <select id="getByInterestRate" resultClass="com.brest.bank.domain.BankDeposit">
+        select * from BANKDEPOSIT
+        <dynamic prepend="WHERE">
+            <isNotEmpty property="depositInterestRate">
+                depositInterestRate = #depositInterestRate#
+            </isNotEmpty>
+        </dynamic>
+    </select>
+
+    <select id="getFromToMinTerm" parameterClass="java.util.Map" resultClass="com.brest.bank.domain.BankDeposit">
+        select * from BANKDEPOSIT
+        <dynamic prepend="WHERE">
+            depositMinTerm between #fromTerm# and #toTerm#
+        </dynamic>
+    </select>
+
+    <select id="rowCount" resultClass="int">
+        select count(*) from BANKDEPOSIT
+    </select>
+
+</sqlMap>

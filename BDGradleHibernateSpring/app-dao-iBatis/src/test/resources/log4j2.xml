@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%-5p][%t][%logger{36}] - %m%n"/>
+        </Console>
+        <File name="File" fileName="/tmp/output.log">
+            <PatternLayout pattern="%d %с [%t] %m%n"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.brest.bank.dao" level="TRACE">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
+        </Logger>
+        <!-- Log all SQL parameters -->
+        <Logger name="com.ibatis.common.jdbc.logging" level="TRACE">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <!-- Log all JDBC parameters -->
+        <Logger name="com.ibatis.common.jdbc" level="TRACE">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="java.sql" level="DEBUG">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <!-- Log all SQL DML statements as they are executed -->
+        <Logger name="com.ibatis.common.xml" level="TRACE">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <!-- Log all SQL DDL statements as they are executed -->
+        <Logger name="com.ibatis.sqlmap.engine.mapping.sql" level="DEBUG">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <!-- Log the state of all entities (max 20 entities) associated with the session at flush time -->
+        <Logger name="com.ibatis.sqlmap.engine.builder.xml" level="DEBUG">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <!-- Log all second-level cache activity -->
+        <Logger name="com.ibatis.sqlmap.engine.cache" level="DEBUG" >
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <!-- Log transaction related activity -->
+        <Logger name="com.ibatis.sqlmap.engine.transaction" level="DEBUG">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <!-- Log all JDBC resource acquisition -->
+        <Logger name="com.ibatis.sqlmap.engine.mapping.result" level="DEBUG" >
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="com.ibatis.sqlmap.engine.type" level="DEBUG" >
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <!-- Log everything (a lot of information, but very useful for troubleshooting) -->
+        <Logger name="com.ibatis" level="DEBUG">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <Logger name="org.hsqldb" level="DEBUG">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <Root level="ERROR">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
