@@ -1145,4 +1145,27 @@ public class DepositSoapEndpoint {
         }
         return null;
     }*/
+
+    /*
+
+    //------
+    if(isRequestValid(accountBalanceRequest)) {
+			response = createDummyResponse();
+		} else {
+			throw new AccountNumberNotFoundException(
+					"Account number " + accountBalanceRequest.getNumber() + " not valid.");
+		}
+    //------
+    private boolean isRequestValid(final AccountBalanceRequest accountBalanceRequest) {
+		final boolean valid;
+
+		if(accountBalanceRequest.getNumber().startsWith("9")) {
+			valid = false;
+		} else {
+			valid = true;
+		}
+
+		return valid;
+	}
+     */
 }
