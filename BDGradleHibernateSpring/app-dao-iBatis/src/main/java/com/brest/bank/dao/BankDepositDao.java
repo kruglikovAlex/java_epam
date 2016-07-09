@@ -313,14 +313,14 @@ public interface BankDepositDao {
     *
     * @param deposit BankDeposit - Bank Deposit to be stored in the database
     */
-    //void updateBankDeposit(BankDeposit deposit);
+    void updateBankDeposit(BankDeposit deposit);
 
    /**
     * Deleting Bank Deposit by ID
     *
     * @param id Long - id of the Bank Deposit to be removed
     */
-    //void deleteBankDeposit(Long id);
+    void deleteBankDeposit(Long id);
 
     /**
      *

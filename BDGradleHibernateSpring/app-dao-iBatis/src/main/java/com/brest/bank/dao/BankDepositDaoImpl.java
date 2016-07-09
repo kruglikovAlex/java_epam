@@ -275,6 +275,48 @@ public class BankDepositDaoImpl implements BankDepositDao{
         }
     }
 
+    /**
+     * Updating Bank Deposit
+     *
+     * @param deposit BankDeposit - Bank Deposit to be stored in the database
+     */
+    public void updateBankDeposit(BankDeposit deposit){
+        LOGGER.debug("updateBankDeposit({})",deposit.toString());
+        Assert.notNull(deposit,ERROR_METHOD_PARAM);
+        Assert.notNull(deposit.getDepositId(),ERROR_NULL_PARAM);
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            smc.update("BankDeposit.update",deposit);
+        }catch (Exception e){
+            LOGGER.error("error - updateBankDeposit({}) - {}", deposit, e.toString());
+            throw new IllegalArgumentException("error - updateBankDeposit()"+e.toString());
+        }
+    }
+
+    /**
+     * Deleting Bank Deposit by ID
+     *
+     * @param depositId Long - id of the Bank Deposit to be removed
+     */
+    public void deleteBankDeposit(Long depositId){
+        LOGGER.debug("deleteBankDeposit({})",depositId);
+        Assert.notNull(depositId,ERROR_METHOD_PARAM);
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            Map param = new HashMap();
+            param.put("depositId",depositId);
+
+            smc.delete("BankDeposit.delete",param);
+        }catch (Exception e){
+            LOGGER.error("error - deleteBankDeposit({}) - {}", depositId, e.toString());
+            throw new IllegalArgumentException("error - deleteBankDeposit()"+e.toString());
+        }
+    }
+
     public Integer rowCount(){
         LOGGER.debug("rowCount()");
         Integer count = 0;

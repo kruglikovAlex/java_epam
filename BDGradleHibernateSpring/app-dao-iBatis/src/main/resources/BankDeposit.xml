@@ -107,6 +107,43 @@
         </dynamic>
     </select>
 
+    <update id="update" parameterClass="com.brest.bank.domain.BankDeposit">
+        update BANKDEPOSIT set
+        <isNotEmpty property="depositName">
+            depositName = #depositName#,
+        </isNotEmpty>
+        <isNotEmpty property="depositMinTerm">
+            depositMinTerm = #depositMinTerm#,
+        </isNotEmpty>
+        <isNotEmpty property="depositMinAmount">
+            depositMinAmount = #depositMinAmount#,
+        </isNotEmpty>
+        <isNotEmpty property="depositCurrency">
+            depositCurrency = #depositCurrency#,
+        </isNotEmpty>
+        <isNotEmpty property="depositInterestRate">
+            depositInterestRate = #depositInterestRate#,
+        </isNotEmpty>
+        <isNotEmpty property="depositAddConditions">
+            depositAddConditions = #depositAddConditions#
+        </isNotEmpty>
+
+        <dynamic prepend="WHERE">
+            <isNotEmpty property="depositId">
+                depositId = #depositId#
+            </isNotEmpty>
+        </dynamic>
+    </update>
+
+    <delete id="delete" parameterClass="java.util.Map">
+        delete from BANKDEPOSIT
+        <dynamic prepend="WHERE">
+            <isNotEmpty property="depositId">
+                depositId = #depositId#
+            </isNotEmpty>
+        </dynamic>
+    </delete>
+
     <select id="rowCount" resultClass="int">
         select count(*) from BANKDEPOSIT
     </select>

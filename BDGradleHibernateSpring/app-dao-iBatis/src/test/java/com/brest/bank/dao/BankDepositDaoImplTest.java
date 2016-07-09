@@ -145,6 +145,38 @@ public class BankDepositDaoImplTest {
     }
 
     @Test
+    public void testUpdateBankDeposit(){
+        String testDeposit;
+
+        deposit = deposits.get(4);
+        Long id = deposit.getDepositId();
+
+        testDeposit = deposit.toString();
+
+        deposit.setDepositName("UpdateDepositName");
+        deposit.setDepositMinAmount(10);
+        deposit.setDepositCurrency("eur");
+        deposit.setDepositAddConditions("UpdateConditions");
+
+        depositDao.updateBankDeposit(deposit);
+
+        assertNotEquals(depositDao.getBankDepositByIdCriteria(id).toString(),testDeposit);
+        assertEquals(depositDao.getBankDepositByIdCriteria(id).toString(),deposit.toString());
+    }
+
+    @Test
+    public void testRemoveBankDeposit() {
+        assertNotNull(deposits);
+        assertFalse(deposits.isEmpty());
+        sizeBefore = deposits.size();
+        LOGGER.debug("size before - {}",sizeBefore);
+        depositDao.deleteBankDeposit(3L);
+        deposits = depositDao.getBankDepositsCriteria();
+        LOGGER.debug("size after - {}",deposits.size());
+        assertEquals(sizeBefore-1,deposits.size());
+    }
+
+    @Test
     public void testRowCount(){
         Integer count = depositDao.rowCount();
         LOGGER.debug("count = {}",count);
