@@ -90,8 +90,8 @@ public interface BankDepositDao {
     * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
     * with the specified task`s date return of deposit
     */
-    //List<BankDeposit> getBankDepositsFromToDateReturnDeposit(Date startDate,
-    //                                                         Date endDate);
+    List<BankDeposit> getBankDepositsFromToDateReturnDeposit(Date startDate,
+                                                             Date endDate);
 
    /**
     * Get Bank Deposit by NAME with depositors
@@ -100,7 +100,7 @@ public interface BankDepositDao {
     * @return Map - a bank deposit with a report on all relevant
     * bank depositors
     */
-    //Map getBankDepositByNameWithDepositors(String name);
+    Map getBankDepositByNameWithDepositors(String name);
 
    /**
     * Get Bank Deposit by NAME with depositors from-to Date Deposit values
@@ -111,9 +111,9 @@ public interface BankDepositDao {
     * @return Map - a bank deposit with a report on all relevant
     * bank depositors with the specified task`s date of deposit
     */
-    //Map getBankDepositByNameFromToDateDepositWithDepositors(String name,
-    //                                                        Date startDate,
-    //                                                        Date endDate);
+    Map getBankDepositByNameFromToDateDepositWithDepositors(String name,
+                                                            Date startDate,
+                                                            Date endDate);
 
    /**
     * Get Bank Deposit by NAME with depositor from-to Date Return Deposit values
@@ -124,9 +124,9 @@ public interface BankDepositDao {
     * @return Map - a bank deposit with a report on all relevant
     * bank depositors with the specified task`s date return of deposit
     */
-    //Map getBankDepositByNameFromToDateReturnDepositWithDepositors(String name,
-    //                                                              Date startDate,
-    //                                                              Date endDate);
+    Map getBankDepositByNameFromToDateReturnDepositWithDepositors(String name,
+                                                                  Date startDate,
+                                                                  Date endDate);
 
    /**
     * Get Bank Deposit by ID with depositors
@@ -135,7 +135,7 @@ public interface BankDepositDao {
     * @return Map - a bank deposit with a report on all relevant
     * bank depositors
     */
-    //Map getBankDepositByIdWithDepositors(Long id);
+    Map getBankDepositByIdWithDepositors(Long id);
 
    /**
     * Get Bank Deposits by ID with depositors from-to Date Deposit values
@@ -146,9 +146,9 @@ public interface BankDepositDao {
     * @return Map - a bank deposit with a report on all relevant
     * bank depositors with the specified task`s date of deposit
     */
-    //Map getBankDepositByIdFromToDateDepositWithDepositors(Long id,
-    //                                                      Date startDate,
-    //                                                      Date endDate);
+    Map getBankDepositByIdFromToDateDepositWithDepositors(Long id,
+                                                          Date startDate,
+                                                          Date endDate);
 
    /**
     * Get Bank Deposit by ID with depositors from-to Date Return Deposit values
@@ -159,9 +159,9 @@ public interface BankDepositDao {
     * @return Map - a bank deposit with a report on all relevant
     * bank depositors with the specified task`s date return deposit
     */
-    //Map getBankDepositByIdFromToDateReturnDepositWithDepositors(Long id,
-     //                                                           Date startDate,
-     //                                                           Date endDate);
+    Map getBankDepositByIdFromToDateReturnDepositWithDepositors(Long id,
+                                                                Date startDate,
+                                                                Date endDate);
 
     /**
      * Get Bank Deposits by Min term with depositors

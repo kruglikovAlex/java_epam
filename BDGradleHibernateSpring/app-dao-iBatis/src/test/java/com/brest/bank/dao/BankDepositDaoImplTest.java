@@ -1,6 +1,7 @@
 package com.brest.bank.dao;
 
 import com.brest.bank.domain.BankDeposit;
+import com.brest.bank.domain.BankDepositor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,6 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -142,6 +144,220 @@ public class BankDepositDaoImplTest {
                 "depositCurrency=eur, depositInterestRate=5, depositAddConditions=condition1}, " +
                 "BankDeposit: { depositId=3, depositName=depositName3, depositMinTerm=15, depositMinAmount=400, " +
                 "depositCurrency=usd, depositInterestRate=7, depositAddConditions=condition3}]",deposits.toString());
+    }
+
+    @Test
+    public void testGetBankDepositsBetweenDateReturnDeposit() throws Exception {
+        Date startDate = dateFormat.parse("2015-12-06");
+        Date endDate = dateFormat.parse("2015-12-08");
+
+        deposits = depositDao.getBankDepositsFromToDateDeposit(startDate, endDate);
+        LOGGER.debug("deposits = {}", deposits);
+
+        assertFalse(ERROR_EMPTY_BD,deposits.isEmpty());
+        assertThat(ERROR_SIZE,deposits.size(), is(not(0)));
+        assertNotNull(ERROR_NULL,deposits);
+
+        assertEquals("[BankDeposit: { depositId=1, depositName=depositName1, depositMinTerm=13, depositMinAmount=200, " +
+                "depositCurrency=eur, depositInterestRate=5, depositAddConditions=condition1}, " +
+                "BankDeposit: { depositId=2, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
+                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}, " +
+                "BankDeposit: { depositId=3, depositName=depositName3, depositMinTerm=15, depositMinAmount=400, " +
+                "depositCurrency=usd, depositInterestRate=7, depositAddConditions=condition3}]",deposits.toString());
+    }
+
+    @Test
+    public void testGetBankDepositByNameWithDepositors() throws ParseException {
+        int sumAmountDeposit = 2000,
+                sumAmountPlusDeposit = 80,
+                sumAmountMinusDeposit = 80;
+        String name = "depositName1";
+
+        deposit = depositDao.getBankDepositByNameCriteria(name);
+        LOGGER.debug("deposit = {}", deposit);
+
+        Map list = depositDao.getBankDepositByNameWithDepositors(name);
+        LOGGER.debug("list = {}", list);
+
+        assertNotNull(ERROR_NULL,list);
+
+        assertEquals(deposit.getDepositId(), list.get("DEPOSITID"));
+        assertEquals(deposit.getDepositName(), list.get("DEPOSITNAME"));
+        assertEquals(deposit.getDepositMinTerm(), list.get("DEPOSITMINTERM"));
+        assertEquals(deposit.getDepositMinAmount(), list.get("DEPOSITMINAMOUNT"));
+        assertEquals(deposit.getDepositCurrency(), list.get("DEPOSITCURRENCY"));
+        assertEquals(deposit.getDepositInterestRate(), list.get("DEPOSITINTERESTRATE"));
+        assertEquals(deposit.getDepositAddConditions(), list.get("DEPOSITADDCONDITIONS"));
+
+        assertTrue("Error sum amount", sumAmountDeposit ==
+                Integer.parseInt(list.get("DEPOSITORAMOUNTSUM").toString()));
+        assertTrue("Error sum plus amount", sumAmountPlusDeposit ==
+                Integer.parseInt(list.get("DEPOSITORAMOUNTPLUSSUM").toString()));
+        assertTrue("Error sum minus amount", sumAmountMinusDeposit ==
+                Integer.parseInt(list.get("DEPOSITORAMOUNTMINUSSUM").toString()));
+    }
+
+    @Test
+    public void testGetBankDepositByNameFromToDateDepositWithDepositors() throws ParseException{
+        Integer sumAmountDeposit=1001,
+                sumAmountPlusDeposit=20,
+                sumAmountMinusDeposit=20;
+        String name = "depositName1";
+        Date start = dateFormat.parse("2015-12-01");
+        Date end = dateFormat.parse("2015-12-05");
+
+        deposit = depositDao.getBankDepositByNameCriteria(name);
+        LOGGER.debug("deposit = {}", deposit);
+
+        Map list = depositDao.getBankDepositByNameFromToDateDepositWithDepositors(name,start,end);
+        LOGGER.debug("list = {}", list);
+
+        assertNotNull(ERROR_NULL,list);
+
+        assertEquals(deposit.getDepositId(), list.get("DEPOSITID"));
+        assertEquals(deposit.getDepositName(), list.get("DEPOSITNAME"));
+        assertEquals(deposit.getDepositMinTerm(), list.get("DEPOSITMINTERM"));
+        assertEquals(deposit.getDepositMinAmount(), list.get("DEPOSITMINAMOUNT"));
+        assertEquals(deposit.getDepositCurrency(), list.get("DEPOSITCURRENCY"));
+        assertEquals(deposit.getDepositInterestRate(), list.get("DEPOSITINTERESTRATE"));
+        assertEquals(deposit.getDepositAddConditions(), list.get("DEPOSITADDCONDITIONS"));
+
+        assertTrue("Error sum amount", sumAmountDeposit ==
+                Integer.parseInt(list.get("DEPOSITORAMOUNTSUM").toString()));
+        assertTrue("Error sum plus amount", sumAmountPlusDeposit ==
+                Integer.parseInt(list.get("DEPOSITORAMOUNTPLUSSUM").toString()));
+        assertTrue("Error sum minus amount", sumAmountMinusDeposit ==
+                Integer.parseInt(list.get("DEPOSITORAMOUNTMINUSSUM").toString()));
+    }
+
+    @Test
+    public void testGetBankDepositByNameFromToDateReturnDepositWithDepositors() throws ParseException{
+        Integer sumAmountDeposit=999,
+                sumAmountPlusDeposit=60,
+                sumAmountMinusDeposit=60;
+        String name = "depositName1";
+        Date start = dateFormat.parse("2015-12-06");
+        Date end = dateFormat.parse("2015-12-07");
+
+        deposit = depositDao.getBankDepositByNameCriteria(name);
+        LOGGER.debug("deposit = {}", deposit);
+
+        Map list = depositDao.getBankDepositByNameFromToDateReturnDepositWithDepositors(name,start,end);
+        LOGGER.debug("list = {}", list);
+
+        assertNotNull(ERROR_NULL,list);
+
+        assertEquals(deposit.getDepositId(), list.get("DEPOSITID"));
+        assertEquals(deposit.getDepositName(), list.get("DEPOSITNAME"));
+        assertEquals(deposit.getDepositMinTerm(), list.get("DEPOSITMINTERM"));
+        assertEquals(deposit.getDepositMinAmount(), list.get("DEPOSITMINAMOUNT"));
+        assertEquals(deposit.getDepositCurrency(), list.get("DEPOSITCURRENCY"));
+        assertEquals(deposit.getDepositInterestRate(), list.get("DEPOSITINTERESTRATE"));
+        assertEquals(deposit.getDepositAddConditions(), list.get("DEPOSITADDCONDITIONS"));
+
+        assertTrue("Error sum amount", sumAmountDeposit ==
+                Integer.parseInt(list.get("DEPOSITORAMOUNTSUM").toString()));
+        assertTrue("Error sum plus amount", sumAmountPlusDeposit ==
+                Integer.parseInt(list.get("DEPOSITORAMOUNTPLUSSUM").toString()));
+        assertTrue("Error sum minus amount", sumAmountMinusDeposit ==
+                Integer.parseInt(list.get("DEPOSITORAMOUNTMINUSSUM").toString()));
+    }
+
+    @Test
+    public void testGetBankDepositByIdWithDepositors() throws ParseException {
+        int sumAmountDeposit = 2000,
+                sumAmountPlusDeposit = 80,
+                sumAmountMinusDeposit = 80;
+        String name = "depositName1";
+
+        deposit = depositDao.getBankDepositByIdCriteria(1L);
+        LOGGER.debug("deposit = {}", deposit);
+
+        Map list = depositDao.getBankDepositByIdWithDepositors(1L);
+        LOGGER.debug("list = {}", list);
+
+        assertNotNull(ERROR_NULL,list);
+
+        assertEquals(deposit.getDepositId(), list.get("DEPOSITID"));
+        assertEquals(deposit.getDepositName(), list.get("DEPOSITNAME"));
+        assertEquals(deposit.getDepositMinTerm(), list.get("DEPOSITMINTERM"));
+        assertEquals(deposit.getDepositMinAmount(), list.get("DEPOSITMINAMOUNT"));
+        assertEquals(deposit.getDepositCurrency(), list.get("DEPOSITCURRENCY"));
+        assertEquals(deposit.getDepositInterestRate(), list.get("DEPOSITINTERESTRATE"));
+        assertEquals(deposit.getDepositAddConditions(), list.get("DEPOSITADDCONDITIONS"));
+
+        assertTrue("Error sum amount", sumAmountDeposit ==
+                Integer.parseInt(list.get("DEPOSITORAMOUNTSUM").toString()));
+        assertTrue("Error sum plus amount", sumAmountPlusDeposit ==
+                Integer.parseInt(list.get("DEPOSITORAMOUNTPLUSSUM").toString()));
+        assertTrue("Error sum minus amount", sumAmountMinusDeposit ==
+                Integer.parseInt(list.get("DEPOSITORAMOUNTMINUSSUM").toString()));
+    }
+
+    @Test
+    public void testGetBankDepositByIdFromToDateDepositWithDepositors() throws ParseException{
+        Integer sumAmountDeposit=1001,
+                sumAmountPlusDeposit=20,
+                sumAmountMinusDeposit=20;
+        Long id = 1L;
+        Date start = dateFormat.parse("2015-12-01");
+        Date end = dateFormat.parse("2015-12-05");
+
+        deposit = depositDao.getBankDepositByIdCriteria(1L);
+        LOGGER.debug("deposit = {}", deposit);
+
+        Map list = depositDao.getBankDepositByIdFromToDateDepositWithDepositors(id,start,end);
+        LOGGER.debug("list = {}", list);
+
+        assertNotNull(ERROR_NULL,list);
+
+        assertEquals(deposit.getDepositId(), list.get("DEPOSITID"));
+        assertEquals(deposit.getDepositName(), list.get("DEPOSITNAME"));
+        assertEquals(deposit.getDepositMinTerm(), list.get("DEPOSITMINTERM"));
+        assertEquals(deposit.getDepositMinAmount(), list.get("DEPOSITMINAMOUNT"));
+        assertEquals(deposit.getDepositCurrency(), list.get("DEPOSITCURRENCY"));
+        assertEquals(deposit.getDepositInterestRate(), list.get("DEPOSITINTERESTRATE"));
+        assertEquals(deposit.getDepositAddConditions(), list.get("DEPOSITADDCONDITIONS"));
+
+        assertTrue("Error sum amount", sumAmountDeposit ==
+                Integer.parseInt(list.get("DEPOSITORAMOUNTSUM").toString()));
+        assertTrue("Error sum plus amount", sumAmountPlusDeposit ==
+                Integer.parseInt(list.get("DEPOSITORAMOUNTPLUSSUM").toString()));
+        assertTrue("Error sum minus amount", sumAmountMinusDeposit ==
+                Integer.parseInt(list.get("DEPOSITORAMOUNTMINUSSUM").toString()));
+    }
+
+    @Test
+    public void testGetBankDepositByIdFromToDateReturnDepositWithDepositors() throws ParseException{
+        Integer sumAmountDeposit=999,
+                sumAmountPlusDeposit=60,
+                sumAmountMinusDeposit=60;
+        Long id = 1L;
+        Date start = dateFormat.parse("2015-12-06");
+        Date end = dateFormat.parse("2015-12-07");
+
+        deposit = depositDao.getBankDepositByIdCriteria(1L);
+        LOGGER.debug("deposit = {}", deposit);
+
+        Map list = depositDao.getBankDepositByIdFromToDateReturnDepositWithDepositors(id,start,end);
+        LOGGER.debug("list = {}", list);
+
+        assertNotNull(ERROR_NULL,list);
+
+        assertEquals(deposit.getDepositId(), list.get("DEPOSITID"));
+        assertEquals(deposit.getDepositName(), list.get("DEPOSITNAME"));
+        assertEquals(deposit.getDepositMinTerm(), list.get("DEPOSITMINTERM"));
+        assertEquals(deposit.getDepositMinAmount(), list.get("DEPOSITMINAMOUNT"));
+        assertEquals(deposit.getDepositCurrency(), list.get("DEPOSITCURRENCY"));
+        assertEquals(deposit.getDepositInterestRate(), list.get("DEPOSITINTERESTRATE"));
+        assertEquals(deposit.getDepositAddConditions(), list.get("DEPOSITADDCONDITIONS"));
+
+        assertTrue("Error sum amount", sumAmountDeposit ==
+                Integer.parseInt(list.get("DEPOSITORAMOUNTSUM").toString()));
+        assertTrue("Error sum plus amount", sumAmountPlusDeposit ==
+                Integer.parseInt(list.get("DEPOSITORAMOUNTPLUSSUM").toString()));
+        assertTrue("Error sum minus amount", sumAmountMinusDeposit ==
+                Integer.parseInt(list.get("DEPOSITORAMOUNTMINUSSUM").toString()));
     }
 
     @Test

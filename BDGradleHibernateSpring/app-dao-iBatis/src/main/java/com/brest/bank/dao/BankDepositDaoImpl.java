@@ -254,6 +254,243 @@ public class BankDepositDaoImpl implements BankDepositDao{
     }
 
     /**
+     * Get Bank Deposits from-to Date Return Deposit values
+     *
+     * @param startDate Date - start value of the date return deposit (startDate < endDate)
+     * @param endDate Date - end value of the date return deposit (endDate > startDate)
+     * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
+     * with the specified task`s date return of deposit
+     */
+    public List<BankDeposit> getBankDepositsFromToDateReturnDeposit(Date startDate,
+                                                                    Date endDate){
+        LOGGER.debug("getBankDepositsFromToDateReturnDeposit(from:{}, to:{})",dateFormat.format(startDate),
+                dateFormat.format(endDate));
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate),ERROR_FROM_TO_PARAM);
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            Map param = new HashMap();
+            param.put("startDate",startDate);
+            param.put("endDate",endDate);
+
+            deposits = (List<BankDeposit>)smc.queryForList("BankDeposit.getFromToDateReturn",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositsFromToDateReturnDeposit(from:{}, to:{}) - {}",dateFormat.format(startDate),
+                    dateFormat.format(endDate),e.toString());
+            throw new IllegalArgumentException("error - getBankDepositsFromToDateReturnDeposit() - {}"+e.toString());
+        }
+        return deposits;
+    }
+
+    /**
+     * Get Bank Deposit by NAME with depositors
+     *
+     * @param name String - name of the Bank Deposit to return
+     * @return Map - a bank deposit with a report on all relevant
+     * bank depositors
+     */
+    public Map getBankDepositByNameWithDepositors(String name){
+        LOGGER.debug("getBankDepositByNameWithDepositors({})",name);
+        Assert.notNull(name,ERROR_METHOD_PARAM);
+        Map list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            BankDeposit param = new BankDeposit();
+            param.setDepositName(name);
+
+            list = (Map) smc.queryForObject("BankDeposit.getByNameWithDepositors",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositByNameWithDepositors({}) - {}", name, e.toString());
+            throw new IllegalArgumentException("error - getBankDepositByNameWithDepositors() "+e.toString());
+        }
+        return list;
+    }
+
+    /**
+     * Get Bank Deposit by NAME with depositors from-to Date Deposit values
+     *
+     * @param name String - name of the Bank Deposit to return
+     * @param startDate Date - start value of the date deposit (startDate < endDate)
+     * @param endDate Date - end value of the date deposit (endDate > startDate)
+     * @return Map - a bank deposit with a report on all relevant
+     * bank depositors with the specified task`s date of deposit
+     */
+    public Map getBankDepositByNameFromToDateDepositWithDepositors(String name,
+                                                                   Date startDate,
+                                                                   Date endDate){
+        LOGGER.debug("getBankDepositByNameFromToDateDepositWithDepositors(name: {}, start: {}, end: {})",
+                name,dateFormat.format(startDate),dateFormat.format(endDate));
+        Assert.notNull(name,ERROR_METHOD_PARAM);
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate),ERROR_FROM_TO_PARAM);
+
+        Map list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            Map param = new HashMap();
+                param.put("depositName",name);
+                param.put("startDate",startDate);
+                param.put("endDate",endDate);
+
+            list = (Map)smc.queryForObject("BankDeposit.getByNameFromToDateDepositWithDepositors",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositByNameFromToDateDepositWithDepositors(name: {}, start: {}, end: {}) - {}",
+                    name, dateFormat.format(startDate),dateFormat.format(endDate),e.toString());
+            throw new IllegalArgumentException("error - getBankDepositByNameFromToDateDepositWithDepositors() "+e.toString());
+        }
+        return list;
+    }
+
+    /**
+     * Get Bank Deposit by NAME with depositor from-to Date Return Deposit values
+     *
+     * @param name String - name of the Bank Deposit to return
+     * @param startDate Date - start value of the date return deposit (startDate < endDate)
+     * @param endDate Date - end value of the date return deposit (endDate > startDate)
+     * @return Map - a bank deposit with a report on all relevant
+     * bank depositors with the specified task`s date return of deposit
+     */
+    public Map getBankDepositByNameFromToDateReturnDepositWithDepositors(String name,
+                                                                         Date startDate,
+                                                                         Date endDate){
+        LOGGER.debug("getBankDepositByNameFromToDateReturnDepositWithDepositors(name: {}, start: {}, end: {})",
+                name,dateFormat.format(startDate),dateFormat.format(endDate));
+        Assert.notNull(name,ERROR_METHOD_PARAM);
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate),ERROR_FROM_TO_PARAM);
+
+        Map list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            Map param = new HashMap();
+                param.put("depositName",name);
+                param.put("startDate",startDate);
+                param.put("endDate",endDate);
+
+            list = (Map)smc.queryForObject("BankDeposit.getByNameFromToDateReturnDepositWithDepositors",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositByNameFromToDateReturnDepositWithDepositors(name: {}, start: {}, end: {}) - {}",
+                    name, dateFormat.format(startDate),dateFormat.format(endDate),e.toString());
+            throw new IllegalArgumentException("error - getBankDepositByNameFromToDateReturnDepositWithDepositors() "+e.toString());
+        }
+        return list;
+    }
+
+    /**
+     * Get Bank Deposit by ID with depositors
+     *
+     * @param id Long - depositId of the Bank Deposit to return
+     * @return Map - a bank deposit with a report on all relevant
+     * bank depositors
+     */
+    public Map getBankDepositByIdWithDepositors(Long id){
+        LOGGER.debug("getBankDepositByIdWithDepositors({})",id);
+        Assert.notNull(id,ERROR_METHOD_PARAM);
+
+        Map list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            Map param = new HashMap();
+            param.put("depositId",id);
+
+            list = (Map)smc.queryForObject("BankDeposit.getByIdWithDepositors",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositByIdWithDepositors(id: {}) - {}",id,e.toString());
+            throw new IllegalArgumentException("error - getBankDepositByIdWithDepositors() "+e.toString());
+        }
+        return list;
+    }
+
+    /**
+     * Get Bank Deposits by ID with depositors from-to Date Deposit values
+     *
+     * @param id Long - depositId of the Bank Deposit to return
+     * @param startDate Date - start value of the date deposit (startDate < endDate)
+     * @param endDate Date - end value of the date deposit (endDate > startDate)
+     * @return Map - a bank deposit with a report on all relevant
+     * bank depositors with the specified task`s date of deposit
+     */
+    public Map getBankDepositByIdFromToDateDepositWithDepositors(Long id,
+                                                                 Date startDate,
+                                                                 Date endDate){
+        LOGGER.debug("getBankDepositByIdFromToDateDepositWithDepositors(id:{},from:{},to:{})",id,
+                dateFormat.format(startDate),dateFormat.format(endDate));
+        Assert.notNull(id,ERROR_METHOD_PARAM);
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate));
+
+        Map list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            Map param = new HashMap();
+                param.put("depositId",id);
+                param.put("startDate",startDate);
+                param.put("endDate",endDate);
+
+            list = (Map)smc.queryForObject("BankDeposit.getByIdFromToDateDepositWithDepositors",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositByIdFromToDateDepositWithDepositors(id:{},from:{},to:{}) - {}",
+                    id,dateFormat.format(startDate),dateFormat.format(endDate),e.toString());
+            throw new IllegalArgumentException("error - getBankDepositByIdFromToDateDepositWithDepositors() "+e.toString());
+        }
+        return list;
+    }
+
+    /**
+     * Get Bank Deposit by ID with depositors from-to Date Return Deposit values
+     *
+     * @param id Long - depositId of the Bank Deposit to return
+     * @param startDate Date - start value of the date return deposit (startDate < endDate)
+     * @param endDate Date - end value of the date return deposit (startDate < endDate)
+     * @return Map - a bank deposit with a report on all relevant
+     * bank depositors with the specified task`s date return deposit
+     */
+    public Map getBankDepositByIdFromToDateReturnDepositWithDepositors(Long id,
+                                                                       Date startDate,
+                                                                       Date endDate){
+        LOGGER.debug("getBankDepositByIdFromToDateReturnDepositWithDepositors(id:{},from:{},to:{})",id,
+                dateFormat.format(startDate),dateFormat.format(endDate));
+        Assert.notNull(id,ERROR_METHOD_PARAM);
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate));
+
+        Map list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            Map param = new HashMap();
+            param.put("depositId",id);
+            param.put("startDate",startDate);
+            param.put("endDate",endDate);
+
+            list = (Map)smc.queryForObject("BankDeposit.getByIdFromToDateReturnDepositWithDepositors",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositByIdFromToDateReturnDepositWithDepositors(id:{},from:{},to:{}) - {}",
+                    id,dateFormat.format(startDate),dateFormat.format(endDate),e.toString());
+            throw new IllegalArgumentException("error - getBankDepositByIdFromToDateReturnDepositWithDepositors() "+e.toString());
+        }
+        return list;
+    }
+
+    /**
      * Adding Bank Deposit
      *
      * @param deposit BankDeposit - Bank Deposit to be inserted to the database
