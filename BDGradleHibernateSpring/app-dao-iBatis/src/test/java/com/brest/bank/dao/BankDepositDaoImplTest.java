@@ -399,6 +399,83 @@ public class BankDepositDaoImplTest {
     }
 
     @Test
+    public void testGetBankDepositsByAmountWithDepositors() throws ParseException{
+        int[]   sumAmountDeposit =      new int[]{2000, 0},
+                sumAmountPlusDeposit =  new int[]{80, 0},
+                sumAmountMinusDeposit = new int[]{80, 0};
+
+        Integer amount = 200;
+
+        deposits = new ArrayList<BankDeposit>();
+        deposits.add(depositDao.getBankDepositByIdCriteria(1L));
+        LOGGER.debug("deposits = {}", deposit);
+
+        List<Map> list = depositDao.getBankDepositsByAmountWithDepositors(amount);
+        LOGGER.debug("list = {}", list);
+
+        assertNotNull(ERROR_NULL,list);
+
+        int i = 0;
+        for (Map aList: list) {
+            assertEquals(deposits.get(i).getDepositId(), aList.get("depositId"));
+            assertEquals(deposits.get(i).getDepositName(), aList.get("depositName"));
+            assertEquals(deposits.get(i).getDepositMinTerm(), aList.get("depositMinTerm"));
+            assertEquals(deposits.get(i).getDepositMinAmount(), aList.get("depositMinAmount"));
+            assertEquals(deposits.get(i).getDepositCurrency(), aList.get("depositCurrency"));
+            assertEquals(deposits.get(i).getDepositInterestRate(), aList.get("depositInterestRate"));
+            assertEquals(deposits.get(i).getDepositAddConditions(), aList.get("depositAddConditions"));
+
+            sumAmountDeposit[1] +=      Integer.parseInt(aList.get("depositorAmountSum").toString());
+            sumAmountPlusDeposit[1] +=  Integer.parseInt(aList.get("depositorAmountPlusSum").toString());
+            sumAmountMinusDeposit[1] += Integer.parseInt(aList.get("depositorAmountMinusSum").toString());
+
+            i++;
+        }
+
+        assertTrue("Error sum amount", sumAmountDeposit[0] == sumAmountDeposit[1]);
+        assertTrue("Error sum plus amount", sumAmountPlusDeposit[0] == sumAmountPlusDeposit[1]);
+        assertTrue("Error sum minus amount", sumAmountMinusDeposit[0] == sumAmountMinusDeposit[1]);
+    }
+
+    @Test
+    public void testGetBankDepositsByRateWithDepositors() throws ParseException{
+        int[]   sumAmountDeposit =      new int[]{2000, 0},
+                sumAmountPlusDeposit =  new int[]{80, 0},
+                sumAmountMinusDeposit = new int[]{80, 0};
+
+        Integer rate = 5;
+
+        deposits = depositDao.getBankDepositsFromToInterestRateCriteria(5,5);
+        LOGGER.debug("deposits = {}", deposits);
+
+        List<Map> list = depositDao.getBankDepositsByRateWithDepositors(rate);
+        LOGGER.debug("list = {}", list);
+
+        assertNotNull(ERROR_NULL,list);
+
+        int i = 0;
+        for (Map aList: list) {
+            assertEquals(deposits.get(i).getDepositId(), aList.get("depositId"));
+            assertEquals(deposits.get(i).getDepositName(), aList.get("depositName"));
+            assertEquals(deposits.get(i).getDepositMinTerm(), aList.get("depositMinTerm"));
+            assertEquals(deposits.get(i).getDepositMinAmount(), aList.get("depositMinAmount"));
+            assertEquals(deposits.get(i).getDepositCurrency(), aList.get("depositCurrency"));
+            assertEquals(deposits.get(i).getDepositInterestRate(), aList.get("depositInterestRate"));
+            assertEquals(deposits.get(i).getDepositAddConditions(), aList.get("depositAddConditions"));
+
+            sumAmountDeposit[1] +=      Integer.parseInt(aList.get("depositorAmountSum").toString());
+            sumAmountPlusDeposit[1] +=  Integer.parseInt(aList.get("depositorAmountPlusSum").toString());
+            sumAmountMinusDeposit[1] += Integer.parseInt(aList.get("depositorAmountMinusSum").toString());
+
+            i++;
+        }
+
+        assertTrue("Error sum amount", sumAmountDeposit[0] == sumAmountDeposit[1]);
+        assertTrue("Error sum plus amount", sumAmountPlusDeposit[0] == sumAmountPlusDeposit[1]);
+        assertTrue("Error sum minus amount", sumAmountMinusDeposit[0] == sumAmountMinusDeposit[1]);
+    }
+
+    @Test
     public void testUpdateBankDeposit(){
         String testDeposit;
 

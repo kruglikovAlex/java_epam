@@ -519,6 +519,58 @@ public class BankDepositDaoImpl implements BankDepositDao{
     }
 
     /**
+     * Get Bank Deposits by Min Amount with depositors
+     *
+     * @param amount Integer - Min amount of the Bank Deposit to return
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    public List<Map> getBankDepositsByAmountWithDepositors(Integer amount){
+        LOGGER.debug("getBankDepositByAmountWithDepositors(amount: {})",amount);
+        Assert.notNull(amount,ERROR_METHOD_PARAM);
+        List<Map> list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            BankDeposit param = new BankDeposit();
+            param.setDepositMinAmount(amount);
+
+            list = smc.queryForList("BankDeposit.getByAmountWithDepositors",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositsByAmountWithDepositors(amount:{}) - {}",amount,e.toString());
+            throw new IllegalArgumentException("error - getBankDepositsByAmountWithDepositors() "+e.toString());
+        }
+        return list;
+    }
+
+    /**
+     * Get Bank Deposits by Interest Rate with depositors
+     *
+     * @param rate Integer - Interest Rate of the Bank Deposit to return
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    public List<Map> getBankDepositsByRateWithDepositors(Integer rate){
+        LOGGER.debug("getBankDepositsByRateWithDepositors(rate: {})",rate);
+        Assert.notNull(rate,ERROR_METHOD_PARAM);
+        List<Map> list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            BankDeposit param = new BankDeposit();
+            param.setDepositInterestRate(rate);
+
+            list = smc.queryForList("BankDeposit.getByRateWithDepositors",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositsByRateWithDepositors(rate:{}) - {}",rate,e.toString());
+            throw new IllegalArgumentException("error - getBankDepositsByRateWithDepositors() "+e.toString());
+        }
+        return list;
+    }
+
+    /**
      * Adding Bank Deposit
      *
      * @param deposit BankDeposit - Bank Deposit to be inserted to the database

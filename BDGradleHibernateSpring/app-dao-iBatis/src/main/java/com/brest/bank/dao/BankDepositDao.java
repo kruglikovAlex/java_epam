@@ -179,7 +179,7 @@ public interface BankDepositDao {
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
-   // List<Map> getBankDepositsByAmountWithDepositors(Integer amount);
+    List<Map> getBankDepositsByAmountWithDepositors(Integer amount);
 
     /**
      * Get Bank Deposits by Interest Rate with depositors
@@ -188,7 +188,7 @@ public interface BankDepositDao {
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
-    //List<Map> getBankDepositsByRateWithDepositors(Integer rate);
+    List<Map> getBankDepositsByRateWithDepositors(Integer rate);
 
     /**
      * Get Bank Deposit by Depositor ID with depositors

@@ -251,6 +251,26 @@
         group by dep.depositId
     </select>
 
+    <select id="getByAmountWithDepositors" parameterClass="BankDeposit" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <dynamic prepend="WHERE">
+            <isNotEmpty property="depositMinAmount">
+                dep.depositMinAmount = #depositMinAmount#
+            </isNotEmpty>
+        </dynamic>
+        group by dep.depositId
+    </select>
+
+    <select id="getByRateWithDepositors" parameterClass="BankDeposit" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <dynamic prepend="WHERE">
+            <isNotEmpty property="depositInterestRate">
+                dep.depositInterestRate = #depositInterestRate#
+            </isNotEmpty>
+        </dynamic>
+        group by dep.depositId
+    </select>
+
     <update id="update" parameterClass="BankDeposit">
         update BANKDEPOSIT set
         <isNotEmpty property="depositName">
