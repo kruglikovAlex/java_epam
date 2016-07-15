@@ -170,7 +170,7 @@ public interface BankDepositDao {
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
-    //List<Map> getBankDepositsByTermWithDepositors(Integer term);
+    List<Map> getBankDepositsByTermWithDepositors(Integer term);
 
     /**
      * Get Bank Deposits by Min Amount with depositors

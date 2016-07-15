@@ -7,6 +7,8 @@ import com.ibatis.common.resources.Resources;
 import com.ibatis.sqlmap.client.SqlMapClient;
 import com.ibatis.sqlmap.client.SqlMapClientBuilder;
 
+import com.ibatis.sqlmap.client.event.RowHandler;
+import com.ibatis.sqlmap.engine.mapping.statement.DefaultRowHandler;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -303,7 +305,7 @@ public class BankDepositDaoImpl implements BankDepositDao{
             BankDeposit param = new BankDeposit();
             param.setDepositName(name);
 
-            list = (Map) smc.queryForObject("BankDeposit.getByNameWithDepositors",param);
+            list = (HashMap)smc.queryForObject("BankDeposit.getByNameWithDepositors",param);
         }catch (Exception e){
             LOGGER.error("error - getBankDepositByNameWithDepositors({}) - {}", name, e.toString());
             throw new IllegalArgumentException("error - getBankDepositByNameWithDepositors() "+e.toString());
@@ -486,6 +488,32 @@ public class BankDepositDaoImpl implements BankDepositDao{
             LOGGER.error("error - getBankDepositByIdFromToDateReturnDepositWithDepositors(id:{},from:{},to:{}) - {}",
                     id,dateFormat.format(startDate),dateFormat.format(endDate),e.toString());
             throw new IllegalArgumentException("error - getBankDepositByIdFromToDateReturnDepositWithDepositors() "+e.toString());
+        }
+        return list;
+    }
+
+    /**
+     * Get Bank Deposits by Min term with depositors
+     *
+     * @param term Integer - Min term of the Bank Deposit to return
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    public List<Map> getBankDepositsByTermWithDepositors(Integer term){
+        LOGGER.debug("getBankDepositsByTermWithDepositors({})",term);
+        Assert.notNull(term,ERROR_METHOD_PARAM);
+        List<Map> list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            BankDeposit param = new BankDeposit();
+            param.setDepositMinTerm(term);
+
+            list = smc.queryForList("BankDeposit.getByTermWithDepositors",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositsByTermWithDepositors(term:{}) - {}",term,e.toString());
+            throw new IllegalArgumentException("error - getBankDepositsByTermWithDepositors() "+e.toString());
         }
         return list;
     }

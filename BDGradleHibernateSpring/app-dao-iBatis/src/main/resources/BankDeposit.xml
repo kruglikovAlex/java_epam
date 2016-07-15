@@ -8,31 +8,48 @@
     <sql id="allDeposits">
         select distinct * from BANKDEPOSIT
     </sql>
-    
+
     <sql id="allDepositWithDepositors">
-        select distinct 
-            dep.*,
-            count(depr.depositorId) as depositorCount,
-            sum(depr.depositorAmountDeposit) as depositorAmountSum,
-            sum(depr.depositorAmountPlusDeposit) as depositorAmountPlusSum,
-            sum(depr.depositorAmountMinusDeposit) as depositorAmountMinusSum,
-            dep.depositId as depId
+        select distinct
+        dep.*,
+        count(depr.depositorId) as depositorCount,
+        sum(depr.depositorAmountDeposit) as depositorAmountSum,
+        sum(depr.depositorAmountPlusDeposit) as depositorAmountPlusSum,
+        sum(depr.depositorAmountMinusDeposit) as depositorAmountMinusSum,
+        dep.depositId as depId
         from BANKDEPOSIT dep
-            left outer join
-            BANKDEPOSITOR depr
-            on dep.depositId=depr.depositId
+        left outer join
+        BANKDEPOSITOR depr
+        on dep.depositId=depr.depositId
     </sql>
 
-    <insert id="insert" parameterClass="com.brest.bank.domain.BankDeposit">
+    <typeAlias alias="BankDeposit" type="com.brest.bank.domain.BankDeposit"/>
+    <typeAlias alias="BankDepositor" type="com.brest.bank.domain.BankDepositor"/>
+
+    <resultMap id="report" groupBy="depositId" class="java.util.HashMap">
+        <result property="depositId" column="depositId"/>
+        <result property="depositName" column="depositName"/>
+        <result property="depositMinTerm" column="depositMinTerm"/>
+        <result property="depositMinAmount" column="depositMinAmount"/>
+        <result property="depositCurrency" column="depositCurrency"/>
+        <result property="depositInterestRate" column="depositInterestRate"/>
+        <result property="depositAddConditions" column="depositAddConditions"/>
+        <result property="depositorCount" column="depositorCount"/>
+        <result property="depositorAmountSum" column="depositorAmountSum"/>
+        <result property="depositorAmountPlusSum" column="depositorAmountPlusSum"/>
+        <result property="depositorAmountMinusSum" column="depositorAmountMinusSum"/>
+    </resultMap>
+
+    <insert id="insert" parameterClass="BankDeposit">
         insert into BANKDEPOSIT (depositName, depositMinTerm, depositMinAmount, depositCurrency, depositInterestRate, depositAddConditions)
         values (#depositName#, #depositMinTerm#, #depositMinAmount#, #depositCurrency#, #depositInterestRate#, #depositAddConditions#);
     </insert>
 
-    <select id="getAll" resultClass="com.brest.bank.domain.BankDeposit">
+    <select id="getAll" resultClass="BankDeposit">
         <include refid="allDeposits"/>
     </select>
 
-    <select id="getById" resultClass="com.brest.bank.domain.BankDeposit">
+    <select id="getById" resultClass="BankDeposit">
 
         <include refid="allDeposits"/>
 
@@ -43,7 +60,7 @@
         </dynamic>
     </select>
 
-    <select id="getByName" resultClass="com.brest.bank.domain.BankDeposit">
+    <select id="getByName" resultClass="BankDeposit">
 
         <include refid="allDeposits"/>
 
@@ -54,7 +71,7 @@
         </dynamic>
     </select>
 
-    <select id="getByCurrency" resultClass="com.brest.bank.domain.BankDeposit">
+    <select id="getByCurrency" resultClass="BankDeposit">
 
         <include refid="allDeposits"/>
 
@@ -65,7 +82,7 @@
         </dynamic>
     </select>
 
-    <select id="getByInterestRate" resultClass="com.brest.bank.domain.BankDeposit">
+    <select id="getByInterestRate" resultClass="BankDeposit">
 
         <include refid="allDeposits"/>
 
@@ -76,7 +93,7 @@
         </dynamic>
     </select>
 
-    <select id="getFromToMinTerm" parameterClass="java.util.Map" resultClass="com.brest.bank.domain.BankDeposit">
+    <select id="getFromToMinTerm" parameterClass="hashmap" resultClass="BankDeposit">
 
         <include refid="allDeposits"/>
 
@@ -91,7 +108,7 @@
         </dynamic>
     </select>
 
-    <select id="getFromToInterestRate" parameterClass="java.util.Map" resultClass="com.brest.bank.domain.BankDeposit">
+    <select id="getFromToInterestRate" parameterClass="hashmap" resultClass="BankDeposit">
 
         <include refid="allDeposits"/>
 
@@ -106,7 +123,7 @@
         </dynamic>
     </select>
 
-    <select id="getFromToDate" parameterClass="java.util.Map" resultClass="com.brest.bank.domain.BankDeposit">
+    <select id="getFromToDate" parameterClass="hashmap" resultClass="BankDeposit">
 
         <include refid="allDeposits"/>
         inner join BANKDEPOSITOR depositor on depositId = depositor.depositId
@@ -121,7 +138,7 @@
         </dynamic>
     </select>
 
-    <select id="getFromToDateReturn" parameterClass="java.util.Map" resultClass="com.brest.bank.domain.BankDeposit">
+    <select id="getFromToDateReturn" parameterClass="hashmap" resultClass="BankDeposit">
 
         <include refid="allDeposits"/>
         inner join BANKDEPOSITOR depositor on depositId = depositor.depositId
@@ -136,7 +153,7 @@
         </dynamic>
     </select>
 
-    <select id="getByNameWithDepositors" parameterClass="com.brest.bank.domain.BankDeposit" resultClass="java.util.HashMap">
+    <select id="getByNameWithDepositors" parameterClass="BankDeposit" resultMap="report">
         <include refid="allDepositWithDepositors"/>
         <dynamic prepend="WHERE">
             <isNotEmpty property="depositName">
@@ -146,7 +163,7 @@
         group by dep.depositId
     </select>
 
-    <select id="getByNameFromToDateDepositWithDepositors" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+    <select id="getByNameFromToDateDepositWithDepositors" parameterClass="hashmap" resultMap="report">
         <include refid="allDepositWithDepositors"/>
         <dynamic prepend="WHERE">
             <isNotEmpty property="depositName">
@@ -163,7 +180,7 @@
         group by dep.depositId
     </select>
 
-    <select id="getByNameFromToDateReturnDepositWithDepositors" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+    <select id="getByNameFromToDateReturnDepositWithDepositors" parameterClass="hashmap" resultMap="report">
         <include refid="allDepositWithDepositors"/>
         <dynamic prepend="WHERE">
             <isNotEmpty property="depositName">
@@ -180,7 +197,7 @@
         group by dep.depositId
     </select>
 
-    <select id="getByIdWithDepositors" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+    <select id="getByIdWithDepositors" parameterClass="hashmap" resultMap="report">
         <include refid="allDepositWithDepositors"/>
         <dynamic prepend="WHERE">
             <isNotEmpty property="depositId">
@@ -190,7 +207,7 @@
         group by dep.depositId
     </select>
 
-    <select id="getByIdFromToDateDepositWithDepositors" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+    <select id="getByIdFromToDateDepositWithDepositors" parameterClass="hashmap" resultMap="report">
         <include refid="allDepositWithDepositors"/>
         <dynamic prepend="WHERE">
             <isNotEmpty property="depositId">
@@ -207,7 +224,7 @@
         group by dep.depositId
     </select>
 
-    <select id="getByIdFromToDateReturnDepositWithDepositors" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+    <select id="getByIdFromToDateReturnDepositWithDepositors" parameterClass="hashmap" resultMap="report">
         <include refid="allDepositWithDepositors"/>
         <dynamic prepend="WHERE">
             <isNotEmpty property="depositId">
@@ -224,7 +241,17 @@
         group by dep.depositId
     </select>
 
-    <update id="update" parameterClass="com.brest.bank.domain.BankDeposit">
+    <select id="getByTermWithDepositors" parameterClass="BankDeposit" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <dynamic prepend="WHERE">
+            <isNotEmpty property="depositMinTerm">
+                dep.depositMinTerm = #depositMinTerm#
+            </isNotEmpty>
+        </dynamic>
+        group by dep.depositId
+    </select>
+
+    <update id="update" parameterClass="BankDeposit">
         update BANKDEPOSIT set
         <isNotEmpty property="depositName">
             depositName = #depositName#,
@@ -252,7 +279,7 @@
         </dynamic>
     </update>
 
-    <delete id="delete" parameterClass="java.util.Map">
+    <delete id="delete" parameterClass="hashmap">
         delete from BANKDEPOSIT
         <dynamic prepend="WHERE">
             <isNotEmpty property="depositId">
