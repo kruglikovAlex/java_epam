@@ -197,7 +197,7 @@ public interface BankDepositDao {
      * @return Map - a bank deposit with a report on all relevant
      * bank depositors
      */
-    //Map getBankDepositByDepositorIdWithDepositors(Long id);
+    Map getBankDepositByDepositorIdWithDepositors(Long id);
 
     /**
      * Get Bank Deposit by Depositor Name with depositors
@@ -206,7 +206,7 @@ public interface BankDepositDao {
      * @return Map - a bank deposit with a report on all relevant
      * bank depositors
      */
-    //Map getBankDepositByDepositorNameWithDepositors(String name);
+    Map getBankDepositByDepositorNameWithDepositors(String name);
 
     /**
      * Get Bank Deposits by from-to Depositor Amount with depositors

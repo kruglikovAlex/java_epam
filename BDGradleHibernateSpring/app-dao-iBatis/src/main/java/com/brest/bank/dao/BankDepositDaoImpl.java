@@ -571,6 +571,58 @@ public class BankDepositDaoImpl implements BankDepositDao{
     }
 
     /**
+     * Get Bank Deposit by Depositor ID with depositors
+     *
+     * @param id Long - depositorId of the Bank Depositor
+     * @return Map - a bank deposit with a report on all relevant
+     * bank depositors
+     */
+    public Map getBankDepositByDepositorIdWithDepositors(Long id){
+        LOGGER.debug("getBankDepositByDepositorIdWithDepositors(id:{})",id);
+        Assert.notNull(id,ERROR_METHOD_PARAM);
+        Map list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            BankDepositor param = new BankDepositor();
+            param.setDepositorId(id);
+
+            list = (Map)smc.queryForObject("BankDeposit.getByDepositorIdWithDepositors",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositByDepositorIdWithDepositors(id:{}) - {}",id,e.toString());
+            throw new IllegalArgumentException("error - getBankDepositByDepositorIdWithDepositors() "+e.toString());
+        }
+        return list;
+    }
+
+    /**
+     * Get Bank Deposit by Depositor Name with depositors
+     *
+     * @param name String - depositorName of the Bank Depositor
+     * @return Map - a bank deposit with a report on all relevant
+     * bank depositors
+     */
+    public Map getBankDepositByDepositorNameWithDepositors(String name){
+        LOGGER.debug("getBankDepositByDepositorNameWithDepositors(name:{})",name);
+        Assert.notNull(name,ERROR_METHOD_PARAM);
+        Map list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            BankDepositor param = new BankDepositor();
+            param.setDepositorName(name);
+
+            list = (Map)smc.queryForObject("BankDeposit.getByDepositorNameWithDepositors",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositByDepositorNameWithDepositors(name:{}) - {}",name,e.toString());
+            throw new IllegalArgumentException("error - getBankDepositByDepositorNameWithDepositors() "+e.toString());
+        }
+        return list;
+    }
+
+    /**
      * Adding Bank Deposit
      *
      * @param deposit BankDeposit - Bank Deposit to be inserted to the database
