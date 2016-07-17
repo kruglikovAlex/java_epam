@@ -535,6 +535,121 @@ public class BankDepositDaoImplTest {
                 Integer.parseInt(list.get("depositorAmountMinusSum").toString()));
     }
 
+    @Test
+    public void testGetBankDepositsByDepositorAmountWithDepositors() throws ParseException{
+        int[]   sumAmountDeposit =      new int[]{6000, 0},
+                sumAmountPlusDeposit =  new int[]{300, 0},
+                sumAmountMinusDeposit = new int[]{300, 0};
+
+        Integer amount = 997;
+
+        deposits = new ArrayList<BankDeposit>();
+        deposits.add(depositDao.getBankDepositByIdCriteria(1L));
+        deposits.add(depositDao.getBankDepositByIdCriteria(2L));
+        deposits.add(depositDao.getBankDepositByIdCriteria(3L));
+        LOGGER.debug("deposits = {}", deposit);
+
+        List<Map> list = depositDao.getBankDepositsByDepositorAmountWithDepositors(amount,amount+6);
+        LOGGER.debug("list = {}", list);
+
+        assertNotNull(ERROR_NULL,list);
+
+        int i = 0;
+        for (Map aList: list) {
+            assertEquals(deposits.get(i).getDepositId(), aList.get("depositId"));
+            assertEquals(deposits.get(i).getDepositName(), aList.get("depositName"));
+            assertEquals(deposits.get(i).getDepositMinTerm(), aList.get("depositMinTerm"));
+            assertEquals(deposits.get(i).getDepositMinAmount(), aList.get("depositMinAmount"));
+            assertEquals(deposits.get(i).getDepositCurrency(), aList.get("depositCurrency"));
+            assertEquals(deposits.get(i).getDepositInterestRate(), aList.get("depositInterestRate"));
+            assertEquals(deposits.get(i).getDepositAddConditions(), aList.get("depositAddConditions"));
+
+            sumAmountDeposit[1] +=      Integer.parseInt(aList.get("depositorAmountSum").toString());
+            sumAmountPlusDeposit[1] +=  Integer.parseInt(aList.get("depositorAmountPlusSum").toString());
+            sumAmountMinusDeposit[1] += Integer.parseInt(aList.get("depositorAmountMinusSum").toString());
+
+            i++;
+        }
+
+        assertTrue("Error sum amount", sumAmountDeposit[0] == sumAmountDeposit[1]);
+        assertTrue("Error sum plus amount", sumAmountPlusDeposit[0] == sumAmountPlusDeposit[1]);
+        assertTrue("Error sum minus amount", sumAmountMinusDeposit[0] == sumAmountMinusDeposit[1]);
+    }
+
+    @Test
+    public void testGetBankDepositsWithDepositors() throws Exception {
+        LOGGER.debug("deposits.size()= {}", deposits.size());
+
+        List<Map> list = depositDao.getBankDepositsWithDepositors();
+        LOGGER.debug("list size={},\nlist = {}", list.size(),list);
+
+        assertFalse(ERROR_EMPTY_BD,list.isEmpty());
+        assertThat(ERROR_SIZE,list.size(), is(not(0)));
+        assertNotNull(ERROR_NULL,list);
+
+        assertEquals(deposits.size(), list.size());
+        for (int i=0; i<list.size(); i++) {
+            LOGGER.debug("i-{}, deposits-{}, list-{}",i,deposits.get(i).getDepositId(), list.get(i).get("depositId"));
+            LOGGER.debug("i-{}, deposits-{}, list-{}",i,deposits.get(i).getDepositName(), list.get(i).get("depositName"));
+            LOGGER.debug("i-{}, deposits-{}, list-{}",i,deposits.get(i).getDepositMinTerm(), list.get(i).get("depositMinTerm"));
+            LOGGER.debug("i-{}, deposits-{}, list-{}",i,deposits.get(i).getDepositMinAmount(), list.get(i).get("depositMinAmount"));
+            LOGGER.debug("i-{}, deposits-{}, list-{}",i,deposits.get(i).getDepositCurrency(), list.get(i).get("depositCurrency"));
+            LOGGER.debug("i-{}, deposits-{}, list-{}",i,deposits.get(i).getDepositInterestRate(), list.get(i).get("depositInterestRate"));
+            LOGGER.debug("i-{}, deposits-{}, list-{}",i,deposits.get(i).getDepositAddConditions(), list.get(i).get("depositAddConditions"));
+            LOGGER.debug("i-{}, deposits-{}, list-{}",i,deposits.get(i).getDepositors(), list.get(i).get("depositors"));
+        }
+
+        for (int i=0; i<list.size(); i++) {
+            assertEquals(deposits.get(i).getDepositId(), list.get(i).get("depositId"));
+            assertEquals(deposits.get(i).getDepositName(), list.get(i).get("depositName"));
+            assertEquals(deposits.get(i).getDepositMinTerm(), list.get(i).get("depositMinTerm"));
+            assertEquals(deposits.get(i).getDepositMinAmount(), list.get(i).get("depositMinAmount"));
+            assertEquals(deposits.get(i).getDepositCurrency(), list.get(i).get("depositCurrency"));
+            assertEquals(deposits.get(i).getDepositInterestRate(), list.get(i).get("depositInterestRate"));
+            assertEquals(deposits.get(i).getDepositAddConditions(), list.get(i).get("depositAddConditions"));
+        }
+    }
+
+    @Test
+    public void testGetBankDepositsFromToDateDepositWithDepositors() throws Exception {
+        int[]   sumAmountDeposit =      new int[]{2003, 0},
+                sumAmountPlusDeposit =  new int[]{50, 0},
+                sumAmountMinusDeposit = new int[]{50, 0};
+
+        Date startDate = dateFormat.parse("2015-12-01");
+        Date endDate = dateFormat.parse("2015-12-02");
+
+        deposits = depositDao.getBankDepositsFromToDateDeposit(startDate, endDate);
+        LOGGER.debug("deposits size={},\ndeposits = {}", deposits.size(),deposits);
+
+        List<Map> list = depositDao.getBankDepositsFromToDateDepositWithDepositors(startDate,endDate);
+        LOGGER.debug("list size={},\nlist = {}", list.size(),list);
+
+        assertFalse(ERROR_EMPTY_BD,list.isEmpty());
+        assertThat(ERROR_SIZE,list.size(), is(not(0)));
+        assertNotNull(ERROR_NULL,list);
+
+        assertTrue(list.size()==deposits.size());
+
+        int i=0;
+        while (i<list.size()) {
+            assertEquals(deposits.get(i).getDepositId(), list.get(i).get("depositId"));
+            assertEquals(deposits.get(i).getDepositName(), list.get(i).get("depositName"));
+            assertEquals(deposits.get(i).getDepositMinTerm(), list.get(i).get("depositMinTerm"));
+            assertEquals(deposits.get(i).getDepositMinAmount(), list.get(i).get("depositMinAmount"));
+            assertEquals(deposits.get(i).getDepositCurrency(), list.get(i).get("depositCurrency"));
+            assertEquals(deposits.get(i).getDepositInterestRate(), list.get(i).get("depositInterestRate"));
+            assertEquals(deposits.get(i).getDepositAddConditions(), list.get(i).get("depositAddConditions"));
+            sumAmountDeposit[1] +=       Integer.parseInt(list.get(i).get("depositorAmountSum").toString());
+            sumAmountPlusDeposit[1] +=   Integer.parseInt(list.get(i).get("depositorAmountPlusSum").toString());
+            sumAmountMinusDeposit[1] +=  Integer.parseInt(list.get(i).get("depositorAmountMinusSum").toString());
+            i++;
+        }
+
+        assertTrue("Error sum amount", sumAmountDeposit[0] == sumAmountDeposit[1]);
+        assertTrue("Error sum plus amount", sumAmountPlusDeposit[0] == sumAmountPlusDeposit[1]);
+        assertTrue("Error sum minus amount", sumAmountMinusDeposit[0] == sumAmountMinusDeposit[1]);
+    }
 
     @Test
     public void testUpdateBankDeposit(){

@@ -623,6 +623,88 @@ public class BankDepositDaoImpl implements BankDepositDao{
     }
 
     /**
+     * Get Bank Deposits by from-to Depositor Amount with depositors
+     *
+     * @param from Integer - Amount of the Bank Depositor
+     * @param to Integer - Amount of the Bank Depositor
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    public List<Map> getBankDepositsByDepositorAmountWithDepositors(Integer from, Integer to){
+        LOGGER.debug("getBankDepositsByDepositorAmountWithDepositors(from:{}, to:{})",from,to);
+        Assert.notNull(from,ERROR_METHOD_PARAM);
+        Assert.notNull(to,ERROR_METHOD_PARAM);
+        Assert.isTrue(from<=to,ERROR_FROM_TO_PARAM);
+        List<Map> list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            Map param = new HashMap();
+            param.put("from",from);
+            param.put("to",to);
+
+            list = smc.queryForList("BankDeposit.getByDepositorAmountWithDepositors",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositsByDepositorAmountWithDepositors(from:{}, to:{}) - {}",from,to,e.toString());
+            throw new IllegalArgumentException("error - getBankDepositsByDepositorAmountWithDepositors() "+e.toString());
+        }
+        return list;
+    }
+
+    /**
+     * Get Bank Deposit with depositors
+     *
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    public List<Map> getBankDepositsWithDepositors(){
+        LOGGER.debug("getBankDepositsWithDepositors()");
+        List<Map> list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            list = smc.queryForList("BankDeposit.getAllWithDepositors");
+        }catch(Exception e){
+            LOGGER.error("error - getBankDepositsWithDepositors() - {}",e.toString());
+            throw new IllegalArgumentException("error - getBankDepositsWithDepositors() "+e.toString());
+        }
+        return list;
+    }
+
+    /**
+     * Get Bank Deposit from-to Date Deposit with depositors
+     *
+     * @param startDate Date - start value of the date deposit (startDate < endDate)
+     * @param endDate Date - end value of the date deposit (startDate < endDate)
+     * @return List<Map> a list of all bank deposits with a report on all relevant
+     * bank depositors with the specified task`s date deposit
+     */
+    public List<Map> getBankDepositsFromToDateDepositWithDepositors(Date startDate,
+                                                                    Date endDate){
+        LOGGER.debug("getBankDepositsFromToDateDpositWithDepositors(start:{}. end:{}",startDate,endDate);
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate));
+        List<Map> list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            Map param = new HashMap();
+            param.put("startDate",startDate);
+            param.put("endDate",endDate);
+
+            list = smc.queryForList("BankDeposit.getByFromToDateDepositWithDepositors",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositsFromToDateDepositWithDepositors({}, {}) - {}",startDate,endDate,e.toString());
+            throw new IllegalArgumentException("error - getBankDepositsFromToDateDepositWithDepositors() "+e.toString());
+        }
+        return list;
+    }
+
+    /**
      * Adding Bank Deposit
      *
      * @param deposit BankDeposit - Bank Deposit to be inserted to the database

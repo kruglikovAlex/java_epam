@@ -291,6 +291,39 @@
         group by dep.depositId
     </select>
 
+    <select id="getByDepositorAmountWithDepositors" parameterClass="hashmap" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <dynamic prepend="WHERE">
+            depr.depositorAmountDeposit between
+            <isNotEmpty property="from" prepend="AND">
+                #from#
+            </isNotEmpty>
+            <isNotEmpty property="to" prepend="AND">
+                #to#
+            </isNotEmpty>
+        </dynamic>
+        group by dep.depositId
+    </select>
+
+    <select id="getAllWithDepositors" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        group by dep.depositId
+    </select>
+
+    <select id="getByFromToDateDepositWithDepositors" parameterClass="hashmap" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <dynamic prepend="WHERE">
+            depr.depositorDateDeposit between
+            <isNotEmpty property="startDate" prepend="AND">
+                #startDate#
+            </isNotEmpty>
+            <isNotEmpty property="endDate" prepend="AND">
+                #endDate#
+            </isNotEmpty>
+        </dynamic>
+        group by dep.depositId
+    </select>
+
     <update id="update" parameterClass="BankDeposit">
         update BANKDEPOSIT set
         <isNotEmpty property="depositName">

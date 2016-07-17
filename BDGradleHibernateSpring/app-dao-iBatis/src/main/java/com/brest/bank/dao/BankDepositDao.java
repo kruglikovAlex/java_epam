@@ -216,7 +216,7 @@ public interface BankDepositDao {
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
-    //List<Map> getBankDepositsByDepositorAmountWithDepositors(Integer from, Integer to);
+    List<Map> getBankDepositsByDepositorAmountWithDepositors(Integer from, Integer to);
 
     /**
      * Get Bank Deposit with depositors
@@ -224,7 +224,7 @@ public interface BankDepositDao {
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
-    //List<Map> getBankDepositsWithDepositors();
+    List<Map> getBankDepositsWithDepositors();
 
    /**
     * Get Bank Deposit from-to Date Deposit with depositors
@@ -234,8 +234,8 @@ public interface BankDepositDao {
     * @return List<Map> a list of all bank deposits with a report on all relevant
     * bank depositors with the specified task`s date deposit
     */
-    //List<Map> getBankDepositsFromToDateDepositWithDepositors(Date startDate,
-    //                                                         Date endDate);
+    List<Map> getBankDepositsFromToDateDepositWithDepositors(Date startDate,
+                                                             Date endDate);
 
    /**
     * Get Bank Deposit from-to Date Return Deposit with depositors
