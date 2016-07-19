@@ -705,6 +705,165 @@ public class BankDepositDaoImpl implements BankDepositDao{
     }
 
     /**
+     * Get Bank Deposit from-to Date Return Deposit with depositors
+     *
+     * @param startDate Date - start value of the date return deposit (startDate < endDate)
+     * @param endDate Date - end value of the date return deposit (startDate < endDate)
+     * @return List<Map> a list of all bank deposits with a report on all relevant
+     * bank depositors with the specified task`s date return deposit
+     */
+    public List<Map> getBankDepositsFromToDateReturnDepositWithDepositors(Date startDate,
+                                                                          Date endDate){
+        LOGGER.debug("getBankDepositsFromToDateReturnDpositWithDepositors(start:{}. end:{}",startDate,endDate);
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate));
+        List<Map> list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            Map param = new HashMap();
+            param.put("startDate",startDate);
+            param.put("endDate",endDate);
+
+            list = smc.queryForList("BankDeposit.getByFromToDateReturnDepositWithDepositors",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositsFromToDateReturnDepositWithDepositors({}, {}) - {}",
+                    startDate,endDate,e.toString());
+            throw new IllegalArgumentException("error - getBankDepositsFromToDateReturnDepositWithDepositors() "+e.toString());
+        }
+        return list;
+    }
+
+    /**
+     * Get Bank Deposit by Currency with depositors
+     *
+     * @param currency String - Currency of the Bank Deposit to return
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    public List<Map> getBankDepositsByCurrencyWithDepositors(String currency){
+        LOGGER.debug("getBankDepositByCurrencyWithDepositors(currency:{})",currency);
+        Assert.notNull(currency,ERROR_METHOD_PARAM);
+        List<Map> list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            BankDeposit param = new BankDeposit();
+            param.setDepositCurrency(currency);
+
+            list = smc.queryForList("BankDeposit.getByCurrencyWithDepositors",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositByCurrencyWithDepositors(currency:{}) - {}",currency,e.toString());
+            throw new IllegalArgumentException("error - getBankDepositByCurrencyWithDepositors() "+e.toString());
+        }
+        return list;
+    }
+
+    /**
+     * Get Bank Deposit from-to Date Deposit by Currency with depositors
+     *
+     * @param currency String - Currency of the Bank Deposit to return
+     * @param startDate Date - start value of the date deposit (startDate < endDate)
+     * @param endDate Date - end value of the date deposit (startDate < endDate)
+     * @return List<Map> a list of all bank deposits with a report on all relevant
+     * bank depositors with the specified task`s date deposit
+     */
+    public List<Map> getBankDepositsByCurrencyFromToDateDepositWithDepositors(String currency,
+                                                                              Date startDate,
+                                                                              Date endDate){
+        LOGGER.debug("getBankDepositByCurrencyFromToDateDepositWithDepositors(currency:{}," +
+                "startDate:{}, endDate:{})",currency, dateFormat.format(startDate),dateFormat.format(endDate));
+        Assert.notNull(currency,ERROR_METHOD_PARAM);
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate));
+        List<Map> list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            Map param = new HashMap();
+            param.put("currency",currency);
+            param.put("startDate",startDate);
+            param.put("endDate",endDate);
+
+            list = smc.queryForList("BankDeposit.getByCurrencyFromToDateDepositWithDepositors",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositByCurrencyFromToDateDepositWithDepositors(currency:{},startDate:{}, endDate:{}) - {}",
+                    currency,startDate,endDate,e.toString());
+            throw new IllegalArgumentException("error - getBankDepositByCurrencyFromToDateDepositWithDepositors() "+e.toString());
+        }
+        return list;
+    }
+
+    /**
+     * Get Bank Deposit from-to Date Return Deposit by Currency with depositors
+     *
+     * @param currency String - Currency of the Bank Deposit to return
+     * @param startDate Date - start value of the date deposit (startDate < endDate)
+     * @param endDate Date - end value of the date deposit (startDate < endDate)
+     * @return List<Map> a list of all bank deposits with a report on all relevant
+     * bank depositors with the specified task`s date return deposit
+     */
+    public List<Map> getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(String currency,
+                                                                                    Date startDate,
+                                                                                    Date endDate){
+        LOGGER.debug("getBankDepositByCurrencyFromToDateReturnDepositWithDepositors(currency:{}," +
+                "startDate:{}, endDate:{})",currency, dateFormat.format(startDate),dateFormat.format(endDate));
+        Assert.notNull(currency,ERROR_METHOD_PARAM);
+        Assert.notNull(startDate,ERROR_METHOD_PARAM);
+        Assert.notNull(endDate,ERROR_METHOD_PARAM);
+        Assert.isTrue(startDate.before(endDate));
+        List<Map> list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            Map param = new HashMap();
+            param.put("currency",currency);
+            param.put("startDate",startDate);
+            param.put("endDate",endDate);
+
+            list = smc.queryForList("BankDeposit.getByCurrencyFromToDateReturnDepositWithDepositors",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositByCurrencyFromToDateReturnDepositWithDepositors(currency:{}," +
+                    "startDate:{}, endDate:{}) - {}",currency,startDate,endDate,e.toString());
+            throw new IllegalArgumentException("error - getBankDepositByCurrencyFromToDateReturnDepositWithDepositors() "
+                    +e.toString());
+        }
+        return list;
+    }
+
+    /**
+     * Get Bank Deposits by Depositor mark return with depositors
+     *
+     * @param markReturn Integer - Mark Return of the Bank Depositor
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    public List<Map> getBankDepositsByDepositorMarkReturnWithDepositors(Integer markReturn){
+        LOGGER.debug("getBankDepositByDepositorMarkReturnWithDepositors(mark:{})",markReturn);
+        Assert.notNull(markReturn,ERROR_METHOD_PARAM);
+        List<Map> list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            BankDepositor param = new BankDepositor();
+            param.setDepositorMarkReturnDeposit(markReturn);
+
+            list = smc.queryForList("BankDeposit.getByDepositorMarkReturnWithDepositors",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositByDepositorMarkReturnWithDepositors(mark:{}) - {}",markReturn,e.toString());
+            throw new IllegalArgumentException("error - getBankDepositByDepositorMarkReturnWithDepositors() "+e.toString());
+        }
+        return list;
+    }
+
+    /**
      * Adding Bank Deposit
      *
      * @param deposit BankDeposit - Bank Deposit to be inserted to the database

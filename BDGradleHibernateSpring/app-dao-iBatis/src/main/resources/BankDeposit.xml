@@ -324,6 +324,74 @@
         group by dep.depositId
     </select>
 
+    <select id="getByFromToDateReturnDepositWithDepositors" parameterClass="hashmap" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <dynamic prepend="WHERE">
+            depr.depositorDateReturnDeposit between
+            <isNotEmpty property="startDate" prepend="AND">
+                #startDate#
+            </isNotEmpty>
+            <isNotEmpty property="endDate" prepend="AND">
+                #endDate#
+            </isNotEmpty>
+        </dynamic>
+        group by dep.depositId
+    </select>
+
+    <select id="getByCurrencyWithDepositors" parameterClass="BankDeposit" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <dynamic prepend="WHERE">
+            <isNotEmpty property="depositCurrency">
+                dep.depositCurrency = #depositCurrency#
+            </isNotEmpty>
+        </dynamic>
+        group by dep.depositId
+    </select>
+
+    <select id="getByCurrencyFromToDateDepositWithDepositors" parameterClass="hashmap" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <dynamic prepend="WHERE">
+            <isNotEmpty property="currency">
+                dep.depositCurrency = #currency#
+            </isNotEmpty>
+            and depr.depositorDateDeposit between
+            <isNotEmpty property="startDate" prepend="AND">
+                #startDate#
+            </isNotEmpty>
+            <isNotEmpty property="endDate" prepend="AND">
+                #endDate#
+            </isNotEmpty>
+        </dynamic>
+        group by dep.depositId
+    </select>
+
+    <select id="getByCurrencyFromToDateReturnDepositWithDepositors" parameterClass="hashmap" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <dynamic prepend="WHERE">
+            <isNotEmpty property="currency">
+                dep.depositCurrency = #currency#
+            </isNotEmpty>
+            and depr.depositorDateReturnDeposit between
+            <isNotEmpty property="startDate" prepend="AND">
+                #startDate#
+            </isNotEmpty>
+            <isNotEmpty property="endDate" prepend="AND">
+                #endDate#
+            </isNotEmpty>
+        </dynamic>
+        group by dep.depositId
+    </select>
+
+    <select id="getByDepositorMarkReturnWithDepositors" parameterClass="BankDepositor" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <dynamic prepend="WHERE">
+            <isNotEmpty property="depositorMarkReturnDeposit">
+                depr.depositorMarkReturnDeposit = #depositorMarkReturnDeposit#
+            </isNotEmpty>
+        </dynamic>
+        group by dep.depositId
+    </select>
+
     <update id="update" parameterClass="BankDeposit">
         update BANKDEPOSIT set
         <isNotEmpty property="depositName">
