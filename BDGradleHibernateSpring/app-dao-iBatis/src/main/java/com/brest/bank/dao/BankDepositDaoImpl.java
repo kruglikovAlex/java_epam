@@ -864,6 +864,51 @@ public class BankDepositDaoImpl implements BankDepositDao{
     }
 
     /**
+     * Get Bank Deposits by Variant Args with depositors
+     *
+     * @param args Object - Variant number of arguments
+     * @return List<Map> - a list of all bank deposits with a report on all relevant
+     * bank depositors
+     */
+    public List<Map> getBankDepositsByVarArgs(Object... args){
+        LOGGER.debug("getBankDepositsByVarArgs(args: {})",args);
+        Assert.notNull(args,ERROR_METHOD_PARAM);
+
+        for(int i=0; i<args.length; i=i+2){
+            for(int j=i+2; j<args.length; j=j+2){
+                if(args[i].toString().equals(args[j].toString())){
+                    args[i] = args[i].toString()+"Le";
+                    args[j] = args[j].toString()+"Ge";
+                    LOGGER.debug("le-{}",args[i]);
+                    LOGGER.debug("ge-{}",args[j]);
+                }
+            }
+        }
+
+        Map param = new HashMap();
+        for(int i=0; i<args.length;i=i+2){
+            if(args[i].toString().contains("deposit.")){
+                param.put(args[i].toString().replace("deposit.",""),args[i+1]);
+            } else {
+                param.put(args[i].toString().replace("depositor.",""),args[i+1]);
+            }
+        }
+
+        LOGGER.debug("param: {}",param);
+        List<Map> list;
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            list = smc.queryForList("BankDeposit.getByVarArgs",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositsByVarArgs(args: {}) - {}",args,e.toString());
+            throw new IllegalArgumentException("error - getBankDepositsByVarArgs() "+e.toString());
+        }
+        return list;
+    }
+
+    /**
      * Adding Bank Deposit
      *
      * @param deposit BankDeposit - Bank Deposit to be inserted to the database

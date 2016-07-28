@@ -299,7 +299,7 @@ public interface BankDepositDao {
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
-    //List<Map> getBankDepositsByVarArgs(Object... args);
+    List<Map> getBankDepositsByVarArgs(Object... args);
 
    /**
     * Adding Bank Deposit

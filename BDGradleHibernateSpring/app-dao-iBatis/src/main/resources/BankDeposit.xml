@@ -392,6 +392,68 @@
         group by dep.depositId
     </select>
 
+    <select id="getByVarArgs" parameterClass="hashmap" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <dynamic prepend="WHERE">
+            <isPropertyAvailable property="depositId" prepend="AND">
+                (dep.depositId=#depositId#
+                <isPropertyAvailable property="depositName" prepend="OR">
+                    dep.depositName=#depositName#
+                </isPropertyAvailable>
+                )
+            </isPropertyAvailable>
+            <isPropertyAvailable property="depositName" prepend="AND">
+                (dep.depositName=#depositName#
+                <isPropertyAvailable property="depositId" prepend="OR">
+                    dep.depositId=#depositId#
+                </isPropertyAvailable>
+                )
+            </isPropertyAvailable>
+            <isPropertyAvailable property="depositCurrency" prepend="AND">
+                dep.depositCurrency=#depositCurrency#
+            </isPropertyAvailable>
+            <isPropertyAvailable property="depositMinTerm" prepend="AND">
+                dep.depositMinTerm = #depositMinTerm#
+            </isPropertyAvailable>
+            <isPropertyAvailable property="depositInterestRate" prepend="AND">
+                dep.depositInterestRate = #depositInterestRate#
+            </isPropertyAvailable>
+            <isPropertyAvailable property="depositMinAmount" prepend="AND">
+                dep.depositMinAmount = #depositMinAmount#
+            </isPropertyAvailable>
+
+            <isPropertyAvailable property="depositorDateDeposit" prepend="AND">
+                depr.depositorDateDeposit = #depositorDateDeposit#
+            </isPropertyAvailable>
+            <isPropertyAvailable property="depositorDateDepositLe" prepend="AND">
+                <isPropertyAvailable property="depositorDateDepositGe">
+                    depr.depositorDateDeposit between #depositorDateDepositLe# and #depositorDateDepositGe#
+                </isPropertyAvailable>
+                <isNotPropertyAvailable property="depositorDateDepositGe">
+                    depr.depositorDateDeposit <![CDATA[ >= ]]> #depositorDateDepositLe#
+                </isNotPropertyAvailable>
+            </isPropertyAvailable>
+            <isPropertyAvailable property="depositorDateReturnDeposit" prepend="AND">
+                depr.depositorDateReturnDeposit = #depositorDateReturnDeposit#
+            </isPropertyAvailable>
+            <isPropertyAvailable property="depositorDateReturnDepositLe" prepend="AND">
+                <isPropertyAvailable property="depositorDateReturnDepositGe">
+                    depr.depositorDateReturnDeposit between #depositorDateReturnDepositLe# and #depositorDateReturnDepositGe#
+                </isPropertyAvailable>
+                <isNotPropertyAvailable property="depositorDateReturnDepositGe">
+                    depr.depositorDateReturnDeposit <![CDATA[ >= ]]> #depositorDateReturnDepositLe#
+                </isNotPropertyAvailable>
+            </isPropertyAvailable>
+            <isPropertyAvailable property="depositorAmountDeposit" prepend="AND">
+                depr.depositorAmountDeposit = #depositorAmountDeposit#
+            </isPropertyAvailable>
+            <isPropertyAvailable property="depositorMarkReturnDeposit" prepend="AND">
+                depr.depositorMarkReturnDeposit = #depositorMarkReturnDeposit#
+            </isPropertyAvailable>
+        </dynamic>
+        group by dep.depositId
+    </select>
+
     <update id="update" parameterClass="BankDeposit">
         update BANKDEPOSIT set
         <isNotEmpty property="depositName">
