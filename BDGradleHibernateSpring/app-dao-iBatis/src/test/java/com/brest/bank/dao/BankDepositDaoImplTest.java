@@ -1072,7 +1072,7 @@ public class BankDepositDaoImplTest {
         String nameAliasField1 = "deposit.depositCurrency";
         String currency = "eur";
         String nameAliasField4 = "deposit.depositName";
-        String name = "depositName1";
+        String name = "depositName2";
         String nameAliasField2 = "deposit.depositInterestRate";
         Integer rate = 5;
         String nameAliasField3 = "deposit.depositId";
@@ -1096,6 +1096,7 @@ public class BankDepositDaoImplTest {
         deposits = new ArrayList<BankDeposit>();
 
         deposits.add(depositDao.getBankDepositByIdCriteria(id));
+        //deposits.add(depositDao.getBankDepositByNameCriteria(name));
         LOGGER.debug("deposits - IR = {}", deposits);
 
         List<Map> list = depositDao.getBankDepositsByVarArgs(

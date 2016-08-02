@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+        PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="BankDepositor">
+
+    <sql id="allDepositors">
+        select distinct * from BANKDEPOSITOR
+    </sql>
+
+    <typeAlias alias="BankDeposit" type="com.brest.bank.domain.BankDeposit"/>
+    <typeAlias alias="BankDepositor" type="com.brest.bank.domain.BankDepositor"/>
+
+    <insert id="insert" parameterClass="BankDepositor">
+        insert into BANKDEPOSITOR (depositorName,depositorDateDeposit,depositorAmountDeposit,depositorAmountPlusDeposit,depositorAmountMinusDeposit,depositorDateReturnDeposit,depositorMarkReturnDeposit)
+        values (#depositorName#,#depositorDateDeposit#,#depositorAmountDeposit#,#depositorAmountPlusDeposit#,#depositorAmountMinusDeposit#,#depositorDateReturnDeposit#,#depositorMarkReturnDeposit#)
+    </insert>
+
+    <select id="getAll" resultClass="BankDepositor">
+        <include refid="allDepositors"/>
+    </select>
+
+    <select id="getById" resultClass="BankDepositor">
+
+        <include refid="allDepositors"/>
+
+        <dynamic prepend="WHERE">
+            <isNotEmpty property="depositorId">
+                depositorId = #depositorId#
+            </isNotEmpty>
+        </dynamic>
+    </select>
+
+    <select id="getDepositById" resultClass="BankDeposit">
+
+        select distinct dep.*
+        from BANKDEPOSIT dep
+        left outer join
+        BANKDEPOSITOR depr
+        on dep.depositId=depr.depositId
+
+        <dynamic prepend="WHERE">
+            <isNotEmpty property="depositId">
+                dep.depositId = #depositId#
+            </isNotEmpty>
+        </dynamic>
+    </select>
+
+    <select id="getByName" resultClass="BankDepositor">
+
+        <include refid="allDepositors"/>
+
+        <dynamic prepend="WHERE">
+            <isNotEmpty property="depositorName">
+                depositorName = #depositorName#
+            </isNotEmpty>
+        </dynamic>
+    </select>
+
+    <update id="update" parameterClass="BankDepositor">
+        update BANKDEPOSITOR set
+        <isNotEmpty property="depositorName">
+            depositorName = #depositorName#,
+        </isNotEmpty>
+        <isNotEmpty property="depositorDateDeposit">
+            depositorDateDeposit = #depositorDateDeposit#,
+        </isNotEmpty>
+        <isNotEmpty property="depositorAmountDeposit">
+            depositorAmountDeposit = #depositorAmountDeposit#,
+        </isNotEmpty>
+        <isNotEmpty property="depositorAmountPlusDeposit">
+            depositorAmountPlusDeposit = #depositorAmountPlusDeposit#,
+        </isNotEmpty>
+        <isNotEmpty property="depositorAmountMinusDeposit">
+            depositorAmountMinusDeposit = #depositorAmountMinusDeposit#,
+        </isNotEmpty>
+        <isNotEmpty property="depositorDateReturnDeposit">
+            depositorDateReturnDeposit = #depositorDateReturnDeposit#,
+        </isNotEmpty>
+        <isNotEmpty property="depositorMarkReturnDeposit">
+            depositorMarkReturnDeposit = #depositorMarkReturnDeposit#
+        </isNotEmpty>
+
+        <dynamic prepend="WHERE">
+            <isNotEmpty property="depositorId">
+                depositorId = #depositorId#
+            </isNotEmpty>
+        </dynamic>
+    </update>
+
+    <delete id="delete" parameterClass="hashmap">
+        delete from BANKDEPOSITOR
+        <dynamic prepend="WHERE">
+            <isNotEmpty property="depositorId">
+                depositorId = #depositorId#
+            </isNotEmpty>
+        </dynamic>
+    </delete>
+
+    <select id="rowCount" resultClass="int">
+        select count(*) from BANKDEPOSITOR
+    </select>
+
+</sqlMap>

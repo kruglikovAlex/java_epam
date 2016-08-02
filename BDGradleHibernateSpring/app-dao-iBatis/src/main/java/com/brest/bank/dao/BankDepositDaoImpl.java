@@ -7,8 +7,6 @@ import com.ibatis.common.resources.Resources;
 import com.ibatis.sqlmap.client.SqlMapClient;
 import com.ibatis.sqlmap.client.SqlMapClientBuilder;
 
-import com.ibatis.sqlmap.client.event.RowHandler;
-import com.ibatis.sqlmap.engine.mapping.statement.DefaultRowHandler;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -16,10 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.beans.Transient;
-import java.io.IOException;
 import java.io.Reader;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -41,6 +36,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      *
      * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
      */
+    @Override
+    @Transactional
     public List<BankDeposit> getBankDepositsCriteria(){
         LOGGER.debug("getBankDepositsCriteria()");
         try{
@@ -89,6 +86,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @param depositName String - name of the Bank Deposit to return
      * @return BankDeposit with the specified depositName from the database
      */
+    @Override
+    @Transactional
     public BankDeposit getBankDepositByNameCriteria(String depositName){
         LOGGER.debug("getBankDepositByNameCriteria({})",depositName);
         Assert.notNull(depositName,ERROR_METHOD_PARAM);
@@ -115,6 +114,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<BankDeposit> - a list containing all of the Bank Deposits with the specified
      * currency in the database
      */
+    @Override
+    @Transactional
     public List<BankDeposit> getBankDepositsByCurrencyCriteria(String currency){
         LOGGER.debug("getBankDepositByCurrencyCriteria({})",currency);
         Assert.notNull(currency,ERROR_METHOD_PARAM);
@@ -141,6 +142,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<BankDeposit>  - a list containing all of the Bank Deposits with the specified
      * interest rate in the database
      */
+    @Override
+    @Transactional
     public List<BankDeposit> getBankDepositsByInterestRateCriteria(Integer rate){
         LOGGER.debug("getBankDepositByInterestRateCriteria({})",rate);
         Assert.notNull(rate,ERROR_METHOD_PARAM);
@@ -169,6 +172,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
      * with the specified task`s min term of deposit
      */
+    @Override
+    @Transactional
     public List<BankDeposit> getBankDepositsFromToMinTermCriteria(Integer fromTerm,
                                                                   Integer toTerm){
         LOGGER.debug("getBankDepositFromToMinTermCriteria(from:{}, to:{})",fromTerm,toTerm);
@@ -200,6 +205,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
      * with the specified task`s in of deterest rate of deposit
      */
+    @Override
+    @Transactional
     public List<BankDeposit> getBankDepositsFromToInterestRateCriteria(Integer startRate,
                                                                        Integer endRate){
         LOGGER.debug("getBankDepositsFromToInterestRateCriteria(from:{}, to:{})",startRate,endRate);
@@ -231,6 +238,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
      * with the specified task`s date of deposit
      */
+    @Override
+    @Transactional
     public List<BankDeposit> getBankDepositsFromToDateDeposit(Date startDate,
                                                               Date endDate){
         LOGGER.debug("getBankDepositsFromToDateDeposit(from:{}, to:{})",dateFormat.format(startDate),
@@ -263,6 +272,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
      * with the specified task`s date return of deposit
      */
+    @Override
+    @Transactional
     public List<BankDeposit> getBankDepositsFromToDateReturnDeposit(Date startDate,
                                                                     Date endDate){
         LOGGER.debug("getBankDepositsFromToDateReturnDeposit(from:{}, to:{})",dateFormat.format(startDate),
@@ -278,7 +289,7 @@ public class BankDepositDaoImpl implements BankDepositDao{
             param.put("startDate",startDate);
             param.put("endDate",endDate);
 
-            deposits = (List<BankDeposit>)smc.queryForList("BankDeposit.getFromToDateReturn",param);
+            deposits = smc.queryForList("BankDeposit.getFromToDateReturn",param);
         }catch (Exception e){
             LOGGER.error("error - getBankDepositsFromToDateReturnDeposit(from:{}, to:{}) - {}",dateFormat.format(startDate),
                     dateFormat.format(endDate),e.toString());
@@ -294,6 +305,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return Map - a bank deposit with a report on all relevant
      * bank depositors
      */
+    @Override
+    @Transactional
     public Map getBankDepositByNameWithDepositors(String name){
         LOGGER.debug("getBankDepositByNameWithDepositors({})",name);
         Assert.notNull(name,ERROR_METHOD_PARAM);
@@ -322,6 +335,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return Map - a bank deposit with a report on all relevant
      * bank depositors with the specified task`s date of deposit
      */
+    @Override
+    @Transactional
     public Map getBankDepositByNameFromToDateDepositWithDepositors(String name,
                                                                    Date startDate,
                                                                    Date endDate){
@@ -360,6 +375,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return Map - a bank deposit with a report on all relevant
      * bank depositors with the specified task`s date return of deposit
      */
+    @Override
+    @Transactional
     public Map getBankDepositByNameFromToDateReturnDepositWithDepositors(String name,
                                                                          Date startDate,
                                                                          Date endDate){
@@ -396,6 +413,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return Map - a bank deposit with a report on all relevant
      * bank depositors
      */
+    @Override
+    @Transactional
     public Map getBankDepositByIdWithDepositors(Long id){
         LOGGER.debug("getBankDepositByIdWithDepositors({})",id);
         Assert.notNull(id,ERROR_METHOD_PARAM);
@@ -425,6 +444,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return Map - a bank deposit with a report on all relevant
      * bank depositors with the specified task`s date of deposit
      */
+    @Override
+    @Transactional
     public Map getBankDepositByIdFromToDateDepositWithDepositors(Long id,
                                                                  Date startDate,
                                                                  Date endDate){
@@ -463,6 +484,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return Map - a bank deposit with a report on all relevant
      * bank depositors with the specified task`s date return deposit
      */
+    @Override
+    @Transactional
     public Map getBankDepositByIdFromToDateReturnDepositWithDepositors(Long id,
                                                                        Date startDate,
                                                                        Date endDate){
@@ -499,6 +522,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
+    @Override
+    @Transactional
     public List<Map> getBankDepositsByTermWithDepositors(Integer term){
         LOGGER.debug("getBankDepositsByTermWithDepositors({})",term);
         Assert.notNull(term,ERROR_METHOD_PARAM);
@@ -525,6 +550,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
+    @Override
+    @Transactional
     public List<Map> getBankDepositsByAmountWithDepositors(Integer amount){
         LOGGER.debug("getBankDepositByAmountWithDepositors(amount: {})",amount);
         Assert.notNull(amount,ERROR_METHOD_PARAM);
@@ -551,6 +578,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
+    @Override
+    @Transactional
     public List<Map> getBankDepositsByRateWithDepositors(Integer rate){
         LOGGER.debug("getBankDepositsByRateWithDepositors(rate: {})",rate);
         Assert.notNull(rate,ERROR_METHOD_PARAM);
@@ -577,6 +606,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return Map - a bank deposit with a report on all relevant
      * bank depositors
      */
+    @Override
+    @Transactional
     public Map getBankDepositByDepositorIdWithDepositors(Long id){
         LOGGER.debug("getBankDepositByDepositorIdWithDepositors(id:{})",id);
         Assert.notNull(id,ERROR_METHOD_PARAM);
@@ -603,6 +634,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return Map - a bank deposit with a report on all relevant
      * bank depositors
      */
+    @Override
+    @Transactional
     public Map getBankDepositByDepositorNameWithDepositors(String name){
         LOGGER.debug("getBankDepositByDepositorNameWithDepositors(name:{})",name);
         Assert.notNull(name,ERROR_METHOD_PARAM);
@@ -630,6 +663,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
+    @Override
+    @Transactional
     public List<Map> getBankDepositsByDepositorAmountWithDepositors(Integer from, Integer to){
         LOGGER.debug("getBankDepositsByDepositorAmountWithDepositors(from:{}, to:{})",from,to);
         Assert.notNull(from,ERROR_METHOD_PARAM);
@@ -658,6 +693,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
+    @Override
+    @Transactional
     public List<Map> getBankDepositsWithDepositors(){
         LOGGER.debug("getBankDepositsWithDepositors()");
         List<Map> list;
@@ -681,6 +718,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<Map> a list of all bank deposits with a report on all relevant
      * bank depositors with the specified task`s date deposit
      */
+    @Override
+    @Transactional
     public List<Map> getBankDepositsFromToDateDepositWithDepositors(Date startDate,
                                                                     Date endDate){
         LOGGER.debug("getBankDepositsFromToDateDpositWithDepositors(start:{}. end:{}",startDate,endDate);
@@ -712,6 +751,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<Map> a list of all bank deposits with a report on all relevant
      * bank depositors with the specified task`s date return deposit
      */
+    @Override
+    @Transactional
     public List<Map> getBankDepositsFromToDateReturnDepositWithDepositors(Date startDate,
                                                                           Date endDate){
         LOGGER.debug("getBankDepositsFromToDateReturnDpositWithDepositors(start:{}. end:{}",startDate,endDate);
@@ -743,6 +784,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
+    @Override
+    @Transactional
     public List<Map> getBankDepositsByCurrencyWithDepositors(String currency){
         LOGGER.debug("getBankDepositByCurrencyWithDepositors(currency:{})",currency);
         Assert.notNull(currency,ERROR_METHOD_PARAM);
@@ -771,6 +814,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<Map> a list of all bank deposits with a report on all relevant
      * bank depositors with the specified task`s date deposit
      */
+    @Override
+    @Transactional
     public List<Map> getBankDepositsByCurrencyFromToDateDepositWithDepositors(String currency,
                                                                               Date startDate,
                                                                               Date endDate){
@@ -808,6 +853,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<Map> a list of all bank deposits with a report on all relevant
      * bank depositors with the specified task`s date return deposit
      */
+    @Override
+    @Transactional
     public List<Map> getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(String currency,
                                                                                     Date startDate,
                                                                                     Date endDate){
@@ -844,6 +891,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
+    @Override
+    @Transactional
     public List<Map> getBankDepositsByDepositorMarkReturnWithDepositors(Integer markReturn){
         LOGGER.debug("getBankDepositByDepositorMarkReturnWithDepositors(mark:{})",markReturn);
         Assert.notNull(markReturn,ERROR_METHOD_PARAM);
@@ -870,6 +919,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
+    @Override
+    @Transactional
     public List<Map> getBankDepositsByVarArgs(Object... args){
         LOGGER.debug("getBankDepositsByVarArgs(args: {})",args);
         Assert.notNull(args,ERROR_METHOD_PARAM);
@@ -935,6 +986,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      *
      * @param deposit BankDeposit - Bank Deposit to be stored in the database
      */
+    @Override
+    @Transactional
     public void updateBankDeposit(BankDeposit deposit){
         LOGGER.debug("updateBankDeposit({})",deposit.toString());
         Assert.notNull(deposit,ERROR_METHOD_PARAM);
@@ -955,6 +1008,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
      *
      * @param depositId Long - id of the Bank Deposit to be removed
      */
+    @Override
+    @Transactional
     public void deleteBankDeposit(Long depositId){
         LOGGER.debug("deleteBankDeposit({})",depositId);
         Assert.notNull(depositId,ERROR_METHOD_PARAM);
@@ -972,6 +1027,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
         }
     }
 
+    @Override
+    @Transactional
     public Integer rowCount(){
         LOGGER.debug("rowCount()");
         Integer count = 0;

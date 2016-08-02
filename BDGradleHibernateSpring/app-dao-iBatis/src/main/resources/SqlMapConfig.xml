@@ -21,4 +21,5 @@
         </dataSource>
     </transactionManager>
     <sqlMap resource="BankDeposit.xml"/>
+    <sqlMap resource="BankDepositor.xml"/>
 </sqlMapConfig>

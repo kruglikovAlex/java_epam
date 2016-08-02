@@ -395,20 +395,22 @@
     <select id="getByVarArgs" parameterClass="hashmap" resultMap="report">
         <include refid="allDepositWithDepositors"/>
         <dynamic prepend="WHERE">
+
             <isPropertyAvailable property="depositId" prepend="AND">
-                (dep.depositId=#depositId#
-                <isPropertyAvailable property="depositName" prepend="OR">
-                    dep.depositName=#depositName#
+                <isPropertyAvailable property="depositName">
+                    (dep.depositId=#depositId# or dep.depositName=#depositName#)
                 </isPropertyAvailable>
-                )
-            </isPropertyAvailable>
-            <isPropertyAvailable property="depositName" prepend="AND">
-                (dep.depositName=#depositName#
-                <isPropertyAvailable property="depositId" prepend="OR">
+                <isNotPropertyAvailable property="depositName">
                     dep.depositId=#depositId#
-                </isPropertyAvailable>
-                )
+                </isNotPropertyAvailable>
             </isPropertyAvailable>
+
+            <isPropertyAvailable property="depositName" prepend="OR">
+                <isNotPropertyAvailable property="depositId">
+                    dep.depositName=#depositName#
+                </isNotPropertyAvailable>
+            </isPropertyAvailable>
+
             <isPropertyAvailable property="depositCurrency" prepend="AND">
                 dep.depositCurrency=#depositCurrency#
             </isPropertyAvailable>
