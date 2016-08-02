@@ -29,6 +29,8 @@ http://www.springframework.org/schema/context/spring-context.xsd">
 
     <bean id="depositDao" class="com.brest.bank.dao.BankDepositDaoImpl"/>
 
+    <bean id="depositorDao" class="com.brest.bank.dao.BankDepositorDaoImp"/>
+
     <jdbc:initialize-database data-source="dataSource">
         <jdbc:script location="create-tables.sql"/>
         <jdbc:script location="data-script.sql"/>
