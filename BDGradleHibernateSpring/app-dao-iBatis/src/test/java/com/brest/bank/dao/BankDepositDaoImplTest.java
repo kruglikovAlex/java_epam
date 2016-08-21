@@ -22,7 +22,7 @@ import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/spring-dao-test.xml"})
+@ContextConfiguration(locations = {"classpath:/spring-dao-ibatis-test.xml"})
 public class BankDepositDaoImplTest {
 
     private static final Logger LOGGER = LogManager.getLogger(BankDepositDaoImplTest.class);
@@ -37,8 +37,13 @@ public class BankDepositDaoImplTest {
     @Autowired
     private BankDepositDao depositDao;
 
+    @Autowired
+    private BankDepositorDao depositorDao;
+
     private BankDeposit deposit;
+    private BankDepositor depositor;
     private List<BankDeposit> deposits;
+    private List<BankDepositor> depositors;
 
     @Before
     public void setUp() throws Exception {
@@ -138,37 +143,34 @@ public class BankDepositDaoImplTest {
         assertThat(ERROR_SIZE,deposits.size(), is(not(0)));
         assertNotNull(ERROR_NULL,deposits);
 
-        assertEquals("[BankDeposit: { depositId=1, depositName=depositName1, depositMinTerm=13, depositMinAmount=200, " +
-                "depositCurrency=eur, depositInterestRate=5, depositAddConditions=condition1}, " +
-                "BankDeposit: { depositId=3, depositName=depositName3, depositMinTerm=15, depositMinAmount=400, " +
-                "depositCurrency=eur, depositInterestRate=7, depositAddConditions=condition3}]",deposits.toString());
+        assertEquals("[BankDeposit: { depositId=0, depositName=depositName0, depositMinTerm=12, depositMinAmount=100, " +
+                "depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition0}, " +
+                "BankDeposit: { depositId=2, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
+                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}]",deposits.toString());
     }
 
     @Test
     public void testGetBankDepositsBetweenDateReturnDeposit() throws Exception {
-        Date startDate = dateFormat.parse("2015-12-06");
-        Date endDate = dateFormat.parse("2015-12-08");
+        Date startDate = dateFormat.parse("2015-12-02");
+        Date endDate = dateFormat.parse("2015-12-03");
 
-        deposits = depositDao.getBankDepositsFromToDateDeposit(startDate, endDate);
+        deposits = depositDao.getBankDepositsFromToDateReturnDeposit(startDate, endDate);
         LOGGER.debug("deposits = {}", deposits);
 
         assertFalse(ERROR_EMPTY_BD,deposits.isEmpty());
         assertThat(ERROR_SIZE,deposits.size(), is(not(0)));
         assertNotNull(ERROR_NULL,deposits);
 
-        assertEquals("[BankDeposit: { depositId=1, depositName=depositName1, depositMinTerm=13, depositMinAmount=200, " +
-                "depositCurrency=eur, depositInterestRate=5, depositAddConditions=condition1}, " +
+        assertEquals("[BankDeposit: { depositId=0, depositName=depositName0, depositMinTerm=12, depositMinAmount=100, " +
+                "depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition0}, " +
                 "BankDeposit: { depositId=2, depositName=depositName2, depositMinTerm=14, depositMinAmount=300, " +
-                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}, " +
-                "BankDeposit: { depositId=3, depositName=depositName3, depositMinTerm=15, depositMinAmount=400, " +
-                "depositCurrency=eur, depositInterestRate=7, depositAddConditions=condition3}]",deposits.toString());
+                "depositCurrency=usd, depositInterestRate=6, depositAddConditions=condition2}]",deposits.toString());
     }
-
     @Test
     public void testGetBankDepositByNameWithDepositors() throws ParseException {
-        int sumAmountDeposit = 2000,
-                sumAmountPlusDeposit = 80,
-                sumAmountMinusDeposit = 80;
+        int sumAmountDeposit = 0,
+                sumAmountPlusDeposit = 0,
+                sumAmountMinusDeposit = 0;
         String name = "depositName1";
 
         deposit = depositDao.getBankDepositByNameCriteria(name);
@@ -176,6 +178,15 @@ public class BankDepositDaoImplTest {
 
         Map list = depositDao.getBankDepositByNameWithDepositors(name);
         LOGGER.debug("list = {}", list);
+
+        depositors = depositorDao.getBankDepositorByIdDepositCriteria(deposit.getDepositId());
+        LOGGER.debug("depositors={}",depositors);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit += depositor.getDepositorAmountMinusDeposit();
+        }
 
         assertNotNull(ERROR_NULL,list);
 
@@ -197,15 +208,24 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositByNameFromToDateDepositWithDepositors() throws ParseException{
-        Integer sumAmountDeposit=1001,
-                sumAmountPlusDeposit=20,
-                sumAmountMinusDeposit=20;
-        String name = "depositName1";
+        Integer sumAmountDeposit=0,
+                sumAmountPlusDeposit=0,
+                sumAmountMinusDeposit=0;
+        String name = "depositName0";
         Date start = dateFormat.parse("2015-12-01");
-        Date end = dateFormat.parse("2015-12-05");
+        Date end = dateFormat.parse("2015-12-06");
 
         deposit = depositDao.getBankDepositByNameCriteria(name);
         LOGGER.debug("deposit = {}", deposit);
+
+        depositors = depositorDao.getBankDepositorByIdDepositCriteria(deposit.getDepositId());
+        LOGGER.debug("depositors={}",depositors);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit += depositor.getDepositorAmountMinusDeposit();
+        }
 
         Map list = depositDao.getBankDepositByNameFromToDateDepositWithDepositors(name,start,end);
         LOGGER.debug("list = {}", list);
@@ -230,15 +250,24 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositByNameFromToDateReturnDepositWithDepositors() throws ParseException{
-        Integer sumAmountDeposit=999,
-                sumAmountPlusDeposit=60,
-                sumAmountMinusDeposit=60;
-        String name = "depositName1";
-        Date start = dateFormat.parse("2015-12-06");
+        Integer sumAmountDeposit=0,
+                sumAmountPlusDeposit=0,
+                sumAmountMinusDeposit=0;
+        String name = "depositName0";
+        Date start = dateFormat.parse("2015-12-02");
         Date end = dateFormat.parse("2015-12-07");
 
         deposit = depositDao.getBankDepositByNameCriteria(name);
         LOGGER.debug("deposit = {}", deposit);
+
+        depositors = depositorDao.getBankDepositorByIdDepositCriteria(deposit.getDepositId());
+        LOGGER.debug("depositors={}",depositors);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit += depositor.getDepositorAmountMinusDeposit();
+        }
 
         Map list = depositDao.getBankDepositByNameFromToDateReturnDepositWithDepositors(name,start,end);
         LOGGER.debug("list = {}", list);
@@ -263,13 +292,22 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositByIdWithDepositors() throws ParseException {
-        int sumAmountDeposit = 2000,
-                sumAmountPlusDeposit = 80,
-                sumAmountMinusDeposit = 80;
+        int sumAmountDeposit = 0,
+                sumAmountPlusDeposit = 0,
+                sumAmountMinusDeposit = 0;
         String name = "depositName1";
 
         deposit = depositDao.getBankDepositByIdCriteria(1L);
         LOGGER.debug("deposit = {}", deposit);
+
+        depositors = depositorDao.getBankDepositorByIdDepositCriteria(deposit.getDepositId());
+        LOGGER.debug("depositors={}",depositors);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit += depositor.getDepositorAmountMinusDeposit();
+        }
 
         Map list = depositDao.getBankDepositByIdWithDepositors(1L);
         LOGGER.debug("list = {}", list);
@@ -294,15 +332,24 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositByIdFromToDateDepositWithDepositors() throws ParseException{
-        Integer sumAmountDeposit=1001,
-                sumAmountPlusDeposit=20,
-                sumAmountMinusDeposit=20;
-        Long id = 1L;
+        Integer sumAmountDeposit=0,
+                sumAmountPlusDeposit=0,
+                sumAmountMinusDeposit=0;
+        Long id = 0L;
         Date start = dateFormat.parse("2015-12-01");
-        Date end = dateFormat.parse("2015-12-05");
+        Date end = dateFormat.parse("2015-12-06");
 
-        deposit = depositDao.getBankDepositByIdCriteria(1L);
+        deposit = depositDao.getBankDepositByIdCriteria(0L);
         LOGGER.debug("deposit = {}", deposit);
+
+        depositors = depositorDao.getBankDepositorByIdDepositCriteria(deposit.getDepositId());
+        LOGGER.debug("depositors={}",depositors);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit += depositor.getDepositorAmountMinusDeposit();
+        }
 
         Map list = depositDao.getBankDepositByIdFromToDateDepositWithDepositors(id,start,end);
         LOGGER.debug("list = {}", list);
@@ -327,15 +374,24 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositByIdFromToDateReturnDepositWithDepositors() throws ParseException{
-        Integer sumAmountDeposit=999,
-                sumAmountPlusDeposit=60,
-                sumAmountMinusDeposit=60;
-        Long id = 1L;
-        Date start = dateFormat.parse("2015-12-06");
+        Integer sumAmountDeposit=0,
+                sumAmountPlusDeposit=0,
+                sumAmountMinusDeposit=0;
+        Long id = 0L;
+        Date start = dateFormat.parse("2015-12-01");
         Date end = dateFormat.parse("2015-12-07");
 
-        deposit = depositDao.getBankDepositByIdCriteria(1L);
+        deposit = depositDao.getBankDepositByIdCriteria(0L);
         LOGGER.debug("deposit = {}", deposit);
+
+        depositors = depositorDao.getBankDepositorByIdDepositCriteria(deposit.getDepositId());
+        LOGGER.debug("depositors={}",depositors);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit += depositor.getDepositorAmountMinusDeposit();
+        }
 
         Map list = depositDao.getBankDepositByIdFromToDateReturnDepositWithDepositors(id,start,end);
         LOGGER.debug("list = {}", list);
@@ -360,14 +416,26 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositsByTermWithDepositors() throws ParseException{
-        int[]   sumAmountDeposit =      new int[]{2000, 0},
-                sumAmountPlusDeposit =  new int[]{120, 0},
-                sumAmountMinusDeposit = new int[]{120, 0};
+        int[]   sumAmountDeposit =      new int[]{0, 0},
+                sumAmountPlusDeposit =  new int[]{0, 0},
+                sumAmountMinusDeposit = new int[]{0, 0};
 
         Integer term = 14;
 
         deposits = depositDao.getBankDepositsFromToMinTermCriteria(14,14);
         LOGGER.debug("deposits = {}", deposits);
+
+        depositors = new ArrayList<BankDepositor>();
+        for(BankDeposit d: deposits){
+            depositors.addAll(depositorDao.getBankDepositorByIdDepositCriteria(d.getDepositId()));
+        }
+        LOGGER.debug("depositors={}",depositors);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit[0] +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit[0] +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit[0] += depositor.getDepositorAmountMinusDeposit();
+        }
 
         List<Map> list = depositDao.getBankDepositsByTermWithDepositors(term);
         LOGGER.debug("list = {}", list);
@@ -398,15 +466,25 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositsByAmountWithDepositors() throws ParseException{
-        int[]   sumAmountDeposit =      new int[]{2000, 0},
-                sumAmountPlusDeposit =  new int[]{80, 0},
-                sumAmountMinusDeposit = new int[]{80, 0};
+        int[]   sumAmountDeposit =      new int[]{0, 0},
+                sumAmountPlusDeposit =  new int[]{0, 0},
+                sumAmountMinusDeposit = new int[]{0, 0};
 
         Integer amount = 200;
 
         deposits = new ArrayList<BankDeposit>();
         deposits.add(depositDao.getBankDepositByIdCriteria(1L));
         LOGGER.debug("deposits = {}", deposit);
+
+        depositors = depositorDao.getBankDepositorByIdDepositCriteria(1L);
+
+        LOGGER.debug("depositors={}",depositors);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit[0] +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit[0] +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit[0] += depositor.getDepositorAmountMinusDeposit();
+        }
 
         List<Map> list = depositDao.getBankDepositsByAmountWithDepositors(amount);
         LOGGER.debug("list = {}", list);
@@ -437,14 +515,26 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositsByRateWithDepositors() throws ParseException{
-        int[]   sumAmountDeposit =      new int[]{2000, 0},
-                sumAmountPlusDeposit =  new int[]{80, 0},
-                sumAmountMinusDeposit = new int[]{80, 0};
+        int[]   sumAmountDeposit =      new int[]{0, 0},
+                sumAmountPlusDeposit =  new int[]{0, 0},
+                sumAmountMinusDeposit = new int[]{0, 0};
 
         Integer rate = 5;
 
         deposits = depositDao.getBankDepositsFromToInterestRateCriteria(5,5);
         LOGGER.debug("deposits = {}", deposits);
+
+        depositors = new ArrayList<BankDepositor>();
+        for(BankDeposit d: deposits){
+            depositors.addAll(depositorDao.getBankDepositorByIdDepositCriteria(d.getDepositId()));
+        }
+        LOGGER.debug("depositors={}",depositors);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit[0] +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit[0] +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit[0] += depositor.getDepositorAmountMinusDeposit();
+        }
 
         List<Map> list = depositDao.getBankDepositsByRateWithDepositors(rate);
         LOGGER.debug("list = {}", list);
@@ -475,12 +565,20 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositByDepositorIdWithDepositors() throws ParseException{
-        int     sumAmountDeposit = 999,
-                sumAmountPlusDeposit = 60,
-                sumAmountMinusDeposit = 60;
+        int     sumAmountDeposit = 0,
+                sumAmountPlusDeposit = 0,
+                sumAmountMinusDeposit = 0;
 
-        deposit = depositDao.getBankDepositByIdCriteria(1L);
+        deposit = depositDao.getBankDepositByIdCriteria(0L);
         LOGGER.debug("deposit = {}", deposit);
+
+        depositor = depositorDao.getBankDepositorByIdCriteria(1L);
+        LOGGER.debug("depositor={}",depositor);
+
+        sumAmountDeposit +=      depositor.getDepositorAmountDeposit();
+        sumAmountPlusDeposit +=  depositor.getDepositorAmountPlusDeposit();
+        sumAmountMinusDeposit += depositor.getDepositorAmountMinusDeposit();
+
 
         Map list = depositDao.getBankDepositByDepositorIdWithDepositors(1L);
         LOGGER.debug("list = {}", list);
@@ -505,12 +603,19 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositByDepositorNameWithDepositors() throws ParseException{
-        int sumAmountDeposit = 999,
-                sumAmountPlusDeposit = 60,
-                sumAmountMinusDeposit = 60;
+        int     sumAmountDeposit = 0,
+                sumAmountPlusDeposit = 0,
+                sumAmountMinusDeposit = 0;
 
-        deposit = depositDao.getBankDepositByIdCriteria(1L);
+        deposit = depositDao.getBankDepositByIdCriteria(0L);
         LOGGER.debug("deposit = {}", deposit);
+
+        depositor = depositorDao.getBankDepositorByIdCriteria(1L);
+        LOGGER.debug("depositor={}",depositor);
+
+        sumAmountDeposit +=      depositor.getDepositorAmountDeposit();
+        sumAmountPlusDeposit +=  depositor.getDepositorAmountPlusDeposit();
+        sumAmountMinusDeposit += depositor.getDepositorAmountMinusDeposit();
 
         Map list = depositDao.getBankDepositByDepositorNameWithDepositors("depositorName6");
         LOGGER.debug("list = {}", list);
@@ -533,35 +638,41 @@ public class BankDepositDaoImplTest {
                 Integer.parseInt(list.get("depositorAmountMinusSum").toString()));
     }
 
-    @Test
+    //@Test
     public void testGetBankDepositsByDepositorAmountWithDepositors() throws ParseException{
-        int[]   sumAmountDeposit =      new int[]{4000, 0},
-                sumAmountPlusDeposit =  new int[]{200, 0},
-                sumAmountMinusDeposit = new int[]{200, 0};
+        int[]   sumAmountDeposit =      new int[]{0, 0},
+                sumAmountPlusDeposit =  new int[]{0, 0},
+                sumAmountMinusDeposit = new int[]{0, 0};
 
         Integer amount = 997;
 
-        deposits = new ArrayList<BankDeposit>();
-        deposits.add(depositDao.getBankDepositByIdCriteria(1L));
-        deposits.add(depositDao.getBankDepositByIdCriteria(2L));
-        deposits.add(depositDao.getBankDepositByIdCriteria(3L));
-        LOGGER.debug("deposits = {}", deposit);
+        depositors = new ArrayList<BankDepositor>();
+        for(BankDepositor depr: depositorDao.getBankDepositorsCriteria()){
+            if((amount<=depr.getDepositorAmountDeposit()) && (depr.getDepositorAmountDeposit()<=(amount+3))){
+                depositors.add(depr);
+            }
+        }
+        LOGGER.debug("depositors={}",depositors);
 
-        List<Map> list = depositDao.getBankDepositsByDepositorAmountWithDepositors(amount,amount+6);
+        deposits = new ArrayList<BankDeposit>();
+        for(BankDepositor depr:depositors){
+            deposits.add(depositDao.getBankDepositByIdCriteria(depr.getDepositId()));
+        }
+        LOGGER.debug("deposits = {}", deposits);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit[0] +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit[0] +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit[0] += depositor.getDepositorAmountMinusDeposit();
+        }
+
+        List<Map> list = depositDao.getBankDepositsByDepositorAmountWithDepositors(amount,amount+3);
         LOGGER.debug("list = {}", list);
 
         assertNotNull(ERROR_NULL,list);
 
         int i = 0;
         for (Map aList: list) {
-            assertEquals(deposits.get(i).getDepositId(), aList.get("depositId"));
-            assertEquals(deposits.get(i).getDepositName(), aList.get("depositName"));
-            assertEquals(deposits.get(i).getDepositMinTerm(), aList.get("depositMinTerm"));
-            assertEquals(deposits.get(i).getDepositMinAmount(), aList.get("depositMinAmount"));
-            assertEquals(deposits.get(i).getDepositCurrency(), aList.get("depositCurrency"));
-            assertEquals(deposits.get(i).getDepositInterestRate(), aList.get("depositInterestRate"));
-            assertEquals(deposits.get(i).getDepositAddConditions(), aList.get("depositAddConditions"));
-
             sumAmountDeposit[1] +=      Integer.parseInt(aList.get("depositorAmountSum").toString());
             sumAmountPlusDeposit[1] +=  Integer.parseInt(aList.get("depositorAmountPlusSum").toString());
             sumAmountMinusDeposit[1] += Integer.parseInt(aList.get("depositorAmountMinusSum").toString());
@@ -692,14 +803,26 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositsByCurrencyWithDepositors() throws ParseException{
-        int[]   sumAmountDeposit =      new int[]{4000, 0},
-                sumAmountPlusDeposit =  new int[]{180, 0},
-                sumAmountMinusDeposit = new int[]{180, 0};
+        int[]   sumAmountDeposit =      new int[]{0, 0},
+                sumAmountPlusDeposit =  new int[]{0, 0},
+                sumAmountMinusDeposit = new int[]{0, 0};
 
         String currency = "eur";
 
         deposits = depositDao.getBankDepositsByCurrencyCriteria(currency);
         LOGGER.debug("deposits = {}", deposits);
+
+        depositors = new ArrayList<BankDepositor>();
+        for(BankDeposit d: deposits){
+            depositors.addAll(depositorDao.getBankDepositorByIdDepositCriteria(d.getDepositId()));
+        }
+        LOGGER.debug("depositors={}",depositors);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit[0] +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit[0] +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit[0] += depositor.getDepositorAmountMinusDeposit();
+        }
 
         List<Map> list = depositDao.getBankDepositsByCurrencyWithDepositors(currency);
         LOGGER.debug("list = {}", list);
@@ -733,14 +856,26 @@ public class BankDepositDaoImplTest {
         Date startDate = dateFormat.parse("2015-12-01");
         Date endDate = dateFormat.parse("2015-12-05");
 
-        int[]   sumAmountDeposit =      new int[]{3007, 0},
-                sumAmountPlusDeposit =  new int[]{100, 0},
-                sumAmountMinusDeposit = new int[]{100, 0};
+        int[]   sumAmountDeposit =      new int[]{0, 0},
+                sumAmountPlusDeposit =  new int[]{0, 0},
+                sumAmountMinusDeposit = new int[]{0, 0};
 
         String currency = "eur";
 
         deposits = depositDao.getBankDepositsByCurrencyCriteria(currency);
         LOGGER.debug("deposits = {}", deposits);
+
+        depositors = new ArrayList<BankDepositor>();
+        for(BankDeposit d: deposits){
+            depositors.addAll(depositorDao.getBankDepositorByIdDepositCriteria(d.getDepositId()));
+        }
+        LOGGER.debug("depositors={}",depositors);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit[0] +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit[0] +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit[0] += depositor.getDepositorAmountMinusDeposit();
+        }
 
         List<Map> list = depositDao.getBankDepositsByCurrencyFromToDateDepositWithDepositors(currency,startDate,endDate);
         LOGGER.debug("list = {}", list);
@@ -771,17 +906,29 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositsByCurrencyFromToDateReturnDepositWithDepositors() throws ParseException{
-        Date startDate = dateFormat.parse("2015-12-02");
-        Date endDate = dateFormat.parse("2015-12-07");
+        Date startDate = dateFormat.parse("2015-12-05");
+        Date endDate = dateFormat.parse("2015-12-10");
 
-        int[]   sumAmountDeposit =      new int[]{3002, 0},
-                sumAmountPlusDeposit =  new int[]{110, 0},
-                sumAmountMinusDeposit = new int[]{110, 0};
+        int[]   sumAmountDeposit =      new int[]{0, 0},
+                sumAmountPlusDeposit =  new int[]{0, 0},
+                sumAmountMinusDeposit = new int[]{0, 0};
 
         String currency = "eur";
 
         deposits = depositDao.getBankDepositsByCurrencyCriteria(currency);
         LOGGER.debug("deposits = {}", deposits);
+
+        depositors = new ArrayList<BankDepositor>();
+        for(BankDeposit d: deposits){
+            depositors.addAll(depositorDao.getBankDepositorByIdDepositCriteria(d.getDepositId()));
+        }
+        LOGGER.debug("depositors={}",depositors);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit[0] +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit[0] +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit[0] += depositor.getDepositorAmountMinusDeposit();
+        }
 
         List<Map> list = depositDao.getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(currency,startDate,endDate);
         LOGGER.debug("list = {}", list);
@@ -812,15 +959,37 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositsByDepositorMarkReturnWithDepositors() throws ParseException{
-        int[]   sumAmountDeposit =      new int[]{2000, 0},
-                sumAmountPlusDeposit =  new int[]{140, 0},
-                sumAmountMinusDeposit = new int[]{140, 0};
+        int[]   sumAmountDeposit =      new int[]{0, 0},
+                sumAmountPlusDeposit =  new int[]{0, 0},
+                sumAmountMinusDeposit = new int[]{0, 0};
 
         Integer mark = 1;
 
-        deposit = depositDao.getBankDepositByIdCriteria(4L);
+        depositors = new ArrayList<BankDepositor>();
+        for(BankDepositor depr:depositorDao.getBankDepositorsCriteria()){
+            if(depr.getDepositorMarkReturnDeposit() == mark){
+                depositors.add(depr);
+            }
+        }
+        LOGGER.debug("depositors={}",depositors);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit[0] +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit[0] +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit[0] += depositor.getDepositorAmountMinusDeposit();
+        }
+
         deposits = new ArrayList<BankDeposit>();
-        deposits.add(deposit);
+        for(BankDeposit dep:depositDao.getBankDepositsCriteria()){
+            for(BankDepositor depr:depositors){
+                if(dep.getDepositId().equals(depr.getDepositId())){
+                    if(!deposits.contains(dep)){
+                        deposits.add(dep);
+                        LOGGER.debug("deposits = {}", deposits);
+                    }
+                }
+            }
+        }
         LOGGER.debug("deposits = {}", deposits);
 
         List<Map> list = depositDao.getBankDepositsByDepositorMarkReturnWithDepositors(mark);
@@ -852,9 +1021,9 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositsByVarArgsIdInterestRate() throws ParseException{
-        int[]   sumAmountDeposit =      new int[]{2000, 0},
-                sumAmountPlusDeposit =  new int[]{120, 0},
-                sumAmountMinusDeposit = new int[]{120, 0};
+        int[]   sumAmountDeposit =      new int[]{0, 0},
+                sumAmountPlusDeposit =  new int[]{0, 0},
+                sumAmountMinusDeposit = new int[]{0, 0};
 
         String nameAliasField2 = "deposit.depositInterestRate";
         Integer rate = 6;
@@ -865,6 +1034,18 @@ public class BankDepositDaoImplTest {
         deposits = new ArrayList<BankDeposit>();
         deposits.add(depositDao.getBankDepositByIdCriteria(id));
         LOGGER.debug("deposits - IR = {}", deposits);
+
+        depositors = new ArrayList<BankDepositor>();
+        for(BankDeposit d: deposits){
+            depositors.addAll(depositorDao.getBankDepositorByIdDepositCriteria(d.getDepositId()));
+        }
+        LOGGER.debug("depositors={}",depositors);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit[0] +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit[0] +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit[0] += depositor.getDepositorAmountMinusDeposit();
+        }
 
         List<Map> list = depositDao.getBankDepositsByVarArgs(
                 nameAliasField2,rate,
@@ -898,9 +1079,9 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositsByVarArgsNameCurrency() throws ParseException{
-        int[]   sumAmountDeposit =      new int[]{2000, 0},
-                sumAmountPlusDeposit =  new int[]{80, 0},
-                sumAmountMinusDeposit = new int[]{80, 0};
+        int[]   sumAmountDeposit =      new int[]{0, 0},
+                sumAmountPlusDeposit =  new int[]{0, 0},
+                sumAmountMinusDeposit = new int[]{0, 0};
 
         String nameAliasField1 = "deposit.depositCurrency";
         String currency = "eur";
@@ -918,6 +1099,18 @@ public class BankDepositDaoImplTest {
             }
         }
         LOGGER.debug("deposits {}", deposits);
+
+        depositors = new ArrayList<BankDepositor>();
+        for(BankDeposit d: deposits){
+            depositors.addAll(depositorDao.getBankDepositorByIdDepositCriteria(d.getDepositId()));
+        }
+        LOGGER.debug("depositors={}",depositors);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit[0] +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit[0] +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit[0] += depositor.getDepositorAmountMinusDeposit();
+        }
 
         List<Map> list = depositDao.getBankDepositsByVarArgs(
                 nameAliasField1,currency,
@@ -951,9 +1144,9 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositsByVarArgsDateDeposit() throws ParseException{
-        int[]   sumAmountDeposit =      new int[]{3990, 0},
-                sumAmountPlusDeposit =  new int[]{300, 0},
-                sumAmountMinusDeposit = new int[]{300, 0};
+        int[]   sumAmountDeposit =      new int[]{0, 0},
+                sumAmountPlusDeposit =  new int[]{0, 0},
+                sumAmountMinusDeposit = new int[]{0, 0};
 
         String nameAliasField5 = "depositor.depositorDateDepositLe";
         Date dateDeposit = dateFormat.parse("2015-12-05");
@@ -964,6 +1157,15 @@ public class BankDepositDaoImplTest {
 
         deposits = depositDao.getBankDepositsFromToDateDeposit(dateDeposit,dateDeposit2);
         LOGGER.debug("deposits: {}", deposits);
+
+        depositors = depositorDao.getBankDepositorsFromToDateDeposit(dateDeposit,dateDeposit2);
+        LOGGER.debug("depositors={}",depositors);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit[0] +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit[0] +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit[0] += depositor.getDepositorAmountMinusDeposit();
+        }
 
         List<Map> list = depositDao.getBankDepositsByVarArgs(
                 nameAliasField5,dateDeposit,
@@ -997,9 +1199,9 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositsByVarArgsTermAmountMark() throws ParseException{
-        int[]   sumAmountDeposit =      new int[]{2000, 0},
-                sumAmountPlusDeposit =  new int[]{80, 0},
-                sumAmountMinusDeposit = new int[]{80, 0};
+        int[]   sumAmountDeposit =      new int[]{0, 0},
+                sumAmountPlusDeposit =  new int[]{0, 0},
+                sumAmountMinusDeposit = new int[]{0, 0};
 
         String nameAliasField9 = "deposit.depositMinTerm";
         Integer term = 13;
@@ -1017,7 +1219,7 @@ public class BankDepositDaoImplTest {
 
         for(BankDeposit dMT:depositsTerm){
             for(Map d:depositDao.getBankDepositsByAmountWithDepositors(amount)){
-                if(dMT.getDepositId().equals((Long)d.get("depositId"))){
+                if(dMT.getDepositId().equals(d.get("depositId"))){
                     depositsMTA.add(dMT);
                 }
             }
@@ -1026,11 +1228,27 @@ public class BankDepositDaoImplTest {
 
         for(BankDeposit dMTAM:depositsMTA){
             for(Map d:depositDao.getBankDepositsByDepositorMarkReturnWithDepositors(mark))
-                if(dMTAM.getDepositId().equals((Long)d.get("depositId"))){
+                if(dMTAM.getDepositId().equals(d.get("depositId"))){
                     deposits.add(dMTAM);
             }
         }
         LOGGER.debug("deposits - MTAM = {}", deposits);
+
+        depositors = new ArrayList<BankDepositor>();
+        for(BankDeposit d: deposits){
+            for(BankDepositor depr:depositorDao.getBankDepositorByIdDepositCriteria(d.getDepositId())){
+                if(depr.getDepositorMarkReturnDeposit() != 1){
+                    depositors.add(depr);
+                }
+            }
+        }
+        LOGGER.debug("depositors={}",depositors);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit[0] +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit[0] +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit[0] += depositor.getDepositorAmountMinusDeposit();
+        }
 
         List<Map> list = depositDao.getBankDepositsByVarArgs(
                 nameAliasField9,term,
@@ -1065,9 +1283,9 @@ public class BankDepositDaoImplTest {
 
     @Test
     public void testGetBankDepositsByVarArgs() throws ParseException{
-        int[]   sumAmountDeposit =      new int[]{999, 0},
-                sumAmountPlusDeposit =  new int[]{60, 0},
-                sumAmountMinusDeposit = new int[]{60, 0};
+        int[]   sumAmountDeposit =      new int[]{0, 0},
+                sumAmountPlusDeposit =  new int[]{0, 0},
+                sumAmountMinusDeposit = new int[]{0, 0};
 
         String nameAliasField1 = "deposit.depositCurrency";
         String currency = "eur";
@@ -1098,6 +1316,35 @@ public class BankDepositDaoImplTest {
         deposits.add(depositDao.getBankDepositByIdCriteria(id));
         //deposits.add(depositDao.getBankDepositByNameCriteria(name));
         LOGGER.debug("deposits - IR = {}", deposits);
+
+        List<BankDepositor> depositorsDDR = new ArrayList<BankDepositor>();
+        List<BankDepositor> depositorsDR = depositorDao.getBankDepositorsFromToDateDeposit(dateDeposit,dateDeposit2);
+        LOGGER.debug("depositorsDR={}",depositorsDR);
+        for(BankDepositor d:depositorDao.getBankDepositorsFromToDateReturnDeposit(dateDeposit3,dateDeposit4)){
+            for(BankDepositor dr:depositorsDR){
+                if(d.getDepositorId().equals(dr.getDepositorId())){
+                    depositorsDDR.add(dr);
+                }
+            }
+        }
+        LOGGER.debug("depositorsDDR={}",depositorsDDR);
+
+        depositors = new ArrayList<BankDepositor>();
+        for(BankDeposit d: deposits){
+            for(BankDepositor depr:depositorsDDR){
+                if(depr.getDepositId().equals(d.getDepositId())){
+                    depositors.add(depr);
+                }
+            }
+        }
+        LOGGER.debug("depositors={}",depositors);
+
+        for(BankDepositor depositor: depositors){
+            sumAmountDeposit[0] +=      depositor.getDepositorAmountDeposit();
+            sumAmountPlusDeposit[0] +=  depositor.getDepositorAmountPlusDeposit();
+            sumAmountMinusDeposit[0] += depositor.getDepositorAmountMinusDeposit();
+        }
+        LOGGER.debug("sum={}, {}, {}",sumAmountDeposit[0],sumAmountMinusDeposit[0],sumAmountPlusDeposit[0]);
 
         List<Map> list = depositDao.getBankDepositsByVarArgs(
                 nameAliasField1,currency,
@@ -1164,7 +1411,7 @@ public class BankDepositDaoImplTest {
         assertFalse(deposits.isEmpty());
         sizeBefore = deposits.size();
         LOGGER.debug("size before - {}",sizeBefore);
-        depositDao.deleteBankDeposit(3L);
+        depositDao.deleteBankDeposit(4L);
         deposits = depositDao.getBankDepositsCriteria();
         LOGGER.debug("size after - {}",deposits.size());
         assertEquals(sizeBefore-1,deposits.size());

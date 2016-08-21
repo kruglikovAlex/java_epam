@@ -27,13 +27,12 @@ http://www.springframework.org/schema/context/spring-context.xsd">
         <property name="password" value="${jdbc.password}"/>
     </bean>
 
-    <bean id="depositDao" class="com.brest.bank.dao.BankDepositDaoImpl"/>
-
-    <bean id="depositorDao" class="com.brest.bank.dao.BankDepositorDaoImp"/>
-
     <jdbc:initialize-database data-source="dataSource">
-        <jdbc:script location="create-tables.sql"/>
-        <jdbc:script location="data-script.sql"/>
+        <jdbc:script location="classpath:create-tables.sql"/>
+        <jdbc:script location="classpath:data-script.sql"/>
     </jdbc:initialize-database>
 
+    <bean id="depositDao" class="com.brest.bank.dao.BankDepositDaoImpl"/>
+
+    <bean id="depositorDao" class="com.brest.bank.dao.BankDepositorDaoImpl"/>
 </beans>

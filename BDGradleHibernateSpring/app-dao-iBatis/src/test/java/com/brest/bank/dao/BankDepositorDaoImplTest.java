@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
@@ -19,8 +21,8 @@ import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/spring-dao-test.xml"})
-public class BankDepositorDaoImpTest {
+@ContextConfiguration(locations = {"classpath:/spring-dao-ibatis-test.xml"})
+public class BankDepositorDaoImplTest {
 
     private static final Logger LOGGER = LogManager.getLogger(BankDepositDaoImplTest.class);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -76,6 +78,40 @@ public class BankDepositorDaoImpTest {
     }
 
     @Test
+    public void testGetBankDepositorByIdDepositCriteria() throws Exception {
+        depositors = depositorDao.getBankDepositorByIdDepositCriteria(1L);
+        LOGGER.debug("depositors = {}", depositors);
+
+        assertFalse(ERROR_EMPTY_BD,depositors.isEmpty());
+        assertThat(ERROR_SIZE,depositors.size(), is(not(0)));
+        assertNotNull(ERROR_NULL,depositors);
+    }
+
+    @Test
+    public void testGetBankDepositorsFromToDateDeposit() throws ParseException {
+        Date startDate = dateFormat.parse("2015-11-02");
+        Date endDate = dateFormat.parse("2015-12-04");
+
+        depositors = depositorDao.getBankDepositorsFromToDateDeposit(startDate,endDate);
+        LOGGER.debug("depositors.size()= {}", depositors.size());
+
+        assertFalse(depositors.isEmpty());
+        assertNotNull(depositors);
+    }
+
+    @Test
+    public void testGetBankDepositorsFromToDateReturnDeposit() throws ParseException{
+        Date startDate = dateFormat.parse("2015-11-02");
+        Date endDate = dateFormat.parse("2015-12-04");
+
+        depositors = depositorDao.getBankDepositorsFromToDateReturnDeposit(startDate, endDate);
+        LOGGER.debug("depositors.size()= {}", depositors.size());
+
+        assertFalse(depositors.isEmpty());
+        assertNotNull(depositors);
+    }
+
+    @Test
     public void testAddBankDepositor() throws Exception {
         depositor = new BankDepositor();
             depositor.setDepositorName("newName");
@@ -122,6 +158,13 @@ public class BankDepositorDaoImpTest {
 
     @Test
     public void testRemoveBankDepositor() throws Exception {
-
+        assertNotNull(depositors);
+        assertFalse(depositors.isEmpty());
+        sizeBefore = depositors.size();
+        LOGGER.debug("size before - {}",sizeBefore);
+        depositorDao.removeBankDepositor(3L);
+        depositors = depositorDao.getBankDepositorsCriteria();
+        LOGGER.debug("size after - {}",depositors.size());
+        assertEquals(sizeBefore-1,depositors.size());
     }
 }

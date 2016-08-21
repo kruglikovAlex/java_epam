@@ -21,7 +21,7 @@ public interface BankDepositorDao {
      * @param end Date - end value of the date deposit (startDate < endDate)
      * @return List<BankDepositors> a list of all bank depositors with the specified task`s date deposit
      */
-    //List<BankDepositor> getBankDepositorsFromToDateDeposit(Date start, Date end);
+    List<BankDepositor> getBankDepositorsFromToDateDeposit(Date start, Date end);
 
     /**
      * Get all Bank Depositors from-to Date return Deposit
@@ -30,7 +30,7 @@ public interface BankDepositorDao {
      * @param end Date - end value of the date return deposit (startDate < endDate)
      * @return List<BankDepositors> a list of all bank depositors with the specified task`s date return deposit
      */
-    //List<BankDepositor> getBankDepositorsFromToDateReturnDeposit(Date start, Date end);
+    List<BankDepositor> getBankDepositorsFromToDateReturnDeposit(Date start, Date end);
 
     /**
      * Get Bank Depositor by ID
@@ -46,7 +46,7 @@ public interface BankDepositorDao {
      * @param depositId  Long - id of the Bank Deposit
      * @return List<BankDepositor> with the specified id bank deposit from the database
      */
-    //List<BankDepositor> getBankDepositorByIdDepositCriteria(Long depositId);
+    List<BankDepositor> getBankDepositorByIdDepositCriteria(Long depositId);
 
     /**
      * Get Bank Depositor by Name

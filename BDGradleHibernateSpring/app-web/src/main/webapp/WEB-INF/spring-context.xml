@@ -16,9 +16,9 @@
          http://www.springframework.org/schema/tx
          http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-    <mvc:annotation-driven />
-    <mvc:resources mapping="/resources/**" location="/resources/" />
+    <mvc:annotation-driven/>
     <context:component-scan base-package="com.brest.bank"/>
+    <mvc:resources mapping="/resources/**" location="/resources/" />
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
@@ -34,22 +34,34 @@
         <property name="username" value="${jdbc.username}"/>
         <property name="password" value="${jdbc.password}"/>
     </bean>
+
+    <jdbc:initialize-database data-source="dataSource">
+        <jdbc:script location="classpath:create-tables.sql"/>
+        <jdbc:script location="classpath:data-script.sql"/>
+    </jdbc:initialize-database>
+
 <!--
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="configLocation" value="classpath:hibernate.cfg.xml" />
     </bean>
 -->
+
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
     </bean>
-
-    <tx:annotation-driven transaction-manager="transactionManager"/>
 <!--
-    <jdbc:initialize-database data-source="dataSource">
-        <jdbc:script location="classpath:data-script.sql"/>
-    </jdbc:initialize-database>
+    <tx:annotation-driven/>
+    -->
+    <tx:advice id="tm" transaction-manager="transactionManager"/>
+<!--
+    <bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+        <property name="configLocation" value="SqlMapConfig.xml"/>
+        <property name="dataSource" ref="dataSource"/>
+        <property name="useTransactionAwareDataSource" value="true"/>
+    </bean>
 -->
+
     <bean id="messageSource"
           class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basename" value="classpath:messages" />

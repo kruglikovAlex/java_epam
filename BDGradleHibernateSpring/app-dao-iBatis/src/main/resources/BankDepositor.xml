@@ -47,6 +47,47 @@
         </dynamic>
     </select>
 
+    <select id="getByIdDeposit" resultClass="BankDepositor">
+
+        <include refid="allDepositors"/>
+
+        <dynamic prepend="WHERE">
+            <isNotEmpty property="depositId">
+                depositId = #depositId#
+            </isNotEmpty>
+        </dynamic>
+    </select>
+
+    <select id="getFromToDateDeposit" parameterClass="hashMap" resultClass="BankDepositor">
+
+        <include refid="allDepositors"/>
+
+        <dynamic prepend="WHERE">
+            depositorDateDeposit between
+            <isNotEmpty property="startDate" prepend="AND">
+                #startDate#
+            </isNotEmpty>
+            <isNotEmpty property="endDate" prepend="AND">
+                #endDate#
+            </isNotEmpty>
+        </dynamic>
+    </select>
+
+    <select id="getFromToDateReturnDeposit" parameterClass="hashMap" resultClass="BankDepositor">
+
+        <include refid="allDepositors"/>
+
+        <dynamic prepend="WHERE">
+            depositorDateReturnDeposit between
+            <isNotEmpty property="startDate" prepend="AND">
+                #startDate#
+            </isNotEmpty>
+            <isNotEmpty property="endDate" prepend="AND">
+                #endDate#
+            </isNotEmpty>
+        </dynamic>
+    </select>
+
     <select id="getByName" resultClass="BankDepositor">
 
         <include refid="allDepositors"/>
@@ -89,7 +130,7 @@
         </dynamic>
     </update>
 
-    <delete id="delete" parameterClass="hashmap">
+    <delete id="delete" parameterClass="BankDepositor">
         delete from BANKDEPOSITOR
         <dynamic prepend="WHERE">
             <isNotEmpty property="depositorId">

@@ -3,7 +3,7 @@ version '1.0-SNAPSHOT'
 
 dependencies {
     compile project(":app-core")
-    compile project(":app-dao")
+    compile project(":app-dao-iBatis")
 
     compile group: 'org.springframework', name: 'spring-beans', version: '4.2.4.RELEASE'
     compile group: 'org.springframework', name: 'spring-test', version: '4.2.4.RELEASE'
@@ -14,10 +14,4 @@ dependencies {
     compile('org.hsqldb:hsqldb:2.3.2')
 
     testCompile('org.easymock:easymock:3.3.1')
-
-    testCompile('org.unitils:unitils-mock:3.4.2')
-    testCompile('org.unitils:unitils-spring:3.4.2')
-    testCompile('org.unitils:unitils-database:3.4.2')
-    testCompile('org.unitils:unitils-dbmaintainer:3.4.2')
-    testCompile('org.unitils:unitils-inject:3.4.2')
 }

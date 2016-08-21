@@ -14,13 +14,10 @@ import org.springframework.util.Assert;
 
 import java.io.Reader;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
-public class BankDepositorDaoImp implements BankDepositorDao {
+public class BankDepositorDaoImpl implements BankDepositorDao {
 
     public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
     public static final String ERROR_NULL_PARAM = "The parameter must be NULL";
@@ -29,8 +26,8 @@ public class BankDepositorDaoImp implements BankDepositorDao {
     private static final Logger LOGGER = LogManager.getLogger(BankDepositDaoImpl.class);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    BankDepositor depositor;
-    List<BankDepositor> depositors;
+    private BankDepositor depositor;
+    private List<BankDepositor> depositors;
 
     /**
      * Get all Bank Depositors
@@ -47,7 +44,7 @@ public class BankDepositorDaoImp implements BankDepositorDao {
             Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
             SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
 
-            depositors = (List<BankDepositor>)smc.queryForList("BankDepositor.getAll",null);
+            depositors = smc.queryForList("BankDepositor.getAll",null);
         }catch (Exception e){
             LOGGER.error("error - getBankDepositorsCriteria() - {}", e.toString());
             throw new IllegalArgumentException("error - getBankDepositorsCriteria()"+e.toString());
@@ -120,9 +117,31 @@ public class BankDepositorDaoImp implements BankDepositorDao {
      * @param end Date - end value of the date deposit (startDate < endDate)
      * @return List<BankDepositors> a list of all bank depositors with the specified task`s date deposit
      */
-    //@Override
-    //@Transactional
-    //public List<BankDepositor> getBankDepositorsFromToDateDeposit(Date start, Date end);
+    @Override
+    @Transactional
+    public List<BankDepositor> getBankDepositorsFromToDateDeposit(Date start, Date end){
+        LOGGER.debug("getBankDepositorsFromToDateDeposit(start={}, end={}",dateFormat.format(start),dateFormat.format(end));
+        Assert.notNull(start,ERROR_METHOD_PARAM);
+        Assert.notNull(end,ERROR_METHOD_PARAM);
+        Assert.isTrue(start.before(end),ERROR_FROM_TO_PARAM);
+
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            Map param = new HashMap();
+            param.put("startDate",start);
+            param.put("endDate",end);
+
+            depositors = smc.queryForList("BankDepositor.getFromToDateDeposit",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositorsFromToDateDeposit({}, {}) - {}", dateFormat.format(start),
+                    dateFormat.format(end),e.toString());
+            throw new IllegalArgumentException("error - getBankDepositorsFromToDateDeposit()"+e.toString());
+        }
+        LOGGER.debug("depositors: {}",depositors);
+        return depositors;
+    }
 
     /**
      * Get all Bank Depositors from-to Date return Deposit
@@ -131,9 +150,31 @@ public class BankDepositorDaoImp implements BankDepositorDao {
      * @param end Date - end value of the date return deposit (startDate < endDate)
      * @return List<BankDepositors> a list of all bank depositors with the specified task`s date return deposit
      */
-    //@Override
-    //@Transactional
-    //List<BankDepositor> getBankDepositorsFromToDateReturnDeposit(Date start, Date end);
+    @Override
+    @Transactional
+    public List<BankDepositor> getBankDepositorsFromToDateReturnDeposit(Date start, Date end){
+        LOGGER.debug("getBankDepositorsFromToDateReturnDeposit(start={}, end={}",dateFormat.format(start),dateFormat.format(end));
+        Assert.notNull(start,ERROR_METHOD_PARAM);
+        Assert.notNull(end,ERROR_METHOD_PARAM);
+        Assert.isTrue(start.before(end),ERROR_FROM_TO_PARAM);
+
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            Map param = new HashMap();
+            param.put("startDate",start);
+            param.put("endDate",end);
+
+            depositors = smc.queryForList("BankDepositor.getFromToDateReturnDeposit",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositorsFromToDateReturnDeposit({}, {}) - {}", dateFormat.format(start),
+                    dateFormat.format(end),e.toString());
+            throw new IllegalArgumentException("error - getBankDepositorsFromToDateReturnDeposit()"+e.toString());
+        }
+        LOGGER.debug("depositors: {}",depositors);
+        return depositors;
+    }
 
     /**
      * Get Bank Depositors by ID Bank Deposit
@@ -141,7 +182,27 @@ public class BankDepositorDaoImp implements BankDepositorDao {
      * @param depositId  Long - id of the Bank Deposit
      * @return List<BankDepositor> with the specified id bank deposit from the database
      */
-    //List<BankDepositor> getBankDepositorByIdDepositCriteria(Long depositId);
+    @Override
+    @Transactional
+    public List<BankDepositor> getBankDepositorByIdDepositCriteria(Long depositId){
+        LOGGER.debug("getBankDepositorByIdDepositCriteria(id={})",depositId);
+        Assert.notNull(depositId,ERROR_METHOD_PARAM);
+
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
+
+            BankDeposit param = new BankDeposit();
+            param.setDepositId(depositId);
+
+            depositors = smc.queryForList("BankDepositor.getByIdDeposit",param);
+        }catch (Exception e){
+            LOGGER.error("error - getBankDepositorByIdDepositCriteria(id={}) - {}", depositId, e.toString());
+            throw new IllegalArgumentException("error - getBankDepositorByIdDepositCriteria()"+e.toString());
+        }
+        LOGGER.debug("depositors: {}",depositors);
+        return depositors;
+    }
 
     /**
      * Adding Bank Depositor
@@ -207,14 +268,27 @@ public class BankDepositorDaoImp implements BankDepositorDao {
     @Override
     @Transactional
     public void removeBankDepositor(Long id){
+        LOGGER.debug("removeBankDepositor(id={})",id);
+        Assert.notNull(id,ERROR_METHOD_PARAM);
+        try{
+            Reader rd = Resources.getResourceAsReader("SqlMapConfig.xml");
+            SqlMapClient smc = SqlMapClientBuilder.buildSqlMapClient(rd);
 
+            BankDepositor param = new BankDepositor();
+            param.setDepositorId(id);
+
+            smc.delete("BankDepositor.delete",param);
+        }catch (Exception e){
+            LOGGER.error("error - removeBankDepositor({}) - {}", depositor, e.toString());
+            throw new IllegalArgumentException("error - removeBankDepositor()"+e.toString());
+        }
     }
 
     @Override
     @Transactional
     public Integer rowCount(){
         LOGGER.debug("rowCount()");
-        Integer count = 0;
+        Integer count;
         try{
             Reader rd = com.ibatis.common.resources.Resources.getResourceAsReader("SqlMapConfig.xml");
 
