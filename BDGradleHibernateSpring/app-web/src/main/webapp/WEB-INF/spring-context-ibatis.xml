@@ -53,6 +53,13 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
+
+    <bean id="sqlMapClient" class="com.brest.bank.util.SqlMapClientFactoryBean">
+        <property name="configLocation" value="classpath:SqlMapConfig.xml"/>
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+
     <bean id="messageSource"
           class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basename" value="classpath:messages" />

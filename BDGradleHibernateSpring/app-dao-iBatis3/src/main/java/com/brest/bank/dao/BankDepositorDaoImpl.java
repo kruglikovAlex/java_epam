@@ -7,6 +7,10 @@ import com.ibatis.sqlmap.client.SqlMapClient;
 import com.ibatis.sqlmap.client.SqlMapClientBuilder;
 import com.ibatis.common.resources.Resources;
 
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.orm.ibatis.SqlMapClientTemplate;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,22 +42,9 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
     private Map<String,Object> paramMap;
 
     @Autowired
-    private SqlMapClient sqlMapClient;
+    private SqlSessionFactory sqlSessionFactory;
 
-    //private Reader reader;
-
-    /*
-    @PostConstruct
-    public void init(){
-        try{
-            reader = Resources.getResourceAsReader("SqlMapConfig.xml");
-        }catch (IOException e){
-            LOGGER.error("error - init() for BankDepositDaoImpl.class - {}", e.toString());
-            throw new IllegalArgumentException("error - init() for BankDepositDaoImpl.class"+e.toString());
-        }
-        sqlMapClient = SqlMapClientBuilder.buildSqlMapClient(reader);
-    }
-    */
+    private SqlSession sqlSession;
 
     /**
      * Get all Bank Depositors
@@ -66,21 +57,16 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         depositors = new ArrayList<BankDepositor>();
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
-            depositors = sqlMapClient.queryForList("BankDepositor.getAll",null);
+            depositors = (List<BankDepositor>)sqlSession.selectList("BankDepositor.getAll",null);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositorsCriteria() - {}", e.toString());
             throw new IllegalArgumentException("error - getBankDepositorsCriteria()"+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositorsCriteria() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositorsCriteria() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("depositors-> {}",depositors);
         return depositors;
@@ -99,24 +85,19 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         depositor = new BankDepositor();
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             param = new BankDepositor();
             param.setDepositorId(depositorId);
 
-            depositor = (BankDepositor)sqlMapClient.queryForObject("BankDepositor.getById",param);
+            depositor = (BankDepositor)sqlSession.selectOne("BankDepositor.getById",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositorByIdCriteria(id = {}) - {}", depositorId,e.toString());
             throw new IllegalArgumentException("error - getBankDepositorByIdCriteria()"+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositorByIdCriteria() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositorByIdCriteria() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("depositor-> {}",depositor);
         return depositor;
@@ -135,24 +116,19 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         depositor = new BankDepositor();
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             param = new BankDepositor();
             param.setDepositorName(depositorName);
 
-            depositor = (BankDepositor)sqlMapClient.queryForObject("BankDepositor.getByName",param);
+            depositor = (BankDepositor)sqlSession.selectOne("BankDepositor.getByName",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositorByNameCriteria(id = {}) - {}", depositorName,e.toString());
             throw new IllegalArgumentException("error - getBankDepositorByNameCriteria()"+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositorByNameCriteria() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositorByNameCriteria() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("depositor-> {}",depositor);
         return depositor;
@@ -173,26 +149,21 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         Assert.isTrue(start.before(end),ERROR_FROM_TO_PARAM);
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             paramMap = new HashMap<String, Object>();
                 paramMap.put("startDate",start);
                 paramMap.put("endDate",end);
 
-            depositors = sqlMapClient.queryForList("BankDepositor.getFromToDateDeposit",paramMap);
+            depositors = (List<BankDepositor>)sqlSession.selectList("BankDepositor.getFromToDateDeposit",paramMap);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositorsFromToDateDeposit({}, {}) - {}", dateFormat.format(start),
                     dateFormat.format(end),e.toString());
             throw new IllegalArgumentException("error - getBankDepositorsFromToDateDeposit()"+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositorsFromToDateDeposit() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositorsFromToDateDeposit() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("depositors-> {}",depositors);
         return depositors;
@@ -213,26 +184,21 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         Assert.isTrue(start.before(end),ERROR_FROM_TO_PARAM);
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             paramMap = new HashMap<String, Object>();
                 paramMap.put("startDate",start);
                 paramMap.put("endDate",end);
 
-            depositors = sqlMapClient.queryForList("BankDepositor.getFromToDateReturnDeposit",paramMap);
+            depositors = (List<BankDepositor>)sqlSession.selectList("BankDepositor.getFromToDateReturnDeposit",paramMap);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositorsFromToDateReturnDeposit({}, {}) - {}", dateFormat.format(start),
                     dateFormat.format(end),e.toString());
             throw new IllegalArgumentException("error - getBankDepositorsFromToDateReturnDeposit()"+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositorsFromToDateReturnDeposit() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositorsFromToDateReturnDeposit() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("depositors-> {}",depositors);
         return depositors;
@@ -250,24 +216,19 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         Assert.notNull(depositId,ERROR_METHOD_PARAM);
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             paramDeposit = new BankDeposit();
             paramDeposit.setDepositId(depositId);
 
-            depositors = sqlMapClient.queryForList("BankDepositor.getByIdDeposit",paramDeposit);
+            depositors = (List<BankDepositor>)sqlSession.selectList("BankDepositor.getByIdDeposit",paramDeposit);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositorByIdDepositCriteria(id={}) - {}", depositId, e.toString());
             throw new IllegalArgumentException("error - getBankDepositorByIdDepositCriteria()"+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositorByIdDepositCriteria() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositorByIdDepositCriteria() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("depositors-> {}",depositors);
         return depositors;
@@ -288,7 +249,7 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         Assert.isNull(depositor.getDepositorId(),ERROR_NULL_PARAM);
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             paramMap = new HashMap<String, Object>();
                 paramMap.put("depositorId",depositor.getDepositorId());
@@ -301,19 +262,13 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
                 paramMap.put("depositorMarkReturnDeposit",depositor.getDepositorMarkReturnDeposit());
                 paramMap.put("depositId",depositId);
 
-            sqlMapClient.insert("BankDepositor.insert",paramMap);
+            sqlSession.insert("BankDepositor.insert",paramMap);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
-            LOGGER.error("error - addBankDepositor({}, {}) - {}", depositId, depositor, e.toString());
-            throw new IllegalArgumentException("error - addBankDepositor()"+e.toString());
+            sqlSession.rollback();
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - addBankDepositor() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - addBankDepositor() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
     }
 
@@ -328,21 +283,15 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         LOGGER.debug("updateBankDepositor({})",depositor);
         Assert.notNull(depositor,ERROR_METHOD_PARAM);
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
-            sqlMapClient.update("BankDepositor.update",depositor);
+            sqlSession.update("BankDepositor.update",depositor);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
-            LOGGER.error("error - updateBankDepositor({}) - {}", depositor, e.toString());
-            throw new IllegalArgumentException("error - updateBankDepositor()"+e.toString());
+            sqlSession.rollback();
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - updateBankDepositor() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - updateBankDepositor() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
     }
 
@@ -357,24 +306,18 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         LOGGER.debug("removeBankDepositor(id={})",id);
         Assert.notNull(id,ERROR_METHOD_PARAM);
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             param = new BankDepositor();
             param.setDepositorId(id);
 
-            sqlMapClient.delete("BankDepositor.delete",param);
+            sqlSession.delete("BankDepositor.delete",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
-            LOGGER.error("error - removeBankDepositor({}) - {}", depositor, e.toString());
-            throw new IllegalArgumentException("error - removeBankDepositor()"+e.toString());
+            sqlSession.rollback();
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - removeBankDepositor() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - removeBankDepositor() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
     }
 
@@ -383,21 +326,16 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
         LOGGER.debug("rowCount()");
         Integer count;
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
-            count = (Integer) sqlMapClient.queryForObject("BankDepositor.rowCount");
+            count = (Integer) sqlSession.selectOne("BankDepositor.rowCount");
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - rowCount() - {}",e.toString());
             throw new IllegalArgumentException("error - rowCount():"+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - rowCount() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - rowCount() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("count-> {}",count);
         return count;

@@ -13,7 +13,7 @@ dependencies {
     compile project(":app-rest")
     compile project(":app-soap")
 
-    compile('org.javassist:javassist:3.12.1.GA')
+    //compile('org.javassist:javassist:3.12.1.GA')
     compile('commons-io:commons-io:2.4')
 
     compile('org.apache.logging.log4j:log4j-web:2.1')
@@ -31,6 +31,7 @@ dependencies {
 
     compile('org.springframework.ws:spring-ws-core:2.2.4.RELEASE')
     compile('org.springframework.ws:spring-xml:2.2.4.RELEASE')
+    //compile group: 'org.springframework', name: 'spring-ibatis', version: '2.0.8'
 
     //compile('org.apache.ws.xmlschema:xmlschema-core:2.2.1')
     compile('org.apache.ws.commons.schema:XmlSchema:1.4.7')

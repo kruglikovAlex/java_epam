@@ -3,7 +3,7 @@ version '1.0-SNAPSHOT'
 
 dependencies {
     compile project(":app-core")
-    compile project(":app-dao-iBatis")
+    compile project(":app-dao-iBatis3")
 
     compile group: 'org.springframework', name: 'spring-beans', version: '4.2.4.RELEASE'
     compile group: 'org.springframework', name: 'spring-test', version: '4.2.4.RELEASE'

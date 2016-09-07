@@ -3,8 +3,13 @@ package com.brest.bank.dao;
 import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
 
+import com.ibatis.common.resources.Resources;
 import com.ibatis.sqlmap.client.SqlMapClient;
 
+import com.ibatis.sqlmap.client.SqlMapClientBuilder;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -13,6 +18,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.io.Reader;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -34,32 +42,10 @@ public class BankDepositDaoImpl implements BankDepositDao{
     private Map<String,Object> param;
     private List<Map> mapList;
 
-    //private Reader reader;
-
     @Autowired
-    private SqlMapClient sqlMapClient;
+    private SqlSessionFactory sqlSessionFactory;
 
-    /*
-    public SqlMapClient getSqlMapClient() {
-        return sqlMapClient;
-    }
-
-    @Resource(name="sqlMapClient")
-    public void setSqlMapClient(SqlMapClient sqlMapClient) {
-        this.sqlMapClient = sqlMapClient;
-    }
-
-    @PostConstruct
-    public void init(){
-        try{
-            reader = Resources.getResourceAsReader("SqlMapConfig.xml");
-        }catch (IOException e){
-            LOGGER.error("error - init() for BankDepositDaoImpl.class - {}", e.toString());
-            throw new IllegalArgumentException("error - init() for BankDepositDaoImpl.class"+e.toString());
-        }
-        sqlMapClient = SqlMapClientBuilder.buildSqlMapClient(reader);
-    }
-*/
+    private SqlSession sqlSession;
 
     /**
      * Get all Bank Deposits
@@ -70,21 +56,16 @@ public class BankDepositDaoImpl implements BankDepositDao{
     public List<BankDeposit> getBankDepositsCriteria(){
         LOGGER.debug("getBankDepositsCriteria()");
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
-            deposits = (List<BankDeposit>) sqlMapClient.queryForList("BankDeposit.getAll",null);
+            deposits = (List<BankDeposit>) sqlSession.selectList("BankDeposit.getAll",null);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositsCriteria() - {}", e.toString());
             throw new IllegalArgumentException("error - getBankDepositsCriteria()"+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositsCriteria() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositsCriteria() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("deposits-> {}", deposits);
         return deposits;
@@ -101,24 +82,19 @@ public class BankDepositDaoImpl implements BankDepositDao{
         LOGGER.debug("getBankDepositByIdCriteria({})", id);
         Assert.notNull(id,ERROR_METHOD_PARAM);
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             paramDeposit = new BankDeposit();
             paramDeposit.setDepositId(id);
 
-            deposit = (BankDeposit)sqlMapClient.queryForObject("BankDeposit.getById",paramDeposit);
+            deposit = (BankDeposit)sqlSession.selectOne("BankDeposit.getById",paramDeposit);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositByIdCriteria({}) - {}", id, e.toString());
             throw new IllegalArgumentException("error - getBankDepositByIdCriteria()"+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositByIdCriteria() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositByIdCriteria() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("deposit-> {}", deposit);
         return deposit;
@@ -135,24 +111,19 @@ public class BankDepositDaoImpl implements BankDepositDao{
         LOGGER.debug("getBankDepositByNameCriteria({})",depositName);
         Assert.notNull(depositName,ERROR_METHOD_PARAM);
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             paramDeposit = new BankDeposit();
             paramDeposit.setDepositName(depositName);
 
-            deposit = (BankDeposit)sqlMapClient.queryForObject("BankDeposit.getByName",paramDeposit);
+            deposit = (BankDeposit)sqlSession.selectOne("BankDeposit.getByName",paramDeposit);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositByNameCriteria({}) - {}",depositName,e.toString());
             throw new IllegalArgumentException("error - getBankDepositByNameCriteria()"+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositByNameCriteria() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositByNameCriteria() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("deposit-> {}",deposit);
         return deposit;
@@ -170,24 +141,19 @@ public class BankDepositDaoImpl implements BankDepositDao{
         LOGGER.debug("getBankDepositByCurrencyCriteria({})",currency);
         Assert.notNull(currency,ERROR_METHOD_PARAM);
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             paramDeposit = new BankDeposit();
             paramDeposit.setDepositCurrency(currency);
 
-            deposits = (List<BankDeposit>)sqlMapClient.queryForList("BankDeposit.getByCurrency",paramDeposit);
+            deposits = (List<BankDeposit>)sqlSession.selectList("BankDeposit.getByCurrency",paramDeposit);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositsByCurrencyCriteria({}) - {}",currency,e.toString());
             throw new IllegalArgumentException("error - getBankDepositsByCurrencyCriteria()"+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositsByCurrencyCriteria() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositsByCurrencyCriteria() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("deposits-> {}",deposits);
         return deposits;
@@ -206,24 +172,19 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.notNull(rate,ERROR_METHOD_PARAM);
         Assert.isInstanceOf(Integer.class,rate);
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             paramDeposit = new BankDeposit();
             paramDeposit.setDepositInterestRate(rate);
 
-            deposits = (List<BankDeposit>)sqlMapClient.queryForList("BankDeposit.getByInterestRate",paramDeposit);
+            deposits = (List<BankDeposit>)sqlSession.selectList("BankDeposit.getByInterestRate",paramDeposit);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositByInterestRatecrite({}) - {}",rate,e.toString());
             throw new IllegalArgumentException("error - getBankDepositByIntrerestRateCriteria()"+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositsByInterestRateCriteria() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositsByInterestRateCriteria() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("deposits-> {}",deposits);
         return deposits;
@@ -245,25 +206,20 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.notNull(toTerm,ERROR_METHOD_PARAM);
         Assert.isTrue(fromTerm<=toTerm,ERROR_FROM_TO_PARAM);
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             param = new HashMap<String, Object>();
                 param.put("fromTerm",fromTerm);
                 param.put("toTerm",toTerm);
 
-            deposits = (List<BankDeposit>)sqlMapClient.queryForList("BankDeposit.getFromToMinTerm",param);
+            deposits = (List<BankDeposit>)sqlSession.selectList("BankDeposit.getFromToMinTerm",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositFromToMinTermCriteria(from:{}, to:{}) - {}",fromTerm,toTerm,e.toString());
             throw new IllegalArgumentException("error - getBankDepositFromToMinTermCriteria()"+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositsFromToMinTermCriteria() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositsFromToMinTermCriteria() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("deposits-> {}",deposits);
         return deposits;
@@ -285,25 +241,20 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.notNull(endRate, ERROR_METHOD_PARAM);
         Assert.isTrue(startRate<=endRate,ERROR_FROM_TO_PARAM);
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             param = new HashMap<String, Object>();
                 param.put("startRate",startRate);
                 param.put("endRate",endRate);
 
-            deposits = (List<BankDeposit>)sqlMapClient.queryForList("BankDeposit.getFromToInterestRate",param);
+            deposits = (List<BankDeposit>)sqlSession.selectList("BankDeposit.getFromToInterestRate",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositsFromToInterestRateCriteria(from:{}, to:{}) - {}",startRate,endRate,e.toString());
             throw new IllegalArgumentException("error - getBankDepositsFromToInterestRateCriteria() - {}"+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositsFromToInterestRateCriteria() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositsFromToInterestRateCriteria() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("deposits-> {}",deposits);
         return deposits;
@@ -326,26 +277,21 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.notNull(endDate,ERROR_METHOD_PARAM);
         Assert.isTrue(startDate.before(endDate),ERROR_FROM_TO_PARAM);
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             param = new HashMap<String, Object>();
                 param.put("startDate",startDate);
                 param.put("endDate",endDate);
 
-            deposits = (List<BankDeposit>)sqlMapClient.queryForList("BankDeposit.getFromToDate",param);
+            deposits = (List<BankDeposit>)sqlSession.selectList("BankDeposit.getFromToDate",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositsFromToDateDeposit(from:{}, to:{}) - {}",dateFormat.format(startDate),
                     dateFormat.format(endDate),e.toString());
             throw new IllegalArgumentException("error - getBankDepositsFromToDateDeposit() - {}"+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositsFromToDateDeposit() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositsFromToDateDeposit() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("deposits-> {}",deposits);
         return deposits;
@@ -368,26 +314,21 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.notNull(endDate,ERROR_METHOD_PARAM);
         Assert.isTrue(startDate.before(endDate),ERROR_FROM_TO_PARAM);
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             param = new HashMap<String, Object>();
                 param.put("startDate",startDate);
                 param.put("endDate",endDate);
 
-            deposits = sqlMapClient.queryForList("BankDeposit.getFromToDateReturn",param);
+            deposits = (List<BankDeposit>) sqlSession.selectList("BankDeposit.getFromToDateReturn",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositsFromToDateReturnDeposit(from:{}, to:{}) - {}",dateFormat.format(startDate),
                     dateFormat.format(endDate),e.toString());
             throw new IllegalArgumentException("error - getBankDepositsFromToDateReturnDeposit() - {}"+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositsFromToDateReturnDeposit() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositsFromToDateReturnDeposit() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("deposits-> {}",deposits);
         return deposits;
@@ -406,24 +347,19 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.notNull(name,ERROR_METHOD_PARAM);
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             paramDeposit = new BankDeposit();
             paramDeposit.setDepositName(name);
 
-            list = (HashMap)sqlMapClient.queryForObject("BankDeposit.getByNameWithDepositors",paramDeposit);
+            list = (HashMap)sqlSession.selectOne("BankDeposit.getByNameWithDepositors",paramDeposit);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositByNameWithDepositors({}) - {}", name, e.toString());
             throw new IllegalArgumentException("error - getBankDepositByNameWithDepositors() "+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositByNameWithDepositors() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositByNameWithDepositors() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("list-> {}",list);
         return list;
@@ -450,27 +386,22 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.isTrue(startDate.before(endDate),ERROR_FROM_TO_PARAM);
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             param = new HashMap<String, Object>();
                 param.put("depositName",name);
                 param.put("startDate",startDate);
                 param.put("endDate",endDate);
 
-            list = (Map)sqlMapClient.queryForObject("BankDeposit.getByNameFromToDateDepositWithDepositors",param);
+            list = (Map)sqlSession.selectOne("BankDeposit.getByNameFromToDateDepositWithDepositors",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositByNameFromToDateDepositWithDepositors(name: {}, start: {}, end: {}) - {}",
                     name, dateFormat.format(startDate),dateFormat.format(endDate),e.toString());
             throw new IllegalArgumentException("error - getBankDepositByNameFromToDateDepositWithDepositors() "+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositByNameFromToDateDepositWithDepositors() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositByNameFromToDateDepositWithDepositors() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("list-> {}",list);
         return list;
@@ -497,27 +428,22 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.isTrue(startDate.before(endDate),ERROR_FROM_TO_PARAM);
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             param = new HashMap<String,Object>();
                 param.put("depositName",name);
                 param.put("startDate",startDate);
                 param.put("endDate",endDate);
 
-            list = (Map)sqlMapClient.queryForObject("BankDeposit.getByNameFromToDateReturnDepositWithDepositors",param);
+            list = (Map)sqlSession.selectOne("BankDeposit.getByNameFromToDateReturnDepositWithDepositors",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositByNameFromToDateReturnDepositWithDepositors(name: {}, start: {}, end: {}) - {}",
                     name, dateFormat.format(startDate),dateFormat.format(endDate),e.toString());
             throw new IllegalArgumentException("error - getBankDepositByNameFromToDateReturnDepositWithDepositors() "+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositByNameFromToDateReturnDepositWithDepositors() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositByNameFromToDateReturnDepositWithDepositors() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("list-> {}",list);
         return list;
@@ -536,24 +462,19 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.notNull(id,ERROR_METHOD_PARAM);
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             param = new HashMap<String, Object>();
                 param.put("depositId",id);
 
-            list = (Map)sqlMapClient.queryForObject("BankDeposit.getByIdWithDepositors",param);
+            list = (Map)sqlSession.selectOne("BankDeposit.getByIdWithDepositors",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositByIdWithDepositors(id: {}) - {}",id,e.toString());
             throw new IllegalArgumentException("error - getBankDepositByIdWithDepositors() "+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositByIdWithDepositors() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositByIdWithDepositors() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("list-> {}",list);
         return list;
@@ -580,27 +501,22 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.isTrue(startDate.before(endDate));
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             param = new HashMap<String, Object>();
                 param.put("depositId",id);
                 param.put("startDate",startDate);
                 param.put("endDate",endDate);
 
-            list = (Map)sqlMapClient.queryForObject("BankDeposit.getByIdFromToDateDepositWithDepositors",param);
+            list = (Map)sqlSession.selectOne("BankDeposit.getByIdFromToDateDepositWithDepositors",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositByIdFromToDateDepositWithDepositors(id:{},from:{},to:{}) - {}",
                     id,dateFormat.format(startDate),dateFormat.format(endDate),e.toString());
             throw new IllegalArgumentException("error - getBankDepositByIdFromToDateDepositWithDepositors() "+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositByIdFromToDateDepositWithDepositors() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositByIdFromToDateDepositWithDepositors() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("list-> {}",list);
         return list;
@@ -627,27 +543,22 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.isTrue(startDate.before(endDate));
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             param = new HashMap<String,Object>();
                 param.put("depositId",id);
                 param.put("startDate",startDate);
                 param.put("endDate",endDate);
 
-            list = (Map)sqlMapClient.queryForObject("BankDeposit.getByIdFromToDateReturnDepositWithDepositors",param);
+            list = (Map)sqlSession.selectOne("BankDeposit.getByIdFromToDateReturnDepositWithDepositors",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositByIdFromToDateReturnDepositWithDepositors(id:{},from:{},to:{}) - {}",
                     id,dateFormat.format(startDate),dateFormat.format(endDate),e.toString());
             throw new IllegalArgumentException("error - getBankDepositByIdFromToDateReturnDepositWithDepositors() "+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositByIdFromToDateReturnDepositWithDepositors() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositByIdFromToDateReturnDepositWithDepositors() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("list-> {}",list);
         return list;
@@ -666,24 +577,19 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.notNull(term,ERROR_METHOD_PARAM);
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             paramDeposit = new BankDeposit();
             paramDeposit.setDepositMinTerm(term);
 
-            mapList = sqlMapClient.queryForList("BankDeposit.getByTermWithDepositors",paramDeposit);
+            mapList = (List<Map>)sqlSession.selectList("BankDeposit.getByTermWithDepositors",paramDeposit);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositsByTermWithDepositors(term:{}) - {}",term,e.toString());
             throw new IllegalArgumentException("error - getBankDepositsByTermWithDepositors() "+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositsByTermWithDepositors() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositsByTermWithDepositors() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("maplist-> {}",mapList);
         return mapList;
@@ -702,24 +608,19 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.notNull(amount,ERROR_METHOD_PARAM);
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             paramDeposit = new BankDeposit();
             paramDeposit.setDepositMinAmount(amount);
 
-            mapList = sqlMapClient.queryForList("BankDeposit.getByAmountWithDepositors",paramDeposit);
+            mapList = (List<Map>)sqlSession.selectList("BankDeposit.getByAmountWithDepositors",paramDeposit);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositsByAmountWithDepositors(amount:{}) - {}",amount,e.toString());
             throw new IllegalArgumentException("error - getBankDepositsByAmountWithDepositors() "+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositsByAmountWithDepositors() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositsByAmountWithDepositors() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("mapList-> {}",mapList);
         return mapList;
@@ -738,24 +639,19 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.notNull(rate,ERROR_METHOD_PARAM);
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             paramDeposit = new BankDeposit();
             paramDeposit.setDepositInterestRate(rate);
 
-            mapList = sqlMapClient.queryForList("BankDeposit.getByRateWithDepositors",paramDeposit);
+            mapList = (List<Map>)sqlSession.selectList("BankDeposit.getByRateWithDepositors",paramDeposit);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositsByRateWithDepositors(rate:{}) - {}",rate,e.toString());
             throw new IllegalArgumentException("error - getBankDepositsByRateWithDepositors() "+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositsByRateWithDepositors() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositsByRateWithDepositors() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("mapList-> {}",mapList);
         return mapList;
@@ -774,24 +670,19 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.notNull(id,ERROR_METHOD_PARAM);
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             BankDepositor param = new BankDepositor();
             param.setDepositorId(id);
 
-            list = (Map)sqlMapClient.queryForObject("BankDeposit.getByDepositorIdWithDepositors",param);
+            list = (Map)sqlSession.selectOne("BankDeposit.getByDepositorIdWithDepositors",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositByDepositorIdWithDepositors(id:{}) - {}",id,e.toString());
             throw new IllegalArgumentException("error - getBankDepositByDepositorIdWithDepositors() "+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositByDepositorIdWithDepositors() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositByDepositorIdWithDepositors() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("list-> {}",list);
         return list;
@@ -810,24 +701,19 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.notNull(name,ERROR_METHOD_PARAM);
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             BankDepositor param = new BankDepositor();
             param.setDepositorName(name);
 
-            list = (Map)sqlMapClient.queryForObject("BankDeposit.getByDepositorNameWithDepositors",param);
+            list = (Map)sqlSession.selectOne("BankDeposit.getByDepositorNameWithDepositors",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositByDepositorNameWithDepositors(name:{}) - {}",name,e.toString());
             throw new IllegalArgumentException("error - getBankDepositByDepositorNameWithDepositors() "+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositByDepositorNameWithDepositors() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositByDepositorNameWithDepositors() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("list-> {}",list);
         return list;
@@ -849,25 +735,20 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.isTrue(from<=to,ERROR_FROM_TO_PARAM);
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             param = new HashMap<String,Object>();
                 param.put("from",from);
                 param.put("to",to);
 
-            mapList = sqlMapClient.queryForList("BankDeposit.getByDepositorAmountWithDepositors",param);
+            mapList = (List<Map>)sqlSession.selectList("BankDeposit.getByDepositorAmountWithDepositors",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositsByDepositorAmountWithDepositors(from:{}, to:{}) - {}",from,to,e.toString());
             throw new IllegalArgumentException("error - getBankDepositsByDepositorAmountWithDepositors() "+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositsByDepositorAmountWithDepositors() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositsByDepositorAmountWithDepositors() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("mapList-> {}",mapList);
         return mapList;
@@ -884,21 +765,16 @@ public class BankDepositDaoImpl implements BankDepositDao{
         LOGGER.debug("getBankDepositsWithDepositors()");
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
-            mapList = sqlMapClient.queryForList("BankDeposit.getAllWithDepositors");
+            mapList = (List<Map>)sqlSession.selectList("BankDeposit.getAllWithDepositors");
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch(Exception e){
             LOGGER.error("error - getBankDepositsWithDepositors() - {}",e.toString());
             throw new IllegalArgumentException("error - getBankDepositsWithDepositors() "+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositsWithDepositors() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositsWithDepositors() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("mapList-> {}",mapList);
         return mapList;
@@ -921,25 +797,20 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.isTrue(startDate.before(endDate));
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             param = new HashMap<String,Object>();
                 param.put("startDate",startDate);
                 param.put("endDate",endDate);
 
-            mapList = sqlMapClient.queryForList("BankDeposit.getByFromToDateDepositWithDepositors",param);
+            mapList = (List<Map>)sqlSession.selectList("BankDeposit.getByFromToDateDepositWithDepositors",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositsFromToDateDepositWithDepositors({}, {}) - {}",startDate,endDate,e.toString());
             throw new IllegalArgumentException("error - getBankDepositsFromToDateDepositWithDepositors() "+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositsFromToDateDepositWithDepositors() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositsFromToDateDepositWithDepositors() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("mapList-> {}",mapList);
         return mapList;
@@ -962,26 +833,21 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.isTrue(startDate.before(endDate));
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             param = new HashMap<String,Object>();
                 param.put("startDate",startDate);
                 param.put("endDate",endDate);
 
-            mapList = sqlMapClient.queryForList("BankDeposit.getByFromToDateReturnDepositWithDepositors",param);
+            mapList = (List<Map>)sqlSession.selectList("BankDeposit.getByFromToDateReturnDepositWithDepositors",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositsFromToDateReturnDepositWithDepositors({}, {}) - {}",
                     startDate,endDate,e.toString());
             throw new IllegalArgumentException("error - getBankDepositsFromToDateReturnDepositWithDepositors() "+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositsFromToDateReturnDepositWithDepositors() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositsFromToDateReturnDepositWithDepositors() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("mapList-> {}",mapList);
         return mapList;
@@ -1000,24 +866,19 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.notNull(currency,ERROR_METHOD_PARAM);
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             paramDeposit = new BankDeposit();
             paramDeposit.setDepositCurrency(currency);
 
-            mapList = sqlMapClient.queryForList("BankDeposit.getByCurrencyWithDepositors",paramDeposit);
+            mapList = (List<Map>)sqlSession.selectList("BankDeposit.getByCurrencyWithDepositors",paramDeposit);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositByCurrencyWithDepositors(currency:{}) - {}",currency,e.toString());
             throw new IllegalArgumentException("error - getBankDepositByCurrencyWithDepositors() "+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositsByCurrencyWithDepositors() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositsByCurrencyWithDepositors() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("mapList-> {}",mapList);
         return mapList;
@@ -1044,27 +905,22 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.isTrue(startDate.before(endDate));
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             param = new HashMap<String,Object>();
                 param.put("currency",currency);
                 param.put("startDate",startDate);
                 param.put("endDate",endDate);
 
-            mapList = sqlMapClient.queryForList("BankDeposit.getByCurrencyFromToDateDepositWithDepositors",param);
+            mapList = (List<Map>)sqlSession.selectList("BankDeposit.getByCurrencyFromToDateDepositWithDepositors",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositByCurrencyFromToDateDepositWithDepositors(currency:{},startDate:{}, endDate:{}) - {}",
                     currency,startDate,endDate,e.toString());
             throw new IllegalArgumentException("error - getBankDepositByCurrencyFromToDateDepositWithDepositors() "+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositsByCurrencyFromToDateDepositWithDepositors() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositsByCurrencyFromToDateDepositWithDepositors() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("mapList-> {}",mapList);
         return mapList;
@@ -1091,28 +947,23 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.isTrue(startDate.before(endDate));
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             param = new HashMap<String,Object>();
                 param.put("currency",currency);
                 param.put("startDate",startDate);
                 param.put("endDate",endDate);
 
-            mapList = sqlMapClient.queryForList("BankDeposit.getByCurrencyFromToDateReturnDepositWithDepositors",param);
+            mapList = sqlSession.selectList("BankDeposit.getByCurrencyFromToDateReturnDepositWithDepositors",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositByCurrencyFromToDateReturnDepositWithDepositors(currency:{}," +
                     "startDate:{}, endDate:{}) - {}",currency,startDate,endDate,e.toString());
             throw new IllegalArgumentException("error - getBankDepositByCurrencyFromToDateReturnDepositWithDepositors() "
                     +e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("mapList-> {}",mapList);
         return mapList;
@@ -1131,24 +982,19 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.notNull(markReturn,ERROR_METHOD_PARAM);
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             BankDepositor param = new BankDepositor();
             param.setDepositorMarkReturnDeposit(markReturn);
 
-            mapList = sqlMapClient.queryForList("BankDeposit.getByDepositorMarkReturnWithDepositors",param);
+            mapList = sqlSession.selectList("BankDeposit.getByDepositorMarkReturnWithDepositors",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositByDepositorMarkReturnWithDepositors(mark:{}) - {}",markReturn,e.toString());
             throw new IllegalArgumentException("error - getBankDepositByDepositorMarkReturnWithDepositors() "+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositsByDepositorMarkReturnWithDepositors() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositsByDepositorMarkReturnWithDepositors() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("mapList-> {}",mapList);
         return mapList;
@@ -1188,21 +1034,16 @@ public class BankDepositDaoImpl implements BankDepositDao{
 
         LOGGER.debug("param: {}",param);
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
-            mapList = sqlMapClient.queryForList("BankDeposit.getByVarArgs",param);
+            mapList = sqlSession.selectList("BankDeposit.getByVarArgs",param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - getBankDepositsByVarArgs(args: {}) - {}",args,e.toString());
             throw new IllegalArgumentException("error - getBankDepositsByVarArgs() "+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - getBankDepositsByVarArgs() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - getBankDepositsByVarArgs() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("mapList-> {}",mapList);
         return mapList;
@@ -1221,27 +1062,15 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.isNull(deposit.getDepositId(),ERROR_NULL_PARAM);
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
-            sqlMapClient.insert("BankDeposit.insert",deposit);
+            sqlSession.insert("BankDeposit.insert",deposit);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
-            try{
-                sqlMapClient.getCurrentConnection().rollback();
-            }catch (SQLException ee){
-                LOGGER.error("error - addBankDeposit() {} -> rollback -{}", e.getLocalizedMessage(),ee.toString());
-                throw new IllegalArgumentException("error - addBankDeposit() - "+e.toString()+" -> rollback -"+ee.toString());
-            }
-            LOGGER.error("error - addBankDeposit({}) - {}", deposit, e.toString());
-            throw new IllegalArgumentException("error - addBankDeposit()"+e.toString());
+            sqlSession.rollback();
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - addBankDeposit() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - addBankDeposit() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
     }
 
@@ -1258,27 +1087,15 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.notNull(deposit.getDepositId(),ERROR_NULL_PARAM);
 
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
-            sqlMapClient.update("BankDeposit.update",deposit);
+            sqlSession.update("BankDeposit.update",deposit);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
-            try{
-                sqlMapClient.getCurrentConnection().rollback();
-            }catch (SQLException ee){
-                LOGGER.error("error - updateBankDeposit() {} -> rollback -{}", e.getLocalizedMessage(),ee.toString());
-                throw new IllegalArgumentException("error - updateBankDeposit() - "+e.toString()+" -> rollback -"+ee.toString());
-            }
-            LOGGER.error("error - updateBankDeposit({}) - {}", deposit, e.toString());
-            throw new IllegalArgumentException("error - updateBankDeposit()"+e.toString());
+            sqlSession.rollback();
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - updateBankDeposit() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - updateBankDeposit() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
     }
 
@@ -1294,30 +1111,18 @@ public class BankDepositDaoImpl implements BankDepositDao{
         Assert.notNull(depositId,ERROR_METHOD_PARAM);
 
         try {
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
             param = new HashMap<String,Object>();
                 param.put("depositId", depositId);
 
-            sqlMapClient.delete("BankDeposit.delete", param);
+            sqlSession.delete("BankDeposit.delete", param);
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
-            try{
-                sqlMapClient.getCurrentConnection().rollback();
-            }catch (SQLException ee){
-                LOGGER.error("error - deleteBankDeposit() {} -> rollback -{}", e.getLocalizedMessage(),ee.toString());
-                throw new IllegalArgumentException("error - deleteBankDeposit() - "+e.toString()+" -> rollback -"+ee.toString());
-            }
-            LOGGER.error("error - deleteBankDeposit({}) - {}", depositId, e.toString());
-            throw new IllegalArgumentException("error - deleteBankDeposit()"+e.toString());
+            sqlSession.rollback();
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - deleteBankDeposit() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - deleteBankDeposit() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
     }
 
@@ -1326,21 +1131,16 @@ public class BankDepositDaoImpl implements BankDepositDao{
         LOGGER.debug("rowCount()");
         Integer count;
         try{
-            sqlMapClient.startTransaction();
+            sqlSession = sqlSessionFactory.openSession();
 
-            count = (Integer) sqlMapClient.queryForObject("BankDeposit.rowCount");
+            count = (Integer) sqlSession.selectOne("BankDeposit.rowCount");
 
-            sqlMapClient.commitTransaction();
+            sqlSession.commit();
         }catch (Exception e){
             LOGGER.error("error - rowCount() - {}",e.toString());
             throw new IllegalArgumentException("error - rowCount():"+e.toString());
         }finally {
-            try{
-                sqlMapClient.endTransaction();
-            }catch (SQLException e){
-                LOGGER.error("error - rowCount() -> endTransaction -{}", e.toString());
-                throw new IllegalArgumentException("error - rowCount() -> endTransaction -"+e.toString());
-            }
+            sqlSession.close();
         }
         LOGGER.debug("count-> {}",count);
         return count;

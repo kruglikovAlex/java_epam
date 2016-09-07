@@ -4,11 +4,12 @@ version '1.0-SNAPSHOT'
 dependencies {
     compile project(":app-core")
 
-    //compile group: 'org.apache.ibatis', name: 'ibatis-core', version: '3.0'
+    compile group: 'org.apache.ibatis', name: 'ibatis-core', version: '3.0'
     compile group: 'org.apache.ibatis', name: 'ibatis-sqlmap', version: '2.3.4.726'
+    compile group: 'asm', name: 'asm', version: '3.2'
 
     compile group: 'org.springframework', name: 'spring-beans', version: '4.2.4.RELEASE'
-    //compile group: 'org.springframework', name: 'spring-ibatis', version: '2.0.8'
+    compile group: 'org.springframework', name: 'spring-ibatis', version: '2.0.8'
     compile group: 'org.springframework', name: 'spring-test', version: '4.2.4.RELEASE'
     compile group: 'org.springframework', name: 'spring-tx', version: '4.2.4.RELEASE'
     compile group: 'org.springframework', name: 'spring-jdbc', version: '4.2.4.RELEASE'

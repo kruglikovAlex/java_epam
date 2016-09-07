@@ -101,9 +101,7 @@ public class BankDepositDaoImplTest {
 
         assertNotNull(ERROR_NULL,deposits);
         assertEquals("[BankDeposit: { depositId=0, depositName=depositName0, depositMinTerm=12, depositMinAmount=100, " +
-                "depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition0}, " +
-                "BankDeposit: { depositId=5, depositName=name, depositMinTerm=24, depositMinAmount=1000, " +
-                "depositCurrency=grb, depositInterestRate=4, depositAddConditions=condition}]",deposits.toString());
+                "depositCurrency=usd, depositInterestRate=4, depositAddConditions=condition0}]",deposits.toString());
     }
 
     @Test
@@ -639,7 +637,7 @@ public class BankDepositDaoImplTest {
                 Integer.parseInt(list.get("depositorAmountMinusSum").toString()));
     }
 
-    //@Test
+    @Test
     public void testGetBankDepositsByDepositorAmountWithDepositors() throws ParseException{
         int[]   sumAmountDeposit =      new int[]{0, 0},
                 sumAmountPlusDeposit =  new int[]{0, 0},
@@ -1428,11 +1426,11 @@ public class BankDepositDaoImplTest {
     @Test
     public void testAddBankDeposit() throws Exception {
         deposit = new BankDeposit();
-            deposit.setDepositName("name");
+            deposit.setDepositName("testName");
             deposit.setDepositMinTerm(24);
             deposit.setDepositMinAmount(1000);
             deposit.setDepositCurrency("grb");
-            deposit.setDepositInterestRate(4);
+            deposit.setDepositInterestRate(9);
             deposit.setDepositAddConditions("condition");
         LOGGER.debug("new deposit - {}",deposit);
 

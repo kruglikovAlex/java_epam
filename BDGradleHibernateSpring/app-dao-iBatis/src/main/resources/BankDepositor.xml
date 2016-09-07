@@ -12,9 +12,9 @@
     <typeAlias alias="BankDeposit" type="com.brest.bank.domain.BankDeposit"/>
     <typeAlias alias="BankDepositor" type="com.brest.bank.domain.BankDepositor"/>
 
-    <insert id="insert" parameterClass="BankDepositor">
-        insert into BANKDEPOSITOR (depositorName,depositorDateDeposit,depositorAmountDeposit,depositorAmountPlusDeposit,depositorAmountMinusDeposit,depositorDateReturnDeposit,depositorMarkReturnDeposit)
-        values (#depositorName#,#depositorDateDeposit#,#depositorAmountDeposit#,#depositorAmountPlusDeposit#,#depositorAmountMinusDeposit#,#depositorDateReturnDeposit#,#depositorMarkReturnDeposit#)
+    <insert id="insert" parameterClass="hashMap">
+        insert into BANKDEPOSITOR (depositorName,depositorDateDeposit,depositorAmountDeposit,depositorAmountPlusDeposit,depositorAmountMinusDeposit,depositorDateReturnDeposit,depositorMarkReturnDeposit,depositId)
+        values (#depositorName#,#depositorDateDeposit#,#depositorAmountDeposit#,#depositorAmountPlusDeposit#,#depositorAmountMinusDeposit#,#depositorDateReturnDeposit#,#depositorMarkReturnDeposit#,#depositId#)
     </insert>
 
     <select id="getAll" resultClass="BankDepositor">

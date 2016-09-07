@@ -46,6 +46,10 @@
         <property name="password" value="${jdbc.password}"/>
     </bean>
 
+    <bean id="sqlMapClient" class="com.brest.bank.util.SqlMapClientFactoryBean">
+        <property name="configLocation" value="classpath:SqlMapConfig.xml"/>
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
 <!--
     <bean id="schema2" class="org.springframework.xml.xsd.SimpleXsdSchema">
         <property name="xsd" value="/schemas/bankDepositor.xsd" />
