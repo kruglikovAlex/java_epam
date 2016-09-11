@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%-5p][%t][%logger{36}] - %m%n"/>
+        </Console>
+        <File name="File" fileName="/tmp/output.log">
+            <PatternLayout pattern="%d %с [%t] %m%n"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.brest.bank.dao" level="TRACE">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
+        </Logger>
+        <!-- Log all JDBC parameters -->
+        <Logger name="org.apache.ibatis.jdbc" level="TRACE">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <Logger name="com.ibatis.common.jdbc" level="TRACE">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <Logger name="java.sql" level="DEBUG">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- Log everything (a lot of information, but very useful for troubleshooting) -->
+        <Logger name="org.mybatis.spring" level="DEBUG">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <Logger name="org.hsqldb" level="DEBUG">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <Logger name="org.springframework.jdbc" level="DEBUG">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <Logger name="org.springframework.transaction" level="DEBUG">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <Root level="ERROR">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
