@@ -3,10 +3,6 @@ package com.brest.bank.dao;
 import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
 
-import com.ibatis.sqlmap.client.SqlMapClient;
-import com.ibatis.sqlmap.client.SqlMapClientBuilder;
-import com.ibatis.common.resources.Resources;
-
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.orm.ibatis.SqlMapClientTemplate;
@@ -18,19 +14,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.io.Reader;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
 public class BankDepositorDaoImpl implements BankDepositorDao {
 
-    public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
-    public static final String ERROR_NULL_PARAM = "The parameter must be NULL";
-    public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
+    private static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
+    private static final String ERROR_NULL_PARAM = "The parameter must be NULL";
+    private static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
 
     private static final Logger LOGGER = LogManager.getLogger(BankDepositDaoImpl.class);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
