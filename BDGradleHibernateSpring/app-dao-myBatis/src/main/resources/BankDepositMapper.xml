@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="BankDeposit">
+
+    <sql id="allDeposits">
+        select distinct * from BANKDEPOSIT
+    </sql>
+
+    <sql id="allDepositsAllDepositors">
+        select distinct dep.*, depr.*
+        from BANKDEPOSIT dep
+        left outer join
+        BANKDEPOSITOR depr
+        on dep.depositId=depr.depositId
+    </sql>
+
+    <sql id="allDepositWithDepositors">
+        select distinct
+        dep.*,
+        count(depr.depositorId) as depositorCount,
+        sum(depr.depositorAmountDeposit) as depositorAmountSum,
+        sum(depr.depositorAmountPlusDeposit) as depositorAmountPlusSum,
+        sum(depr.depositorAmountMinusDeposit) as depositorAmountMinusSum,
+        dep.depositId as depId
+        from BANKDEPOSIT dep
+        left outer join
+        BANKDEPOSITOR depr
+        on dep.depositId=depr.depositId
+    </sql>
+
+    <resultMap id="report" type="java.util.HashMap">
+        <id property="depositId" column="depositId"/>
+        <result property="depositName" column="depositName"/>
+        <result property="depositMinTerm" column="depositMinTerm"/>
+        <result property="depositMinAmount" column="depositMinAmount"/>
+        <result property="depositCurrency" column="depositCurrency"/>
+        <result property="depositInterestRate" column="depositInterestRate"/>
+        <result property="depositAddConditions" column="depositAddConditions"/>
+        <result property="depositorCount" column="depositorCount"/>
+        <result property="depositorAmountSum" column="depositorAmountSum"/>
+        <result property="depositorAmountPlusSum" column="depositorAmountPlusSum"/>
+        <result property="depositorAmountMinusSum" column="depositorAmountMinusSum"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="BankDeposit">
+        insert into BANKDEPOSIT (depositName, depositMinTerm, depositMinAmount, depositCurrency, depositInterestRate, depositAddConditions)
+        values (#{depositName}, #{depositMinTerm}, #{depositMinAmount}, #{depositCurrency}, #{depositInterestRate}, #{depositAddConditions});
+    </insert>
+
+    <select id="getAll" resultType="BankDeposit">
+        <include refid="allDeposits"/>
+    </select>
+
+    <select id="getById" resultType="BankDeposit">
+
+        <include refid="allDeposits"/>
+
+        <where>
+            <if test="depositId != null">
+                depositId = #{depositId}
+            </if>
+        </where>
+    </select>
+
+    <select id="getByName" resultType="BankDeposit">
+
+        <include refid="allDeposits"/>
+
+        <where>
+            <if test="depositName != null">
+                depositName = #{depositName}
+            </if>
+        </where>
+    </select>
+
+    <select id="getByCurrency" resultType="BankDeposit">
+
+        <include refid="allDeposits"/>
+
+        <where>
+            <if test="depositCurrency != null">
+                depositCurrency = #{depositCurrency}
+            </if>
+        </where>
+    </select>
+
+    <select id="getByInterestRate" resultType="BankDeposit">
+
+        <include refid="allDeposits"/>
+
+        <where>
+            <if test="depositInterestRate != null">
+                depositInterestRate = #{depositInterestRate}
+            </if>
+        </where>
+    </select>
+
+    <select id="getFromToMinTerm" parameterType="java.util.Map" resultType="BankDeposit">
+
+        <include refid="allDeposits"/>
+
+        <where>
+            depositMinTerm between
+            <if test="fromTerm != null">
+                #{fromTerm}
+            </if>
+            <if test="toTerm != null">
+                and #{toTerm}
+            </if>
+        </where>
+    </select>
+
+    <select id="getFromToInterestRate" parameterType="java.util.Map" resultType="BankDeposit">
+
+        <include refid="allDeposits"/>
+
+        <where>
+            depositInterestRate between
+            <if test="startRate != null">
+                #{startRate}
+            </if>
+            <if test="endRate != null">
+                and #{endRate}
+            </if>
+        </where>
+    </select>
+
+    <select id="getFromToDate" parameterType="hashmap" resultType="BankDeposit">
+
+        <include refid="allDeposits"/>
+        inner join BANKDEPOSITOR depositor on depositId = depositor.depositId
+        <where>
+            depositor.depositorDateDeposit between
+            <if test="startDate != null">
+                #{startDate}
+            </if>
+            <if test="endDate != null">
+                and #{endDate}
+            </if>
+        </where>
+    </select>
+
+    <select id="getFromToDateReturn" parameterType="java.util.Map" resultType="BankDeposit">
+
+        <include refid="allDeposits"/>
+        inner join BANKDEPOSITOR depositor on depositId = depositor.depositId
+        <where>
+            depositor.depositorDateReturnDeposit between
+            <if test="startDate != null">
+                #{startDate}
+            </if>
+            <if test="endDate != null">
+                and #{endDate}
+            </if>
+        </where>
+    </select>
+
+    <select id="getByNameWithDepositors" parameterType="BankDeposit" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <where>
+            <if test="depositName != null">
+                dep.depositName = #{depositName}
+            </if>
+        </where>
+        group by dep.depositId
+    </select>
+
+    <select id="getByNameFromToDateDepositWithDepositors" parameterType="java.util.Map" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <where>
+            <if test="depositName != null">
+                dep.depositName = #{depositName}
+            </if>
+            <if test="startDate != null">
+                and depr.depositorDateDeposit between #{startDate}
+            </if>
+            <if test="endDate != null">
+                and #{endDate}
+            </if>
+        </where>
+        group by dep.depositId
+    </select>
+
+    <select id="getByNameFromToDateReturnDepositWithDepositors" parameterType="java.util.Map" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <where>
+            <if test="depositName != null">
+                dep.depositName = #{depositName}
+            </if>
+            <if test="startDate != null">
+                and depr.depositorDateReturnDeposit between #{startDate}
+            </if>
+            <if test="endDate != null">
+                and #{endDate}
+            </if>
+        </where>
+        group by dep.depositId
+    </select>
+
+    <select id="getByIdWithDepositors" parameterType="java.util.Map" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <where>
+            <if test="depositId != null">
+                dep.depositId = #{depositId}
+            </if>
+        </where>
+        group by dep.depositId
+    </select>
+
+    <select id="getByIdFromToDateDepositWithDepositors" parameterType="java.util.Map" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <where>
+            <if test="depositId != null">
+                dep.depositId = #{depositId}
+            </if>
+            <if test="startDate != null">
+                and depr.depositorDateDeposit between #{startDate}
+            </if>
+            <if test="endDate != null">
+                and #{endDate}
+            </if>
+        </where>
+        group by dep.depositId
+    </select>
+
+    <select id="getByIdFromToDateReturnDepositWithDepositors" parameterType="java.util.Map" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <where>
+            <if test="depositId != null">
+                dep.depositId = #{depositId}
+            </if>
+            <if test="startDate != null">
+                and depr.depositorDateReturnDeposit between #{startDate}
+            </if>
+            <if test="endDate != null">
+                and #{endDate}
+            </if>
+        </where>
+        group by dep.depositId
+    </select>
+
+    <select id="getByTermWithDepositors" parameterType="BankDeposit" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <where>
+            <if test="depositMinTerm != null">
+                dep.depositMinTerm = #{depositMinTerm}
+            </if>
+        </where>
+        group by dep.depositId
+    </select>
+
+    <select id="getByAmountWithDepositors" parameterType="BankDeposit" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <where>
+            <if test="depositMinAmount != null">
+                dep.depositMinAmount = #{depositMinAmount}
+            </if>
+        </where>
+        group by dep.depositId
+    </select>
+
+    <select id="getByRateWithDepositors" parameterType="BankDeposit" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <where>
+            <if test="depositInterestRate != null">
+                dep.depositInterestRate = #{depositInterestRate}
+            </if>
+        </where>
+        group by dep.depositId
+    </select>
+
+    <select id="getByDepositorIdWithDepositors" parameterType="BankDepositor" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <where>
+            <if test="depositorId != null">
+                depr.depositorId = #{depositorId}
+            </if>
+        </where>
+        group by dep.depositId
+    </select>
+
+    <select id="getByDepositorNameWithDepositors" parameterType="BankDepositor" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <where>
+            <if test="depositorName != null">
+                depr.depositorName = #{depositorName}
+            </if>
+        </where>
+        group by dep.depositId
+    </select>
+
+    <select id="getByDepositorAmountWithDepositors" parameterType="hashmap" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <where>
+            depr.depositorAmountDeposit between
+            <if test="from != null">
+                #{from}
+            </if>
+            <if test="to != null">
+                and #{to}
+            </if>
+        </where>
+        group by dep.depositId
+    </select>
+
+    <select id="getAllWithDepositors" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        group by dep.depositId
+    </select>
+
+    <select id="getByFromToDateDepositWithDepositors" parameterType="hashmap" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <where>
+            depr.depositorDateDeposit between
+            <if test="startDate != null">
+                #{startDate}
+            </if>
+            <if test="endDate != null">
+                and #{endDate}
+            </if>
+        </where>
+        group by dep.depositId
+    </select>
+
+    <select id="getByFromToDateReturnDepositWithDepositors" parameterType="hashmap" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <where>
+            depr.depositorDateReturnDeposit between
+            <if test="startDate != null">
+                #{startDate}
+            </if>
+            <if test="endDate != null">
+                and #{endDate}
+            </if>
+        </where>
+        group by dep.depositId
+    </select>
+
+    <select id="getByCurrencyWithDepositors" parameterType="BankDeposit" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <where>
+            <if test="depositCurrency != null">
+                dep.depositCurrency = #{depositCurrency}
+            </if>
+        </where>
+        group by dep.depositId
+    </select>
+
+    <select id="getByCurrencyFromToDateDepositWithDepositors" parameterType="hashmap" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <where>
+            <if test="currency != null">
+                dep.depositCurrency = #{currency}
+            </if>
+            and depr.depositorDateDeposit between
+            <if test="startDate != null">
+                #{startDate}
+            </if>
+            <if test="endDate != null">
+                and #{endDate}
+            </if>
+        </where>
+        group by dep.depositId
+    </select>
+
+    <select id="getByCurrencyFromToDateReturnDepositWithDepositors" parameterType="hashmap" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <where>
+            <if test="currency != null">
+                dep.depositCurrency = #{currency}
+            </if>
+            and depr.depositorDateReturnDeposit between
+            <if test="startDate != null">
+                #{startDate}
+            </if>
+            <if test="endDate != null">
+                and #{endDate}
+            </if>
+        </where>
+        group by dep.depositId
+    </select>
+
+    <select id="getByDepositorMarkReturnWithDepositors" parameterType="BankDepositor" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <where>
+            <if test="depositorMarkReturnDeposit != null">
+                depr.depositorMarkReturnDeposit = #{depositorMarkReturnDeposit}
+            </if>
+        </where>
+        group by dep.depositId
+    </select>
+
+    <select id="getByVarArgs" parameterType="hashmap" resultMap="report">
+        <include refid="allDepositWithDepositors"/>
+        <where>
+
+            <if test="depositId != null">
+                <if test="depositName != null">
+                    (dep.depositId=#{depositId} or dep.depositName=#{depositName})
+                </if>
+                <if test="depositName == null">
+                    dep.depositId=#{depositId}
+                </if>
+            </if>
+
+            <if test="depositName != null">
+                <if test="depositId == null">
+                    or dep.depositName=#{depositName}
+                </if>
+            </if>
+
+            <if test="depositCurrency != null">
+                and dep.depositCurrency=#{depositCurrency}
+            </if>
+            <if test="depositMinTerm != null">
+                and dep.depositMinTerm = #{depositMinTerm}
+            </if>
+            <if test="depositInterestRate != null">
+                and dep.depositInterestRate = #{depositInterestRate}
+            </if>
+            <if test="depositMinAmount != null">
+                and dep.depositMinAmount = #{depositMinAmount}
+            </if>
+
+            <if test="depositorDateDeposit != null">
+                and depr.depositorDateDeposit = #depositorDateDeposit#
+            </if>
+            <if test="depositorDateDepositLe != null">
+                <if test="depositorDateDepositGe != null">
+                    and depr.depositorDateDeposit between #{depositorDateDepositLe} and #{depositorDateDepositGe}
+                </if>
+                <if test="depositorDateDepositGe == null">
+                    and depr.depositorDateDeposit <![CDATA[ >= ]]> #{depositorDateDepositLe}
+                </if>
+            </if>
+            <if test="depositorDateReturnDeposit != null">
+                and depr.depositorDateReturnDeposit = #{depositorDateReturnDeposit}
+            </if>
+            <if test="depositorDateReturnDepositLe != null">
+                <if test="depositorDateReturnDepositGe != null">
+                    and depr.depositorDateReturnDeposit between #{depositorDateReturnDepositLe} and #{depositorDateReturnDepositGe}
+                </if>
+                <if test="depositorDateReturnDepositGe == null">
+                    and depr.depositorDateReturnDeposit <![CDATA[ >= ]]> #{depositorDateReturnDepositLe}
+                </if>
+            </if>
+            <if test="depositorAmountDeposit != null">
+                and depr.depositorAmountDeposit = #{depositorAmountDeposit}
+            </if>
+            <if test="depositorMarkReturnDeposit != null">
+                and depr.depositorMarkReturnDeposit = #{depositorMarkReturnDeposit}
+            </if>
+        </where>
+        group by dep.depositId
+    </select>
+
+    <update id="update" parameterType="BankDeposit">
+        update BANKDEPOSIT set
+        <if test="depositName != null">
+            depositName = #{depositName},
+        </if>
+        <if test="depositMinTerm != null">
+            depositMinTerm = #{depositMinTerm},
+        </if>
+        <if test="depositMinAmount != null">
+            depositMinAmount = #{depositMinAmount},
+        </if>
+        <if test="depositCurrency != null">
+            depositCurrency = #{depositCurrency},
+        </if>
+        <if test="depositInterestRate != null">
+            depositInterestRate = #{depositInterestRate},
+        </if>
+        <if test="depositAddConditions != null">
+            depositAddConditions = #{depositAddConditions}
+        </if>
+        <where>
+            <if test="depositId != null">
+                depositId = #{depositId}
+            </if>
+        </where>
+    </update>
+
+    <delete id="delete" parameterType="java.util.Map">
+        delete from BANKDEPOSIT
+        <where>
+            <if test="depositId != null">
+                depositId = #{depositId}
+            </if>
+        </where>
+    </delete>
+
+    <select id="rowCount" resultType="int">
+        select count(*) from BANKDEPOSIT
+    </select>
+
+</mapper>

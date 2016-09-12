@@ -4,8 +4,14 @@
         <servlet-name>springDispatchServlet</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
+            <!--
+            spring-context.xml:                 app-dao (hibernate),app-dao-myBatis
+            spring-context-ibatis.xml:          app-dao-iBatis
+            spring-context-ibatis3.xml:         app-dao-iBatis3
+            spring-context-myBatisSpring.xml:   app-dao-myBatisSpring
+            -->
             <param-name>contextConfigLocation</param-name>
-            <param-value>WEB-INF/spring-context-myBatisSpring.xml</param-value>
+            <param-value>WEB-INF/spring-context.xml</param-value>
         </init-param>
         <init-param>
             <param-name>dispatchOptionsRequest</param-name>
@@ -23,8 +29,14 @@
         <servlet-name>spring-ws</servlet-name>
         <servlet-class>org.springframework.ws.transport.http.MessageDispatcherServlet</servlet-class>
         <init-param>
+            <!--
+            spring-soap-context.xml:                app-dao (hibernate),app-dao-myBatis
+            spring-soap-context-ibatis.xml:         app-dao-iBatis
+            spring-soap-context-ibatis3.xml:        app-dao-iBatis3
+            spring-soap-context-myBatisSpring.xml:  app-dao-myBatisSpring
+            -->
             <param-name>contextConfigLocation</param-name>
-            <param-value>WEB-INF/spring-soap-context-myBatisSpring.xml</param-value>
+            <param-value>WEB-INF/spring-soap-context.xml</param-value>
         </init-param>
 
         <init-param>

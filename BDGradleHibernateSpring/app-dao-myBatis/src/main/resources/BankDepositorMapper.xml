@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="BankDepositor">
+
+    <sql id="allDepositors">
+        select distinct * from BANKDEPOSITOR
+    </sql>
+
+    <insert id="insert" parameterType="hashMap">
+        insert into BANKDEPOSITOR (depositorName,depositorDateDeposit,depositorAmountDeposit,depositorAmountPlusDeposit,depositorAmountMinusDeposit,depositorDateReturnDeposit,depositorMarkReturnDeposit,depositId)
+        values (#{depositorName},#{depositorDateDeposit},#{depositorAmountDeposit},#{depositorAmountPlusDeposit},#{depositorAmountMinusDeposit},#{depositorDateReturnDeposit},#{depositorMarkReturnDeposit},#{depositId})
+    </insert>
+
+    <select id="getAll" resultType="BankDepositor">
+        <include refid="allDepositors"/>
+    </select>
+
+    <select id="getById" resultType="BankDepositor">
+
+        <include refid="allDepositors"/>
+
+        <where>
+            <if test="depositorId != null" >
+                depositorId = #{depositorId}
+            </if>
+        </where>
+    </select>
+
+    <select id="getDepositById" resultType="BankDeposit">
+
+        select distinct dep.*
+        from BANKDEPOSIT dep
+        left outer join
+        BANKDEPOSITOR depr
+        on dep.depositId=depr.depositId
+
+        <where>
+            <if test="depositId != null">
+                dep.depositId = #{depositId}
+            </if>
+        </where>
+    </select>
+
+    <select id="getByIdDeposit" resultType="BankDepositor">
+
+        <include refid="allDepositors"/>
+
+        <where>
+            <if test="depositId != null">
+                depositId = #{depositId}
+            </if>
+        </where>
+    </select>
+
+    <select id="getFromToDateDeposit" parameterType="hashMap" resultType="BankDepositor">
+
+        <include refid="allDepositors"/>
+
+        <where>
+            depositorDateDeposit between
+            <if test="startDate != null">
+                #{startDate}
+            </if>
+            <if test="endDate != null">
+                and #{endDate}
+            </if>
+        </where>
+    </select>
+
+    <select id="getFromToDateReturnDeposit" parameterType="hashMap" resultType="BankDepositor">
+
+        <include refid="allDepositors"/>
+
+        <where>
+            depositorDateReturnDeposit between
+            <if test="startDate != null">
+                #{startDate}
+            </if>
+            <if test="endDate != null">
+                and #{endDate}
+            </if>
+        </where>
+    </select>
+
+    <select id="getByName" resultType="BankDepositor">
+
+        <include refid="allDepositors"/>
+
+        <where>
+            <if test="depositorName != null">
+                depositorName = #{depositorName}
+            </if>
+        </where>
+    </select>
+
+    <update id="update" parameterType="BankDepositor">
+        update BANKDEPOSITOR set
+        <if test="depositorName != null">
+            depositorName = #{depositorName},
+        </if>
+        <if test="depositorDateDeposit != null">
+            depositorDateDeposit = #{depositorDateDeposit},
+        </if>
+        <if test="depositorAmountDeposit != null">
+            depositorAmountDeposit = #{depositorAmountDeposit},
+        </if>
+        <if test="depositorAmountPlusDeposit != null">
+            depositorAmountPlusDeposit = #{depositorAmountPlusDeposit},
+        </if>
+        <if test="depositorAmountMinusDeposit != null">
+            depositorAmountMinusDeposit = #{depositorAmountMinusDeposit},
+        </if>
+        <if test="depositorDateReturnDeposit != null">
+            depositorDateReturnDeposit = #{depositorDateReturnDeposit},
+        </if>
+        <if test="depositorMarkReturnDeposit != null">
+            depositorMarkReturnDeposit = #{depositorMarkReturnDeposit}
+        </if>
+
+        <where>
+            <if test="depositorId != null">
+                depositorId = #{depositorId}
+            </if>
+        </where>
+    </update>
+
+    <delete id="delete" parameterType="BankDepositor">
+        delete from BANKDEPOSITOR
+        <where>
+            <if test="depositorId != null">
+                depositorId = #{depositorId}
+            </if>
+        </where>
+    </delete>
+
+    <select id="rowCount" resultType="int">
+        select count(*) from BANKDEPOSITOR
+    </select>
+
+</mapper>
