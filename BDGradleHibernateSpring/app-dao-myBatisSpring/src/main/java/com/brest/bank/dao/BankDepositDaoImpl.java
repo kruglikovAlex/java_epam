@@ -38,20 +38,10 @@ public class BankDepositDaoImpl implements BankDepositDao{
     private List<Map> mapList;
 
     @Autowired
-    private SqlSessionFactoryBean sqlSessionFactoryBean;
-
     private SqlSessionFactory sqlSessionFactory;
+
     private SqlSession sqlSession;
 
-    @PostConstruct
-    public void init(){
-        try{
-            sqlSessionFactory = sqlSessionFactoryBean.getObject();
-        }catch (Exception e){
-            LOGGER.error("error - init() for BankDepositDaoImpl.class - {}", e.toString());
-            throw new IllegalArgumentException("error - init() for BankDepositDaoImpl.class"+e.toString());
-        }
-    }
 
     /**
      * Get all Bank Deposits

@@ -56,7 +56,7 @@ public class DepositRestControllerMockTest {
         expect(depositService.getBankDeposits()).andReturn(DataFixture.getExistDeposits());
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/all")
+        this.mockMvc.perform(get("/rest/deposit/all")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -72,7 +72,7 @@ public class DepositRestControllerMockTest {
         expect(depositService.getBankDepositById(1L)).andReturn(DataFixture.getExistDeposit(1L));
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/id/1")
+        this.mockMvc.perform(get("/rest/deposit/id/1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -88,7 +88,7 @@ public class DepositRestControllerMockTest {
         expect(depositService.getBankDepositByName("depositName1")).andReturn(DataFixture.getExistDeposit(1L));
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/name/depositName1")
+        this.mockMvc.perform(get("/rest/deposit/name/depositName1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -104,7 +104,7 @@ public class DepositRestControllerMockTest {
         expect(depositService.getBankDepositsByCurrency("usd")).andReturn(DataFixture.getExistDeposits());
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/currency/usd")
+        this.mockMvc.perform(get("/rest/deposit/currency/usd")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -120,7 +120,7 @@ public class DepositRestControllerMockTest {
         expect(depositService.getBankDepositsByInterestRate(4)).andReturn(DataFixture.getExistDeposits());
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/rate/4")
+        this.mockMvc.perform(get("/rest/deposit/rate/4")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -136,7 +136,7 @@ public class DepositRestControllerMockTest {
         expect(depositService.getBankDepositsFromToMinTerm(11,12)).andReturn(DataFixture.getExistDeposits());
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/term/11,12")
+        this.mockMvc.perform(get("/rest/deposit/term/11,12")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -152,7 +152,7 @@ public class DepositRestControllerMockTest {
         expect(depositService.getBankDepositsFromToInterestRate(4,5)).andReturn(DataFixture.getExistDeposits());
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/rateBetween/4,5")
+        this.mockMvc.perform(get("/rest/deposit/rateBetween/4,5")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -169,7 +169,7 @@ public class DepositRestControllerMockTest {
                 dateFormat.parse("2015-02-02"))).andReturn(DataFixture.getExistDeposits());
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/date/2015-01-01,2015-02-02")
+        this.mockMvc.perform(get("/rest/deposit/date/2015-01-01,2015-02-02")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -186,7 +186,7 @@ public class DepositRestControllerMockTest {
                 dateFormat.parse("2015-02-02"))).andReturn(DataFixture.getExistDeposits());
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/returnDate/2015-01-01,2015-02-02")
+        this.mockMvc.perform(get("/rest/deposit/returnDate/2015-01-01,2015-02-02")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -203,7 +203,7 @@ public class DepositRestControllerMockTest {
                 .andReturn(DataFixture.getExistDepositAllDepositors(1L, 1L));
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/report/name/depositName1")
+        this.mockMvc.perform(get("/rest/deposit/report/name/depositName1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -222,7 +222,7 @@ public class DepositRestControllerMockTest {
                 .andReturn(DataFixture.getExistDepositAllDepositors(1L,1L));
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/report/nameDate/depositName1,2015-01-01,2015-02-02")
+        this.mockMvc.perform(get("/rest/deposit/report/nameDate/depositName1,2015-01-01,2015-02-02")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -241,7 +241,7 @@ public class DepositRestControllerMockTest {
                 .andReturn(DataFixture.getExistDepositAllDepositors(1L,1L));
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/report/nameDateReturn/depositName1,2015-01-01,2015-02-02")
+        this.mockMvc.perform(get("/rest/deposit/report/nameDateReturn/depositName1,2015-01-01,2015-02-02")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -259,7 +259,7 @@ public class DepositRestControllerMockTest {
                 .andReturn(DataFixture.getExistDepositAllDepositors(1L, 1L));
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/report/id/1")
+        this.mockMvc.perform(get("/rest/deposit/report/id/1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -278,7 +278,7 @@ public class DepositRestControllerMockTest {
                 .andReturn(DataFixture.getExistDepositAllDepositors(1L,1L));
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/report/idDate/1,2015-01-01,2015-02-02")
+        this.mockMvc.perform(get("/rest/deposit/report/idDate/1,2015-01-01,2015-02-02")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -297,7 +297,7 @@ public class DepositRestControllerMockTest {
                 .andReturn(DataFixture.getExistDepositAllDepositors(1L,1L));
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/report/idDateReturn/1,2015-01-01,2015-02-02")
+        this.mockMvc.perform(get("/rest/deposit/report/idDateReturn/1,2015-01-01,2015-02-02")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -315,7 +315,7 @@ public class DepositRestControllerMockTest {
                 .andReturn(DataFixture.getExistAllDepositsAllDepositors());
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/report/all")
+        this.mockMvc.perform(get("/rest/deposit/report/all")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -334,7 +334,7 @@ public class DepositRestControllerMockTest {
                 .andReturn(DataFixture.getExistAllDepositsAllDepositors());
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/report/allDate/2015-01-01,2015-02-02")
+        this.mockMvc.perform(get("/rest/deposit/report/allDate/2015-01-01,2015-02-02")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -353,7 +353,7 @@ public class DepositRestControllerMockTest {
                 .andReturn(DataFixture.getExistAllDepositsAllDepositors());
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/report/allDateReturn/2015-01-01,2015-02-02")
+        this.mockMvc.perform(get("/rest/deposit/report/allDateReturn/2015-01-01,2015-02-02")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -371,7 +371,7 @@ public class DepositRestControllerMockTest {
                 .andReturn(DataFixture.getExistAllDepositsAllDepositors());
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/report/currency/usd")
+        this.mockMvc.perform(get("/rest/deposit/report/currency/usd")
                     .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -390,7 +390,7 @@ public class DepositRestControllerMockTest {
                 .andReturn(DataFixture.getExistAllDepositsAllDepositors());
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/report/currencyDate/usd,2015-01-01,2015-02-02")
+        this.mockMvc.perform(get("/rest/deposit/report/currencyDate/usd,2015-01-01,2015-02-02")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -409,7 +409,7 @@ public class DepositRestControllerMockTest {
                 .andReturn(DataFixture.getExistAllDepositsAllDepositors());
         replay(depositService);
 
-        this.mockMvc.perform(get("/deposit/report/currencyDateReturn/usd,2015-01-01,2015-02-02")
+        this.mockMvc.perform(get("/rest/deposit/report/currencyDateReturn/usd,2015-01-01,2015-02-02")
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isFound())
@@ -430,7 +430,7 @@ public class DepositRestControllerMockTest {
         objectMapper = new ObjectMapper();
         String depositJson = objectMapper.writeValueAsString(DataFixture.getNewDeposit());
 
-        this.mockMvc.perform(post("/deposit/")
+        this.mockMvc.perform(post("/rest/deposit/")
                     .content(depositJson)
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
@@ -450,7 +450,7 @@ public class DepositRestControllerMockTest {
         objectMapper = new ObjectMapper();
         String existDeposit = objectMapper.writeValueAsString(DataFixture.getExistDeposit(1L));
 
-        this.mockMvc.perform(post("/deposit/")
+        this.mockMvc.perform(post("/rest/deposit/")
                     .content(existDeposit)
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
@@ -466,7 +466,7 @@ public class DepositRestControllerMockTest {
         objectMapper = new ObjectMapper();
         String emptyDeposit = objectMapper.writeValueAsString(new BankDeposit(null,null,0,0,null,0,null,null));
 
-        this.mockMvc.perform(post("/deposit/")
+        this.mockMvc.perform(post("/rest/deposit/")
                     .content(emptyDeposit)
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
@@ -484,7 +484,7 @@ public class DepositRestControllerMockTest {
         objectMapper = new ObjectMapper();
         String depositJson = objectMapper.writeValueAsString(DataFixture.getExistDeposit(1L));
 
-        ResultActions result = this.mockMvc.perform(put("/deposit/")
+        ResultActions result = this.mockMvc.perform(put("/rest/deposit/")
                 .content(depositJson)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
@@ -501,7 +501,7 @@ public class DepositRestControllerMockTest {
         objectMapper = new ObjectMapper();
         String emptyDeposit = objectMapper.writeValueAsString(new BankDeposit(null,null,0,0,null,0,null,null));
 
-        ResultActions result = this.mockMvc.perform(put("/deposit/")
+        ResultActions result = this.mockMvc.perform(put("/rest/deposit/")
                 .content(emptyDeposit)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
@@ -517,7 +517,7 @@ public class DepositRestControllerMockTest {
         expectLastCall();
         replay(depositService);
 
-        ResultActions result = this.mockMvc.perform(delete("/deposit/id/1")
+        ResultActions result = this.mockMvc.perform(delete("/rest/deposit/id/1")
                 .accept(MediaType.APPLICATION_JSON));
 
         result.andDo(print())
@@ -530,7 +530,7 @@ public class DepositRestControllerMockTest {
     @Test
     public void testRemoveNullIdDeposit() throws Exception{
 
-        this.mockMvc.perform(delete("/deposit/id/null")
+        this.mockMvc.perform(delete("/rest/deposit/id/null")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
@@ -539,7 +539,7 @@ public class DepositRestControllerMockTest {
     @Test
     public void testRemoveErrorIdDeposit() throws Exception{
 
-        this.mockMvc.perform(delete("/deposit/id/-1")
+        this.mockMvc.perform(delete("/rest/deposit/id/-1")
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest())

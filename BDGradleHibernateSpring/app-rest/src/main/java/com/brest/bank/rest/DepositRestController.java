@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/deposit")
+@RequestMapping("/rest/deposit")
 public class DepositRestController {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -40,7 +40,7 @@ public class DepositRestController {
         LOGGER.debug("getDeposits()");
         try {
             List<BankDeposit> deposits = depositService.getBankDeposits();
-            return new ResponseEntity(deposits, HttpStatus.FOUND);
+            return new ResponseEntity<List<BankDeposit>>(deposits, HttpStatus.FOUND);
         } catch (Exception e){
             LOGGER.error("getDeposits(), Exception:{}", e.toString());
             return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);

@@ -9,7 +9,7 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-beans', version: '4.2.4.RELEASE'
     compile group: 'org.springframework', name: 'spring-test', version: '4.2.4.RELEASE'
     compile group: 'org.springframework', name: 'spring-tx', version: '4.2.4.RELEASE'
-    compile group: 'org.springframework', name: 'spring-jdbc', version: '4.2.4.RELEASE'
+    testCompile group: 'org.springframework', name: 'spring-jdbc', version: '4.2.4.RELEASE'
     compile group: 'org.springframework', name: 'spring-orm', version: '4.2.4.RELEASE'
 
     compile('org.hibernate:hibernate-core:4.3.8.Final')

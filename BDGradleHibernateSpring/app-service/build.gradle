@@ -3,8 +3,8 @@ version '1.0-SNAPSHOT'
 
 dependencies {
     compile project(":app-core")
-    compile project(":app-dao-myBatis")
-
+    //compile project(":app-dao")
+    compile project(":app-dao-hibernateSpring")
     compile group: 'org.springframework', name: 'spring-beans', version: '4.2.4.RELEASE'
     compile group: 'org.springframework', name: 'spring-test', version: '4.2.4.RELEASE'
     compile group: 'org.springframework', name: 'spring-tx', version: '4.2.4.RELEASE'

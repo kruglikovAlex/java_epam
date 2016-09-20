@@ -5,11 +5,14 @@ import com.brest.bank.domain.BankDepositor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -27,29 +30,32 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = {"classpath:/spring-daoSpring-test.xml"})
 public class BankDepositorDaoImplTest {
 
-    @Autowired
-    SessionFactory sessionFactory;
-
-    @Autowired
-    BankDepositorDao depositorDao;
-
     private static final Logger LOGGER = LogManager.getLogger();
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
     private static final String ERROR_EMPTY_BD = "Data Base is empty";
     private static final String ERROR_SIZE = "Size can not be 0";
     private static final String ERROR_NULL = "The parameter can not be NULL";
-
+    @Autowired
+    HibernateTemplate hibernateTemplate;
+    @Autowired
+    SessionFactory sessionFactory;
+    @Autowired
+    BankDepositorDao depositorDao;
+    Object result;
+    Integer sizeBefore = 0, sizeAfter = 0;
     private BankDepositor depositor;
     private List<BankDepositor> depositors;
 
-    Object result;
-    Integer sizeBefore = 0, sizeAfter = 0;
-
     @Before
     public void setUp() throws Exception {
+        //hibernateTemplate.getSessionFactory().getCurrentSession().beginTransaction();
         depositor = new BankDepositor();
         depositors = new ArrayList<BankDepositor>();
+    }
+
+    @After
+    public void endUp() throws Exception{
+        //hibernateTemplate.getSessionFactory().getCurrentSession().getTransaction().commit();
     }
 
     @Test
@@ -142,12 +148,21 @@ public class BankDepositorDaoImplTest {
     }
 
     public Integer rowCount(Class<?> name) throws ClassNotFoundException{
-        sessionFactory.getCurrentSession().beginTransaction();
-        //--- query
-        result = sessionFactory.getCurrentSession().createCriteria(name)
-                .setProjection(Projections.rowCount()).uniqueResult();
+        try{
+            hibernateTemplate.getSessionFactory().getCurrentSession().beginTransaction();
+            //--- query
+            result = hibernateTemplate
+                    .findByCriteria(DetachedCriteria.forClass(name)
+                            .setProjection(Projections.rowCount())).get(0);
 
-        sessionFactory.getCurrentSession().getTransaction().commit();
+            hibernateTemplate.getSessionFactory().getCurrentSession().getTransaction().commit();
+        }catch (Exception e){
+            LOGGER.error("error - rowCount({}) - {}", name, e.toString());
+            hibernateTemplate.getSessionFactory().getCurrentSession().getTransaction().rollback();
+            throw new IllegalArgumentException("error - rowCount()"+e.toString());
+        }finally {
+            hibernateTemplate.getSessionFactory().getCurrentSession().close();
+        }
         return Integer.parseInt(result.toString());
     }
 }

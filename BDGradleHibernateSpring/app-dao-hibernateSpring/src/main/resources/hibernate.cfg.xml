@@ -1,5 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 
 <hibernate-configuration>
     <session-factory>
@@ -24,7 +26,8 @@
 
         <!-- вывод запросов SQL генерируемых Hibernate на консоль-->
         <property name="show_sql">true</property>
-
+        <property name="use_sql_comments">true</property>
+        <property name="hibernate.format_sql">true</property>
         <!--Удалить и пересоздать схему БД при запуске-->
         <property name="hbm2ddl.auto">update</property>
 
