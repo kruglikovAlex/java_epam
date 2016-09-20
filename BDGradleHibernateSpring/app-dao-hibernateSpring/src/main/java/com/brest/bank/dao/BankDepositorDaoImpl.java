@@ -332,11 +332,7 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
 
         try {
             hibernateTemplate.getSessionFactory().getCurrentSession().beginTransaction();
-/*
-            BankDepositor depositor = (BankDepositor)hibernateTemplate
-                    .findByCriteria(DetachedCriteria.forClass(BankDepositor.class)
-                    .add(Restrictions.eq("depositorId", id))).get(0);
-*/
+
             BankDepositor depositor = hibernateTemplate.get(BankDepositor.class,id);
             hibernateTemplate.delete(depositor);
 
