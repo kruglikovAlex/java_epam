@@ -269,6 +269,18 @@ public class SoapController {
                             bankDepositor.setDepositorAmountMinusDeposit(Integer.parseInt(queryMap.get("depositorAmountMinusDeposit")));
                             bankDepositor.setDepositorMarkReturnDeposit(Integer.parseInt(queryMap.get("depositorMarkReturnDeposit")));
 
+                            soapRequest = soapRequest
+                                    + "\t\t\t<soa:bankDepositor>\n"
+                                    + "\t\t\t\t<soa:bankDepositorId>" +bankDepositor.getDepositorId()+"</soa:bankDepositorId>\n"
+                                    + "\t\t\t\t<soa:bankDepositorName>" +bankDepositor.getDepositorName()+"</soa:bankDepositorName>\n"
+                                    + "\t\t\t\t<soa:bankDepositorDateDeposit>" +dateFormat.format(bankDepositor.getDepositorDateDeposit())+"</soa:bankDepositorDateDeposit>\n"
+                                    + "\t\t\t\t<soa:bankDepositorAmountDeposit>" +bankDepositor.getDepositorAmountDeposit()+"</soa:bankDepositorAmountDeposit>\n"
+                                    + "\t\t\t\t<soa:bankDepositorAmountPlusDeposit>" +bankDepositor.getDepositorAmountPlusDeposit()+"</soa:bankDepositorAmountPlusDeposit>\n"
+                                    + "\t\t\t\t<soa:bankDepositorAmountMinusDeposit>" +bankDepositor.getDepositorAmountMinusDeposit()+"</soa:bankDepositorAmountMinusDeposit>\n"
+                                    + "\t\t\t\t<soa:bankDepositorDateReturnDeposit>" +dateFormat.format(bankDepositor.getDepositorDateReturnDeposit())+"</soa:bankDepositorDateReturnDeposit>\n"
+                                    + "\t\t\t\t<soa:bankDepositorMarkReturnDeposit>" +bankDepositor.getDepositorMarkReturnDeposit()+"</soa:bankDepositorMarkReturnDeposit>\n"
+                                    + "\t\t\t</soa:bankDepositor>\n";
+
                             sortParam[j] = bankDepositor;
                             break;
                         }
@@ -285,6 +297,17 @@ public class SoapController {
                             bankDeposit.setDepositCurrency(queryMap.get("depositCurrency"));
                             bankDeposit.setDepositInterestRate(Integer.parseInt(queryMap.get("depositInterestRate")));
                             bankDeposit.setDepositAddConditions(queryMap.get("depositAddConditions"));
+
+                            soapRequest = soapRequest
+                                    + "\t\t\t<soa:bankDeposit>\n"
+                                    + "\t\t\t\t<soa:bankDepositId>" +bankDeposit.getDepositId()+"</soa:bankDepositId>\n"
+                                    + "\t\t\t\t<soa:bankDepositName>" +bankDeposit.getDepositName()+"</soa:bankDepositName>\n"
+                                    + "\t\t\t\t<soa:bankDepositMinTerm>" +bankDeposit.getDepositMinTerm()+"</soa:bankDepositMinTerm>\n"
+                                    + "\t\t\t\t<soa:bankDepositMinAmount>" +bankDeposit.getDepositMinAmount()+"</soa:bankDepositMinAmount>\n"
+                                    + "\t\t\t\t<soa:bankDepositCurrency>" +bankDeposit.getDepositCurrency()+"</soa:bankDepositCurrency>\n"
+                                    + "\t\t\t\t<soa:bankDepositInterestRate>" +bankDeposit.getDepositInterestRate()+"</soa:bankDepositInterestRate>\n"
+                                    + "\t\t\t\t<soa:bankDepositAddConditions>" +bankDeposit.getDepositAddConditions()+"</soa:bankDepositAddconditions>\n"
+                                    + "\t\t\t</soa:bankDeposit>\n";
 
                             sortParam[j] = bankDeposit;
                             break;
