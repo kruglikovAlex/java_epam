@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head lang="en">
+		<meta charset="UTF-8">
+		<title>BankDeposit SOAP JS Client</title>
+	</head>
+	<body>
+		<link href='resources/css/bankDeposit.css' rel="stylesheet">
+		<link href='resources/css/jquery-ui.css' rel="stylesheet">
+
+		<div id="dialog-form" title="Get WSDL:">
+			<form>
+				<fieldset>
+					<label for="wsdlUrl">URL:</label>
+					<input type="text" name="WSDL" id="wsdlURL" size="75" class="text ui-widget-content ui-corner-all">
+					<!-- Allow form submission with keyboard without duplicating the dialog button -->
+					<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+				</fieldset>
+			</form>
+		</div>
+		<div id="wsdlURL-contain" class="ui-widget">
+			<legend style="font-weight: bold">
+				 WSDL: <button id="get-wsdl">Get</button>
+			</legend>
+		</div>
+
+		<div class="depositListArea">
+
+			<table id="depositList" cellspacing="0" border="0">
+				<tr>
+					<td>
+						<ol id="selectable"></ol>
+					</td>
+
+					<td>
+						<input id="URL" name="URL" type="text" required size="40"/>
+						<a id="sendMessage" class="buttonFilter">SEND</a>
+						<br>
+						<div id="tabs">
+
+							<ul>
+								<li><a href="#tabs-1">Request</a></li>
+								<li><a href="#tabs-2">Response</a></li>
+							</ul>
+							<div id="tabs-1"></div>
+							<div id="tabs-2"></div>
+
+						</div>
+					</td>
+
+				</tr>
+			</table>
+
+		</div>
+
+		<script src="resources/jquery-3.1.1.js"></script>
+		<script src="resources/jquery.soap.js"></script>
+		<script src="resources/jquery-ui.js"></script>
+		<script src="resources/mainSoap.js"></script>
+	<!--
+	<script src="resources/jquery.xml2json.js"></script>
+	<script src="resources/xml2jsobj.js"></script>
+	<script src="resources/jquery.maskedinput.js"></script>
+	<script src="resources/date.format.js"></script>
+	-->
+
+	</body>
+</html>

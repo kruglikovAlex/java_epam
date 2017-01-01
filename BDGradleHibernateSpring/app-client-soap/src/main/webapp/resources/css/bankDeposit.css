@@ -1,0 +1,255 @@
+
+.scrolling-table th {
+    border-bottom: 0px solid;
+}
+
+.scrolling-table tr td {
+    padding: 2px 5px;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    text-align: center;
+}
+
+.scrolling-table tr td:last-child {
+    border-right: none;
+}
+
+.scrolling-table tr:last-child td {
+    border-bottom: none;
+}
+
+.scrolling-table tbody {
+    display: block;
+    height: 350px;
+    width: 1200px;
+    overflow: hidden;
+    overflow-y: auto;
+}
+.scrolling-table tr {
+background: none;
+    display: table;
+    width: 1200px;
+    table-layout: fixed;
+}
+
+a.buttonDel {
+    display: inline-block;
+    font-family: arial,sans-serif;
+    font-size: 14px;
+
+    color: rgb(68,68,68);
+    text-decoration: none;
+    user-select: none;
+    padding: .3em 1.5em;
+    outline: none;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 5px;
+    background: rgb(245,245,245) linear-gradient(#f4f4f4, #f1f1f1);
+    transition: all .218s ease 0s;
+  }
+a.buttonDel:hover {
+    color: rgb(24,24,24);
+    border: 1px solid rgb(198,198,198);
+    background: #f7f7f7 linear-gradient(#f7f7f7, #f1f1f1);
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+  }
+a.buttonDel:active {
+    color: rgb(51,51,51);
+    border: 1px solid rgb(204,204,204);
+    background: rgb(238,238,238) linear-gradient(rgb(238,238,238), rgb(224,224,224));
+    box-shadow: 0 1px 2px rgba(0,0,0,.1) inset;
+  }
+
+a.buttonFilter {
+    display: inline-block;
+    font-family: arial,sans-serif;
+    font-size: 14px;
+
+    color: rgb(68,68,68);
+    text-decoration: none;
+    user-select: none;
+    padding: .3em 1.5em;
+    outline: none;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 5px;
+    background: rgb(245,245,245) linear-gradient(#f4f4f4, #f1f1f1);
+    transition: all .218s ease 0s;
+    }
+a.buttonFilter:hover {
+    color: rgb(24,24,24);
+    border: 1px solid rgb(198,198,198);
+    background: #f7f7f7 linear-gradient(#f7f7f7, #f1f1f1);
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+    }
+a.buttonFilter:active {
+    color: rgb(51,51,51);
+    border: 1px solid rgb(204,204,204);
+    background: rgb(238,238,238) linear-gradient(rgb(238,238,238), rgb(224,224,224));
+    box-shadow: 0 1px 2px rgba(0,0,0,.1) inset;
+    }
+a.buttonFilterBig {
+    display: inline-block;
+    font-family: arial,sans-serif;
+    font-size: 14px;
+
+    color: rgb(68,68,68);
+    text-decoration: none;
+    user-select: none;
+    padding: 1.0em 0.2em;
+    outline: yes;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 2px;
+    background: rgb(245,245,245) linear-gradient(#f4f4f4, #f1f1f1);
+    transition: all .218s ease 0s;
+    }
+a.buttonFilterBig:hover {
+    color: rgb(24,24,24);
+    border: 1px solid rgb(198,198,198);
+    background: #f7f7f7 linear-gradient(#f7f7f7, #f1f1f1);
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+    }
+a.buttonFilterBig:active {
+    color: rgb(51,51,51);
+    border: 1px solid rgb(204,204,204);
+    background: rgb(238,238,238) linear-gradient(rgb(238,238,238), rgb(224,224,224));
+    box-shadow: 0 1px 2px rgba(0,0,0,.1) inset;
+    }
+a.buttonAdd {
+    display: inline-block;
+    font-family: arial,sans-serif;
+    font-size: 14px;
+
+    color: rgb(68,68,68);
+    text-decoration: none;
+    user-select: none;
+    padding: .3em 1.5em;
+    outline: none;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 5px;
+    background: rgb(245,245,245) linear-gradient(#f4f4f4, #f1f1f1);
+    transition: all .218s ease 0s;
+  }
+a.buttonAdd:hover {
+    color: rgb(24,24,24);
+    border: 1px solid rgb(198,198,198);
+    background: #f7f7f7 linear-gradient(#f7f7f7, #f1f1f1);
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+  }
+a.buttonAdd:active {
+    color: rgb(51,51,51);
+    border: 1px solid rgb(204,204,204);
+    background: rgb(238,238,238) linear-gradient(rgb(238,238,238), rgb(224,224,224));
+    box-shadow: 0 1px 2px rgba(0,0,0,.1) inset;
+  }
+
+a.buttonUpd {
+    display: inline-block;
+    font-family: arial,sans-serif;
+    font-size: 14px;
+
+    color: rgb(68,68,68);
+    text-decoration: none;
+    user-select: none;
+    padding: .3em 1.5em;
+    outline: none;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 5px;
+    background: rgb(245,245,245) linear-gradient(#f4f4f4, #f1f1f1);
+    transition: all .218s ease 0s;
+  }
+a.buttonUpd:hover {
+    color: rgb(24,24,24);
+    border: 1px solid rgb(198,198,198);
+    background: #f7f7f7 linear-gradient(#f7f7f7, #f1f1f1);
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+  }
+a.buttonUpd:active {
+    color: rgb(51,51,51);
+    border: 1px solid rgb(204,204,204);
+    background: rgb(238,238,238) linear-gradient(rgb(238,238,238), rgb(224,224,224));
+    box-shadow: 0 1px 2px rgba(0,0,0,.1) inset;
+  }
+
+#accordion-5{font-size: 14px;}
+#feedback { font-size: 1.4em; }
+#selectable .ui-selecting { background: #FECA40; font-weight: bold}
+#selectable .ui-selected { background: #F39814; color: white; font-weight: bold}
+#selectable { list-style-type: none; margin: 0; padding: 0 }
+#selectable li { margin: 3px; padding: 0.4em; font-size: 0.8em; height: 18px; font-weight: bold}
+#tabs {width: auto}
+#selectable {
+   display:  table-cell;
+   height:  100px;
+   vertical-align:  middle;
+}
+#tabs {
+   display:  table-cell;
+   height:  100px;
+   vertical-align:  middle;
+}
+textarea {font-size: 13px}
+
+#requestRaw1{font-size: 13px}
+#responseHeader1{font-size: 13px}
+#responseRaw1{font-size: 13px}
+#responseRaw1{color: #930}
+
+#selectable {vertical-align: top}
+
+div#wsdlURL-contain { width: 350px; margin: 20px 0; }
+div#wsdlURL-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+div#wsdlURL-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+.ui-dialog .ui-state-error { padding: .3em; }
+
+#selection, #tabs {
+    float: left;
+    width: 100%;
+}
+
+html, body{
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#selection, #tabs{
+    height: 50%;
+}
+
+#requestRaw1, #responseRaw1, #responseHeader1 {
+    width: 100%;
+    height: 100%;
+}
+
+#soapRequest {
+    width: 100%;
+    height: 600px;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #ebebeb;
+    font-size: 12px;
+    resize: none;
+}
+
+#soapResponse0, #soapResponse1 {
+    width: 100%;
+    height: 600px;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    font-size: 12px;
+    resize: none;
+}
+
+#tabs{
+    position: relative;
+    width: 170%;
+    bottom: 10px;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+}

@@ -1,8 +1,10 @@
 package com.brest.bank.client;
 
-import com.brest.bank.domain.BankDeposit;
-import com.brest.bank.domain.BankDepositor;
+import com.brest.bank.wsdl.BankDeposit;
+import com.brest.bank.wsdl.BankDepositor;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -16,8 +18,16 @@ public class DataFixture {
      *
      * @return BankDeposit with fixed parameters for tests
      */
-    public static BankDeposit getNewDeposit(){
-        return new BankDeposit(null,"depositName1",12,1000,"usd",4,"conditions1",new HashSet());
+    public static com.brest.bank.domain.BankDeposit getNewDeposit(){
+        com.brest.bank.domain.BankDeposit deposit = new com.brest.bank.domain.BankDeposit();
+        deposit.setDepositName("depositName1");
+        deposit.setDepositMinTerm(12);
+        deposit.setDepositMinAmount(1000);
+        deposit.setDepositCurrency("usd");
+        deposit.setDepositInterestRate(4);
+        deposit.setDepositAddConditions("conditions1");
+
+        return deposit;
     }
 
     /**
@@ -27,7 +37,36 @@ public class DataFixture {
      * @return BankDeposit with fixed parameters for tests
      */
     public static BankDeposit getExistDeposit(Long id){
-        return new BankDeposit(id,"depositName1",12,1000,"usd",4,"conditions1",new HashSet());
+        BankDeposit deposit = new BankDeposit();
+        deposit.setDepositId(id);
+        deposit.setDepositName("depositName1");
+        deposit.setDepositMinTerm(12);
+        deposit.setDepositMinAmount(1000);
+        deposit.setDepositCurrency("usd");
+        deposit.setDepositInterestRate(4);
+        deposit.setDepositAddConditions("conditions1");
+
+        return deposit;
+    }
+
+    /**
+     * Get an exists update Bank Deposit with fixed parameters
+     *
+     * @param id Long - id of the Bank Deposit to return
+     * @return BankDeposit with fixed parameters for tests
+     */
+    public static com.brest.bank.domain.BankDeposit getExistUpdateDomainDeposit(Long id){
+        com.brest.bank.domain.BankDeposit deposit = new com.brest.bank.domain.BankDeposit();
+        deposit.setDepositName("updateName1");
+        deposit.setDepositMinTerm(12);
+        deposit.setDepositMinAmount(1000);
+        deposit.setDepositCurrency("usd");
+        deposit.setDepositInterestRate(4);
+        deposit.setDepositAddConditions("conditions1");
+
+        deposit.setDepositId(id);
+
+        return deposit;
     }
 
     /**
@@ -37,7 +76,17 @@ public class DataFixture {
      * @return BankDeposit with fixed parameters for tests
      */
     public static BankDeposit getExistUpdateDeposit(Long id){
-        return new BankDeposit(id,"updateName1",12,1000,"usd",4,"conditions1",new HashSet());
+        BankDeposit deposit = new BankDeposit();
+        deposit.setDepositName("updateName1");
+        deposit.setDepositMinTerm(12);
+        deposit.setDepositMinAmount(1000);
+        deposit.setDepositCurrency("usd");
+        deposit.setDepositInterestRate(4);
+        deposit.setDepositAddConditions("conditions1");
+
+        deposit.setDepositId(id);
+
+        return deposit;
     }
 
     /**
@@ -63,8 +112,8 @@ public class DataFixture {
      *
      * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
      */
-    public static List<BankDeposit> getDeposits(){
-        List<BankDeposit> deposits = new ArrayList<BankDeposit>();
+    public static List<com.brest.bank.domain.BankDeposit> getDeposits(){
+        List<com.brest.bank.domain.BankDeposit> deposits = new ArrayList<com.brest.bank.domain.BankDeposit>();
         deposits.add(getNewDeposit());
         return deposits;
     }
@@ -89,9 +138,9 @@ public class DataFixture {
      * bank depositors
      * @throws ParseException
      */
-    public static Map getExistDepositAllDepositors(Long id, Long idd) throws ParseException{
+    public static Map getExistDepositAllDepositors(Long id, Long idd) throws ParseException, DatatypeConfigurationException{
         BankDeposit deposit = getExistDeposit(id);
-        BankDepositor depositor = getExistDepositor(idd);
+        com.brest.bank.domain.BankDepositor depositor = getExistDepositor(idd);
         Map<String, Object> list = new HashMap<String, Object>(11);
             list.put("depositId", deposit.getDepositId());
             list.put("depositName", deposit.getDepositName());
@@ -115,7 +164,7 @@ public class DataFixture {
      * bank depositors
      * @throws ParseException
      */
-    public static List<Map> getExistAllDepositsAllDepositors() throws ParseException{
+    public static List<Map> getExistAllDepositsAllDepositors() throws ParseException, DatatypeConfigurationException{
         List<Map> deposits = new ArrayList<Map>();
         deposits.add(getExistDepositAllDepositors(1L, 1L));
         return deposits;
@@ -126,9 +175,17 @@ public class DataFixture {
      *
      * @return BankDepositor with fixed parameters for tests
      */
-    public static BankDepositor getNewDepositor() throws ParseException{
-        return new BankDepositor(null,"depositorName1",
-                dateFormat.parse("2015-01-01"),1000,100,100,dateFormat.parse("2015-09-09"),0,null);
+    public static com.brest.bank.domain.BankDepositor getNewDepositor() throws ParseException, DatatypeConfigurationException {
+        com.brest.bank.domain.BankDepositor depositor = new com.brest.bank.domain.BankDepositor();
+        depositor.setDepositorName("depositorName1");
+        depositor.setDepositorDateDeposit(dateFormat.parse("2015-01-01"));
+        depositor.setDepositorAmountDeposit(1000);
+        depositor.setDepositorAmountPlusDeposit(100);
+        depositor.setDepositorAmountMinusDeposit(100);
+        depositor.setDepositorDateDeposit(dateFormat.parse("2015-09-09"));
+        depositor.setDepositorMarkReturnDeposit(0);
+
+        return depositor;
     }
 
     /**
@@ -146,7 +203,7 @@ public class DataFixture {
      * @return BankDepositor empty
      */
     public static BankDepositor getEmptyDepositor() {
-        return new BankDepositor(null,null,null,0,0,0,null,0,null);
+        return new BankDepositor();
     }
 
     /**
@@ -155,9 +212,18 @@ public class DataFixture {
      * @param id Long - id of the Bank Depositor to return
      * @return BankDepositor with fixed parameters for tests
      */
-    public static BankDepositor getExistDepositor(Long id) throws ParseException{
-        return new BankDepositor(id,"depositorName"+id,
-                dateFormat.parse("2015-01-01"),1000,100,100,dateFormat.parse("2015-09-09"),0,null);
+    public static com.brest.bank.domain.BankDepositor getExistDepositor(Long id) throws ParseException{
+        com.brest.bank.domain.BankDepositor depositor = new com.brest.bank.domain.BankDepositor();
+        depositor.setDepositorId(id);
+        depositor.setDepositorName("depositorName"+id);
+        depositor.setDepositorDateDeposit(dateFormat.parse("2015-01-01"));
+        depositor.setDepositorAmountDeposit(1000);
+        depositor.setDepositorAmountPlusDeposit(100);
+        depositor.setDepositorAmountMinusDeposit(100);
+        depositor.setDepositorDateReturnDeposit(dateFormat.parse("2015-09-09"));
+        depositor.setDepositorMarkReturnDeposit(0);
+
+        return depositor;
     }
 
     /**
@@ -166,9 +232,18 @@ public class DataFixture {
      * @param id Long - id of the Bank Depositor to return
      * @return BankDepositor with fixed parameters for tests
      */
-    public static BankDepositor getExistUpdateDepositor(Long id) throws ParseException{
-        return new BankDepositor(id,"updateName"+id,
-                dateFormat.parse("2015-01-01"),1000,100,100,dateFormat.parse("2015-09-09"),0,null);
+    public static com.brest.bank.domain.BankDepositor getExistUpdateDepositor(Long id) throws ParseException{
+        com.brest.bank.domain.BankDepositor depositor = new com.brest.bank.domain.BankDepositor();
+        depositor.setDepositorId(id);
+        depositor.setDepositorName("updateName"+id);
+        depositor.setDepositorDateDeposit(dateFormat.parse("2015-01-01"));
+        depositor.setDepositorAmountDeposit(1000);
+        depositor.setDepositorAmountPlusDeposit(100);
+        depositor.setDepositorAmountMinusDeposit(100);
+        depositor.setDepositorDateDeposit(dateFormat.parse("2015-09-09"));
+        depositor.setDepositorMarkReturnDeposit(0);
+
+        return depositor;
     }
 
     /**
@@ -176,8 +251,8 @@ public class DataFixture {
      *
      * @return List<BankDepositor> - a list containing all of the Bank Depositors in the database
      */
-    public static List<BankDepositor> getDepositors() throws ParseException{
-        List<BankDepositor> depositors = new ArrayList<BankDepositor>();
+    public static List<com.brest.bank.domain.BankDepositor> getDepositors() throws ParseException, DatatypeConfigurationException{
+        List<com.brest.bank.domain.BankDepositor> depositors = new ArrayList<com.brest.bank.domain.BankDepositor>();
         depositors.add(getNewDepositor());
         return depositors;
     }
@@ -188,8 +263,8 @@ public class DataFixture {
      * @return List<BankDepositor> - a list containing all of the Bank Depositors in the database
      * @throws ParseException
      */
-    public static List<BankDepositor> getExistDepositors() throws ParseException{
-        List<BankDepositor> depositors = new ArrayList<BankDepositor>();
+    public static List<com.brest.bank.domain.BankDepositor> getExistDepositors() throws ParseException{
+        List<com.brest.bank.domain.BankDepositor> depositors = new ArrayList<com.brest.bank.domain.BankDepositor>();
             depositors.add(getExistDepositor(1L));
             depositors.add(getExistDepositor(2L));
         return depositors;

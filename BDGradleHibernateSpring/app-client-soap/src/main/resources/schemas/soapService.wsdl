@@ -1,0 +1,1335 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch="http://bank.brest.com/soap" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://localhost:8080/SpringHibernateBDeposit-1.0/soap/soapService" targetNamespace="http://localhost:8080/SpringHibernateBDeposit-1.0/soap/soapService">
+  <wsdl:types>
+    <xsd:schema xmlns:tns="http://bank.brest.com/soap" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://bank.brest.com/soap">
+
+    <xsd:include schemaLocation="bankDepositor.xsd"/>
+
+    <xsd:include schemaLocation="bankDeposit.xsd"/>
+
+    <xsd:element name="getBankDepositsRequest"/>
+    <xsd:element name="getBankDepositsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposits" type="tns:bankDeposits"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByIdRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositId" type="xsd:long"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByIdResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposit" type="tns:bankDeposit"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByNameRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositName">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:pattern value="[A-Z][a-z]+[0-9]*"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByNameResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposit" type="tns:bankDeposit"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsByCurrencyRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositCurrency">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:pattern value="[A-Z]{3}"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsByCurrencyResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposits" type="tns:bankDeposits"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsByInterestRateRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositInterestRate">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:int">
+                            <xsd:minInclusive value="1"/>
+                            <xsd:maxInclusive value="100"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsByInterestRateResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposits" type="tns:bankDeposits"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToMinTermRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="fromTerm" nillable="true">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:int">
+                            <xsd:minInclusive value="1"/>
+                            <xsd:maxInclusive value="480"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="toTerm" nillable="true">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:int">
+                            <xsd:minInclusive value="1"/>
+                            <xsd:maxInclusive value="480"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToMinTermResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposits" type="tns:bankDeposits"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToInterestRateRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="startRate" nillable="true">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:int">
+                            <xsd:minInclusive value="1"/>
+                            <xsd:maxInclusive value="100"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="endRate" nillable="true">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:int">
+                            <xsd:minInclusive value="1"/>
+                            <xsd:maxInclusive value="100"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToInterestRateResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposits" type="tns:bankDeposits"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToDateDepositRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="startDate" nillable="true" type="xsd:date"/>
+                <xsd:element name="endDate" nillable="true" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToDateDepositResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposits" type="tns:bankDeposits"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToDateReturnDepositRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="startDate" nillable="true" type="xsd:date"/>
+                <xsd:element name="endDate" nillable="true" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToDateReturnDepositResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposits" type="tns:bankDeposits"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByNameWithDepositorsRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositName">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:pattern value="[A-Z][a-z]+[0-9]*"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByNameWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositReport" type="tns:bankDepositReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByNameFromToDateDepositWithDepositorsRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositName">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:pattern value="[A-Z][a-z]+[0-9]*"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="startDate" type="xsd:date"/>
+                <xsd:element name="endDate" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByNameFromToDateDepositWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositReport" type="tns:bankDepositReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByNameFromToDateReturnDepositWithDepositorsRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositName">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:pattern value="[A-Z][a-z]+[0-9]*"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="startDate" type="xsd:date"/>
+                <xsd:element name="endDate" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByNameFromToDateReturnDepositWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositReport" type="tns:bankDepositReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByIdWithDepositorsRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositId" type="xsd:long"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByIdWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositReport" type="tns:bankDepositReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByIdFromToDateDepositWithDepositorsRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositId" type="xsd:long"/>
+                <xsd:element name="startDate" type="xsd:date"/>
+                <xsd:element name="endDate" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByIdFromToDateDepositWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositReport" type="tns:bankDepositReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByIdFromToDateReturnDepositWithDepositorsRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositId" type="xsd:long"/>
+                <xsd:element name="startDate" type="xsd:date"/>
+                <xsd:element name="endDate" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositByIdFromToDateReturnDepositWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositReport" type="tns:bankDepositReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsWithDepositorsRequest"/>
+    <xsd:element name="getBankDepositsWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositsReport" type="tns:bankDepositsReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToDateDepositWithDepositorsRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="startDate" type="xsd:date"/>
+                <xsd:element name="endDate" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToDateDepositWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositsReport" type="tns:bankDepositsReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToDateReturnDepositWithDepositorsRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="startDate" type="xsd:date"/>
+                <xsd:element name="endDate" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsFromToDateReturnDepositWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositsReport" type="tns:bankDepositsReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsByCurrencyWithDepositorsRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositCurrency">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:pattern value="[A-Z]{3}"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsByCurrencyWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositsReport" type="tns:bankDepositsReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsByCurrencyFromToDateDepositWithDepositorsRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositCurrency">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:pattern value="[A-Z]{3}"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="startDate" type="xsd:date"/>
+                <xsd:element name="endDate" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositsReport" type="tns:bankDepositsReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositCurrency">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:pattern value="[A-Z]{3}"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="startDate" type="xsd:date"/>
+                <xsd:element name="endDate" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositsReport" type="tns:bankDepositsReport"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="addBankDepositRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposit" type="tns:bankDeposit"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="addBankDepositResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposit" type="tns:bankDeposit"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="updateBankDepositRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposit" type="tns:bankDeposit"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="updateBankDepositResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDeposit" type="tns:bankDeposit"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="deleteBankDepositRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositId" nillable="true" type="xsd:long"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="deleteBankDepositResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="result" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositorsRequest"/>
+    <xsd:element name="getBankDepositorsResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositors" type="tns:bankDepositors"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositorsFromToDateDepositRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="startDate" type="xsd:date"/>
+                <xsd:element name="endDate" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositorsFromToDateDepositResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositors" type="tns:bankDepositors"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositorsFromToDateReturnDepositRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="startDate" type="xsd:date"/>
+                <xsd:element name="endDate" type="xsd:date"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositorsFromToDateReturnDepositResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositors" type="tns:bankDepositors"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositorByIdRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositorId" type="xsd:long"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositorByIdResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositor" type="tns:bankDepositor"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositorByIdDepositRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositId" type="xsd:long"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositorByIdDepositResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositors" type="tns:bankDepositors"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositorByNameRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositorName">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:pattern value="[A-Z][a-z]+[0-9]*"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="getBankDepositorByNameResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositor" type="tns:bankDepositor"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="addBankDepositorRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositId" type="xsd:long"/>
+                <xsd:element name="bankDepositor" type="tns:bankDepositor"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="addBankDepositorResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositor" type="tns:bankDepositor"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="updateBankDepositorRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositor" type="tns:bankDepositor"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="updateBankDepositorResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="bankDepositor" type="tns:bankDepositor"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="deleteBankDepositorRequest">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="depositorId" nillable="true" type="xsd:long"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="deleteBankDepositorResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="result" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="getBankDepositsByCurrencyWithDepositorsRequest">
+    <wsdl:part element="sch:getBankDepositsByCurrencyWithDepositorsRequest" name="getBankDepositsByCurrencyWithDepositorsRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositByIdWithDepositorsResponse">
+    <wsdl:part element="sch:getBankDepositByIdWithDepositorsResponse" name="getBankDepositByIdWithDepositorsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositByNameFromToDateDepositWithDepositorsRequest">
+    <wsdl:part element="sch:getBankDepositByNameFromToDateDepositWithDepositorsRequest" name="getBankDepositByNameFromToDateDepositWithDepositorsRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsFromToMinTermResponse">
+    <wsdl:part element="sch:getBankDepositsFromToMinTermResponse" name="getBankDepositsFromToMinTermResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositorByNameResponse">
+    <wsdl:part element="sch:getBankDepositorByNameResponse" name="getBankDepositorByNameResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositorByIdResponse">
+    <wsdl:part element="sch:getBankDepositorByIdResponse" name="getBankDepositorByIdResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositByIdWithDepositorsRequest">
+    <wsdl:part element="sch:getBankDepositByIdWithDepositorsRequest" name="getBankDepositByIdWithDepositorsRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateBankDepositResponse">
+    <wsdl:part element="sch:updateBankDepositResponse" name="updateBankDepositResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositByNameFromToDateReturnDepositWithDepositorsRequest">
+    <wsdl:part element="sch:getBankDepositByNameFromToDateReturnDepositWithDepositorsRequest" name="getBankDepositByNameFromToDateReturnDepositWithDepositorsRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositorsFromToDateDepositResponse">
+    <wsdl:part element="sch:getBankDepositorsFromToDateDepositResponse" name="getBankDepositorsFromToDateDepositResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositByIdResponse">
+    <wsdl:part element="sch:getBankDepositByIdResponse" name="getBankDepositByIdResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="addBankDepositorRequest">
+    <wsdl:part element="sch:addBankDepositorRequest" name="addBankDepositorRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositByNameRequest">
+    <wsdl:part element="sch:getBankDepositByNameRequest" name="getBankDepositByNameRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsFromToInterestRateResponse">
+    <wsdl:part element="sch:getBankDepositsFromToInterestRateResponse" name="getBankDepositsFromToInterestRateResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsFromToInterestRateRequest">
+    <wsdl:part element="sch:getBankDepositsFromToInterestRateRequest" name="getBankDepositsFromToInterestRateRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="addBankDepositorResponse">
+    <wsdl:part element="sch:addBankDepositorResponse" name="addBankDepositorResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsByInterestRateResponse">
+    <wsdl:part element="sch:getBankDepositsByInterestRateResponse" name="getBankDepositsByInterestRateResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsByCurrencyFromToDateDepositWithDepositorsRequest">
+    <wsdl:part element="sch:getBankDepositsByCurrencyFromToDateDepositWithDepositorsRequest" name="getBankDepositsByCurrencyFromToDateDepositWithDepositorsRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="addBankDepositResponse">
+    <wsdl:part element="sch:addBankDepositResponse" name="addBankDepositResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositByNameWithDepositorsRequest">
+    <wsdl:part element="sch:getBankDepositByNameWithDepositorsRequest" name="getBankDepositByNameWithDepositorsRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="addBankDepositRequest">
+    <wsdl:part element="sch:addBankDepositRequest" name="addBankDepositRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateBankDepositorRequest">
+    <wsdl:part element="sch:updateBankDepositorRequest" name="updateBankDepositorRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositorsFromToDateDepositRequest">
+    <wsdl:part element="sch:getBankDepositorsFromToDateDepositRequest" name="getBankDepositorsFromToDateDepositRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateBankDepositRequest">
+    <wsdl:part element="sch:updateBankDepositRequest" name="updateBankDepositRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsResponse">
+    <wsdl:part element="sch:getBankDepositsResponse" name="getBankDepositsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsFromToMinTermRequest">
+    <wsdl:part element="sch:getBankDepositsFromToMinTermRequest" name="getBankDepositsFromToMinTermRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsRequest">
+    <wsdl:part element="sch:getBankDepositsRequest" name="getBankDepositsRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositByNameResponse">
+    <wsdl:part element="sch:getBankDepositByNameResponse" name="getBankDepositByNameResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsWithDepositorsRequest">
+    <wsdl:part element="sch:getBankDepositsWithDepositorsRequest" name="getBankDepositsWithDepositorsRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsByCurrencyWithDepositorsResponse">
+    <wsdl:part element="sch:getBankDepositsByCurrencyWithDepositorsResponse" name="getBankDepositsByCurrencyWithDepositorsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositByIdFromToDateReturnDepositWithDepositorsRequest">
+    <wsdl:part element="sch:getBankDepositByIdFromToDateReturnDepositWithDepositorsRequest" name="getBankDepositByIdFromToDateReturnDepositWithDepositorsRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositorByIdDepositRequest">
+    <wsdl:part element="sch:getBankDepositorByIdDepositRequest" name="getBankDepositorByIdDepositRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositorByIdRequest">
+    <wsdl:part element="sch:getBankDepositorByIdRequest" name="getBankDepositorByIdRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsFromToDateReturnDepositWithDepositorsRequest">
+    <wsdl:part element="sch:getBankDepositsFromToDateReturnDepositWithDepositorsRequest" name="getBankDepositsFromToDateReturnDepositWithDepositorsRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositorByIdDepositResponse">
+    <wsdl:part element="sch:getBankDepositorByIdDepositResponse" name="getBankDepositorByIdDepositResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositByNameWithDepositorsResponse">
+    <wsdl:part element="sch:getBankDepositByNameWithDepositorsResponse" name="getBankDepositByNameWithDepositorsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsByCurrencyRequest">
+    <wsdl:part element="sch:getBankDepositsByCurrencyRequest" name="getBankDepositsByCurrencyRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsByInterestRateRequest">
+    <wsdl:part element="sch:getBankDepositsByInterestRateRequest" name="getBankDepositsByInterestRateRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsFromToDateReturnDepositResponse">
+    <wsdl:part element="sch:getBankDepositsFromToDateReturnDepositResponse" name="getBankDepositsFromToDateReturnDepositResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsFromToDateDepositResponse">
+    <wsdl:part element="sch:getBankDepositsFromToDateDepositResponse" name="getBankDepositsFromToDateDepositResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="deleteBankDepositorRequest">
+    <wsdl:part element="sch:deleteBankDepositorRequest" name="deleteBankDepositorRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsResponse">
+    <wsdl:part element="sch:getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsResponse" name="getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsRequest">
+    <wsdl:part element="sch:getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsRequest" name="getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsFromToDateReturnDepositRequest">
+    <wsdl:part element="sch:getBankDepositsFromToDateReturnDepositRequest" name="getBankDepositsFromToDateReturnDepositRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse">
+    <wsdl:part element="sch:getBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse" name="getBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositorsFromToDateReturnDepositRequest">
+    <wsdl:part element="sch:getBankDepositorsFromToDateReturnDepositRequest" name="getBankDepositorsFromToDateReturnDepositRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositByIdFromToDateDepositWithDepositorsResponse">
+    <wsdl:part element="sch:getBankDepositByIdFromToDateDepositWithDepositorsResponse" name="getBankDepositByIdFromToDateDepositWithDepositorsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositorsRequest">
+    <wsdl:part element="sch:getBankDepositorsRequest" name="getBankDepositorsRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositorByNameRequest">
+    <wsdl:part element="sch:getBankDepositorByNameRequest" name="getBankDepositorByNameRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositByIdFromToDateDepositWithDepositorsRequest">
+    <wsdl:part element="sch:getBankDepositByIdFromToDateDepositWithDepositorsRequest" name="getBankDepositByIdFromToDateDepositWithDepositorsRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositByIdRequest">
+    <wsdl:part element="sch:getBankDepositByIdRequest" name="getBankDepositByIdRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositByNameFromToDateReturnDepositWithDepositorsResponse">
+    <wsdl:part element="sch:getBankDepositByNameFromToDateReturnDepositWithDepositorsResponse" name="getBankDepositByNameFromToDateReturnDepositWithDepositorsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="deleteBankDepositResponse">
+    <wsdl:part element="sch:deleteBankDepositResponse" name="deleteBankDepositResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsFromToDateDepositWithDepositorsRequest">
+    <wsdl:part element="sch:getBankDepositsFromToDateDepositWithDepositorsRequest" name="getBankDepositsFromToDateDepositWithDepositorsRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="deleteBankDepositRequest">
+    <wsdl:part element="sch:deleteBankDepositRequest" name="deleteBankDepositRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsFromToDateDepositRequest">
+    <wsdl:part element="sch:getBankDepositsFromToDateDepositRequest" name="getBankDepositsFromToDateDepositRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsWithDepositorsResponse">
+    <wsdl:part element="sch:getBankDepositsWithDepositorsResponse" name="getBankDepositsWithDepositorsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositorsFromToDateReturnDepositResponse">
+    <wsdl:part element="sch:getBankDepositorsFromToDateReturnDepositResponse" name="getBankDepositorsFromToDateReturnDepositResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositorsResponse">
+    <wsdl:part element="sch:getBankDepositorsResponse" name="getBankDepositorsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsByCurrencyResponse">
+    <wsdl:part element="sch:getBankDepositsByCurrencyResponse" name="getBankDepositsByCurrencyResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositByIdFromToDateReturnDepositWithDepositorsResponse">
+    <wsdl:part element="sch:getBankDepositByIdFromToDateReturnDepositWithDepositorsResponse" name="getBankDepositByIdFromToDateReturnDepositWithDepositorsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="deleteBankDepositorResponse">
+    <wsdl:part element="sch:deleteBankDepositorResponse" name="deleteBankDepositorResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateBankDepositorResponse">
+    <wsdl:part element="sch:updateBankDepositorResponse" name="updateBankDepositorResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsFromToDateDepositWithDepositorsResponse">
+    <wsdl:part element="sch:getBankDepositsFromToDateDepositWithDepositorsResponse" name="getBankDepositsFromToDateDepositWithDepositorsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositsFromToDateReturnDepositWithDepositorsResponse">
+    <wsdl:part element="sch:getBankDepositsFromToDateReturnDepositWithDepositorsResponse" name="getBankDepositsFromToDateReturnDepositWithDepositorsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankDepositByNameFromToDateDepositWithDepositorsResponse">
+    <wsdl:part element="sch:getBankDepositByNameFromToDateDepositWithDepositorsResponse" name="getBankDepositByNameFromToDateDepositWithDepositorsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="soapService">
+    <wsdl:operation name="getBankDepositsByCurrencyWithDepositors">
+      <wsdl:input message="tns:getBankDepositsByCurrencyWithDepositorsRequest" name="getBankDepositsByCurrencyWithDepositorsRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositsByCurrencyWithDepositorsResponse" name="getBankDepositsByCurrencyWithDepositorsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositByIdWithDepositors">
+      <wsdl:input message="tns:getBankDepositByIdWithDepositorsRequest" name="getBankDepositByIdWithDepositorsRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositByIdWithDepositorsResponse" name="getBankDepositByIdWithDepositorsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositByNameFromToDateDepositWithDepositors">
+      <wsdl:input message="tns:getBankDepositByNameFromToDateDepositWithDepositorsRequest" name="getBankDepositByNameFromToDateDepositWithDepositorsRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositByNameFromToDateDepositWithDepositorsResponse" name="getBankDepositByNameFromToDateDepositWithDepositorsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsFromToMinTerm">
+      <wsdl:input message="tns:getBankDepositsFromToMinTermRequest" name="getBankDepositsFromToMinTermRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositsFromToMinTermResponse" name="getBankDepositsFromToMinTermResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositorByName">
+      <wsdl:input message="tns:getBankDepositorByNameRequest" name="getBankDepositorByNameRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositorByNameResponse" name="getBankDepositorByNameResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositorById">
+      <wsdl:input message="tns:getBankDepositorByIdRequest" name="getBankDepositorByIdRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositorByIdResponse" name="getBankDepositorByIdResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateBankDeposit">
+      <wsdl:input message="tns:updateBankDepositRequest" name="updateBankDepositRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:updateBankDepositResponse" name="updateBankDepositResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositByNameFromToDateReturnDepositWithDepositors">
+      <wsdl:input message="tns:getBankDepositByNameFromToDateReturnDepositWithDepositorsRequest" name="getBankDepositByNameFromToDateReturnDepositWithDepositorsRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositByNameFromToDateReturnDepositWithDepositorsResponse" name="getBankDepositByNameFromToDateReturnDepositWithDepositorsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositorsFromToDateDeposit">
+      <wsdl:input message="tns:getBankDepositorsFromToDateDepositRequest" name="getBankDepositorsFromToDateDepositRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositorsFromToDateDepositResponse" name="getBankDepositorsFromToDateDepositResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositById">
+      <wsdl:input message="tns:getBankDepositByIdRequest" name="getBankDepositByIdRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositByIdResponse" name="getBankDepositByIdResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="addBankDepositor">
+      <wsdl:input message="tns:addBankDepositorRequest" name="addBankDepositorRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:addBankDepositorResponse" name="addBankDepositorResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositByName">
+      <wsdl:input message="tns:getBankDepositByNameRequest" name="getBankDepositByNameRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositByNameResponse" name="getBankDepositByNameResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsFromToInterestRate">
+      <wsdl:input message="tns:getBankDepositsFromToInterestRateRequest" name="getBankDepositsFromToInterestRateRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositsFromToInterestRateResponse" name="getBankDepositsFromToInterestRateResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsByInterestRate">
+      <wsdl:input message="tns:getBankDepositsByInterestRateRequest" name="getBankDepositsByInterestRateRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositsByInterestRateResponse" name="getBankDepositsByInterestRateResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsByCurrencyFromToDateDepositWithDepositors">
+      <wsdl:input message="tns:getBankDepositsByCurrencyFromToDateDepositWithDepositorsRequest" name="getBankDepositsByCurrencyFromToDateDepositWithDepositorsRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse" name="getBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="addBankDeposit">
+      <wsdl:input message="tns:addBankDepositRequest" name="addBankDepositRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:addBankDepositResponse" name="addBankDepositResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositByNameWithDepositors">
+      <wsdl:input message="tns:getBankDepositByNameWithDepositorsRequest" name="getBankDepositByNameWithDepositorsRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositByNameWithDepositorsResponse" name="getBankDepositByNameWithDepositorsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateBankDepositor">
+      <wsdl:input message="tns:updateBankDepositorRequest" name="updateBankDepositorRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:updateBankDepositorResponse" name="updateBankDepositorResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDeposits">
+      <wsdl:input message="tns:getBankDepositsRequest" name="getBankDepositsRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositsResponse" name="getBankDepositsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsWithDepositors">
+      <wsdl:input message="tns:getBankDepositsWithDepositorsRequest" name="getBankDepositsWithDepositorsRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositsWithDepositorsResponse" name="getBankDepositsWithDepositorsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositByIdFromToDateReturnDepositWithDepositors">
+      <wsdl:input message="tns:getBankDepositByIdFromToDateReturnDepositWithDepositorsRequest" name="getBankDepositByIdFromToDateReturnDepositWithDepositorsRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositByIdFromToDateReturnDepositWithDepositorsResponse" name="getBankDepositByIdFromToDateReturnDepositWithDepositorsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositorByIdDeposit">
+      <wsdl:input message="tns:getBankDepositorByIdDepositRequest" name="getBankDepositorByIdDepositRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositorByIdDepositResponse" name="getBankDepositorByIdDepositResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsFromToDateReturnDepositWithDepositors">
+      <wsdl:input message="tns:getBankDepositsFromToDateReturnDepositWithDepositorsRequest" name="getBankDepositsFromToDateReturnDepositWithDepositorsRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositsFromToDateReturnDepositWithDepositorsResponse" name="getBankDepositsFromToDateReturnDepositWithDepositorsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsByCurrency">
+      <wsdl:input message="tns:getBankDepositsByCurrencyRequest" name="getBankDepositsByCurrencyRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositsByCurrencyResponse" name="getBankDepositsByCurrencyResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsFromToDateReturnDeposit">
+      <wsdl:input message="tns:getBankDepositsFromToDateReturnDepositRequest" name="getBankDepositsFromToDateReturnDepositRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositsFromToDateReturnDepositResponse" name="getBankDepositsFromToDateReturnDepositResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsFromToDateDeposit">
+      <wsdl:input message="tns:getBankDepositsFromToDateDepositRequest" name="getBankDepositsFromToDateDepositRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositsFromToDateDepositResponse" name="getBankDepositsFromToDateDepositResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="deleteBankDepositor">
+      <wsdl:input message="tns:deleteBankDepositorRequest" name="deleteBankDepositorRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:deleteBankDepositorResponse" name="deleteBankDepositorResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors">
+      <wsdl:input message="tns:getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsRequest" name="getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsResponse" name="getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositorsFromToDateReturnDeposit">
+      <wsdl:input message="tns:getBankDepositorsFromToDateReturnDepositRequest" name="getBankDepositorsFromToDateReturnDepositRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositorsFromToDateReturnDepositResponse" name="getBankDepositorsFromToDateReturnDepositResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositByIdFromToDateDepositWithDepositors">
+      <wsdl:input message="tns:getBankDepositByIdFromToDateDepositWithDepositorsRequest" name="getBankDepositByIdFromToDateDepositWithDepositorsRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositByIdFromToDateDepositWithDepositorsResponse" name="getBankDepositByIdFromToDateDepositWithDepositorsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositors">
+      <wsdl:input message="tns:getBankDepositorsRequest" name="getBankDepositorsRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositorsResponse" name="getBankDepositorsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="deleteBankDeposit">
+      <wsdl:input message="tns:deleteBankDepositRequest" name="deleteBankDepositRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:deleteBankDepositResponse" name="deleteBankDepositResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsFromToDateDepositWithDepositors">
+      <wsdl:input message="tns:getBankDepositsFromToDateDepositWithDepositorsRequest" name="getBankDepositsFromToDateDepositWithDepositorsRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:getBankDepositsFromToDateDepositWithDepositorsResponse" name="getBankDepositsFromToDateDepositWithDepositorsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="soapServiceSoap11" type="tns:soapService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="getBankDepositsByCurrencyWithDepositors">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositsByCurrencyWithDepositorsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositsByCurrencyWithDepositorsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositByIdWithDepositors">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositByIdWithDepositorsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositByIdWithDepositorsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositByNameFromToDateDepositWithDepositors">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositByNameFromToDateDepositWithDepositorsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositByNameFromToDateDepositWithDepositorsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsFromToMinTerm">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositsFromToMinTermRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositsFromToMinTermResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositorByName">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositorByNameRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositorByNameResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositorById">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositorByIdRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositorByIdResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateBankDeposit">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="updateBankDepositRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateBankDepositResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositByNameFromToDateReturnDepositWithDepositors">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositByNameFromToDateReturnDepositWithDepositorsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositByNameFromToDateReturnDepositWithDepositorsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositorsFromToDateDeposit">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositorsFromToDateDepositRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositorsFromToDateDepositResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositById">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositByIdRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositByIdResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="addBankDepositor">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="addBankDepositorRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="addBankDepositorResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositByName">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositByNameRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositByNameResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsFromToInterestRate">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositsFromToInterestRateRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositsFromToInterestRateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsByInterestRate">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositsByInterestRateRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositsByInterestRateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsByCurrencyFromToDateDepositWithDepositors">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositsByCurrencyFromToDateDepositWithDepositorsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="addBankDeposit">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="addBankDepositRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="addBankDepositResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositByNameWithDepositors">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositByNameWithDepositorsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositByNameWithDepositorsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateBankDepositor">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="updateBankDepositorRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateBankDepositorResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDeposits">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsWithDepositors">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositsWithDepositorsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositsWithDepositorsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositByIdFromToDateReturnDepositWithDepositors">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositByIdFromToDateReturnDepositWithDepositorsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositByIdFromToDateReturnDepositWithDepositorsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositorByIdDeposit">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositorByIdDepositRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositorByIdDepositResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsFromToDateReturnDepositWithDepositors">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositsFromToDateReturnDepositWithDepositorsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositsFromToDateReturnDepositWithDepositorsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsByCurrency">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositsByCurrencyRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositsByCurrencyResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsFromToDateReturnDeposit">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositsFromToDateReturnDepositRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositsFromToDateReturnDepositResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsFromToDateDeposit">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositsFromToDateDepositRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositsFromToDateDepositResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="deleteBankDepositor">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="deleteBankDepositorRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="deleteBankDepositorResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositorsFromToDateReturnDeposit">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositorsFromToDateReturnDepositRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositorsFromToDateReturnDepositResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositByIdFromToDateDepositWithDepositors">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositByIdFromToDateDepositWithDepositorsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositByIdFromToDateDepositWithDepositorsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositors">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositorsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositorsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="deleteBankDeposit">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="deleteBankDepositRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="deleteBankDepositResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getBankDepositsFromToDateDepositWithDepositors">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="getBankDepositsFromToDateDepositWithDepositorsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankDepositsFromToDateDepositWithDepositorsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="soapServiceService">
+    <wsdl:port binding="tns:soapServiceSoap11" name="soapServiceSoap11">
+      <soap:address location="http://localhost:8080/SpringHibernateBDeposit-1.0/soap"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
