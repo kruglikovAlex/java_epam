@@ -8,7 +8,7 @@
        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
     <bean id="marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
-        <property name="contextPath" value="com.brest.bank.util"/>
+        <property name="contextPath" value="com.brest.bank.wsdl"/>
     </bean>
 
     <bean id="soapClient" class="com.brest.bank.client.SoapClient">
@@ -16,7 +16,7 @@
         <property name="marshaller" ref="marshaller" />
         <property name="unmarshaller" ref="marshaller" />
         <property name="defaultUri"
-                  value="http://localhost:8080/SpringHibernateBDeposit-1.0/soap/client" />
+                  value="http://localhost:8090/SpringHibernateBDeposit-1.0/soap/client" />
     </bean>
 
 </beans>
