@@ -2,6 +2,8 @@ package com.brest.bank.client;
 
 import com.brest.bank.wsdl.BankDeposit;
 import com.brest.bank.wsdl.BankDepositor;
+import com.brest.bank.wsdl.BankDeposits;
+import com.brest.bank.wsdl.GetBankDepositsResponse;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -116,6 +118,28 @@ public class DataFixture {
         List<com.brest.bank.domain.BankDeposit> deposits = new ArrayList<com.brest.bank.domain.BankDeposit>();
         deposits.add(getNewDeposit());
         return deposits;
+    }
+
+    /**
+     * Get all Bank Deposits
+     *
+     * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
+     */
+    public static GetBankDepositsResponse getDepositsWsdl(){
+        GetBankDepositsResponse getBankDepositsResponse = new GetBankDepositsResponse();
+        BankDeposits bankDeposits = new BankDeposits();
+        BankDeposit bankDeposit = new BankDeposit();
+        bankDeposit.setDepositId(1L);
+        bankDeposit.setDepositName("depositName0");
+        bankDeposit.setDepositMinTerm(12);
+        bankDeposit.setDepositMinAmount(100);
+        bankDeposit.setDepositCurrency("usd");
+        bankDeposit.setDepositInterestRate(4);
+        bankDeposit.setDepositAddConditions("condition0");
+        bankDeposits.getBankDeposit().add(bankDeposit);
+
+        getBankDepositsResponse.setBankDeposits(bankDeposits);
+        return getBankDepositsResponse;
     }
 
     /**

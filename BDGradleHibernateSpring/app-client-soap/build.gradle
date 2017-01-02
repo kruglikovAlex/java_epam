@@ -83,8 +83,6 @@ dependencies {
 
     compile(files(genJaxb.classesDir).builtBy(genJaxb))
 
-
-
     jaxb "com.sun.xml.bind:jaxb-xjc:2.1.7"
 
     compile('javax.servlet:javax.servlet-api:3.1.0')
@@ -94,6 +92,7 @@ dependencies {
     compile group: 'org.json', name: 'json', version: '20160810'
 
     testCompile('org.easymock:easymock:3.3.1')
+    testCompile('org.mockito:mockito-all:1.10.19')
 }
 
 jar {
