@@ -1,9 +1,6 @@
 package com.brest.bank.client;
 
-import com.brest.bank.wsdl.BankDeposit;
-import com.brest.bank.wsdl.BankDepositor;
-import com.brest.bank.wsdl.BankDeposits;
-import com.brest.bank.wsdl.GetBankDepositsResponse;
+import com.brest.bank.wsdl.*;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -49,6 +46,52 @@ public class DataFixture {
         deposit.setDepositAddConditions("conditions1");
 
         return deposit;
+    }
+
+    /**
+     * Get an exists Bank Deposit with fixed parameters
+     *
+     * @param id Long - id of the Bank Deposit to return
+     * @return BankDeposit with fixed parameters for tests
+     */
+    public static GetBankDepositByIdResponse getExistDepositWsdl(Long id){
+        GetBankDepositByIdResponse getBankDepositByIdResponse = new GetBankDepositByIdResponse();
+        BankDeposit deposit = new BankDeposit();
+        deposit.setDepositId(id);
+        deposit.setDepositName("depositName0");
+        deposit.setDepositMinTerm(12);
+        deposit.setDepositMinAmount(100);
+        deposit.setDepositCurrency("usd");
+        deposit.setDepositInterestRate(4);
+        deposit.setDepositAddConditions("condition0");
+        getBankDepositByIdResponse.setBankDeposit(deposit);
+
+        return getBankDepositByIdResponse;
+    }
+
+    /**
+     * Get an exists Bank Deposit with fixed parameters
+     *
+     * @param name String - id of the Bank Deposit to return
+     * @return BankDeposit with fixed parameters for tests
+     */
+    public static GetBankDepositByNameWithDepositorsResponse getExistDepositByNameWithDepositorsWsdl(String name){
+        GetBankDepositByNameWithDepositorsResponse getBankDepositByNameWithDepositorsResponse
+                = new GetBankDepositByNameWithDepositorsResponse();
+        BankDepositReport deposit = new BankDepositReport();
+        deposit.setDepositId(1L);
+        deposit.setDepositName(name);
+        deposit.setDepositMinTerm(12);
+        deposit.setDepositMinAmount(100);
+        deposit.setDepositCurrency("usd");
+        deposit.setDepositInterestRate(4);
+        deposit.setDepositAddConditions("condition0");
+        deposit.setDepositorAmountSum(200);
+        deposit.setDepositorAmountPlusSum(200);
+        deposit.setDepositorAmountMinusSum(200);
+        getBankDepositByNameWithDepositorsResponse.setBankDepositReport(deposit);
+
+        return getBankDepositByNameWithDepositorsResponse;
     }
 
     /**
@@ -143,6 +186,29 @@ public class DataFixture {
     }
 
     /**
+     * Get all Bank Deposits
+     *
+     * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
+     */
+    public static GetBankDepositorsResponse getDepositorsWsdl() throws DatatypeConfigurationException{
+        GetBankDepositorsResponse getBankDepositorsResponse = new GetBankDepositorsResponse();
+        BankDepositors bankDepositors = new BankDepositors();
+        BankDepositor bankDepositor = new BankDepositor();
+        bankDepositor.setDepositorId(1L);
+        bankDepositor.setDepositorName("depositorName0");
+        bankDepositor.setDepositorDateDeposit(DatatypeFactory.newInstance().newXMLGregorianCalendar("2015-01-01"));
+        bankDepositor.setDepositorDateReturnDeposit(DatatypeFactory.newInstance().newXMLGregorianCalendar("2017-01-01"));
+        bankDepositor.setDepositorAmountDeposit(1000);
+        bankDepositor.setDepositorAmountPlusDeposit(1000);
+        bankDepositor.setDepositorAmountMinusDeposit(1000);
+        bankDepositor.setDepositorMarkReturnDeposit(0);
+        bankDepositors.getBankDepositor().add(bankDepositor);
+
+        getBankDepositorsResponse.setBankDepositors(bankDepositors);
+        return getBankDepositorsResponse;
+    }
+
+    /**
      * Get exist Bank Deposits
      *
      * @return List<BankDeposit> - a list containing all of the Bank Deposits in the database
@@ -152,6 +218,7 @@ public class DataFixture {
         deposits.add(getExistDeposit(1L));
         return deposits;
     }
+
 
     /**
      * Get exist Bank Deposit with all Bank Depositors

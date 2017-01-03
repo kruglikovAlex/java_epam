@@ -18,8 +18,6 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.wsdl.Definition;
 import java.text.SimpleDateFormat;
@@ -29,7 +27,6 @@ import java.util.Map;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
-import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SoapControllerTest {
@@ -43,6 +40,7 @@ public class SoapControllerTest {
     private String soapRequest = "";
     private String wsdlLocation = "http://localhost:8080/SpringHibernateBDeposit-1.0/soap/soapService.wsdl";
     private Definition wsdl;
+
     @InjectMocks
     private SoapController soapController = new SoapController();
 
@@ -54,8 +52,8 @@ public class SoapControllerTest {
     }
 
     @Test
-    public void postSoapQuery() throws Exception {
-        LOGGER.debug("postSoapQuery() - start");
+    public void testPostSoapQueryGetBankDeposits() throws Exception {
+        LOGGER.debug("postSoapQuery(): getBankDeposits - start");
 
         soapRequest = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:soa=\"http://bank.brest.com/soap\">\n" +
                 "\t<x:Header/>\n" +
@@ -75,6 +73,81 @@ public class SoapControllerTest {
                 .andExpect(status().isOk());
 
         verify(soapClient).getBankDeposits();
+    }
+
+    @Test
+    public void testPostSoapQueryGetBankDepositors() throws Exception {
+        LOGGER.debug("postSoapQuery(): getBankDepositors - start");
+
+        soapRequest = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:soa=\"http://bank.brest.com/soap\">\n" +
+                "\t<x:Header/>\n" +
+                "\t<x:Body>\n" +
+                "\t\t<soa:getBankDepositorsRequest>\n" +
+                "\t\t</soa:getBankDepositorsRequest>\n" +
+                "\t</x:Body>\n" +
+                "</x:Envelope>";
+
+        when(soapClient.getBankDepositors()).thenReturn(DataFixture.getDepositorsWsdl());
+        mockMvc.perform(post("/client/submitSoapQuery?soapQuery={soapQuery}&submit={submit}","getBankDepositors","Generate+Request"))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("services"))
+                .andExpect(model().attributeExists("requests"))
+                .andExpect(model().attribute("requests",soapRequest))
+                .andExpect(model().attributeExists("responses"))
+                .andExpect(status().isOk());
+
+        verify(soapClient).getBankDepositors();
+    }
+
+    @Test
+    public void testPostSoapQueryGetBankDepositById() throws Exception {
+        LOGGER.debug("postSoapQuery(): getBankDepositById - start");
+
+        soapRequest = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:soa=\"http://bank.brest.com/soap\">\n" +
+                "\t<x:Header/>\n" +
+                "\t<x:Body>\n" +
+                "\t\t<soa:getBankDepositByIdRequest>\n" +
+                "\t\t\t<soa:depositId>1</soa:depositId>\n" +
+                "\t\t</soa:getBankDepositByIdRequest>\n" +
+                "\t</x:Body>\n" +
+                "</x:Envelope>";
+
+        when(soapClient.getBankDepositById(1L)).thenReturn(DataFixture.getExistDepositWsdl(1L));
+        mockMvc.perform(post("/client/submitSoapQuery?soapQuery={soapQuery}&depositId={id}&submit={submit}","getBankDepositById",1,"Generate+Request"))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("services"))
+                .andExpect(model().attributeExists("requests"))
+                .andExpect(model().attribute("requests",soapRequest))
+                .andExpect(model().attributeExists("responses"))
+                .andExpect(status().isOk());
+
+        verify(soapClient).getBankDepositById(1L);
+    }
+
+    @Test
+    public void testPostSoapQueryGetBankDepositByNameWithDepositors() throws Exception {
+        LOGGER.debug("postSoapQuery(): getBankDepositByNameWithDepositors - start");
+
+        soapRequest = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:soa=\"http://bank.brest.com/soap\">\n" +
+                "\t<x:Header/>\n" +
+                "\t<x:Body>\n" +
+                "\t\t<soa:getBankDepositByNameWithDepositorsRequest>\n" +
+                "\t\t\t<soa:depositName>depositName1</soa:depositName>\n" +
+                "\t\t</soa:getBankDepositByNameWithDepositorsRequest>\n" +
+                "\t</x:Body>\n" +
+                "</x:Envelope>";
+
+        when(soapClient.getBankDepositByNameWithDepositors("depositName1"))
+                .thenReturn(DataFixture.getExistDepositByNameWithDepositorsWsdl("depositName1"));
+        mockMvc.perform(post("/client/submitSoapQuery?soapQuery={soapQuery}&depositName={name}&submit={submit}","getBankDepositByNameWithDepositors","depositName1","Generate+Request"))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("services"))
+                .andExpect(model().attributeExists("requests"))
+                .andExpect(model().attribute("requests",soapRequest))
+                .andExpect(model().attributeExists("responses"))
+                .andExpect(status().isOk());
+
+        verify(soapClient).getBankDepositByNameWithDepositors("depositName1");
     }
 
     @Test
