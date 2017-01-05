@@ -1,6 +1,9 @@
 package com.brest.bank.client;
 
+import com.brest.bank.domain.*;
 import com.brest.bank.wsdl.*;
+import com.brest.bank.wsdl.BankDeposit;
+import com.brest.bank.wsdl.BankDepositor;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -26,6 +29,17 @@ public class DataFixture {
         deposit.setDepositInterestRate(4);
         deposit.setDepositAddConditions("conditions1");
 
+        return deposit;
+    }
+
+    public static com.brest.bank.domain.BankDeposit getAddDeposit(){
+        com.brest.bank.domain.BankDeposit deposit = new com.brest.bank.domain.BankDeposit();
+        deposit.setDepositName("testAdd");
+        deposit.setDepositMinTerm(6);
+        deposit.setDepositMinAmount(1000);
+        deposit.setDepositCurrency("eur");
+        deposit.setDepositInterestRate(4);
+        deposit.setDepositAddConditions("conditions2");
         return deposit;
     }
 
@@ -67,6 +81,27 @@ public class DataFixture {
         getBankDepositByIdResponse.setBankDeposit(deposit);
 
         return getBankDepositByIdResponse;
+    }
+
+    /**
+     * Get an exists Bank Deposit with fixed parameters
+     *
+     * @param id Long - id of the Bank Deposit to return
+     * @return BankDeposit with fixed parameters for tests
+     */
+    public static AddBankDepositResponse getAddDepositWsdl(Long id){
+        AddBankDepositResponse addBankDepositResponse = new AddBankDepositResponse();
+        BankDeposit deposit = new BankDeposit();
+        deposit.setDepositId(id);
+        deposit.setDepositName("testAdd");
+        deposit.setDepositMinTerm(6);
+        deposit.setDepositMinAmount(1000);
+        deposit.setDepositCurrency("eur");
+        deposit.setDepositInterestRate(4);
+        deposit.setDepositAddConditions("conditions2");
+        addBankDepositResponse.setBankDeposit(deposit);
+
+        return addBankDepositResponse;
     }
 
     /**

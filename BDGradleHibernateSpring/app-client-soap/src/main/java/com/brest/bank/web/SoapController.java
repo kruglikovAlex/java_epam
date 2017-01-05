@@ -306,7 +306,7 @@ public class SoapController {
                                     + "\t\t\t\t<soa:bankDepositMinAmount>" +bankDeposit.getDepositMinAmount()+"</soa:bankDepositMinAmount>\n"
                                     + "\t\t\t\t<soa:bankDepositCurrency>" +bankDeposit.getDepositCurrency()+"</soa:bankDepositCurrency>\n"
                                     + "\t\t\t\t<soa:bankDepositInterestRate>" +bankDeposit.getDepositInterestRate()+"</soa:bankDepositInterestRate>\n"
-                                    + "\t\t\t\t<soa:bankDepositAddConditions>" +bankDeposit.getDepositAddConditions()+"</soa:bankDepositAddconditions>\n"
+                                    + "\t\t\t\t<soa:bankDepositAddConditions>" +bankDeposit.getDepositAddConditions()+"</soa:bankDepositAddConditions>\n"
                                     + "\t\t\t</soa:bankDeposit>\n";
 
                             sortParam[j] = bankDeposit;
