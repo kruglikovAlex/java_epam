@@ -333,15 +333,10 @@ public class SoapController {
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             try{
                 marshaller.marshal(clientClassMethod.invoke(soapClient,sortParam), sw);
-            }catch (JAXBException e){
+            }catch (Exception e){
                 sw.write("<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
                         "\t<faultcode>SOAP-ENV:Server</faultcode>" +
-                        "\t<faultstring xml:lang=\"en\">" + e.toString()+"\n"+ e.getStackTrace() + "</faultstring>" +
-                        "</SOAP-ENV:Fault>");
-            }catch (InvocationTargetException e){
-                sw.write("<SOAP-ENV:Fault xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
-                        "\t<faultcode>SOAP-ENV:Server</faultcode>" +
-                        "\t<faultstring xml:lang=\"en\">" + e.toString()+"\n"+ e.getStackTrace()  + "</faultstring>" +
+                        "\t<faultstring xml:lang=\"en\">" + e.getMessage()+"\n"+ e.toString()+"\n"+ e.getStackTrace() + "</faultstring>" +
                         "</SOAP-ENV:Fault>");
             }
 

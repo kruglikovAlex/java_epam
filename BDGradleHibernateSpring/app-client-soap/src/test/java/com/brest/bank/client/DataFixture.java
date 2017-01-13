@@ -130,6 +130,34 @@ public class DataFixture {
     }
 
     /**
+     * Get an exists Bank Deposits with fixed parameters
+     *
+     * @param currency String - currency of the Bank Deposits to return
+     * @return BankDeposits with fixed parameters for tests
+     */
+    public static GetBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse getExistDepositByCurrencyWsdl(String currency){
+        GetBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse getBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse
+                = new GetBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse();
+        BankDepositReport deposit = new BankDepositReport();
+        deposit.setDepositId(1L);
+        deposit.setDepositName("depositName");
+        deposit.setDepositMinTerm(12);
+        deposit.setDepositMinAmount(100);
+        deposit.setDepositCurrency(currency);
+        deposit.setDepositInterestRate(4);
+        deposit.setDepositAddConditions("condition0");
+        deposit.setDepositorAmountSum(200);
+        deposit.setDepositorAmountPlusSum(200);
+        deposit.setDepositorAmountMinusSum(200);
+
+        BankDepositsReport bankDepositsReport = new BankDepositsReport();
+        bankDepositsReport.getBankDepositReport().add(deposit);
+        getBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse.setBankDepositsReport(bankDepositsReport);
+
+        return getBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse;
+    }
+
+    /**
      * Get an exists update Bank Deposit with fixed parameters
      *
      * @param id Long - id of the Bank Deposit to return

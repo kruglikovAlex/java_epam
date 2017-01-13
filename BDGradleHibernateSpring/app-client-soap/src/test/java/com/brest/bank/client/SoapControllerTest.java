@@ -2,12 +2,11 @@ package com.brest.bank.client;
 
 import com.brest.bank.domain.BankDeposit;
 import com.brest.bank.domain.BankDepositor;
-import com.brest.bank.util.AddBankDepositResponse;
 import com.brest.bank.web.SoapController;
-import com.brest.bank.wsdl.UpdateBankDepositResponse;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.After;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.mockito.Matchers.isNull;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.is;
 
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -27,6 +27,8 @@ import java.util.Map;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
@@ -68,13 +70,15 @@ public class SoapControllerTest {
         when(soapClient.getBankDeposits()).thenReturn(DataFixture.getDepositsWsdl());
         mockMvc.perform(post("/client/submitSoapQuery?soapQuery={soapQuery}&submit={submit}","getBankDeposits","Generate+Request"))
                 .andExpect(view().name("mainFrame"))
-                .andExpect(model().attributeExists("services"))
-                .andExpect(model().attributeExists("requests"))
+                .andExpect(model().attributeExists("services","requests","responses"))
                 .andExpect(model().attribute("requests",soapRequest))
-                .andExpect(model().attributeExists("responses"))
-                .andExpect(status().isOk());
+                .andExpect(model().attribute("responses", notNullValue()))
+                .andExpect(status().isOk())
+                .andDo(log())
+                .andDo(print());
 
-        verify(soapClient).getBankDeposits();
+        verify(soapClient,times(1)).getBankDeposits();
+        verifyNoMoreInteractions(soapClient);
     }
 
     @Test
@@ -92,13 +96,14 @@ public class SoapControllerTest {
         when(soapClient.getBankDepositors()).thenReturn(DataFixture.getDepositorsWsdl());
         mockMvc.perform(post("/client/submitSoapQuery?soapQuery={soapQuery}&submit={submit}","getBankDepositors","Generate+Request"))
                 .andExpect(view().name("mainFrame"))
-                .andExpect(model().attributeExists("services"))
-                .andExpect(model().attributeExists("requests"))
+                .andExpect(model().attributeExists("services","requests","responses"))
                 .andExpect(model().attribute("requests",soapRequest))
-                .andExpect(model().attributeExists("responses"))
-                .andExpect(status().isOk());
+                .andExpect(model().attribute("responses", notNullValue()))
+                .andExpect(status().isOk())
+                .andDo(print());
 
-        verify(soapClient).getBankDepositors();
+        verify(soapClient,times(1)).getBankDepositors();
+        verifyNoMoreInteractions(soapClient);
     }
 
     @Test
@@ -114,22 +119,85 @@ public class SoapControllerTest {
                 "\t</x:Body>\n" +
                 "</x:Envelope>";
 
+        soapResponse[0] = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                "<getBankDepositByIdResponse xmlns=\"http://bank.brest.com/soap\">\n" +
+                "    <bankDeposit>\n" +
+                "        <depositId>1</depositId>\n" +
+                "        <depositName>depositName0</depositName>\n" +
+                "        <depositMinTerm>12</depositMinTerm>\n" +
+                "        <depositMinAmount>100</depositMinAmount>\n" +
+                "        <depositCurrency>usd</depositCurrency>\n" +
+                "        <depositInterestRate>4</depositInterestRate>\n" +
+                "        <depositAddConditions>condition0</depositAddConditions>\n" +
+                "    </bankDeposit>\n" +
+                "</getBankDepositByIdResponse>\n";
+        soapResponse[1] = "{\"getBankDepositByIdResponse\": {\n" +
+                "    \"bankDeposit\": {\n" +
+                "        \"depositMinTerm\": 12,\n" +
+                "        \"depositInterestRate\": 4,\n" +
+                "        \"depositName\": \"depositName0\",\n" +
+                "        \"depositCurrency\": \"usd\",\n" +
+                "        \"depositId\": 1,\n" +
+                "        \"depositMinAmount\": 100,\n" +
+                "        \"depositAddConditions\": \"condition0\"\n" +
+                "    },\n" +
+                "    \"xmlns\": \"http://bank.brest.com/soap\"\n" +
+                "}}";
+
         when(soapClient.getBankDepositById(1L)).thenReturn(DataFixture.getExistDepositWsdl(1L));
         mockMvc.perform(post("/client/submitSoapQuery?soapQuery={soapQuery}&depositId={id}&submit={submit}","getBankDepositById",1,"Generate+Request"))
                 .andExpect(view().name("mainFrame"))
-                .andExpect(model().attributeExists("services"))
-                .andExpect(model().attributeExists("requests"))
+                .andExpect(model().attributeExists("services","requests","responses"))
                 .andExpect(model().attribute("requests",soapRequest))
-                .andExpect(model().attributeExists("responses"))
-                .andExpect(status().isOk());
+                .andExpect(model().attribute("responses", notNullValue()))
+                .andExpect(model().attribute("responses",is(soapResponse)))
+                .andExpect(status().isOk())
+                .andDo(log())
+                .andDo(print());
 
-        verify(soapClient).getBankDepositById(1L);
+        verify(soapClient,times(1)).getBankDepositById(1L);
+        verifyNoMoreInteractions(soapClient);
     }
 
     @Test
     public void testPostSoapQueryGetBankDepositByNameWithDepositors() throws Exception {
         LOGGER.debug("postSoapQuery(): getBankDepositByNameWithDepositors - start");
 
+        soapResponse[0] = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                "<getBankDepositByNameWithDepositorsResponse xmlns=\"http://bank.brest.com/soap\">\n" +
+                "    <bankDepositReport>\n" +
+                "        <depositId>1</depositId>\n" +
+                "        <depositName>depositName1</depositName>\n" +
+                "        <depositMinTerm>12</depositMinTerm>\n" +
+                "        <depositMinAmount>100</depositMinAmount>\n" +
+                "        <depositCurrency>usd</depositCurrency>\n" +
+                "        <depositInterestRate>4</depositInterestRate>\n" +
+                "        <depositAddConditions>condition0</depositAddConditions>\n" +
+                "        <depositorCount xsi:nil=\"true\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"/>\n" +
+                "        <depositorAmountSum>200</depositorAmountSum>\n" +
+                "        <depositorAmountPlusSum>200</depositorAmountPlusSum>\n" +
+                "        <depositorAmountMinusSum>200</depositorAmountMinusSum>\n" +
+                "    </bankDepositReport>\n" +
+                "</getBankDepositByNameWithDepositorsResponse>\n";
+        soapResponse[1] = "{\"getBankDepositByNameWithDepositorsResponse\": {\n" +
+                "    \"bankDepositReport\": {\n" +
+                "        \"depositMinTerm\": 12,\n" +
+                "        \"depositInterestRate\": 4,\n" +
+                "        \"depositorAmountPlusSum\": 200,\n" +
+                "        \"depositName\": \"depositName1\",\n" +
+                "        \"depositorAmountSum\": 200,\n" +
+                "        \"depositorAmountMinusSum\": 200,\n" +
+                "        \"depositorCount\": {\n" +
+                "            \"xsi:nil\": true,\n" +
+                "            \"xmlns:xsi\": \"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                "        },\n" +
+                "        \"depositCurrency\": \"usd\",\n" +
+                "        \"depositId\": 1,\n" +
+                "        \"depositMinAmount\": 100,\n" +
+                "        \"depositAddConditions\": \"condition0\"\n" +
+                "    },\n" +
+                "    \"xmlns\": \"http://bank.brest.com/soap\"\n" +
+                "}}";
         soapRequest = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:soa=\"http://bank.brest.com/soap\">\n" +
                 "\t<x:Header/>\n" +
                 "\t<x:Body>\n" +
@@ -143,13 +211,16 @@ public class SoapControllerTest {
                 .thenReturn(DataFixture.getExistDepositByNameWithDepositorsWsdl("depositName1"));
         mockMvc.perform(post("/client/submitSoapQuery?soapQuery={soapQuery}&depositName={name}&submit={submit}","getBankDepositByNameWithDepositors","depositName1","Generate+Request"))
                 .andExpect(view().name("mainFrame"))
-                .andExpect(model().attributeExists("services"))
-                .andExpect(model().attributeExists("requests"))
+                .andExpect(model().attributeExists("services","requests","responses"))
                 .andExpect(model().attribute("requests",soapRequest))
-                .andExpect(model().attributeExists("responses"))
-                .andExpect(status().isOk());
+                .andExpect(model().attribute("responses", notNullValue()))
+                .andExpect(model().attribute("responses",is(soapResponse)))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(log());
 
-        verify(soapClient).getBankDepositByNameWithDepositors("depositName1");
+        verify(soapClient, times(1)).getBankDepositByNameWithDepositors("depositName1");
+        verifyNoMoreInteractions(soapClient);
     }
 
     @Test
@@ -173,8 +244,6 @@ public class SoapControllerTest {
                 "\t</x:Body>\n" +
                 "</x:Envelope>";
 
-        LOGGER.debug("soap request: \n {}",soapRequest);
-
         BankDeposit deposit = DataFixture.getAddDeposit();
         when(soapClient.addBankDeposit(deposit));
         mockMvc.perform(post("/client/submitSoapQuery?soapQuery={soapQuery}" +
@@ -187,13 +256,15 @@ public class SoapControllerTest {
                 "&depositAddConditions={condition}"+
                 "&submit={submit}","addBankDeposit",null,"testAdd",6,1000,"eur",4,"conditions2","Generate+Request"))
                 .andExpect(view().name("mainFrame"))
-                .andExpect(model().attributeExists("services"))
-                .andExpect(model().attributeExists("requests"))
+                .andExpect(model().attributeExists("services","requests","responses"))
                 .andExpect(model().attribute("requests",soapRequest))
-                .andExpect(model().attributeExists("responses"))
-                .andExpect(status().isOk());
+                .andExpect(model().attribute("responses",notNullValue()))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(log());
 
-        verify(soapClient).addBankDeposit(deposit);
+        verify(soapClient, times(1)).addBankDeposit(deposit);
+        verifyNoMoreInteractions(soapClient);
     }
 
     @Test
@@ -217,8 +288,6 @@ public class SoapControllerTest {
                 "\t</x:Body>\n" +
                 "</x:Envelope>";
 
-        LOGGER.debug("soap request: \n {}",soapRequest);
-
         BankDeposit deposit = DataFixture.getAddDeposit();
         deposit.setDepositId(1L);
         when(soapClient.updateBankDeposit(deposit));
@@ -232,13 +301,16 @@ public class SoapControllerTest {
                 "&depositAddConditions={condition}"+
                 "&submit={submit}","updateBankDeposit",1,"testAdd",6,1000,"eur",4,"conditions2","Generate+Request"))
                 .andExpect(view().name("mainFrame"))
-                .andExpect(model().attributeExists("services"))
-                .andExpect(model().attributeExists("requests"))
+                .andExpect(model().attributeExists("services","requests","responses"))
                 .andExpect(model().attribute("requests",soapRequest))
-                .andExpect(model().attributeExists("responses"))
-                .andExpect(status().isOk());
+                .andExpect(model().attribute("responses",notNullValue()))
+                .andExpect(status().isOk())
+                .andDo(log())
+                .andDo(print());
 
-        verify(soapClient).updateBankDeposit(deposit);
+        verify(soapClient, times(1)).updateBankDeposit(deposit);
+        verify(soapClient, only()).updateBankDeposit(deposit);
+        verifyNoMoreInteractions(soapClient);
     }
 
     @Test
@@ -263,8 +335,6 @@ public class SoapControllerTest {
                 "\t</x:Body>\n" +
                 "</x:Envelope>";
 
-        LOGGER.debug("soap request: \n {}",soapRequest);
-
         BankDepositor depositor = DataFixture.getExistDepositor(1L);
         when(soapClient.updateBankDepositor(depositor));
         mockMvc.perform(post("/client/submitSoapQuery?soapQuery={soapQuery}" +
@@ -278,13 +348,136 @@ public class SoapControllerTest {
                 "&depositorMarkReturnDeposit={mark}"+
                 "&submit={submit}","updateBankDepositor",1,"depositNameUpdate","2017-01-06",1000,1000,1000,"2017-01-06",0,"Generate+Request"))
                 .andExpect(view().name("mainFrame"))
-                .andExpect(model().attributeExists("services"))
-                .andExpect(model().attributeExists("requests"))
+                .andExpect(model().attributeExists("services","requests","responses"))
                 .andExpect(model().attribute("requests",soapRequest))
-                .andExpect(model().attributeExists("responses"))
-                .andExpect(status().isOk());
+                .andExpect(model().attribute("responses",notNullValue()))
+                .andDo(log())
+                .andDo(print());
 
-        verify(soapClient).updateBankDepositor(depositor);
+        verify(soapClient, times(1)).updateBankDepositor(depositor);
+        verify(soapClient, only()).updateBankDepositor(depositor);
+        verifyNoMoreInteractions(soapClient);
+    }
+
+    @Test
+    public void testPostSoapQueryDeleteBankDeposit() throws Exception {
+        LOGGER.debug("postSoapQuery(): deleteBankDeposit- start");
+
+        soapRequest = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:soa=\"http://bank.brest.com/soap\">\n" +
+                "\t<x:Header/>\n" +
+                "\t<x:Body>\n" +
+                "\t\t<soa:deleteBankDepositRequest>\n" +
+                "\t\t\t<soa:depositId>2</soa:depositId>\n" +
+                "\t\t</soa:deleteBankDepositRequest>\n" +
+                "\t</x:Body>\n" +
+                "</x:Envelope>";
+
+        soapResponse[0] = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                "<deleteBankDepositResponse xmlns=\"http://bank.brest.com/soap\">\n" +
+                "    <result>Bank Deposit removed</result>\n" +
+                "</deleteBankDepositResponse>\n";
+        soapResponse[1] = "{\"deleteBankDepositResponse\": {\n" +
+                "    \"result\": \"Bank Deposit removed\",\n" +
+                "    \"xmlns\": \"http://bank.brest.com/soap\"\n" +
+                "}}";
+
+        when(soapClient.deleteBankDeposit(2L));
+        mockMvc.perform(post("/client/submitSoapQuery?soapQuery={soapQuery}" +
+                "&depositId={id}" +
+                "&submit={submit}","deleteBankDeposit",2,"Generate+Request"))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("services","requests","responses"))
+                .andExpect(model().attribute("requests",soapRequest))
+                //.andExpect(model().attribute("responses", is(soapResponse)))
+                .andExpect(model().attribute("responses", notNullValue()))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+
+        verify(soapClient, times(1)).deleteBankDeposit(2L);
+        verify(soapClient, only()).deleteBankDeposit(2L);
+        verifyNoMoreInteractions(soapClient);
+    }
+
+    @Test
+    public void testPostSoapQueryGetBankDepositsByCurrencyFromToDateDepositWithDepositors() throws Exception{
+        LOGGER.debug("postSoapQuery() - start");
+        soapRequest = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:soa=\"http://bank.brest.com/soap\">\n" +
+                "\t<x:Header/>\n" +
+                "\t<x:Body>\n" +
+                "\t\t<soa:getBankDepositsByCurrencyFromToDateDepositWithDepositorsRequest>\n" +
+                "\t\t\t<soa:depositCurrency>usd</soa:depositCurrency>\n" +
+                "\t\t\t<soa:startDate>Thu Jan 01 00:01:00 MSK 2015</soa:startDate>\n" +
+                "\t\t\t<soa:endDate>Tue Jan 12 00:12:00 MSK 2016</soa:endDate>\n" +
+                "\t\t</soa:getBankDepositsByCurrencyFromToDateDepositWithDepositorsRequest>\n" +
+                "\t</x:Body>\n" +
+                "</x:Envelope>";
+        soapResponse[0] = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                "<getBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse xmlns=\"http://bank.brest.com/soap\">\n" +
+                "    <bankDepositsReport>\n" +
+                "        <bankDepositReport>\n" +
+                "            <depositId>1</depositId>\n" +
+                "            <depositName>depositName</depositName>\n" +
+                "            <depositMinTerm>12</depositMinTerm>\n" +
+                "            <depositMinAmount>100</depositMinAmount>\n" +
+                "            <depositCurrency>usd</depositCurrency>\n" +
+                "            <depositInterestRate>4</depositInterestRate>\n" +
+                "            <depositAddConditions>condition0</depositAddConditions>\n" +
+                "            <depositorCount xsi:nil=\"true\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"/>\n" +
+                "            <depositorAmountSum>200</depositorAmountSum>\n" +
+                "            <depositorAmountPlusSum>200</depositorAmountPlusSum>\n" +
+                "            <depositorAmountMinusSum>200</depositorAmountMinusSum>\n" +
+                "        </bankDepositReport>\n" +
+                "    </bankDepositsReport>\n" +
+                "</getBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse>\n";
+        soapResponse[1] = "{\"getBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse\": {\n" +
+                "    \"bankDepositsReport\": {\"bankDepositReport\": {\n" +
+                "        \"depositMinTerm\": 12,\n" +
+                "        \"depositInterestRate\": 4,\n" +
+                "        \"depositorAmountPlusSum\": 200,\n" +
+                "        \"depositName\": \"depositName\",\n" +
+                "        \"depositorAmountSum\": 200,\n" +
+                "        \"depositorAmountMinusSum\": 200,\n" +
+                "        \"depositorCount\": {\n" +
+                "            \"xsi:nil\": true,\n" +
+                "            \"xmlns:xsi\": \"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                "        },\n" +
+                "        \"depositCurrency\": \"usd\",\n" +
+                "        \"depositId\": 1,\n" +
+                "        \"depositMinAmount\": 100,\n" +
+                "        \"depositAddConditions\": \"condition0\"\n" +
+                "    }},\n" +
+                "    \"xmlns\": \"http://bank.brest.com/soap\"\n" +
+                "}}";
+
+        when(soapClient.getBankDepositsByCurrencyFromToDateDepositWithDepositors("usd",
+                dateFormat.parse("2015-01-01"),
+                dateFormat.parse("2016-12-12")))
+                .thenReturn(DataFixture.getExistDepositByCurrencyWsdl("usd"));
+
+        mockMvc.perform(post("/client/submitSoapQuery?soapQuery={soapQuery}" +
+                "&depositCurrency={currency}" +
+                "&startDate={startDate}" +
+                "&endDate={endDate}" +
+                "&submit={submit}","getBankDepositsByCurrencyFromToDateDepositWithDepositors",
+                "usd","2015-01-01","2016-12-12","Generate+Request"))
+                .andExpect(view().name("mainFrame"))
+                .andExpect(model().attributeExists("services","requests","responses"))
+                .andExpect(model().attribute("requests",soapRequest))
+                .andExpect(model().attribute("responses",notNullValue()))
+                .andExpect(model().attribute("responses",is(soapResponse)))
+                .andExpect(status().isOk())
+                .andDo(log())
+                .andDo(print());
+
+        verify(soapClient, times(1)).getBankDepositsByCurrencyFromToDateDepositWithDepositors("usd",
+                dateFormat.parse("2015-01-01"),
+                dateFormat.parse("2016-12-12"));
+        verify(soapClient, only()).getBankDepositsByCurrencyFromToDateDepositWithDepositors("usd",
+                dateFormat.parse("2015-01-01"),
+                dateFormat.parse("2016-12-12"));
+        verifyNoMoreInteractions(soapClient);
+
     }
 
     @Test
@@ -294,11 +487,11 @@ public class SoapControllerTest {
         when(soapClient.readWSDLFile(wsdlLocation)).thenReturn(wsdl);
         mockMvc.perform(get("/client/main?wsdlLoc=http://localhost:8080/SpringHibernateBDeposit-1.0/soap/soapService.wsdl"))
                 .andExpect(view().name("mainFrame"))
-                .andExpect(model().attributeExists("services"))
-                .andExpect(model().attributeExists("requests"))
+                .andExpect(model().attributeExists("services","requests","responses"))
                 .andExpect(model().attribute("requests",""))
-                .andExpect(model().attributeExists("responses"))
-                .andExpect(status().isOk());
+                .andExpect(model().attribute("responses",notNullValue()))
+                .andExpect(status().isOk())
+                .andDo(print());
 
         verify(soapClient).readWSDLFile(wsdlLocation);
     }
@@ -317,7 +510,9 @@ public class SoapControllerTest {
                 .andExpect(model().attribute("requests",""))
                 .andExpect(model().attributeExists("responses"))
                 .andExpect(model().attribute("responses",soapResponse))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(log())
+                .andDo(print());
 
         verify(soapClient,never()).readWSDLFile(wsdlLocation);
     }

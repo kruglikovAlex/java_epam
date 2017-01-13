@@ -1290,7 +1290,7 @@ public class SoapClientTest {
 
         mockServer.expect(payload(requestPayload)).andRespond(withPayload(responsePayload));
 
-        String result = soapClient.removeBankDepositor(1L).getResult();
+        String result = soapClient.deleteBankDepositor(1L).getResult();
         LOGGER.debug("result-{}",result);
 
         assertEquals("Bank Depositor removed",result);

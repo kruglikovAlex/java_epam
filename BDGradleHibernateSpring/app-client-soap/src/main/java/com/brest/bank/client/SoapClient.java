@@ -1016,7 +1016,7 @@ public class SoapClient extends WebServiceGatewaySupport{
      * @param depositorId Long - id of the Bank Depositor to be removed
      * @return DeleteBankDepositorResponse
      */
-    public DeleteBankDepositorResponse removeBankDepositor(Long depositorId){
+    public DeleteBankDepositorResponse deleteBankDepositor(Long depositorId){
         LOGGER.debug("deleteBankDepositorRequest(depositorId={})",depositorId);
 
         DeleteBankDepositorRequest request = new DeleteBankDepositorRequest();
