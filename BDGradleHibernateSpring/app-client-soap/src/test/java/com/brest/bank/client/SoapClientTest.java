@@ -52,6 +52,7 @@ public class SoapClientTest {
 
     @Before
     public void setUp() throws Exception {
+        soapClient.setDefaultUri("http://localhost:8080/SpringHibernateBDeposit-1.0/soap");
         mockServer = MockWebServiceServer.createServer(soapClient);
     }
 

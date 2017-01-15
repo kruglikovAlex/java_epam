@@ -49,9 +49,9 @@ public class SoapController {
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
     public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
     private static final Logger LOGGER = LogManager.getLogger();
+    private static String serviceAddress;
     @Autowired
     SoapClient soapClient;
-
     private Map wsdlServices = new HashMap();
     private String[] soapResponse = {"",""};
     private String soapRequest = "";
@@ -139,6 +139,14 @@ public class SoapController {
                 }
             }
         }
+
+        Iterator itr = wsdl.getServices().values().iterator();
+
+        while(itr.hasNext()) {
+            String element = itr.next().toString();
+            serviceAddress = element.substring(element.lastIndexOf("locationURI")+12);
+        }
+
         return services;
     }
 
@@ -389,6 +397,8 @@ public class SoapController {
                 soapResponse[0] = wsdl.toString();
                 soapResponse[1] = "";
                 soapRequest = "";
+
+                soapClient.setDefaultUri(serviceAddress);
             } catch (Exception e) {
                 LOGGER.debug("getSoapView(), Exception:{}", e.toString());
                 redirectAttributes.addFlashAttribute("message", e.getMessage());

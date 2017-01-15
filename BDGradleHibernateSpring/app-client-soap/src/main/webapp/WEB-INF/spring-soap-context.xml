@@ -45,8 +45,10 @@
     </bean>
 
     <bean id="soapClient" class="com.brest.bank.client.SoapClient">
+        <!--
         <property name="defaultUri"
-                  value="http://localhost:8080/SpringHibernateBDeposit-1.0/soap" />
+                  value="http://localhost:9090/SpringHibernateBDeposit-1.0/soap" />
+                  -->
         <property name="marshaller" ref="marshaller" />
         <property name="unmarshaller" ref="marshaller" />
 
