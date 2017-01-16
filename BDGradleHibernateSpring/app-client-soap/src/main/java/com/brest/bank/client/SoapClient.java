@@ -73,7 +73,7 @@ public class SoapClient extends WebServiceGatewaySupport{
     /**
      *Get all Bank deposits
      *
-     * @return GetBankDepositsResponse
+     * @return GetBankDepositsResponse XmlElement - includes a xmlElement BankDeposits
      */
     public GetBankDepositsResponse getBankDeposits(){
         Source requestPayload = new StringSource(
@@ -94,7 +94,8 @@ public class SoapClient extends WebServiceGatewaySupport{
      * Get Bank Deposit by id deposit
      *
      * @param depositId Long - id of the Bank Deposit to return
-     * @return GetBankDepositByIdResponse
+     * @return GetBankDepositByIdResponse - includes a xmlElement BankDeposit with the specific id
+     * from the database
      */
     public GetBankDepositByIdResponse getBankDepositById(Long depositId){
         LOGGER.debug("getBankDepositByIdRequest(depositId={})",depositId);
@@ -109,10 +110,11 @@ public class SoapClient extends WebServiceGatewaySupport{
     }
 
     /**
-     * Get Bank Deposit by id deposit
+     * Get Bank Deposit by NAME deposit
      *
      * @param depositName String - name of the Bank Deposit to return
-     * @return XmlElement BankDeposit with the specified id from the database
+     * @return GetBankDepositByNameResponse - includes a XmlElement BankDeposit with the specified name
+     * from the database
      */
     public GetBankDepositByNameResponse getBankDepositByName(String depositName){
         LOGGER.debug("getBankDepositByNameRequest(depositName={})",depositName);
@@ -130,7 +132,8 @@ public class SoapClient extends WebServiceGatewaySupport{
      * Get Bank Deposits by currency
      *
      * @param currency String - currency of the Bank Deposit to return
-     * @return XmlElement BankDeposits with the specified depositCurrency from the database
+     * @return GetBankDepositsByCurrencyResponse - includes a XmlElement BankDeposits with the
+     * specified depositCurrency from the database
      */
     public GetBankDepositsByCurrencyResponse getBankDepositsByCurrency(String currency){
         LOGGER.debug("getBankDepositsByCurrencyRequest(depositCurrency={})",currency);
@@ -148,7 +151,8 @@ public class SoapClient extends WebServiceGatewaySupport{
      * Get Bank Deposits by interest rate
      *
      * @param rate Integer - interest rate of the Bank Deposits to return
-     * @return XmlElement BankDeposits with the specified depositInterestRate from the database
+     * @return GetBankDepositsByInterestRateResponse - includes a XmlElement BankDeposits with the
+     * specified depositInterestRate from the database
      */
     public GetBankDepositsByInterestRateResponse getBankDepositsByInterestRate(Integer rate){
         LOGGER.debug("getBankDepositsByInterestRateRequest(depositInterestRate={})",rate);
@@ -167,7 +171,8 @@ public class SoapClient extends WebServiceGatewaySupport{
      *
      * @param fromTerm Integer - start value of the min term (count month)
      * @param toTerm Integer - end value of the min term (count month)
-     * @return XmlElement BankDeposits with the specified depositMinTerm from the database
+     * @return GetBankDepositsFromToMinTermResponse - includes a XmlElement BankDeposits with the specified
+     * depositMinTerm from the database
      */
     public GetBankDepositsFromToMinTermResponse getBankDepositsFromToMinTerm(Integer fromTerm, Integer toTerm){
         LOGGER.debug("getBankDepositsFromToMinTermRequest(from={}, to={})",fromTerm,toTerm);
@@ -189,7 +194,7 @@ public class SoapClient extends WebServiceGatewaySupport{
      *
      * @param fromRate Integer - start value of the interest rate (0% < startRate <= 100%)
      * @param toRate Integer - end value of the interest rate (0% < endRate <= 100%)
-     * @return XmlElement BankDeposits with the specified depositInterestRate from the database
+     * @return GetBankDepositsFromToInterestRateResponse - includes a XmlElement BankDeposits with the specified depositInterestRate from the database
      */
     public GetBankDepositsFromToInterestRateResponse getBankDepositsFromToInterestRate(Integer fromRate, Integer toRate){
         LOGGER.debug("getBankDepositsFromToInterestRateRequest(from={}, to={})",fromRate,toRate);
@@ -211,7 +216,8 @@ public class SoapClient extends WebServiceGatewaySupport{
      *
      * @param startDate Date - start value of the date deposit (startDate < endDate)
      * @param endDate Date - end value of the date deposit (endDate > startDate)
-     * @return XmlElement BankDeposits with the specified depositorDateDeposit from the database
+     * @return GetBankDepositsFromToDateDepositResponse - includes a XmlElement BankDeposits with the
+     * specified depositorDateDeposit from the database
      */
     public GetBankDepositsFromToDateDepositResponse getBankDepositsFromToDateDeposit(Date startDate, Date endDate){
         LOGGER.debug("getBankDepositsFromToDateDepositRequest(start={}, end={})",dateFormat.format(startDate),
@@ -247,7 +253,8 @@ public class SoapClient extends WebServiceGatewaySupport{
      *
      * @param startDate Date - start value of the date return deposit (startDate < endDate)
      * @param endDate Date - end value of the date return deposit (endDate > startDate)
-     * @return XmlElement BankDeposits with the specified depositorDateReturnDeposit from the database
+     * @return GetBankDepositsFromToDateReturnDepositResponse - includes a XmlElement BankDeposits with the
+     * specified depositorDateReturnDeposit from the database
      */
     public GetBankDepositsFromToDateReturnDepositResponse getBankDepositsFromToDateReturnDeposit(Date startDate, Date endDate){
         LOGGER.debug("getBankDepositsFromToDateReturnDepositRequest(start={}, end={})",dateFormat.format(startDate),
@@ -279,10 +286,11 @@ public class SoapClient extends WebServiceGatewaySupport{
     }
 
     /**
-     * Get Bank Deposits by NAME with depositors
+     * Get Bank Deposit by NAME with depositors
      *
      * @param depositName String - name of the Bank Deposit to return
-     * @return XmlElement BankDepositReport
+     * @return GetBankDepositByNameWithDepositorsResponse - includes a XmlElement BankDepositReport with
+     * the specified name from the database
      */
     public GetBankDepositByNameWithDepositorsResponse getBankDepositByNameWithDepositors(String depositName){
         LOGGER.debug("getBankDepositByNameWithDepositorsRequest(depositName={})",depositName);
@@ -298,12 +306,13 @@ public class SoapClient extends WebServiceGatewaySupport{
     }
 
     /**
-     * Get Bank Deposits by NAME with depositors from-to Date Deposit values
+     * Get Bank Deposit by NAME with depositors from-to Date Deposit values
      *
      * @param depositName String - name of the Bank Deposit to return
      * @param startDate Date - start value of the date deposit (startDate < endDate)
      * @param endDate Date - end value of the date deposit (endDate > startDate)
-     * @return XmlElement BankDepositReport
+     * @return GetBankDepositByNameFromToDateDepositWithDepositorsResponse - includes a XmlElement BankDepositReport with
+     * the specified name and from-to date deposit from the database
      */
     public GetBankDepositByNameFromToDateDepositWithDepositorsResponse getBankDepositByNameFromToDateDepositWithDepositors(String depositName,
                                                                                  Date startDate,
@@ -341,12 +350,13 @@ public class SoapClient extends WebServiceGatewaySupport{
     }
 
     /**
-     * Get Bank Deposits by NAME with depositors from-to Date Return Deposit values
+     * Get Bank Deposit by NAME with depositors from-to Date Return Deposit values
      *
      * @param depositName String - name of the Bank Deposit to return
      * @param startDate Date - start value of the date return deposit (startDate < endDate)
      * @param endDate Date - end value of the date return deposit (endDate > startDate)
-     * @return XmlElement BankDepositReport
+     * @return GetBankDepositByNameFromToDateReturnDepositWithDepositorsResponse - includes a XmlElement BankDepositReport with
+     * the specified name and from-to date return deposit from the database
      */
     public GetBankDepositByNameFromToDateReturnDepositWithDepositorsResponse getBankDepositByNameFromToDateReturnDepositWithDepositors(String depositName,
                                                                                        Date startDate,
@@ -387,7 +397,8 @@ public class SoapClient extends WebServiceGatewaySupport{
      * Get Bank Deposits by ID with depositors
      *
      * @param depositId ong - depositId of the Bank Deposit to return
-     * @return XmlElement BankDepositReport
+     * @return GetBankDepositByIdWithDepositorsResponse - includes a XmlElement BankDepositReport with
+     * the specified ID with depositors
      */
     public GetBankDepositByIdWithDepositorsResponse getBankDepositByIdWithDepositors(Long depositId){
         LOGGER.debug("getBankDepositByIdWithDepositorsRequest(depositId={})",depositId);
@@ -403,12 +414,13 @@ public class SoapClient extends WebServiceGatewaySupport{
     }
 
     /**
-     * Get Bank Deposits by Id with depositors from-to Date Deposit values
+     * Get Bank Deposit by Id with depositors from-to Date Deposit values
      *
      * @param depositId Long - depositId of the Bank Deposit to return
      * @param startDate Date - start value of the date deposit (startDate < endDate)
      * @param endDate Date - end value of the date deposit (endDate > startDate)
-     * @return XmlElement BankDepositReport
+     * @return GetBankDepositByIdFromToDateDepositWithDepositorsResponse - includes a XmlElement BankDepositReport with
+     * the specified ID and from-to date deposit with depositors
      */
     public GetBankDepositByIdFromToDateDepositWithDepositorsResponse getBankDepositByIdFromToDateDepositWithDepositors(Long depositId,
                                                                                Date startDate,
@@ -445,12 +457,13 @@ public class SoapClient extends WebServiceGatewaySupport{
     }
 
     /**
-     * Get Bank Deposits by Id with depositors from-to Date Return Deposit values
+     * Get Bank Deposit by Id with depositors from-to Date Return Deposit values
      *
      * @param depositId Long - depositId of the Bank Deposit to return
      * @param startDate Date - start value of the date return deposit (startDate < endDate)
      * @param endDate Date - end value of the date return deposit (endDate > startDate)
-     * @return XmlElement BankDepositReport
+     * @return GetBankDepositByIdFromToDateReturnDepositWithDepositorsResponse - includes a XmlElement BankDepositReport with
+     * the specified Id and from-to Date Return Deposit with depositors
      */
     public GetBankDepositByIdFromToDateReturnDepositWithDepositorsResponse getBankDepositByIdFromToDateReturnDepositWithDepositors(Long depositId,
                                                                                      Date startDate,
@@ -488,9 +501,9 @@ public class SoapClient extends WebServiceGatewaySupport{
     }
 
     /**
-     * Get Bank Deposit with depositors
+     * Get Bank Deposits with depositors
      *
-     * @return XmlElement BankDepositsReport
+     * @return GetBankDepositsWithDepositorsResponse - includes a XmlElement BankDepositsReport
      */
     public GetBankDepositsWithDepositorsResponse getBankDepositsWithDepositors(){
         Source requestPayload = new StringSource(
@@ -508,11 +521,12 @@ public class SoapClient extends WebServiceGatewaySupport{
     }
 
     /**
-     * Get Bank Deposit from-to Date Deposit with depositors
+     * Get Bank Deposits from-to Date Deposit with depositors
      *
      * @param startDate Date - start value of the date deposit (startDate < endDate)
      * @param endDate Date - end value of the date deposit (startDate < endDate)
-     * @return XmlElement BankDepositsReport
+     * @return GetBankDepositsFromToDateDepositWithDepositorsResponse - includes a XmlElement BankDepositsReport
+     * from-to Date Deposit with depositors
      */
     public GetBankDepositsFromToDateDepositWithDepositorsResponse getBankDepositsFromToDateDepositWithDepositors(Date startDate, Date endDate){
         LOGGER.debug("getBankDepositsFromToDateDepositWithDepositorsRequest(start={}, end={})",
@@ -551,7 +565,8 @@ public class SoapClient extends WebServiceGatewaySupport{
      *
      * @param startDate Date - start value of the date return deposit (startDate < endDate)
      * @param endDate Date - end value of the date return deposit (startDate < endDate)
-     * @return XmlElement BankDepositsReport
+     * @return GetBankDepositsFromToDateReturnDepositWithDepositorsResponse - includes a XmlElement BankDepositsReport
+     * from-to Date Return Deposit with depositors
      */
     public GetBankDepositsFromToDateReturnDepositWithDepositorsResponse getBankDepositsFromToDateReturnDepositWithDepositors(Date startDate, Date endDate){
         LOGGER.debug("getBankDepositsFromToDateReturnDepositWithDepositorsRequest(start={}, end={})",
@@ -586,10 +601,11 @@ public class SoapClient extends WebServiceGatewaySupport{
     }
 
     /**
-     * Get Bank Deposit by Currency with depositors
+     * Get Bank Deposits by Currency with depositors
      *
      * @param depositCurrency String - Currency of the Bank Deposit to return
-     * @return XmlElement BankDepositsReport
+     * @return GetBankDepositsByCurrencyWithDepositorsResponse - includes a XmlElement BankDepositsReport with
+     * the specified currency with depositors
      */
     public GetBankDepositsByCurrencyWithDepositorsResponse getBankDepositsByCurrencyWithDepositors(String depositCurrency){
         LOGGER.debug("getBankDepositsByCurrencyWithDepositorsRequest(currency={})",depositCurrency);
@@ -612,7 +628,8 @@ public class SoapClient extends WebServiceGatewaySupport{
      * @param depositCurrency String - Currency of the Bank Deposit to return
      * @param startDate Date - start value of the date deposit (startDate < endDate)
      * @param endDate Date - end value of the date deposit (startDate < endDate)
-     * @return XmlElement BankDepositsReport
+     * @return GetBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse - includes a XmlElement BankDepositsReport with
+     * the specified currency and from-to date deposit with depositors
      */
     public GetBankDepositsByCurrencyFromToDateDepositWithDepositorsResponse getBankDepositsByCurrencyFromToDateDepositWithDepositors(String depositCurrency,
                                                                                        Date startDate,
@@ -655,7 +672,8 @@ public class SoapClient extends WebServiceGatewaySupport{
      * @param depositCurrency String - Currency of the Bank Deposit to return
      * @param startDate Date - start value of the date return deposit (startDate < endDate)
      * @param endDate Date - end value of the date return deposit (startDate < endDate)
-     * @return XmlElement BankDepositsReport
+     * @return GetBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsResponse - includes a XmlElement BankDepositsReport with
+     * the specified currency and from-to date deposit with depositors
      */
     public GetBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsResponse getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(String depositCurrency,
                                                                                              Date startDate,
@@ -696,7 +714,7 @@ public class SoapClient extends WebServiceGatewaySupport{
      * Add Bank Deposit
      *
      * @param deposit BankDeposit - Bank Deposit to be stored in the database
-     * @return XmlElement BankDeposit
+     * @return AddBankDepositResponse - includes a XmlElement BankDeposit
      */
     public AddBankDepositResponse addBankDeposit(com.brest.bank.domain.BankDeposit deposit){
         LOGGER.debug("addBankDepositRequest(deposit={})",deposit);
@@ -721,10 +739,10 @@ public class SoapClient extends WebServiceGatewaySupport{
     }
 
     /**
-     * Updating Bank Deposit
+     * Update Bank Deposit
      *
      * @param deposit BankDeposit - Bank Deposit to be stored in the database
-     * @return XmlElement BankDeposit
+     * @return UpdateBankDepositResponse - includes a XmlElement BankDeposit
      */
     public UpdateBankDepositResponse updateBankDeposit(com.brest.bank.domain.BankDeposit deposit){
         LOGGER.debug("updateBankDepositRequest(deposit={})",deposit);
@@ -749,10 +767,10 @@ public class SoapClient extends WebServiceGatewaySupport{
     }
 
     /**
-     * Deleting Bank Deposit by ID
+     * Delete Bank Deposit by ID
      *
      * @param depositId Long - id of the Bank Deposit to be removed
-     * @return result String
+     * @return DeleteBankDepositResponse - includes a XmlElement result
      */
     public DeleteBankDepositResponse deleteBankDeposit(Long depositId){
         LOGGER.debug("deleteBankDepositRequest(depositId={})",depositId);
@@ -770,7 +788,7 @@ public class SoapClient extends WebServiceGatewaySupport{
     /**
      *Get all Bank depositors
      *
-     * @return XmlElement BankDepositors
+     * @return GetBankDepositorsResponse - includes a XmlElement BankDepositors
      */
     public GetBankDepositorsResponse getBankDepositors(){
         Source requestPayload = new StringSource(
@@ -792,7 +810,7 @@ public class SoapClient extends WebServiceGatewaySupport{
      *
      * @param startDate Date - start value of the date deposit (startDate < endDate)
      * @param endDate Date - end value of the date deposit (startDate < endDate)
-     * @return XmlElement BankDepositors
+     * @return GetBankDepositorsFromToDateDepositResponse - includes a XmlElement BankDepositors
      */
     public GetBankDepositorsFromToDateDepositResponse getBankDepositorsFromToDateDeposit(Date startDate, Date endDate){
         LOGGER.debug("getBankDepositorsFromToDateDepositRequest(start={}, end={}", dateFormat.format(startDate),
@@ -830,7 +848,7 @@ public class SoapClient extends WebServiceGatewaySupport{
      *
      * @param startDate Date - start value of the date return deposit (startDate < endDate)
      * @param endDate Date - end value of the date return deposit (startDate < endDate)
-     * @return XmlElement BankDepositors
+     * @return GetBankDepositorsFromToDateReturnDepositResponse - includes a XmlElement BankDepositors
      */
     public GetBankDepositorsFromToDateReturnDepositResponse getBankDepositorsFromToDateReturnDeposit(Date startDate, Date endDate){
         LOGGER.debug("getBankDepositorsFromToDateReturnDepositRequest(start={}, end={}", dateFormat.format(startDate),
@@ -883,10 +901,10 @@ public class SoapClient extends WebServiceGatewaySupport{
     }
 
     /**
-     * Get Bank Depositor by ID Deposit
+     * Get Bank Depositors by ID Deposit
      *
      * @param depositId Long - id of the Bank Deposit
-     * @return XmlElement BankDepositors
+     * @return GetBankDepositorByIdDepositResponse - includes a XmlElement BankDepositors
      */
     public GetBankDepositorByIdDepositResponse getBankDepositorByIdDeposit(Long depositId){
         LOGGER.debug("getBankDepositorByIdDepositRequest(depositId={})",depositId);
@@ -905,7 +923,7 @@ public class SoapClient extends WebServiceGatewaySupport{
      * Get Bank Depositor by Name Deposit
      *
      * @param depositorName String - name of the Bank Depositor to return
-     * @return GetBankDepositorByNameResponse
+     * @return GetBankDepositorByNameResponse - includes a XmlElement BankDepositor
      */
     public GetBankDepositorByNameResponse getBankDepositorByName(String depositorName){
         LOGGER.debug("getBankDepositorByNameRequest(depositorName={}",depositorName);
@@ -925,7 +943,7 @@ public class SoapClient extends WebServiceGatewaySupport{
      *
      * @param depositId id of Bank Deposit
      * @param depositor BankDepositor - Bank Depositor to be inserted to the database
-     * @return AddBankDepositorResponse
+     * @return AddBankDepositorResponse - includes a XmlElement BankDepositor
      */
     public AddBankDepositorResponse addBankDepositor(Long depositId, com.brest.bank.domain.BankDepositor depositor){
         LOGGER.debug("ddBankDepositorRequest(depositId={}, depositor={})",depositId,depositor);
@@ -970,7 +988,7 @@ public class SoapClient extends WebServiceGatewaySupport{
      * Updating Bank Depositor
      *
      * @param depositor BankDepositor - Bank Depositor to be stored in the database
-     * @return UpdateBankDepositorResponse
+     * @return UpdateBankDepositorResponse - includes a XmlElement BankDepositor
      */
     public UpdateBankDepositorResponse updateBankDepositor(com.brest.bank.domain.BankDepositor depositor){
         LOGGER.debug("updateBankDepositorRequest(depositor={})",depositor);
@@ -1014,7 +1032,7 @@ public class SoapClient extends WebServiceGatewaySupport{
      * Deleting Bank Depositor by ID
      *
      * @param depositorId Long - id of the Bank Depositor to be removed
-     * @return DeleteBankDepositorResponse
+     * @return DeleteBankDepositorResponse - includes a XmlElement result
      */
     public DeleteBankDepositorResponse deleteBankDepositor(Long depositorId){
         LOGGER.debug("deleteBankDepositorRequest(depositorId={})",depositorId);

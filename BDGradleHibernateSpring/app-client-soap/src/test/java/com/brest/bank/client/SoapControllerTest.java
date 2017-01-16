@@ -37,8 +37,10 @@ public class SoapControllerTest {
 
     private static final Logger LOGGER = LogManager.getLogger(SoapControllerTest.class);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+
     @Mock
     SoapClient soapClient;
+
     private Map wsdlServices = new HashMap();
     private String[] soapResponse = {"",""};
     private String soapRequest = "";

@@ -1,6 +1,5 @@
 package com.brest.bank.client;
 
-import com.brest.bank.domain.*;
 import com.brest.bank.wsdl.*;
 
 import com.brest.bank.wsdl.BankDeposit;
@@ -21,17 +20,13 @@ import org.springframework.xml.transform.StringSource;
 
 import javax.wsdl.WSDLException;
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 
 import static org.springframework.ws.test.client.RequestMatchers.*;
 import static org.springframework.ws.test.client.ResponseCreators.*;
-import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -44,9 +39,6 @@ public class SoapClientTest {
 
     @Autowired
     private SoapClient soapClient;
-
-    @Autowired
-    private Jaxb2Marshaller marshaller;
 
     private MockWebServiceServer mockServer;
 
@@ -91,9 +83,9 @@ public class SoapClientTest {
         mockServer.expect(payload(requestPayload)).andRespond(withPayload(responsePayload));
 
         BankDeposits deposits = soapClient.getBankDeposits().getBankDeposits();
-        //LOGGER.debug("Response - deposits - {}",xmlEntityToString(deposits.getBankDeposit().get(0)));
+        LOGGER.debug("Response - deposits - {}",xmlEntityToString(deposits.getBankDeposit().get(0)));
 
-        //assertEquals(DataFixture.getExistDeposit(1L).toString(),xmlEntityToString(deposits.getBankDeposit().get(0)));
+        assertEquals(xmlEntityToString(deposits.getBankDeposit().get(0)), xmlEntityToString(DataFixture.getExistDeposit(1L)));
     }
 
     @Test

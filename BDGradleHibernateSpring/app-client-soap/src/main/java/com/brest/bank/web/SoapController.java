@@ -1,21 +1,15 @@
 package com.brest.bank.web;
 
 import com.brest.bank.client.SoapClient;
-//import com.brest.bank.client.SoapConfiguration;
-import com.brest.bank.domain.*;
 import com.brest.bank.domain.BankDeposit;
-import com.brest.bank.wsdl.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.json.JSONObject;
-import org.eclipse.persistence.jaxb.JAXBContextFactory;
-import org.eclipse.persistence.jaxb.MarshallerProperties;
 
 import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -26,16 +20,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.xml.sax.SAXException;
 
 import javax.wsdl.Definition;
-import javax.wsdl.WSDLException;
 import javax.xml.bind.*;
-import javax.xml.parsers.ParserConfigurationException;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import java.text.ParseException;
@@ -47,7 +37,6 @@ import java.util.*;
 public class SoapController {
 
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
-    public static final String ERROR_METHOD_PARAM = "The parameter can not be NULL";
     private static final Logger LOGGER = LogManager.getLogger();
     private static String serviceAddress;
     @Autowired
@@ -58,27 +47,28 @@ public class SoapController {
     private String wsdlLocation = "http://localhost:8080/SpringHibernateBDeposit-1.0/soap/soapService.wsdl";
 
     /**
+     * Get a list of SOAP client methods
      *
-     * @param client
-     * @return
+     * @param client - object of SoapClient.class
+     * @return an array of Method.class elements
      */
     private static Method[] getServiceMethods(SoapClient client){
         LOGGER.debug("getServiceMethods({})",client);
 
-        System.out.println("getServiceMethods(): ");
         Method[] methods = client.getClass().getMethods();
         for (Method m:methods
              ) {
-            System.out.println("method name: "+m.getName());
+            LOGGER.debug("method name: {}",m.getName());
         }
         return methods;
     }
 
     /**
+     * Get a list of services from a WSDL document
      *
-     * @param wsdl
-     * @param methods
-     * @return
+     * @param wsdl - a definition WSDL scheme
+     * @param methods - a list of SOAP client methods
+     * @return a HashMap of services
      */
     private static Map getServices(Definition wsdl, Method[] methods) throws ClassNotFoundException, IllegalAccessException, InstantiationException{
         LOGGER.debug("getServices({},{})",wsdl,methods);
@@ -151,12 +141,15 @@ public class SoapController {
     }
 
     /**
+     * Sending a POST request
      *
-     * @param redirectAttributes
-     * @param model
-     * @param status
-     * @param queryMap
-     * @return
+     * @param redirectAttributes RedirectAttributes - to transfer the so-called flash-attributes,
+     *                           that is, values that will be available only to the following request, e.t. errors
+     * @param model ModelMap - This facility is intended to convey information to the JSP page.
+     * Variables "services","requests" and "responses" will be passed on mainFrame.jsp page.
+     * @param status SessionStatus - status code of the query
+     * @param queryMap LinkedHashMap<String, String> - parameters of a POST request
+     * @return ModelAndView - "mainFrame" with SOAP services, xml request, xml and json response
      */
     @RequestMapping(value={"/submitSoapQuery"}, method = RequestMethod.POST)
     public ModelAndView postSoapQuery( RedirectAttributes redirectAttributes,
@@ -372,10 +365,13 @@ public class SoapController {
     }
 
     /**
+     * Sending a GET request
      *
-     * @param redirectAttributes
-     * @param status
-     * @return
+     * @param redirectAttributes RedirectAttributes - to transfer the so-called flash-attributes,
+     *                           that is, values that will be available only to the following request, e.t. errors
+     * @param wsdlLoc String - http address of the wsdl document
+     * @param status SessionStatus - status code of the query
+     * @return ModelAndView - "mainFrame" with SOAP services, xml request, xml and json response
      * @throws ParseException
      */
     @RequestMapping(value = "/main")
@@ -419,7 +415,6 @@ public class SoapController {
 
     /*
         // JSON
-        System.out.println("JSON: ");
         // Create properties
         Map<String, Object> propertiesJSON = new HashMap<String, Object>();
         propertiesJSON.put("eclipselink.media-type", "application/json");
@@ -436,6 +431,5 @@ public class SoapController {
         marshallerJSON.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         // Marshal the employee object to JSON and print the output to console
         marshallerJSON.marshal(response, System.out);
-*/
-
+    */
 }
