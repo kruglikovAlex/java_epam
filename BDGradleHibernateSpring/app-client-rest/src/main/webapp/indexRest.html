@@ -1,0 +1,162 @@
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>BankDeposit management</title>
+	<link href='resources/css/tether.css' rel="stylesheet">
+	<link href='resources/css/bootstrap.min.css' rel="stylesheet">
+	<link href='resources/css/bootstrap-theme.min.css' rel="stylesheet">
+	<link href='resources/css/jquery-ui.css' rel="stylesheet">
+</head>
+<body>
+	<div class="panel panel-success">
+		<div class="panel-heading" style="font-weight: bold; font-size: 16px">BANK DEPOSITS:</div>
+		<div class="panel-body">
+			<div id="accordionMy">
+				<h3>Request:</h3>
+				<div>
+
+					<div id="dialog-form" title="Get HOST:">
+						<form>
+							<fieldset>
+								<label for="hostUrl">URL:</label>
+								<input type="text" name="HOST" id="hostURL" size="75" class="text ui-widget-content ui-corner-all">
+								<!-- Allow form submission with keyboard without duplicating the dialog button -->
+								<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+							</fieldset>
+						</form>
+					</div>
+					<div id="hostURL-contain" class="ui-widget">
+				 		<button id="get-Host"><span class="glyphicon glyphicon-question-sign"></span> URL-> 
+				 		</button>
+				 		<input id="HOST" name="HOST" type="text" required size="70"/>
+						<input id="URL" name="URL" type="text" required size="50"/><br>
+					</div>
+
+					<div style="font-weight: bold" aria-setsize="50">
+						<span class="label label-success" style="font-size: 13px">
+							<input type="radio" name="httpMethod" checked> GET
+							<input type="radio" name="httpMethod"/> PUT
+							<input type="radio" name="httpMethod"/> POST
+							<input type="radio" name="httpMethod"/> DELETE
+						</span>
+					</div>
+
+					<p></p>
+					<ul class="nav nav-tabs nav-justified smile-tabs">
+						<li class="active"><a data-toggle="tab" href="#home">Raw payload</a></li>
+						<li><a data-toggle="tab" href="#menu1">Deposit data form</a></li>
+						<li><a data-toggle="tab" href="#menu2">Depositor data form</a></li>
+					</ul>
+
+					<div class="tab-content">
+						<div id="home" class="tab-pane fade in active">
+							<p></p>
+							<textarea id="JsonRequest" name="JsonRequest" rows="4" cols="146" ></textarea>
+						</div>
+						<div id="menu1" class="tab-pane fade">
+							<p></p>
+							<form id="depositForm">
+								<div class="mainDepositArea">
+									<table frame="hsides" rules="cols">
+										<th>
+										<td><label>Deposit Id:</label></td>
+										<td><label>Deposit Name:</label></td>
+										<td><label>Minimum Termin:</label></td>
+										<td><label>Minimum Amount:</label></td>
+										<td><label>Currency:</label></td>
+										<td><label>Interest Rate:</label></td>
+										<td><label>Add Conditions:</label></td>
+										</th>
+										<tr>
+											<td></td>
+											<td><input id="depositId" name="depositId" type="text" disabled size="15"/></td>
+											<td><input id="depositName" name="depositName" type="text" required size="35"/></td>
+											<td><input id="depositMinTerm" name="depositMinTerm" type="text" size="5"></td>
+											<td><input id="depositMinAmount" name="depositMinAmount" type="text" size="20"/></td>
+											<td><input id="depositCurrency" name="depositCurrency" type="text" size="5"/></td>
+											<td><input id="depositInterestRate" name="depositInterestRate" type="text" size="5"/></td>
+											<td><input id="depositAddConditions" name="depositAddConditions" type="text" size="25"/></td>
+										</tr>
+									</table>
+
+								</div>
+							</form>
+						</div>
+						<div id="menu2" class="tab-pane fade">
+							<p></p>
+							<form id="depositorForm">
+								<div class="mainDepositorArea">
+									<table frame="hsides" rules="cols">
+										<th>
+										<td><label>Depositor Id:</label></td>
+										<td><label>Depositor Name:</label></td>
+										<td><label>Date Deposit:</label></td>
+										<td><label>Amount Deposit:</label></td>
+										<td><label>Amount Plus:</label></td>
+										<td><label>Amount Minus:</label></td>
+										<td><label>Date Return :</label></td>
+										<td><label>Return Mark:</label></td>
+										</th>
+										<tr>
+											<td></td>
+											<td><input id="depositorId" name="depositorId" type="text" disabled size="15"/></td>
+											<td><input id="depositorName" name="depositorName" type="text" required size="38"/></td>
+											<td><input id="depositorDateDeposit" name="depositorDateDeposit" type="datetime" required
+													   pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size="10" class="datepicker"/></td>
+											<td><input id="depositorAmountDeposit" name="depositorAmountDeposit" type="text" size="10"/></td>
+											<td><input id="depositorAmountPlusDeposit" name="depositorAmountPlusDeposit" type="text" size="10"/></td>
+											<td><input id="depositorAmountMinusDeposit" name="depositorAmountMinusDeposit" type="text" size="10"/></td>
+											<td><input id="depositorDateReturnDeposit" name="depositorDateReturnDeposit" type="datetime" required
+													   pattern = "(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)" size="10" class="datepicker"/></td>
+											<td><input id="depositorMarkReturnDeposit" name="depositorMarkReturnDeposit" type="text" size="1"/></td>
+										</tr>
+									</table>
+
+								</div>
+							</form>
+						</div>
+					</div>
+
+					<p></p>
+
+					<div class="btn-group btn-group-justified">
+						<div class="btn-group">
+							<button id="btnClear" type="button" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span> CLEAR</button>
+						</div>
+						<div class="btn-group">
+							<button id="btnSendMessage" type="button" class="btn btn-default"><span class="glyphicon glyphicon-envelope"></span> SEND</button>
+						</div>
+					</div>
+				</div>
+				<h3>Response:</h3>
+				<div>
+					<textarea class="responseHeader" id="responseHeader" name="responseHeader" rows="5" cols="146" ></textarea>
+
+					<div class="btn-group btn-group-justified">
+						<div class="btn-group">
+							<button id="btnResponseRaw" type="button" class="btn btn-default"><span class="glyphicon glyphicon-eye-close"></span> RAW</button>
+						</div>
+						<div class="btn-group">
+							<button id="btnResponseJson" type="button" class="btn btn-default"><span class="glyphicon glyphicon-eye-open"></span> JSON</button>
+						</div>
+					</div>
+
+					<textarea class="responseRaw" id="responseRaw" name="responseRaw" rows="10" cols="146" ></textarea>
+					<textarea class="responseJson" id="responseJson" name="responseJson" rows="10" cols="146" ></textarea>
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+<script src="resources/js/jquery-3.1.1.js"></script>
+<script src="resources/js/bootstrap.min.js"></script>
+<script src="resources/js/bootstrap-tab.js"></script>
+<script src="resources/js/tether.js"></script>
+<script src="resources/js/main.js"></script>
+<script src="resources/js/jquery.maskedinput.js"></script>
+<script src="resources/js/jquery-ui.js"></script>
+
+</body>
+</html>

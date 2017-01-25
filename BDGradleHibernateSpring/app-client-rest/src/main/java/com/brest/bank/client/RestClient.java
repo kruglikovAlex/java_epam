@@ -5,32 +5,39 @@ import com.brest.bank.domain.BankDepositor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RestClient {
 
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     public static final String ERROR_FROM_TO_PARAM = "The first parameter should be less than the second";
     private static final Logger LOGGER = LogManager.getLogger();
-    private String host;
 
+    private String host;
     private RestTemplate restTemplate = new RestTemplate();
 
-    public RestClient(String host){
-        this.host = host;
+    public RestClient(){
+        //this.host = host;
         List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
         converters.add(new MappingJackson2HttpMessageConverter());
         restTemplate.setMessageConverters(converters);
+    }
+
+    public String getHost(){
+        return host;
+    }
+
+    public void setHost(String host){
+        this.host = host;
     }
 
     public RestTemplate getRestTemplate(){
@@ -145,30 +152,34 @@ public class RestClient {
      * Get Bank Deposits from-to Date Deposit values
      *
      * @link http://<host:port>/<project_name-version>/<client_name>/deposit/date/{start},{end}
-     * @param start Date - start value of the date deposit (startDate < endDate)
-     * @param end Date - end value of the date deposit (endDate > startDate)
+     * @param startDate String - start value of the date deposit (startDate < endDate)
+     * @param endDate String - end value of the date deposit (endDate > startDate)
      * @return BankDeposit[]
      */
-    public BankDeposit[] getBankDepositsFromToDateDeposit(Date start, Date end){
-        LOGGER.debug("getBankDepositsFromToDateDeposit {}",host+"/deposit/date/"+dateFormat.format(start)+","+dateFormat.format(end));
-        Assert.isTrue(start.before(end),ERROR_FROM_TO_PARAM);
+    public BankDeposit[] getBankDepositsFromToDateDeposit(String startDate, String endDate)
+            throws ParseException{
+        LOGGER.debug("getBankDepositsFromToDateDeposit {}",host+"/deposit/date/"+startDate+","+endDate);
+        Assert.isTrue(dateFormat.parse(startDate).before(dateFormat.parse(endDate))||
+                dateFormat.parse(startDate).equals(dateFormat.parse(endDate)),ERROR_FROM_TO_PARAM);
 
-        return restTemplate.getForObject(host+"/deposit/date/"+dateFormat.format(start)+","+dateFormat.format(end),BankDeposit[].class);
+        return restTemplate.getForObject(host+"/deposit/date/"+startDate+","+endDate,BankDeposit[].class);
     }
 
     /**
      * Get Bank Deposits from-to Date return Deposit values
      *
      * @link http://<host:port>/<project_name-version>/<client_name>/deposit/returnDate/{start},{end}
-     * @param start Date - start value of the date return deposit (startDate < endDate)
-     * @param end Date - end value of the date return deposit (endDate > startDate)
+     * @param startDate String - start value of the date return deposit (startDate < endDate)
+     * @param endDate String - end value of the date return deposit (endDate > startDate)
      * @return BankDeposit[]
      */
-    public BankDeposit[] getBankDepositsFromToDateReturnDeposit(Date start, Date end){
-        LOGGER.debug("getBankDepositsFromToDateReturnDeposit {}",host+"/deposit/returnDate/"+dateFormat.format(start)+","+dateFormat.format(end));
-        Assert.isTrue(start.before(end)||start.equals(end),ERROR_FROM_TO_PARAM);
+    public BankDeposit[] getBankDepositsFromToDateReturnDeposit(String startDate, String endDate)
+            throws ParseException{
+        LOGGER.debug("getBankDepositsFromToDateReturnDeposit {}",host+"/deposit/returnDate/"+startDate+","+endDate);
+        Assert.isTrue(dateFormat.parse(startDate).before(dateFormat.parse(endDate))||
+                dateFormat.parse(startDate).equals(dateFormat.parse(endDate)),ERROR_FROM_TO_PARAM);
 
-        return restTemplate.getForObject(host+"/deposit/returnDate/"+dateFormat.format(start)+","+dateFormat.format(end),BankDeposit[].class);
+        return restTemplate.getForObject(host+"/deposit/returnDate/"+startDate+","+endDate,BankDeposit[].class);
     }
 
     /**
@@ -176,11 +187,11 @@ public class RestClient {
      *
      * @link http://<host:port>/<project_name-version>/<client_name>/deposit/report/name/{depositName}
      * @param depositName String - name of the Bank Deposit to return
-     * @return Map<K,V>
+     * @return LinkedHashMap<K,V>
      */
-    public Map getBankDepositByNameWithDepositors(String depositName){
+    public LinkedHashMap getBankDepositByNameWithDepositors(String depositName){
         LOGGER.debug("getBankDepositByNameWithDepositors {}",host+"/deposit/report/name/"+depositName);
-        return restTemplate.getForObject(host+"/deposit/report/name/"+depositName,Map.class);
+        return restTemplate.getForObject(host+"/deposit/report/name/"+depositName, LinkedHashMap.class);
     }
 
     /**
@@ -188,16 +199,18 @@ public class RestClient {
      *
      * @link http://<host:port>/<project_name-version>/<client_name>/deposit/report/nameDate/{depositName},{start},{end}
      * @param depositName String - name of the Bank Deposit to return
-     * @param start Date - start value of the date deposit (startDate < endDate)
-     * @param end Date - end value of the date deposit (endDate > startDate)
-     * @return Map<K,V>
+     * @param startDate String - start value of the date deposit (startDate < endDate)
+     * @param endDate String - end value of the date deposit (endDate > startDate)
+     * @return LinkedHashMap<K,V>
      */
-    public Map getBankDepositByNameFromToDateDepositWithDepositors(String depositName, Date start, Date end){
+    public LinkedHashMap getBankDepositByNameFromToDateDepositWithDepositors(String depositName, String startDate, String endDate)
+            throws ParseException{
         LOGGER.debug("getBankDepositByNameFromToDateDepositWithDepositors {}",
-                host+"/deposit/report/nameDate/"+depositName+","+dateFormat.format(start)+","+dateFormat.format(end));
-        Assert.isTrue(start.before(end)||start.equals(end));
+                host+"/deposit/report/nameDate/"+depositName+","+startDate+","+endDate);
+        Assert.isTrue(dateFormat.parse(startDate).before(dateFormat.parse(endDate))||
+                dateFormat.parse(startDate).equals(dateFormat.parse(endDate)),ERROR_FROM_TO_PARAM);
 
-        return restTemplate.getForObject(host+"/deposit/report/nameDate/"+depositName+","+dateFormat.format(start)+","+dateFormat.format(end),Map.class);
+        return restTemplate.getForObject(host+"/deposit/report/nameDate/"+depositName+","+startDate+","+endDate,LinkedHashMap.class);
     }
 
     /**
@@ -205,16 +218,18 @@ public class RestClient {
      *
      * @link http://<host:port>/<project_name-version>/<client_name>/deposit/report/nameDateReturn/{depositName},{start},{end}
      * @param depositName String - name of the Bank Deposit to return
-     * @param start Date - start value of the date return deposit (startDate < endDate)
-     * @param end Date - end value of the date return deposit (endDate > startDate)
-     * @return Map<K,V>
+     * @param startDate String - start value of the date return deposit (startDate < endDate)
+     * @param endDate String - end value of the date return deposit (endDate > startDate)
+     * @return LinkedHashMap<K,V>
      */
-    public Map getBankDepositByNameFromToDateReturnDepositWithDepositors(String depositName, Date start, Date end){
+    public LinkedHashMap getBankDepositByNameFromToDateReturnDepositWithDepositors(String depositName, String startDate, String endDate)
+            throws ParseException{
         LOGGER.debug("getBankDepositByNameFromToDateReturnDepositWithDepositors {}",
-                host+"/deposit/report/nameDateReturn/"+depositName+","+dateFormat.format(start)+","+dateFormat.format(end));
-        Assert.isTrue(start.before(end)||start.equals(end),ERROR_FROM_TO_PARAM);
+                host+"/deposit/report/nameDateReturn/"+depositName+","+startDate+","+endDate);
+        Assert.isTrue(dateFormat.parse(startDate).before(dateFormat.parse(endDate))||
+                dateFormat.parse(startDate).equals(dateFormat.parse(endDate)),ERROR_FROM_TO_PARAM);
 
-        return restTemplate.getForObject(host+"/deposit/report/nameDateReturn/"+depositName+","+dateFormat.format(start)+","+dateFormat.format(end),Map.class);
+        return restTemplate.getForObject(host+"/deposit/report/nameDateReturn/"+depositName+","+startDate+","+endDate,LinkedHashMap.class);
     }
 
     /**
@@ -222,11 +237,11 @@ public class RestClient {
      *
      * @link http://<host:port>/<project_name-version>/<client_name>/deposit/report/id/{depositId}
      * @param depositId Long - depositId of the Bank Deposit to return
-     * @return Map<K,V>
+     * @return LinkedHashMap<K,V>
      */
-    public Map getBankDepositByIdWithDepositors(Long depositId){
+    public LinkedHashMap getBankDepositByIdWithDepositors(Long depositId){
         LOGGER.debug("getBankDepositByIdWithDepositors {}",host+"/deposit/report/id/"+depositId);
-        return restTemplate.getForObject(host+"/deposit/report/id/"+depositId,Map.class);
+        return restTemplate.getForObject(host+"/deposit/report/id/"+depositId,LinkedHashMap.class);
     }
 
     /**
@@ -234,16 +249,18 @@ public class RestClient {
      *
      * @link http://<host:port>/<project_name-version>/<client_name>/deposit/report/idDate/{depositId},{start},{end}
      * @param depositId Long - depositId of the Bank Deposit to return
-     * @param start Date - start value of the date deposit (startDate < endDate)
-     * @param end Date - end value of the date deposit (endDate > startDate)
-     * @return Map
+     * @param startDate String - start value of the date deposit (startDate < endDate)
+     * @param endDate String - end value of the date deposit (endDate > startDate)
+     * @return LinkedHashMap<K,V>
      */
-    public Map getBankDepositByIdFromToDateDepositWithDepositors(Long depositId, Date start, Date end){
+    public LinkedHashMap getBankDepositByIdFromToDateDepositWithDepositors(Long depositId, String startDate, String endDate)
+            throws ParseException{
         LOGGER.debug("getBankDepositByIdFromToDateDepositWithDepositors {}",
-                host+"/deposit/report/idDate/"+depositId+","+dateFormat.format(start)+","+dateFormat.format(end));
-        Assert.isTrue(start.before(end)||start.equals(end),ERROR_FROM_TO_PARAM);
+                host+"/deposit/report/idDate/"+depositId+","+startDate+","+endDate);
+        Assert.isTrue(dateFormat.parse(startDate).before(dateFormat.parse(endDate))||
+                dateFormat.parse(startDate).equals(dateFormat.parse(endDate)),ERROR_FROM_TO_PARAM);
 
-        return restTemplate.getForObject(host+"/deposit/report/idDate/"+depositId+","+dateFormat.format(start)+","+dateFormat.format(end),Map.class);
+        return restTemplate.getForObject(host+"/deposit/report/idDate/"+depositId+","+startDate+","+endDate,LinkedHashMap.class);
     }
 
     /**
@@ -251,59 +268,65 @@ public class RestClient {
      *
      * @link http://<host:port>/<project_name-version>/<client_name>/deposit/report/idDateReturn/{depositId},{start},{end}
      * @param depositId Long - depositId of the Bank Deposit to return
-     * @param start Date - start value of the date return deposit (startDate < endDate)
-     * @param end Date - end value of the date return deposit (endDate > startDate)
-     * @return Map
+     * @param startDate String - start value of the date return deposit (startDate < endDate)
+     * @param endDate String - end value of the date return deposit (endDate > startDate)
+     * @return LinkedHashMap<K,V>
      */
-    public Map getBankDepositByIdFromToDateReturnDepositWithDepositors(Long depositId, Date start, Date end){
+    public LinkedHashMap getBankDepositByIdFromToDateReturnDepositWithDepositors(Long depositId, String startDate, String endDate)
+            throws ParseException{
         LOGGER.debug("getBankDepositByIdFromToDateReturnDepositWithDepositors {}",
-                host+"/deposit/report/idDate/"+depositId+","+dateFormat.format(start)+","+dateFormat.format(end));
-        Assert.isTrue(start.before(end)||start.equals(end),ERROR_FROM_TO_PARAM);
+                host+"/deposit/report/idDate/"+depositId+","+startDate+","+endDate);
+        Assert.isTrue(dateFormat.parse(startDate).before(dateFormat.parse(endDate))||
+                dateFormat.parse(startDate).equals(dateFormat.parse(endDate)),ERROR_FROM_TO_PARAM);
 
-        return restTemplate.getForObject(host+"/deposit/report/idDateReturn/"+depositId+","+dateFormat.format(start)+","+dateFormat.format(end),Map.class);
+        return restTemplate.getForObject(host+"/deposit/report/idDateReturn/"+depositId+","+startDate+","+endDate,LinkedHashMap.class);
     }
 
     /**
      * Get Bank Deposit with depositors
      *
      * @link http://<host:port>/<project_name-version>/<client_name>/deposit/report/all
-     * @return Map[]
+     * @return LinkedHashMap[]
      */
-    public Map[] getBankDepositsWithDepositors(){
+    public LinkedHashMap[] getBankDepositsWithDepositors(){
         LOGGER.debug("getBankDepositsWithDepositors {}", host+"/deposit/report/all");
-        return restTemplate.getForObject(host+"/deposit/report/all",Map[].class);
+        return restTemplate.getForObject(host+"/deposit/report/all",LinkedHashMap[].class);
     }
 
     /**
      * Get Bank Deposit from-to Date Deposit with depositors
      *
      * @link http://<host:port>/<project_name-version>/<client_name>/deposit/report/allDate/{start},{end}
-     * @param start Date - start value of the date deposit (startDate < endDate)
-     * @param end Date - end value of the date deposit (startDate < endDate)
-     * @return Map[]
+     * @param startDate String - start value of the date deposit (startDate < endDate)
+     * @param endDate String - end value of the date deposit (startDate < endDate)
+     * @return LinkedHashMap[]
      */
-    public Map[] getBankDepositsFromToDateDepositWithDepositors(Date start, Date end){
+    public LinkedHashMap[] getBankDepositsFromToDateDepositWithDepositors(String startDate, String endDate)
+            throws ParseException{
         LOGGER.debug("getBankDepositsFromToDateDepositWithDepositors {}",
-                host+"/deposit/report/allDate/"+dateFormat.format(start)+","+dateFormat.format(end));
-        Assert.isTrue(start.before(end)||start.equals(end),ERROR_FROM_TO_PARAM);
+                host+"/deposit/report/allDate/"+startDate+","+endDate);
+        Assert.isTrue(dateFormat.parse(startDate).before(dateFormat.parse(endDate))||
+                dateFormat.parse(startDate).equals(dateFormat.parse(endDate)),ERROR_FROM_TO_PARAM);
 
-        return restTemplate.getForObject(host+"/deposit/report/allDate/"+dateFormat.format(start)+","+dateFormat.format(end),Map[].class);
+        return restTemplate.getForObject(host+"/deposit/report/allDate/"+startDate+","+endDate,LinkedHashMap[].class);
     }
 
     /**
      * Get Bank Deposit from-to Date return Deposit with depositors
      *
      * @link http://<host:port>/<project_name-version>/<client_name>/deposit/report/allDateReturn/{start},{end}
-     * @param start Date - start value of the date return deposit (startDate < endDate)
-     * @param end Date - end value of the date return deposit (startDate < endDate)
-     * @return Map[]
+     * @param startDate String - start value of the date return deposit (startDate < endDate)
+     * @param endDate String - end value of the date return deposit (startDate < endDate)
+     * @return LinkedHashMap[]
      */
-    public Map[] getBankDepositsFromToDateReturnDepositWithDepositors(Date start, Date end){
+    public LinkedHashMap[] getBankDepositsFromToDateReturnDepositWithDepositors(String startDate, String endDate)
+            throws ParseException{
         LOGGER.debug("getBankDepositsFromToDateReturnDepositWithDepositors {}",
-                host+"/deposit/report/allDateReturn/"+dateFormat.format(start)+","+dateFormat.format(end));
-        Assert.isTrue(start.before(end)||start.equals(end),ERROR_FROM_TO_PARAM);
+                host+"/deposit/report/allDateReturn/"+startDate+","+endDate);
+        Assert.isTrue(dateFormat.parse(startDate).before(dateFormat.parse(endDate))||
+                dateFormat.parse(startDate).equals(dateFormat.parse(endDate)),ERROR_FROM_TO_PARAM);
 
-        return restTemplate.getForObject(host+"/deposit/report/allDateReturn/"+dateFormat.format(start)+","+dateFormat.format(end),Map[].class);
+        return restTemplate.getForObject(host+"/deposit/report/allDateReturn/"+startDate+","+endDate,LinkedHashMap[].class);
     }
 
     /**
@@ -311,11 +334,11 @@ public class RestClient {
      *
      * @link http://<host:port>/<project_name-version>/<client_name>/deposit/report/currency/{depsitCurrency}
      * @param depositCurrency String - Currency of the Bank Deposit to return
-     * @return Map[]
+     * @return LinkedHashMap[]
      */
-    public Map[] getBankDepositsByCurrencyWithDepositors(String depositCurrency){
+    public LinkedHashMap[] getBankDepositsByCurrencyWithDepositors(String depositCurrency){
         LOGGER.debug("getBankDepositsByCurrencyWithDepositors {}",host+"/deposit/report/currency/"+depositCurrency);
-        return  restTemplate.getForObject(host+"/deposit/report/currency/"+depositCurrency, Map[].class);
+        return  restTemplate.getForObject(host+"/deposit/report/currency/"+depositCurrency, LinkedHashMap[].class);
     }
 
     /**
@@ -323,16 +346,18 @@ public class RestClient {
      *
      * @link http://<host:port>/<project_name-version>/<client_name>/deposit/report/currencyDate/{depsitCurrency},{start},{end}
      * @param currency String - Currency of the Bank Deposit to return
-     * @param start Date - start value of the date deposit (startDate < endDate)
-     * @param end Date - end value of the date deposit (startDate < endDate)
-     * @return Map[]
+     * @param startDate String - start value of the date deposit (startDate < endDate)
+     * @param endDate String - end value of the date deposit (startDate < endDate)
+     * @return LinkedHashMap[]
      */
-    public Map[] getBankDepositsByCurrencyFromToDateDepositWithDepositors(String currency, Date start, Date end){
+    public LinkedHashMap[] getBankDepositsByCurrencyFromToDateDepositWithDepositors(String currency, String startDate, String endDate)
+            throws ParseException{
         LOGGER.debug("getBankDepositsByCurrencyFromToDateDepositWithDepositors {}",
-                host+"/deposit/report/currencyDate/"+currency+","+dateFormat.format(start)+","+dateFormat.format(end));
-        Assert.isTrue(start.before(end)||start.equals(end),ERROR_FROM_TO_PARAM);
+                host+"/deposit/report/currencyDate/"+currency+","+startDate+","+endDate);
+        Assert.isTrue(dateFormat.parse(startDate).before(dateFormat.parse(endDate))||
+                dateFormat.parse(startDate).equals(dateFormat.parse(endDate)),ERROR_FROM_TO_PARAM);
 
-        return restTemplate.getForObject(host+"/deposit/report/currencyDate/"+currency+","+dateFormat.format(start)+","+dateFormat.format(end),Map[].class);
+        return restTemplate.getForObject(host+"/deposit/report/currencyDate/"+currency+","+startDate+","+endDate,LinkedHashMap[].class);
     }
 
     /**
@@ -340,16 +365,18 @@ public class RestClient {
      *
      * @link http://<host:port>/<project_name-version>/<client_name>/deposit/report/currencyDateReturn/{depsitCurrency},{start},{end}
      * @param currency String - Currency of the Bank Deposit to return
-     * @param start Date - start value of the date return deposit (startDate < endDate)
-     * @param end Date - end value of the date return deposit (startDate < endDate)
+     * @param startDate String - start value of the date return deposit (startDate < endDate)
+     * @param endDate String - end value of the date return deposit (startDate < endDate)
      * @return Map[]
      */
-    public Map[] getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(String currency, Date start, Date end){
+    public LinkedHashMap[] getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(String currency, String startDate, String endDate)
+            throws ParseException{
         LOGGER.debug("getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors {}",
-                host+"/deposit/report/currencyDateReturn/"+currency+","+dateFormat.format(start)+","+dateFormat.format(end));
-        Assert.isTrue(start.before(end)||start.equals(end),ERROR_FROM_TO_PARAM);
+                host+"/deposit/report/currencyDateReturn/"+currency+","+startDate+","+endDate);
+        Assert.isTrue(dateFormat.parse(startDate).before(dateFormat.parse(endDate))||
+                dateFormat.parse(startDate).equals(dateFormat.parse(endDate)),ERROR_FROM_TO_PARAM);
 
-        return restTemplate.getForObject(host+"/deposit/report/currencyDateReturn/"+currency+","+dateFormat.format(start)+","+dateFormat.format(end),Map[].class);
+        return restTemplate.getForObject(host+"/deposit/report/currencyDateReturn/"+currency+","+startDate+","+endDate,LinkedHashMap[].class);
     }
 
     /**

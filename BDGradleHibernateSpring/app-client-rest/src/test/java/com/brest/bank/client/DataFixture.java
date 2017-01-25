@@ -31,6 +31,31 @@ public class DataFixture {
     }
 
     /**
+     * Get an exists Bank Deposits
+     *
+     * @return BankDeposit with fixed parameters for tests
+     */
+    public static BankDeposit[] getExistDeposits(){
+        BankDeposit[] deposits = new BankDeposit[2];
+        deposits[0] = getExistDeposit(1L);
+        deposits[1] = getExistDeposit(2L);
+        return deposits;
+    }
+
+    /**
+     * Get an exists Bank Deposits
+     *
+     * @return BankDeposit with fixed parameters for tests
+     */
+    public static ArrayList<BankDeposit> getExistListDeposits(){
+        ArrayList<BankDeposit> deposits = new ArrayList<>();
+        deposits.add(getExistDeposit(1L));
+        deposits.add(getExistDeposit(2L));
+
+        return deposits;
+    }
+
+    /**
      * Get exist Bank Deposit with all Bank Depositors
      *
      * @param id Long - id of Bank Deposit
@@ -39,10 +64,10 @@ public class DataFixture {
      * bank depositors
      * @throws ParseException
      */
-    public static Map getExistDepositAllDepositors(Long id, Long idd) throws ParseException{
+    public static LinkedHashMap getExistDepositAllDepositors(Long id, Long idd) throws ParseException{
         BankDeposit deposit = getExistDeposit(id);
         BankDepositor depositor = getExistDepositor(idd);
-        Map<String, Object> list = new HashMap<String, Object>(11);
+        LinkedHashMap<String, Object> list = new LinkedHashMap<>(11);
             list.put("depositId", deposit.getDepositId());
             list.put("depositName", deposit.getDepositName());
             list.put("depositMinTerm", deposit.getDepositMinTerm());
@@ -56,6 +81,44 @@ public class DataFixture {
             list.put("depositorAmountMinusSum", depositor.getDepositorAmountMinusDeposit());
 
         return list;
+    }
+
+    /**
+     * Get exist Bank Deposit with all Bank Depositors
+     *
+     * @returne Map - a bank deposit with a report on all relevant
+     * bank depositors
+     * @throws ParseException
+     */
+    public static LinkedHashMap[] getExistDepositsWithDepositors() throws ParseException{
+        LinkedHashMap[] listMap = new LinkedHashMap[2];
+        LinkedHashMap<String, Object> list = new LinkedHashMap<String, Object>(11);
+        list.put("depositId", 1L);
+        list.put("depositName", "depositName1");
+        list.put("depositMinTerm", 12);
+        list.put("depositMinAmount", 100);
+        list.put("depositCurrency", "usd");
+        list.put("depositInterestRate", 4);
+        list.put("depositAddConditions", "condition1");
+        list.put("depositorCount", 2);
+        list.put("depositorAmountSum", 2000);
+        list.put("depositorAmountPlusSum", 200);
+        list.put("depositorAmountMinusSum", 200);
+        listMap[0]=list;
+        list = new LinkedHashMap<String, Object>(11);
+        list.put("depositId", 2L);
+        list.put("depositName", "depositName2");
+        list.put("depositMinTerm", 12);
+        list.put("depositMinAmount", 100);
+        list.put("depositCurrency", "usd");
+        list.put("depositInterestRate", 4);
+        list.put("depositAddConditions", "condition2");
+        list.put("depositorCount", 2);
+        list.put("depositorAmountSum", 2000);
+        list.put("depositorAmountPlusSum", 200);
+        list.put("depositorAmountMinusSum", 200);
+        listMap[1]=list;
+        return listMap;
     }
 
     /**
@@ -77,6 +140,19 @@ public class DataFixture {
     public static BankDepositor getExistDepositor(Long id) throws ParseException{
         return new BankDepositor(id,"depositorName"+id,
                 dateFormat.parse("2015-01-01"),1000,100,100,dateFormat.parse("2015-09-09"),0,null);
+    }
+
+    /**
+     * Get an exists Bank Depositors with fixed parameters
+     *
+     * @return BankDepositor with fixed parameters for tests
+     */
+    public static BankDepositor[] getExistDepositors() throws ParseException{
+        BankDepositor[] depositors = new BankDepositor[3];
+        depositors[0] = getExistDepositor(1L);
+        depositors[1] = getExistDepositor(2L);
+        depositors[2] = getExistDepositor(3L);
+        return depositors;
     }
 
     /**
