@@ -1,6 +1,7 @@
 rootProject.name = 'BDGradleHibernateSpring'
 include 'app-core'
-//include 'app-dao'
+//include 'app-dao-JDBC'
+//include 'app-dao-hibernate'
 include 'app-dao-hibernateSpring'
 //include 'app-dao-iBatis'
 //include 'app-dao-iBatis3'

@@ -13,8 +13,10 @@
         <constructor-arg value="com.brest.bank.client.RestClient"/>
     </bean>
 
-    <bean id="restClientController" class="com.brest.bank.web.RestClientController">
+    <bean id="webClientController" class="com.brest.bank.web.WebClientController">
+    </bean>
 
+    <bean id="restClientController" class="com.brest.bank.rest.RestClientController">
     </bean>
 
 </beans>
