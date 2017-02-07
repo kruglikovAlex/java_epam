@@ -27,7 +27,7 @@ import static org.springframework.util.Assert.*;
 @ContextConfiguration(locations = {"classpath:/spring-dao-test.xml"})
 public class BankDepositDaoImplDBUnitTest {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(BankDepositDaoImplDBUnitTest.class);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     IDataSet expectedData, actualData;

@@ -18,8 +18,8 @@ import org.hibernate.sql.JoinType;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.management.relation.Relation;
@@ -45,7 +45,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return List<BankDeposit>
      */
     @Override
-    @Transactional
     public List<BankDeposit> getBankDepositsCriteria() {
         LOGGER.debug("getBankDepositsCriteria()");
         deposits = new ArrayList<BankDeposit>();
@@ -79,7 +78,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return BankDeposit
      */
     @Override
-    @Transactional
     public BankDeposit getBankDepositByIdCriteria(Long id){
         LOGGER.debug("getBankDepositByIdCriteria({})", id);
         Assert.notNull(id,ERROR_METHOD_PARAM);
@@ -112,7 +110,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return BankDeposit
      */
     @Override
-    @Transactional
     public BankDeposit getBankDepositByNameCriteria(String name){
         LOGGER.debug("getBankDepositByNameCriteria({})",name);
         Assert.notNull(name,ERROR_METHOD_PARAM);
@@ -145,7 +142,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return List<BankDeposit>
      */
     @Override
-    @Transactional
     public List<BankDeposit> getBankDepositsByCurrencyCriteria(String currency){
         LOGGER.debug("getBankDepositByCurrencyCriteria({})", currency);
         Assert.notNull(currency,ERROR_METHOD_PARAM);
@@ -187,7 +183,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return List<BankDeposit>
      */
     @Override
-    @Transactional
     public List<BankDeposit> getBankDepositsByInterestRateCriteria(Integer rate){
         LOGGER.debug("getBankDepositsByInterestRateCriteria({})", rate);
         Assert.notNull(rate,ERROR_METHOD_PARAM);
@@ -228,7 +223,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return List<BankDeposit>
      */
     @Override
-    @Transactional
     public List<BankDeposit> getBankDepositsFromToMinTermCriteria(Integer fromTerm, Integer toTerm){
         LOGGER.debug("getBankDepositsFromToMinTermCriteria({}, {})",fromTerm,toTerm);
         Assert.notNull(fromTerm,ERROR_METHOD_PARAM);
@@ -271,7 +265,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return List<BankDeposit>
      */
     @Override
-    @Transactional
     public List<BankDeposit> getBankDepositsFromToInterestRateCriteria(Integer startRate, Integer endRate){
         LOGGER.debug("getBankDepositsFromToInterestRateCriteria({}, {})",startRate,endRate);
         Assert.notNull(startRate,ERROR_METHOD_PARAM);
@@ -314,7 +307,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return List<BankDeposit>
      */
     @Override
-    @Transactional
     public List<BankDeposit> getBankDepositsFromToDateDeposit(Date startDate, Date endDate){
         LOGGER.debug("getBankDepositsFromToDateDeposit({}, {})",dateFormat.format(startDate),dateFormat.format(endDate));
         Assert.notNull(startDate,ERROR_METHOD_PARAM);
@@ -358,7 +350,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return List<BankDeposit>
      */
     @Override
-    @Transactional
     public List<BankDeposit> getBankDepositsFromToDateReturnDeposit(Date startDate, Date endDate){
         LOGGER.debug("getBankDepositsFromToDateReturnDeposit({}, {})",dateFormat.format(startDate),
                 dateFormat.format(endDate));
@@ -402,7 +393,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return List<Map>
      */
     @Override
-    @Transactional
     public Map getBankDepositByNameWithDepositors(String name){
         LOGGER.debug("getBankDepositByNameWithDepositors({})", name);
         Assert.notNull(name,ERROR_METHOD_PARAM);
@@ -447,7 +437,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return List<Map>
      */
     @Override
-    @Transactional
     public Map getBankDepositByNameFromToDateDepositWithDepositors(String name,Date startDate, Date endDate){
         LOGGER.debug("getBankDepositByNameFromToDateDepositWithDepositors({}, {}, {})",name,
                 dateFormat.format(startDate),dateFormat.format(endDate));
@@ -499,7 +488,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return Map
      */
     @Override
-    @Transactional
     public Map getBankDepositByNameFromToDateReturnDepositWithDepositors(String name,Date startDate, Date endDate){
         LOGGER.debug("getBankDepositByNameFromToDateReturnDepositWithDepositors({}, {}, {})",name,
                 dateFormat.format(startDate),dateFormat.format(endDate));
@@ -549,7 +537,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return Map
      */
     @Override
-    @Transactional
     public Map getBankDepositByIdWithDepositors(Long id){
         LOGGER.debug("getBankDepositByIdWithDepositors({})", id);
         Assert.notNull(id,ERROR_METHOD_PARAM);
@@ -592,7 +579,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return Map
      */
     @Override
-    @Transactional
     public Map getBankDepositByDepositorIdWithDepositors(Long id){
         LOGGER.debug("getBankDepositByDepositorIdWithDepositors({})", id);
         Assert.notNull(id,ERROR_METHOD_PARAM);
@@ -637,7 +623,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * bank depositors
      */
     @Override
-    @Transactional
     public Map getBankDepositByDepositorNameWithDepositors(String name){
         LOGGER.debug("getBankDepositByDepositorNameWithDepositors({})", name);
         Assert.notNull(name,ERROR_METHOD_PARAM);
@@ -682,7 +667,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return Map
      */
     @Override
-    @Transactional
     public Map getBankDepositByIdFromToDateDepositWithDepositors(Long id,Date startDate, Date endDate){
         LOGGER.debug("getBankDepositByNameFromToDateReturnDepositWithDepositors({}, {}, {})",id,
                 dateFormat.format(startDate),dateFormat.format(endDate));
@@ -732,6 +716,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
+    @Override
     public List<Map> getBankDepositsByVarArgs(Object...args){
         LOGGER.debug("getBankDepositsByVarArgs(args: {})",args);
         Assert.notNull(args,ERROR_METHOD_PARAM);
@@ -840,7 +825,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return Map
      */
     @Override
-    @Transactional
     public Map getBankDepositByIdFromToDateReturnDepositWithDepositors(Long id,Date startDate, Date endDate){
         LOGGER.debug("getBankDepositByIdFromToDateReturnDepositWithDepositors({}, {}, {})",id,
                 dateFormat.format(startDate),dateFormat.format(endDate));
@@ -889,7 +873,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return List<Map>
      */
     @Override
-    @Transactional
     public List<Map> getBankDepositsByTermWithDepositors(Integer term){
         LOGGER.debug("getBankDepositByTermWithDepositors(term = {})", term);
         Assert.notNull(term,ERROR_METHOD_PARAM);
@@ -933,7 +916,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return List<Map>
      */
     @Override
-    @Transactional
     public List<Map> getBankDepositsByAmountWithDepositors(Integer amount){
         LOGGER.debug("getBankDepositsByAmountWithDepositors(amount = {})", amount);
         Assert.notNull(amount,ERROR_METHOD_PARAM);
@@ -979,7 +961,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * bank depositors
      */
     @Override
-    @Transactional
     public List<Map> getBankDepositsByDepositorAmountWithDepositors(Integer from, Integer to){
         LOGGER.debug("getBankDepositsByDepositorAmountWithDepositors(from = {}, to = {})", from, to);
         Assert.notNull(from,ERROR_METHOD_PARAM);
@@ -1026,7 +1007,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * bank depositors
      */
     @Override
-    @Transactional
     public List<Map> getBankDepositsByDepositorMarkReturnWithDepositors(Integer markReturn){
         LOGGER.debug("getBankDepositsByDepositorMarkReturnWithDepositors(markReturn = {})", markReturn);
         Assert.notNull(markReturn,ERROR_METHOD_PARAM);
@@ -1071,7 +1051,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return List<Map>
      */
     @Override
-    @Transactional
     public List<Map> getBankDepositsByRateWithDepositors(Integer rate){
         LOGGER.debug("getBankDepositByRateWithDepositors(rate = {})", rate);
         Assert.notNull(rate,ERROR_METHOD_PARAM);
@@ -1114,6 +1093,7 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return List<Map> - a list of all bank deposits with a report on all relevant
      * bank depositors
      */
+    @Override
     public List<Map> getBankDepositsWithDepositors(){
         LOGGER.debug("getBankDepositsWithDepositors()");
         List list;
@@ -1155,7 +1135,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return List<Map>
      */
     @Override
-    @Transactional
     public List<Map> getBankDepositsFromToDateDepositWithDepositors(Date startDate, Date endDate){
         LOGGER.debug("getBankDepositsFromToDateDepositWithDepositors({}, {})",
                 dateFormat.format(startDate),dateFormat.format(endDate));
@@ -1202,7 +1181,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return List<Map>
      */
     @Override
-    @Transactional
     public List<Map> getBankDepositsFromToDateReturnDepositWithDepositors(Date startDate, Date endDate){
         LOGGER.debug("getBankDepositsFromToDateReturnDepositWithDepositors({}, {})",
                 dateFormat.format(startDate),dateFormat.format(endDate));
@@ -1249,7 +1227,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return List<Map>
      */
     @Override
-    @Transactional
     public List<Map> getBankDepositsByCurrencyWithDepositors(String currency){
         LOGGER.debug("getBankDepositByCurrencyWithDepositors({})", currency);
         Assert.notNull(currency,ERROR_METHOD_PARAM);
@@ -1295,7 +1272,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return List<Map>
      */
     @Override
-    @Transactional
     public List<Map> getBankDepositsByCurrencyFromToDateDepositWithDepositors(String currency,
                                                                              Date startDate,
                                                                              Date endDate){
@@ -1348,7 +1324,6 @@ public class BankDepositDaoImpl implements BankDepositDao {
      * @return List<Map>
      */
     @Override
-    @Transactional
     public List<Map> getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(String currency,
                                                                                    Date startDate,
                                                                                    Date endDate){

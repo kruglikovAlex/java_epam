@@ -817,8 +817,6 @@ public class BankDepositDaoImplTest {
         }
         LOGGER.debug("depositors={}",depositors);
 
-        LOGGER.debug("depositors={}",depositors);
-
         for(BankDepositor depositor: depositors){
             sumAmountDeposit[0] +=      depositor.getDepositorAmountDeposit();
             sumAmountPlusDeposit[0] +=  depositor.getDepositorAmountPlusDeposit();

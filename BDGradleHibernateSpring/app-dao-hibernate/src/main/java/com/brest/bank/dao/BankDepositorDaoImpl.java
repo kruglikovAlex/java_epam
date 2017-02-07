@@ -9,9 +9,9 @@ import org.hibernate.criterion.*;
 
 import java.util.*;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -29,7 +29,6 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
      * @return List<BankDepositor> - a list containing all of the Bank Depositors in the database
      */
     @Override
-    @Transactional
     public List<BankDepositor> getBankDepositorsCriteria() {
         LOGGER.debug("getBankDepositorsCriteria()");
 
@@ -55,6 +54,7 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
      * @param end Date - end value of the date deposit (startDate < endDate)
      * @return List<BankDepositors> a list of all bank depositors with the specified task`s date deposit
      */
+    @Override
     public List<BankDepositor> getBankDepositorsFromToDateDeposit(Date start, Date end){
         LOGGER.debug("getBankDepositorsFromToDateDeposit()");
 
@@ -82,6 +82,7 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
      * @param end Date - end value of the date return deposit (startDate < endDate)
      * @return List<BankDepositors> a list of all bank depositors with the specified task`s date return deposit
      */
+    @Override
     public List<BankDepositor> getBankDepositorsFromToDateReturnDeposit(Date start, Date end){
         LOGGER.debug("getBankDepositorsFromToDateReturnDeposit()");
 
@@ -109,7 +110,6 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
      * @return BankDepositor with the specified id from the database
      */
     @Override
-    @Transactional
     public BankDepositor getBankDepositorByIdCriteria(Long id){
         LOGGER.debug("getBankDepositorByIdCriteria({})", id);
         Assert.notNull(id,ERROR_METHOD_PARAM);
@@ -132,6 +132,7 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
      * @param id  Long - id of the Bank Deposit
      * @return List<BankDepositor> with the specified id bank deposit from the database
      */
+    @Override
     public List<BankDepositor> getBankDepositorByIdDepositCriteria(Long id){
         LOGGER.debug("getBankDepositorByIdDepositCriteria({})", id);
         Assert.notNull(id,ERROR_METHOD_PARAM);
@@ -156,7 +157,6 @@ public class BankDepositorDaoImpl implements BankDepositorDao {
      * @return BankDepositor with the specified id from the database
      */
     @Override
-    @Transactional
     public BankDepositor getBankDepositorByNameCriteria(String name){
         LOGGER.debug("getBankDepositorByNameCriteria({})",name);
         Assert.notNull(name,ERROR_METHOD_PARAM);
