@@ -229,8 +229,7 @@ private BankDepositor depositor = new BankDepositor(null,"", new Date(),0,0,0, n
      * Get Bank Deposits by interest rate
      *
      * @param rate - Integer - interest rate of the Bank Deposits to return
-     * @return ResponseEntity(BankDeposit[]) - a list containing all of the Bank Deposits with the specified
-     * interest rate in the database
+     * @return ModelAndView - "indexRestMain" with current deposit, list of all Bank Deposit and Depositors
      */
     @ResponseBody
     @RequestMapping(value = "/rate/{rate}",method = RequestMethod.GET)
