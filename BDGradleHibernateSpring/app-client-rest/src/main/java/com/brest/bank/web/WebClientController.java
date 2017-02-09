@@ -108,8 +108,7 @@ private BankDepositor depositor = new BankDepositor(null,"", new Date(),0,0,0, n
             view.addObject("depositor",depositor);
         try {
             deposit = restClient.getDepositById(depositId);
-            JsonObject jsonDeposit;
-            jsonDeposit = new JsonObject();
+            JsonObject jsonDeposit = new JsonObject();
             try {
                 jsonDeposit.addProperty("depositId", deposit.getDepositId());
                 jsonDeposit.addProperty("depositName", deposit.getDepositName());
@@ -198,7 +197,7 @@ private BankDepositor depositor = new BankDepositor(null,"", new Date(),0,0,0, n
             BankDeposit[] deposits = restClient.getBankDepositsByCurrency(currency);
             String jsonInString = "";
             try {
-                // Convert object to JSON string and save into a file directly
+                // Convert object to JSON string
                 mapper.writerFor(BankDeposit.class);
 
                 // Convert object to JSON string
@@ -229,8 +228,7 @@ private BankDepositor depositor = new BankDepositor(null,"", new Date(),0,0,0, n
      * Get Bank Deposits by interest rate
      *
      * @param rate - Integer - interest rate of the Bank Deposits to return
-     * @return ResponseEntity(BankDeposit[]) - a list containing all of the Bank Deposits with the specified
-     * interest rate in the database
+     * @return ModelAndView - "indexRestMain" with current deposit, list of all Bank Deposit and Depositors
      */
     @ResponseBody
     @RequestMapping(value = "/rate/{rate}",method = RequestMethod.GET)
@@ -270,8 +268,7 @@ private BankDepositor depositor = new BankDepositor(null,"", new Date(),0,0,0, n
      *
      * @param fromTerm Integer - start value of the min term (count month)
      * @param toTerm Integer - end value of the min term (count month)
-     * @return ResponseEntity(BankDeposit[]) - a list containing all of the Bank Deposits in the database
-     * with the specified task`s min term of deposit
+     * @return ModelAndView - "indexRestMain" with current deposit, list of all Bank Deposit and Depositors
      */
     @ResponseBody
     @RequestMapping(value = "/term/{fromTerm},{toTerm}", method = RequestMethod.GET)
@@ -314,25 +311,24 @@ private BankDepositor depositor = new BankDepositor(null,"", new Date(),0,0,0, n
      *
      * @param startRate Integer - start value of the interest rate (0% < startRate <= 100%)
      * @param endRate Integer - end value of the interest rate (0% < endRate <= 100%)
-     * @return ResponseEntity(BankDeposit[]) - a list containing all of the Bank Deposits in the database
-     * with the specified task`s in of interest rate of deposit
+     * @return ModelAndView - "indexRestMain" with current deposit, list of all Bank Deposit and Depositors
      */
     @ResponseBody
     @RequestMapping(value = "/rateBetween/{startRate},{endRate}", method = RequestMethod.GET)
     public ModelAndView getBankDepositsFromToInterestRate(@PathVariable Integer startRate,
-                                                                               @PathVariable Integer endRate) throws ParseException{
+                                                          @PathVariable Integer endRate) throws ParseException{
         LOGGER.debug("getBankDepositsFromToInterestRate(from={}, to={})",startRate,endRate);
         JSONArray depositsJson = new JSONArray();
         ModelAndView view = new ModelAndView("indexRestMain");
             view.addObject("HOST", host);
             view.addObject("jsonRequest", "");
-            view.addObject("depositor", new BankDepositor(null,"", dateFormat.parse("2017-01-01"),0,0,0, dateFormat.parse("2017-01-01"),0,null));
+            view.addObject("depositor", depositor);
         try{
             BankDeposit[] deposits = restClient.getBankDepositsFromToInterestRate(startRate, endRate);
             try{
                 for (BankDeposit d:deposits
-                        ) {
-                    depositsJson.put(d);
+                    ) {
+                        depositsJson.put(d);
                 }
             }catch (Exception e){
                 LOGGER.error("getBankDepositsFromInterestRate(from={}, to={}), Error parsing JSON. Exception:{}",startRate,
@@ -358,23 +354,43 @@ private BankDepositor depositor = new BankDepositor(null,"", new Date(),0,0,0, n
      *
      * @param startDate String - start value of the date deposit (startDate < endDate)
      * @param endDate String - end value of the date deposit (endDate > startDate)
-     * @return ResponseEntity(BankDeposit[]) - a list containing all of the Bank Deposits in the database
-     * with the specified task`s date of deposit
+     * @return ModelAndView - "indexRestMain" with current deposit, list of all Bank Deposit and Depositors
      */
     @ResponseBody
     @RequestMapping(value = "/date/{startDate},{endDate}", method = RequestMethod.GET)
-    public ResponseEntity<BankDeposit[]> getBankDepositsFromToDateDeposit(@PathVariable String startDate,
-                                                                          @PathVariable String endDate)
+    public ModelAndView getBankDepositsFromToDateDeposit(@PathVariable String startDate,
+                                                         @PathVariable String endDate)
             throws ParseException{
         LOGGER.debug("getBankDepositsFromToDateDeposit(startDate={},endDate={})",startDate,endDate);
+        JSONArray depositsJson = new JSONArray();
+        ModelAndView view = new ModelAndView("indexRestMain");
+            view.addObject("HOST", host);
+            view.addObject("jsonRequest", "");
+            view.addObject("depositor", depositor);
         try{
             BankDeposit[] deposits = restClient.getBankDepositsFromToDateDeposit(startDate,endDate);
-            return new ResponseEntity<BankDeposit[]>(deposits,HttpStatus.FOUND);
+            try{
+                for (BankDeposit d:deposits
+                        ) {
+                    depositsJson.put(d);
+                }
+            }catch (Exception e){
+                LOGGER.error("getBankDepositsFromToDateDeposit(startDate={},endDate={}), Error parsing JSON. Exception:{}",startDate,
+                        endDate,e.getMessage());
+            }
+            view.addObject("deposit",deposits[0]);
+            view.addObject("responseHeader", "HTTP " + HttpStatus.OK);
+            view.addObject("responseRaw",Arrays.asList(deposits));
+            view.addObject("responseJson",depositsJson);
         }catch (Exception e){
             LOGGER.error("getBankDepositsFromToDateDeposit(startDate={},endDate={}), Exception:{}",startDate,
                     endDate,e.getMessage());
-            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+            view.addObject("deposit",new BankDeposit());
+            view.addObject("responseHeader", HttpStatus.NOT_FOUND);
+            view.addObject("responseRaw",e.getMessage());
+            view.addObject("responseJson",e.getMessage());
         }
+        return view;
     }
 
     /**
@@ -382,45 +398,82 @@ private BankDepositor depositor = new BankDepositor(null,"", new Date(),0,0,0, n
      *
      * @param startDate String - start value of the date return deposit (startDate < endDate)
      * @param endDate String - end value of the date return deposit (endDate > startDate)
-     * @return ResponseEntity(BankDeposit[]) - a list containing all of the Bank Deposits in the database
-     * with the specified task`s date return of deposit
+     * @return ModelAndView - "indexRestMain" with current deposit, list of all Bank Deposit and Depositors
      * @throws ParseException
      */
     @ResponseBody
     @RequestMapping(value = "/returnDate/{startDate},{endDate}", method = RequestMethod.GET)
-    public ResponseEntity<BankDeposit[]> getBankDepositsFromToDateReturnDeposit(@PathVariable String startDate,
-                                                                                    @PathVariable String endDate)
+    public ModelAndView getBankDepositsFromToDateReturnDeposit(@PathVariable String startDate,
+                                                               @PathVariable String endDate)
             throws ParseException{
         LOGGER.debug("getBankDepositsFromToDateReturnDeposit(startDate={},endDate={})",startDate,endDate);
+        JSONArray depositsJson = new JSONArray();
+        ModelAndView view = new ModelAndView("indexRestMain");
+            view.addObject("HOST", host);
+            view.addObject("jsonRequest", "");
+            view.addObject("depositor", depositor);
         try{
             BankDeposit[] deposits = restClient
                     .getBankDepositsFromToDateReturnDeposit(startDate,endDate);
-            return new ResponseEntity<BankDeposit[]>(deposits,HttpStatus.FOUND);
+            try{
+                for (BankDeposit d:deposits
+                        ) {
+                    depositsJson.put(d);
+                }
+            }catch (Exception e){
+                LOGGER.error("getBankDepositsFromToDateReturnDeposit(startDate={},endDate={}), Error parsing JSON. Exception:{}",startDate,
+                        endDate,e.getMessage());
+            }
+            view.addObject("deposit",deposits[0]);
+            view.addObject("responseHeader", "HTTP " + HttpStatus.OK);
+            view.addObject("responseRaw",Arrays.asList(deposits));
+            view.addObject("responseJson",depositsJson);
         }catch (Exception e){
             LOGGER.error("getBankDepositsFromToDateReturnDeposit(startDate={},endDate={}), Exception:{}",
                     startDate,endDate,e.getMessage());
-            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+            view.addObject("deposit",new BankDeposit());
+            view.addObject("responseHeader", HttpStatus.NOT_FOUND);
+            view.addObject("responseRaw",e.getMessage());
+            view.addObject("responseJson",e.getMessage());
         }
+        return view;
     }
 
     /**
      * Get Bank Deposits by NAME with depositors
      *
      * @param name String - name of the Bank Deposit to return
-     * @return ResponseEntity(LinkedHashMap) - a bank deposit with a report on all relevant
-     * bank depositors
+     * @return ModelAndView - "indexRestMain" with current deposit, list of all Bank Deposit and Depositors
      */
     @ResponseBody
     @RequestMapping(value = "/report/name/{name}",method = RequestMethod.GET)
-    public ResponseEntity<LinkedHashMap> getBankDepositByNameWithDepositors(@PathVariable String name){
+    public ModelAndView getBankDepositByNameWithDepositors(@PathVariable String name){
         LOGGER.debug("getBankDepositByNameWithDepositors(name={})",name);
+        JSONObject jsonObject = new JSONObject();
+        ModelAndView view = new ModelAndView("indexRestMain");
+            view.addObject("HOST", host);
+            view.addObject("jsonRequest", "");
+            view.addObject("depositor", depositor);
         try{
-            LinkedHashMap deposit = restClient.getBankDepositByNameWithDepositors(name);
-            return new ResponseEntity<LinkedHashMap>(deposit,HttpStatus.FOUND);
+            LinkedHashMap depositReport = restClient.getBankDepositByNameWithDepositors(name);
+            try{
+                jsonObject.put("BankDepositReport",depositReport);
+            }catch (Exception e){
+                LOGGER.error("getBankDepositByNameWithDepositors(name={}), Error parsing JSON. Exception:{}",name,e.getMessage());
+            }
+            view.addObject("deposit",deposit);
+            view.addObject("responseHeader", "HTTP " + HttpStatus.OK);
+            view.addObject("responseRaw",depositReport);
+            view.addObject("responseJson",jsonObject);
+
         }catch (Exception e){
             LOGGER.error("getBankDepositByNameWithDepositors(name={}),Exception:{}",name,e.getMessage());
-            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+            view.addObject("deposit",new BankDeposit());
+            view.addObject("responseHeader", HttpStatus.NOT_FOUND);
+            view.addObject("responseRaw",e.getMessage());
+            view.addObject("responseJson",e.getMessage());
         }
+        return view;
     }
 
     /**
@@ -429,27 +482,45 @@ private BankDepositor depositor = new BankDepositor(null,"", new Date(),0,0,0, n
      * @param name String - name of the Bank Deposit to return
      * @param startDate String - start value of the date deposit (startDate < endDate)
      * @param endDate String - end value of the date deposit (endDate > startDate)
-     * @return ResponseEntity(LinkedHashMap) - a bank deposit with a report on all relevant
-     * bank depositors with the specified task`s date of deposit
+     * @return ModelAndView - "indexRestMain" with current deposit, list of all Bank Deposit and Depositors
      * @throws ParseException
      */
     @ResponseBody
     @RequestMapping(value = "report/nameDate/{name},{startDate},{endDate}",method = RequestMethod.GET)
-    public ResponseEntity<LinkedHashMap> getBankDepositByNameFromToDateDepositWithDepositors(@PathVariable String name,
-                                                                                             @PathVariable String startDate,
-                                                                                             @PathVariable String endDate)
+    public ModelAndView getBankDepositByNameFromToDateDepositWithDepositors(@PathVariable String name,
+                                                                            @PathVariable String startDate,
+                                                                            @PathVariable String endDate)
             throws ParseException{
         LOGGER.debug("getBankDepositByNameFromToDateDepositWithDepositors(name={},startDate={},endDate={})",
                 name,startDate,endDate);
+        JSONObject jsonObject = new JSONObject();
+        ModelAndView view = new ModelAndView("indexRestMain");
+            view.addObject("HOST", host);
+            view.addObject("jsonRequest", "");
+            view.addObject("depositor", depositor);
         try{
-            LinkedHashMap deposit = restClient.getBankDepositByNameFromToDateDepositWithDepositors(name,
+            LinkedHashMap depositReport = restClient.getBankDepositByNameFromToDateDepositWithDepositors(name,
                     startDate,endDate);
-            return new ResponseEntity<LinkedHashMap>(deposit,HttpStatus.FOUND);
+
+            try{
+                jsonObject.put("BankDepositReport",depositReport);
+            }catch (Exception e){
+                LOGGER.error("getBankDepositByNameFromToDateDepositWithDepositors(name={},startDate={},endDate={}), " +
+                        "Error parsing JSON. Exception:{}",name,startDate,endDate,e.getMessage());
+            }
+            view.addObject("deposit",deposit);
+            view.addObject("responseHeader", "HTTP " + HttpStatus.OK);
+            view.addObject("responseRaw",depositReport);
+            view.addObject("responseJson",jsonObject);
         }catch (Exception e){
             LOGGER.error("getBankDepositByNameFromToDateDepositWithDepositors(name={},startDate={},endDate={})," +
                     "Exception:{}",name,startDate,endDate,e.getMessage());
-            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+            view.addObject("deposit",new BankDeposit());
+            view.addObject("responseHeader", HttpStatus.NOT_FOUND);
+            view.addObject("responseRaw",e.getMessage());
+            view.addObject("responseJson",e.getMessage());
         }
+        return view;
     }
 
     /**
@@ -458,47 +529,82 @@ private BankDepositor depositor = new BankDepositor(null,"", new Date(),0,0,0, n
      * @param name String - name of the Bank Deposit to return
      * @param startDate String - start value of the date return deposit (startDate < endDate)
      * @param endDate String - end value of the date return deposit (endDate > startDate)
-     * @return ResponseEntity(LinkedHashMap) - a bank deposit with a report on all relevant
-     * bank depositors with the specified task`s date return of deposit
+     * @return ModelAndView - "indexRestMain" with current deposit, list of all Bank Deposit and Depositors
      * @throws ParseException
      */
     @ResponseBody
     @RequestMapping(value = "/report/nameDateReturn/{name},{startDate},{endDate}", method = RequestMethod.GET)
-    public ResponseEntity<LinkedHashMap> getBankDepositByNameFromToDateReturnDepositWithDepositors(@PathVariable String name,
-                                                                                                   @PathVariable String startDate,
-                                                                                                   @PathVariable String endDate)
+    public ModelAndView getBankDepositByNameFromToDateReturnDepositWithDepositors(@PathVariable String name,
+                                                                                  @PathVariable String startDate,
+                                                                                  @PathVariable String endDate)
             throws ParseException{
         LOGGER.debug("getBankDepositByNameFromToDateReturnDepositWithDepositors(name={},startDate={},endDate={})",
                 name,startDate,endDate);
+        JSONObject jsonObject = new JSONObject();
+        ModelAndView view = new ModelAndView("indexRestMain");
+            view.addObject("HOST", host);
+            view.addObject("jsonRequest", "");
+            view.addObject("depositor", depositor);
         try{
-            LinkedHashMap deposit = restClient.getBankDepositByNameFromToDateReturnDepositWithDepositors(name,
+            LinkedHashMap depositReport = restClient.getBankDepositByNameFromToDateReturnDepositWithDepositors(name,
                     startDate,endDate);
-            return new ResponseEntity<LinkedHashMap>(deposit,HttpStatus.FOUND);
+            try{
+                jsonObject.put("BankDepositReport",depositReport);
+            }catch (Exception e){
+                LOGGER.error("getBankDepositByNameFromToDateReturnDepositWithDepositors(name={},startDate={},endDate={}), " +
+                        "Error parsing JSON. Exception:{}",name,startDate,endDate,e.getMessage());
+            }
+            view.addObject("deposit",deposit);
+            view.addObject("responseHeader", "HTTP " + HttpStatus.OK);
+            view.addObject("responseRaw",depositReport);
+            view.addObject("responseJson",jsonObject);
         }catch (Exception e){
             LOGGER.error("getBankDepositByNameFromToDateReturnDepositWithDepositors(name={},startDate={}," +
                     "endDate={}),Exception:{}",name,startDate,endDate,e.getMessage());
-            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+            view.addObject("deposit",new BankDeposit());
+            view.addObject("responseHeader", HttpStatus.NOT_FOUND);
+            view.addObject("responseRaw",e.getMessage());
+            view.addObject("responseJson",e.getMessage());
         }
+        return view;
     }
 
     /**
      * Get Bank Deposits by ID with depositors
      *
      * @param id Long - depositId of the Bank Deposit to return
-     * @return ResponseEntity(LinkedHashMap) - a bank deposit with a report on all relevant
+     * @return ModelAndView - "indexRestMain" with current deposit, list of all Bank Deposit and Depositors
      * bank depositors
      */
     @ResponseBody
     @RequestMapping(value = "/report/id/{id}",method = RequestMethod.GET)
-    public ResponseEntity<LinkedHashMap> getBankDepositByIdWithDepositors(@PathVariable Long id){
+    public ModelAndView getBankDepositByIdWithDepositors(@PathVariable Long id){
         LOGGER.debug("getBankDepositByIdWithDepositors(id={})",id);
+        JSONObject jsonObject = new JSONObject();
+        ModelAndView view = new ModelAndView("indexRestMain");
+            view.addObject("HOST", host);
+            view.addObject("jsonRequest", "");
+            view.addObject("depositor", depositor);
         try{
-            LinkedHashMap deposit = restClient.getBankDepositByIdWithDepositors(id);
-            return new ResponseEntity<LinkedHashMap>(deposit,HttpStatus.FOUND);
+            LinkedHashMap depositReport = restClient.getBankDepositByIdWithDepositors(id);
+            try{
+                jsonObject.put("BankDepositReport",depositReport);
+            }catch (Exception e){
+                LOGGER.error("getBankDepositByIdWithDepositors(id={}), " +
+                        "Error parsing JSON. Exception:{}",id,e.getMessage());
+            }
+            view.addObject("deposit",deposit);
+            view.addObject("responseHeader", "HTTP " + HttpStatus.OK);
+            view.addObject("responseRaw",depositReport);
+            view.addObject("responseJson",jsonObject);
         }catch (Exception e){
             LOGGER.error("getBankDepositByIdWithDepositors(id={}), Exception:{}",id,e.getMessage());
-            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+            view.addObject("deposit",new BankDeposit());
+            view.addObject("responseHeader", HttpStatus.NOT_FOUND);
+            view.addObject("responseRaw",e.getMessage());
+            view.addObject("responseJson",e.getMessage());
         }
+        return view;
     }
 
     /**
@@ -507,27 +613,44 @@ private BankDepositor depositor = new BankDepositor(null,"", new Date(),0,0,0, n
      * @param id Long - depositId of the Bank Deposit to return
      * @param startDate String - start value of the date deposit (startDate < endDate)
      * @param endDate String - end value of the date deposit (endDate > startDate)
-     * @return ResponseEntity(LinkedHashMap) - a bank deposit with a report on all relevant
-     * bank depositors with the specified task`s date of deposit
+     * @return ModelAndView - "indexRestMain" with current deposit, list of all Bank Deposit and Depositors
      * @throws ParseException
      */
     @ResponseBody
     @RequestMapping(value = "/report/idDate/{id},{startDate},{endDate}", method = RequestMethod.GET)
-    public ResponseEntity<LinkedHashMap> getBankDepositByIdFromToDateDepositWithDepositors(@PathVariable Long id,
-                                                                                           @PathVariable String startDate,
-                                                                                           @PathVariable String endDate)
+    public ModelAndView getBankDepositByIdFromToDateDepositWithDepositors(@PathVariable Long id,
+                                                                          @PathVariable String startDate,
+                                                                          @PathVariable String endDate)
             throws ParseException{
         LOGGER.debug("getBankDepositByIdFromToDateDepositWithDepositors(id={},startDate={},endDate={})",
                 id, startDate, endDate);
+        JSONObject jsonObject = new JSONObject();
+        ModelAndView view = new ModelAndView("indexRestMain");
+            view.addObject("HOST", host);
+            view.addObject("jsonRequest", "");
+            view.addObject("depositor", depositor);
         try{
-            LinkedHashMap deposit = restClient.getBankDepositByIdFromToDateDepositWithDepositors(id,
+            LinkedHashMap depositReport = restClient.getBankDepositByIdFromToDateDepositWithDepositors(id,
                             startDate,endDate);
-            return new ResponseEntity<LinkedHashMap>(deposit, HttpStatus.FOUND);
+            try{
+                jsonObject.put("BankDepositReport",depositReport);
+            }catch (Exception e){
+                LOGGER.error("getBankDepositByIdFromToDateDepositWithDepositors(id={},startDate={},endDate={}), " +
+                        "Error parsing JSON. Exception:{}",id,startDate,endDate,e.getMessage());
+            }
+            view.addObject("deposit",deposit);
+            view.addObject("responseHeader", "HTTP " + HttpStatus.OK);
+            view.addObject("responseRaw",depositReport);
+            view.addObject("responseJson",jsonObject);
         }catch (Exception e){
             LOGGER.error("getBankDepositByIdFromToDateDepositWithDepositors(id={},startDate={},endDate={}), " +
                     "Exception:{}",id,startDate,endDate,e.getMessage());
-            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+            view.addObject("deposit",new BankDeposit());
+            view.addObject("responseHeader", HttpStatus.NOT_FOUND);
+            view.addObject("responseRaw",e.getMessage());
+            view.addObject("responseJson",e.getMessage());
         }
+        return view;
     }
 
     /**
@@ -536,46 +659,82 @@ private BankDepositor depositor = new BankDepositor(null,"", new Date(),0,0,0, n
      * @param id Long - depositId of the Bank Deposit to return
      * @param startDate String - start value of the date return deposit (startDate < endDate)
      * @param endDate String - end value of the date return deposit (endDate > startDate)
-     * @return ResponseEntity(LinkedHashMap) - a bank deposit with a report on all relevant
-     * bank depositors with the specified task`s date of deposit
+     * @return ModelAndView - "indexRestMain" with current deposit, list of all Bank Deposit and Depositors
      * @throws ParseException
      */
     @ResponseBody
     @RequestMapping(value = "/report/idDateReturn/{id},{startDate},{endDate}", method = RequestMethod.GET)
-    public ResponseEntity<LinkedHashMap> getBankDepositByIdFromToDateReturnDepositWithDepositors(@PathVariable Long id,
-                                                                                       @PathVariable String startDate,
-                                                                                       @PathVariable String endDate)
+    public ModelAndView getBankDepositByIdFromToDateReturnDepositWithDepositors(@PathVariable Long id,
+                                                                                @PathVariable String startDate,
+                                                                                @PathVariable String endDate)
             throws ParseException{
         LOGGER.debug("getBankDepositByIdFromToDateReturnDepositWithDepositors(id={},startDate={},endDate={})",
                 id, startDate, endDate);
+        JSONObject jsonObject = new JSONObject();
+        ModelAndView view = new ModelAndView("indexRestMain");
+            view.addObject("HOST", host);
+            view.addObject("jsonRequest", "");
+            view.addObject("depositor", depositor);
         try{
-            LinkedHashMap deposit = restClient.getBankDepositByIdFromToDateReturnDepositWithDepositors(id,
+            LinkedHashMap depositReport = restClient.getBankDepositByIdFromToDateReturnDepositWithDepositors(id,
                     startDate, endDate);
-            return new ResponseEntity<LinkedHashMap>(deposit, HttpStatus.FOUND);
+            try{
+                jsonObject.put("BankDepositReport",depositReport);
+            }catch (Exception e){
+                LOGGER.error("getBankDepositByIdFromToDateReturnDepositWithDepositors(id={},startDate={},endDate={}), " +
+                        "Error parsing JSON. Exception:{}",id,startDate,endDate,e.getMessage());
+            }
+            view.addObject("deposit",deposit);
+            view.addObject("responseHeader", "HTTP " + HttpStatus.OK);
+            view.addObject("responseRaw",depositReport);
+            view.addObject("responseJson",jsonObject);
         }catch (Exception e){
             LOGGER.error("getBankDepositByIdFromToDateReturnDepositWithDepositors(id={},startDate={},endDate={}), " +
                     "Exception:{}",id,startDate,endDate,e.getMessage());
-            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+            view.addObject("deposit",new BankDeposit());
+            view.addObject("responseHeader", HttpStatus.NOT_FOUND);
+            view.addObject("responseRaw",e.getMessage());
+            view.addObject("responseJson",e.getMessage());
         }
+        return view;
     }
 
     /**
      * Get Bank Deposit with depositors
      *
-     * @return ResponseEntity(List<LinkedHashMap>) - a list of all bank deposits with a report on all relevant
-     * bank depositors
+     * @return ModelAndView - "indexRestMain" with current deposit, list of all Bank Deposit and Depositors
      */
     @ResponseBody
     @RequestMapping(value = "/report/all",method = RequestMethod.GET)
-    public ResponseEntity<LinkedHashMap[]> getBankDepositsWithDepositors(){
+    public ModelAndView getBankDepositsWithDepositors(){
         LOGGER.debug("getBankDepositsWithDepositors()");
+        JSONArray depositsJson = new JSONArray();
+        ModelAndView view = new ModelAndView("indexRestMain");
+            view.addObject("HOST", host);
+            view.addObject("jsonRequest", "");
+            view.addObject("depositor", depositor);
         try{
             LinkedHashMap[] deposits = restClient.getBankDepositsWithDepositors();
-            return new ResponseEntity<LinkedHashMap[]>(deposits,HttpStatus.FOUND);
+            try{
+                for (LinkedHashMap d:deposits
+                        ) {
+                    depositsJson.put(d);
+                }
+            }catch (Exception e){
+                LOGGER.error("getBankDepositsWithDepositors(), Error parsing JSON. Exception:{}", e.getMessage());
+            }
+            view.addObject("deposit",deposit);
+            view.addObject("responseHeader", "HTTP " + HttpStatus.OK);
+            view.addObject("responseRaw",Arrays.asList(deposits));
+            view.addObject("responseJson",depositsJson);
         }catch (Exception e){
             LOGGER.error("getBankDepositsWithDepositors(), Exception;{}",e.getMessage());
-            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+            view.addObject("deposit",new BankDeposit());
+            view.addObject("responseHeader", HttpStatus.NOT_FOUND);
+            view.addObject("responseRaw",e.getMessage());
+            view.addObject("responseJson",e.getMessage());
         }
+        return view;
     }
 
     /**
@@ -583,25 +742,44 @@ private BankDepositor depositor = new BankDepositor(null,"", new Date(),0,0,0, n
      *
      * @param startDate String - start value of the date deposit (startDate < endDate)
      * @param endDate String - end value of the date deposit (startDate < endDate)
-     * @return ResponseEntity(LinkedHashMap[]) - a list of all bank deposits with a report on all relevant
-     * bank depositors with the specified task`s date deposit
+     * @return ModelAndView - "indexRestMain" with current deposit, list of all Bank Deposit and Depositors
      * @throws ParseException
      */
     @ResponseBody
     @RequestMapping(value="/report/allDate/{startDate},{endDate}",method = RequestMethod.GET)
-    public ResponseEntity<LinkedHashMap[]> getBankDepositsFromToDateDepositWithDepositors(@PathVariable String startDate,
+    public ModelAndView getBankDepositsFromToDateDepositWithDepositors(@PathVariable String startDate,
                                                                                           @PathVariable String endDate)
             throws ParseException{
         LOGGER.debug("getBankDepositsFromToDateDepositWithDepositors(startDate={},endDate={})",startDate,endDate);
+        JSONArray depositsJson = new JSONArray();
+        ModelAndView view = new ModelAndView("indexRestMain");
+            view.addObject("HOST", host);
+            view.addObject("jsonRequest", "");
+            view.addObject("depositor", depositor);
         try{
             LinkedHashMap[] deposits =
                     restClient.getBankDepositsFromToDateDepositWithDepositors(startDate, endDate);
-            return new ResponseEntity<LinkedHashMap[]>(deposits,HttpStatus.FOUND);
+            try{
+                for (LinkedHashMap d:deposits
+                        ) {
+                    depositsJson.put(d);
+                }
+            }catch (Exception e){
+                LOGGER.error("getBankDepositsFromToDateDepositWithDepositors(startDate={},endDate={}), Error parsing JSON. Exception:{}", startDate,endDate, e.getMessage());
+            }
+            view.addObject("deposit",deposit);
+            view.addObject("responseHeader", "HTTP " + HttpStatus.OK);
+            view.addObject("responseRaw",Arrays.asList(deposits));
+            view.addObject("responseJson",depositsJson);
         }catch (Exception e){
             LOGGER.error("getBankDepositsFromToDateDepositWithDepositors(startDate={},endDate={}), Exception:{}",
                     startDate,endDate,e.getMessage());
-            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+            view.addObject("deposit",new BankDeposit());
+            view.addObject("responseHeader", HttpStatus.NOT_FOUND);
+            view.addObject("responseRaw",e.getMessage());
+            view.addObject("responseJson",e.getMessage());
         }
+        return view;
     }
 
     /**
@@ -609,47 +787,84 @@ private BankDepositor depositor = new BankDepositor(null,"", new Date(),0,0,0, n
      *
      * @param startDate String - start value of the date return deposit (startDate < endDate)
      * @param endDate String - end value of the date return deposit (startDate < endDate)
-     * @return ResponseEntity(LinkedHashMap[]) - a list of all bank deposits with a report on all relevant
-     * bank depositors with the specified task`s date return deposit
+     * @return ModelAndView - "indexRestMain" with current deposit, list of all Bank Deposit and Depositors
      * @throws ParseException
      */
     @ResponseBody
     @RequestMapping(value = "/report/allDateReturn/{startDate},{endDate}",method = RequestMethod.GET)
-    public ResponseEntity<LinkedHashMap[]> getBankDepositsFromToDateReturnDepositWithDepositors(@PathVariable String startDate,
+    public ModelAndView getBankDepositsFromToDateReturnDepositWithDepositors(@PathVariable String startDate,
                                                                                                 @PathVariable String endDate)
             throws ParseException{
         LOGGER.debug("getBankDepositsFromToDateReturnDepositWithDepositors(startDate={},endDate={})",startDate,endDate);
+        JSONArray depositsJson = new JSONArray();
+        ModelAndView view = new ModelAndView("indexRestMain");
+            view.addObject("HOST", host);
+            view.addObject("jsonRequest", "");
+            view.addObject("depositor", depositor);
         try{
             LinkedHashMap[] deposits =
                     restClient.getBankDepositsFromToDateReturnDepositWithDepositors(startDate,endDate);
-            return new ResponseEntity<LinkedHashMap[]>(deposits,HttpStatus.FOUND);
+            try{
+                for (LinkedHashMap d:deposits
+                        ) {
+                    depositsJson.put(d);
+                }
+            }catch (Exception e){
+                LOGGER.error("getBankDepositsFromToDateReturnDepositWithDepositors(startDate={},endDate={}), Error parsing JSON. Exception:{}", startDate,endDate, e.getMessage());
+            }
+            view.addObject("deposit",deposit);
+            view.addObject("responseHeader", "HTTP " + HttpStatus.OK);
+            view.addObject("responseRaw",Arrays.asList(deposits));
+            view.addObject("responseJson",depositsJson);
 
         }catch (Exception e){
             LOGGER.error("getBankDepositsFromToDateReturnDepositWithDepositors(startDate={},endDate={}), Exception:{}",
                     startDate,endDate,e.getMessage());
-            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+            view.addObject("deposit",new BankDeposit());
+            view.addObject("responseHeader", HttpStatus.NOT_FOUND);
+            view.addObject("responseRaw",e.getMessage());
+            view.addObject("responseJson",e.getMessage());
         }
+        return view;
     }
 
     /**
      * Get Bank Deposit by Currency with depositors
      *
      * @param currency String - Currency of the Bank Deposit to return
-     * @return ResponseEntity(LinkedHashMap[]) - a list of all bank deposits with a report on all relevant
-     * bank depositors
+     * @return ModelAndView - "indexRestMain" with current deposit, list of all Bank Deposit and Depositors
      */
     @ResponseBody
     @RequestMapping(value = "/report/currency/{currency}",method = RequestMethod.GET)
-    public ResponseEntity<LinkedHashMap[]> getBankDepositsByCurrencyWithDepositors(@PathVariable String currency){
+    public ModelAndView getBankDepositsByCurrencyWithDepositors(@PathVariable String currency){
         LOGGER.debug("getBankDepositsByCurrencyWithDepositors(currency={})",currency);
+        JSONArray depositsJson = new JSONArray();
+        ModelAndView view = new ModelAndView("indexRestMain");
+            view.addObject("HOST", host);
+            view.addObject("jsonRequest", "");
+            view.addObject("depositor", depositor);
         try{
             LinkedHashMap[] deposits = restClient.getBankDepositsByCurrencyWithDepositors(currency);
-            return new ResponseEntity<LinkedHashMap[]>(deposits,HttpStatus.FOUND);
+            try{
+                for (LinkedHashMap d:deposits
+                        ) {
+                    depositsJson.put(d);
+                }
+            }catch (Exception e){
+                LOGGER.error("getBankDepositsByCurrencyWithDepositors(currency={}), Error parsing JSON. Exception:{}", currency, e.getMessage());
+            }
+            view.addObject("deposit",deposit);
+            view.addObject("responseHeader", "HTTP " + HttpStatus.OK);
+            view.addObject("responseRaw",Arrays.asList(deposits));
+            view.addObject("responseJson",depositsJson);
         }catch (Exception e){
             LOGGER.error("getBankDepositsByCurrencyWithDepositors(currency={}), Exception:{}",currency,e.getMessage());
-            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+            view.addObject("deposit",new BankDeposit());
+            view.addObject("responseHeader", HttpStatus.NOT_FOUND);
+            view.addObject("responseRaw",e.getMessage());
+            view.addObject("responseJson",e.getMessage());
         }
-
+        return view;
     }
 
     /**
