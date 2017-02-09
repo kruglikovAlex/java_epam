@@ -12,6 +12,7 @@ import org.easymock.Mock;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,9 +27,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
+import java.util.*;
 
 import static org.easymock.EasyMock.*;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -238,13 +237,16 @@ public class WebClientControllerMockTest {
         this.mockMvc.perform(get("/deposit/date/2016-01-01,2017-01-01")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isFound())
-                .andExpect(content().string("[{\"depositId\":1,\"depositName\":\"depositName1\"," +
-                        "\"depositMinTerm\":12,\"depositMinAmount\":1000,\"depositCurrency\":\"usd\"," +
-                        "\"depositInterestRate\":4,\"depositAddConditions\":\"conditions1\",\"depositors\":[]}," +
-                        "{\"depositId\":2,\"depositName\":\"depositName2\",\"depositMinTerm\":12," +
-                        "\"depositMinAmount\":1000,\"depositCurrency\":\"usd\",\"depositInterestRate\":4," +
-                        "\"depositAddConditions\":\"conditions2\",\"depositors\":[]}]"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("indexRestMain"))
+                .andExpect(model().attributeExists("responseRaw","responseJson"))
+                .andExpect(model().attribute("depositor", Matchers.isA(BankDepositor.class)))
+                .andExpect(model().attribute("deposit",Matchers.isA(BankDeposit.class)))
+                .andExpect(model().attribute("responseRaw",Matchers.isA(Arrays.asList().getClass())))
+                .andExpect(model().attribute("responseJson", Matchers.isA(JSONArray.class)))
+                .andExpect(status().isOk())
+                .andDo(log())
+                .andDo(print());
 
         verify(restClient);
     }
@@ -258,13 +260,16 @@ public class WebClientControllerMockTest {
         this.mockMvc.perform(get("/deposit/returnDate/2015-01-01,2015-02-02")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isFound())
-                .andExpect(content().string("[{\"depositId\":1,\"depositName\":\"depositName1\"," +
-                        "\"depositMinTerm\":12,\"depositMinAmount\":1000,\"depositCurrency\":\"usd\"," +
-                        "\"depositInterestRate\":4,\"depositAddConditions\":\"conditions1\",\"depositors\":[]}," +
-                        "{\"depositId\":2,\"depositName\":\"depositName2\",\"depositMinTerm\":12," +
-                        "\"depositMinAmount\":1000,\"depositCurrency\":\"usd\",\"depositInterestRate\":4," +
-                        "\"depositAddConditions\":\"conditions2\",\"depositors\":[]}]"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("indexRestMain"))
+                .andExpect(model().attributeExists("responseRaw","responseJson"))
+                .andExpect(model().attribute("depositor", Matchers.isA(BankDepositor.class)))
+                .andExpect(model().attribute("deposit",Matchers.isA(BankDeposit.class)))
+                .andExpect(model().attribute("responseRaw",Matchers.isA(Arrays.asList().getClass())))
+                .andExpect(model().attribute("responseJson", Matchers.isA(JSONArray.class)))
+                .andExpect(status().isOk())
+                .andDo(log())
+                .andDo(print());
 
         verify(restClient);
     }
@@ -278,12 +283,16 @@ public class WebClientControllerMockTest {
         this.mockMvc.perform(get("/deposit/report/name/depositName1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isFound())
-                .andExpect(content().string("{\"depositId\":1,\"depositName\":\"depositName1\"," +
-                        "\"depositMinTerm\":12,\"depositMinAmount\":1000,\"depositCurrency\":\"usd\"," +
-                        "\"depositInterestRate\":4,\"depositAddConditions\":\"conditions1\"," +
-                        "\"depositorCount\":1,\"depositorAmountSum\":1000,\"depositorAmountPlusSum\":100," +
-                        "\"depositorAmountMinusSum\":100}"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("indexRestMain"))
+                .andExpect(model().attributeExists("responseRaw","responseJson"))
+                .andExpect(model().attribute("depositor", Matchers.isA(BankDepositor.class)))
+                .andExpect(model().attribute("deposit",Matchers.isA(BankDeposit.class)))
+                .andExpect(model().attribute("responseRaw",Matchers.isA(LinkedHashMap.class)))
+                .andExpect(model().attribute("responseJson", Matchers.isA(JSONObject.class)))
+                .andExpect(status().isOk())
+                .andDo(log())
+                .andDo(print());
 
         verify(restClient);
     }
@@ -298,12 +307,16 @@ public class WebClientControllerMockTest {
         this.mockMvc.perform(get("/deposit/report/nameDate/depositName1,2016-01-01,2017-02-02")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isFound())
-                .andExpect(content().string("{\"depositId\":1,\"depositName\":\"depositName1\"," +
-                        "\"depositMinTerm\":12,\"depositMinAmount\":1000,\"depositCurrency\":\"usd\"," +
-                        "\"depositInterestRate\":4,\"depositAddConditions\":\"conditions1\"," +
-                        "\"depositorCount\":1,\"depositorAmountSum\":1000,\"depositorAmountPlusSum\":100," +
-                        "\"depositorAmountMinusSum\":100}"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("indexRestMain"))
+                .andExpect(model().attributeExists("responseRaw","responseJson"))
+                .andExpect(model().attribute("depositor", Matchers.isA(BankDepositor.class)))
+                .andExpect(model().attribute("deposit",Matchers.isA(BankDeposit.class)))
+                .andExpect(model().attribute("responseRaw",Matchers.isA(LinkedHashMap.class)))
+                .andExpect(model().attribute("responseJson", Matchers.isA(JSONObject.class)))
+                .andExpect(status().isOk())
+                .andDo(log())
+                .andDo(print());
 
         verify(restClient);
     }
@@ -318,12 +331,16 @@ public class WebClientControllerMockTest {
         this.mockMvc.perform(get("/deposit/report/nameDateReturn/depositName1,2015-01-01,2015-02-02")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isFound())
-                .andExpect(content().string("{\"depositId\":1,\"depositName\":\"depositName1\"," +
-                        "\"depositMinTerm\":12,\"depositMinAmount\":1000,\"depositCurrency\":\"usd\"," +
-                        "\"depositInterestRate\":4,\"depositAddConditions\":\"conditions1\"," +
-                        "\"depositorCount\":1,\"depositorAmountSum\":1000,\"depositorAmountPlusSum\":100," +
-                        "\"depositorAmountMinusSum\":100}"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("indexRestMain"))
+                .andExpect(model().attributeExists("responseRaw","responseJson"))
+                .andExpect(model().attribute("depositor", Matchers.isA(BankDepositor.class)))
+                .andExpect(model().attribute("deposit",Matchers.isA(BankDeposit.class)))
+                .andExpect(model().attribute("responseRaw",Matchers.isA(LinkedHashMap.class)))
+                .andExpect(model().attribute("responseJson", Matchers.isA(JSONObject.class)))
+                .andExpect(status().isOk())
+                .andDo(log())
+                .andDo(print());
 
         verify(restClient);
     }
@@ -337,12 +354,16 @@ public class WebClientControllerMockTest {
         this.mockMvc.perform(get("/deposit/report/id/1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isFound())
-                .andExpect(content().string("{\"depositId\":1,\"depositName\":\"depositName1\"," +
-                        "\"depositMinTerm\":12,\"depositMinAmount\":1000,\"depositCurrency\":\"usd\"," +
-                        "\"depositInterestRate\":4,\"depositAddConditions\":\"conditions1\"," +
-                        "\"depositorCount\":1,\"depositorAmountSum\":1000,\"depositorAmountPlusSum\":100," +
-                        "\"depositorAmountMinusSum\":100}"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("indexRestMain"))
+                .andExpect(model().attributeExists("responseRaw","responseJson"))
+                .andExpect(model().attribute("depositor", Matchers.isA(BankDepositor.class)))
+                .andExpect(model().attribute("deposit",Matchers.isA(BankDeposit.class)))
+                .andExpect(model().attribute("responseRaw",Matchers.isA(LinkedHashMap.class)))
+                .andExpect(model().attribute("responseJson", Matchers.isA(JSONObject.class)))
+                .andExpect(status().isOk())
+                .andDo(log())
+                .andDo(print());
 
         verify(restClient);
     }
@@ -357,12 +378,16 @@ public class WebClientControllerMockTest {
         this.mockMvc.perform(get("/deposit/report/idDate/1,2015-01-01,2015-02-02")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isFound())
-                .andExpect(content().string("{\"depositId\":1,\"depositName\":\"depositName1\"," +
-                        "\"depositMinTerm\":12,\"depositMinAmount\":1000,\"depositCurrency\":\"usd\"," +
-                        "\"depositInterestRate\":4,\"depositAddConditions\":\"conditions1\"," +
-                        "\"depositorCount\":1,\"depositorAmountSum\":1000,\"depositorAmountPlusSum\":100," +
-                        "\"depositorAmountMinusSum\":100}"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("indexRestMain"))
+                .andExpect(model().attributeExists("responseRaw","responseJson"))
+                .andExpect(model().attribute("depositor", Matchers.isA(BankDepositor.class)))
+                .andExpect(model().attribute("deposit",Matchers.isA(BankDeposit.class)))
+                .andExpect(model().attribute("responseRaw",Matchers.isA(LinkedHashMap.class)))
+                .andExpect(model().attribute("responseJson", Matchers.isA(JSONObject.class)))
+                .andExpect(status().isOk())
+                .andDo(log())
+                .andDo(print());
 
         verify(restClient);
     }
@@ -377,12 +402,16 @@ public class WebClientControllerMockTest {
         this.mockMvc.perform(get("/deposit/report/idDateReturn/1,2015-01-01,2015-02-02")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isFound())
-                .andExpect(content().string("{\"depositId\":1,\"depositName\":\"depositName1\"," +
-                        "\"depositMinTerm\":12,\"depositMinAmount\":1000,\"depositCurrency\":\"usd\"," +
-                        "\"depositInterestRate\":4,\"depositAddConditions\":\"conditions1\"," +
-                        "\"depositorCount\":1,\"depositorAmountSum\":1000,\"depositorAmountPlusSum\":100," +
-                        "\"depositorAmountMinusSum\":100}"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("indexRestMain"))
+                .andExpect(model().attributeExists("responseRaw","responseJson"))
+                .andExpect(model().attribute("depositor", Matchers.isA(BankDepositor.class)))
+                .andExpect(model().attribute("deposit",Matchers.isA(BankDeposit.class)))
+                .andExpect(model().attribute("responseRaw",Matchers.isA(LinkedHashMap.class)))
+                .andExpect(model().attribute("responseJson", Matchers.isA(JSONObject.class)))
+                .andExpect(status().isOk())
+                .andDo(log())
+                .andDo(print());
 
         verify(restClient);
     }
@@ -396,16 +425,16 @@ public class WebClientControllerMockTest {
         this.mockMvc.perform(get("/deposit/report/all")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isFound())
-                .andExpect(content().string("[{\"depositId\":1,\"depositName\":\"depositName1\"," +
-                        "\"depositMinTerm\":12,\"depositMinAmount\":100,\"depositCurrency\":\"usd\"," +
-                        "\"depositInterestRate\":4,\"depositAddConditions\":\"condition1\"," +
-                        "\"depositorCount\":2,\"depositorAmountSum\":2000,\"depositorAmountPlusSum\":200," +
-                        "\"depositorAmountMinusSum\":200},{\"depositId\":2,\"depositName\":\"depositName2\"," +
-                        "\"depositMinTerm\":12,\"depositMinAmount\":100,\"depositCurrency\":\"usd\"," +
-                        "\"depositInterestRate\":4,\"depositAddConditions\":\"condition2\"," +
-                        "\"depositorCount\":2,\"depositorAmountSum\":2000,\"depositorAmountPlusSum\":200," +
-                        "\"depositorAmountMinusSum\":200}]"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("indexRestMain"))
+                .andExpect(model().attributeExists("responseRaw","responseJson"))
+                .andExpect(model().attribute("depositor", Matchers.isA(BankDepositor.class)))
+                .andExpect(model().attribute("deposit",Matchers.isA(BankDeposit.class)))
+                .andExpect(model().attribute("responseRaw",Matchers.isA(Arrays.asList().getClass())))
+                .andExpect(model().attribute("responseJson", Matchers.isA(JSONArray.class)))
+                .andExpect(status().isOk())
+                .andDo(log())
+                .andDo(print());
 
         verify(restClient);
     }
@@ -420,16 +449,16 @@ public class WebClientControllerMockTest {
         this.mockMvc.perform(get("/deposit/report/allDate/2015-01-01,2015-02-02")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isFound())
-                .andExpect(content().string("[{\"depositId\":1,\"depositName\":\"depositName1\"," +
-                        "\"depositMinTerm\":12,\"depositMinAmount\":100,\"depositCurrency\":\"usd\"," +
-                        "\"depositInterestRate\":4,\"depositAddConditions\":\"condition1\"," +
-                        "\"depositorCount\":2,\"depositorAmountSum\":2000,\"depositorAmountPlusSum\":200," +
-                        "\"depositorAmountMinusSum\":200},{\"depositId\":2,\"depositName\":\"depositName2\"," +
-                        "\"depositMinTerm\":12,\"depositMinAmount\":100,\"depositCurrency\":\"usd\"," +
-                        "\"depositInterestRate\":4,\"depositAddConditions\":\"condition2\"," +
-                        "\"depositorCount\":2,\"depositorAmountSum\":2000,\"depositorAmountPlusSum\":200," +
-                        "\"depositorAmountMinusSum\":200}]"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("indexRestMain"))
+                .andExpect(model().attributeExists("responseRaw","responseJson"))
+                .andExpect(model().attribute("depositor", Matchers.isA(BankDepositor.class)))
+                .andExpect(model().attribute("deposit",Matchers.isA(BankDeposit.class)))
+                .andExpect(model().attribute("responseRaw",Matchers.isA(Arrays.asList().getClass())))
+                .andExpect(model().attribute("responseJson", Matchers.isA(JSONArray.class)))
+                .andExpect(status().isOk())
+                .andDo(log())
+                .andDo(print());
 
         verify(restClient);
     }
@@ -444,16 +473,16 @@ public class WebClientControllerMockTest {
         this.mockMvc.perform(get("/deposit/report/allDateReturn/2016-01-01,2017-02-02")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isFound())
-                .andExpect(content().string("[{\"depositId\":1,\"depositName\":\"depositName1\"," +
-                        "\"depositMinTerm\":12,\"depositMinAmount\":100,\"depositCurrency\":\"usd\"," +
-                        "\"depositInterestRate\":4,\"depositAddConditions\":\"condition1\"," +
-                        "\"depositorCount\":2,\"depositorAmountSum\":2000,\"depositorAmountPlusSum\":200," +
-                        "\"depositorAmountMinusSum\":200},{\"depositId\":2,\"depositName\":\"depositName2\"," +
-                        "\"depositMinTerm\":12,\"depositMinAmount\":100,\"depositCurrency\":\"usd\"," +
-                        "\"depositInterestRate\":4,\"depositAddConditions\":\"condition2\"," +
-                        "\"depositorCount\":2,\"depositorAmountSum\":2000,\"depositorAmountPlusSum\":200," +
-                        "\"depositorAmountMinusSum\":200}]"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("indexRestMain"))
+                .andExpect(model().attributeExists("responseRaw","responseJson"))
+                .andExpect(model().attribute("depositor", Matchers.isA(BankDepositor.class)))
+                .andExpect(model().attribute("deposit",Matchers.isA(BankDeposit.class)))
+                .andExpect(model().attribute("responseRaw",Matchers.isA(Arrays.asList().getClass())))
+                .andExpect(model().attribute("responseJson", Matchers.isA(JSONArray.class)))
+                .andExpect(status().isOk())
+                .andDo(log())
+                .andDo(print());
 
         verify(restClient);
     }
@@ -467,16 +496,16 @@ public class WebClientControllerMockTest {
         this.mockMvc.perform(get("/deposit/report/currency/usd")
                     .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isFound())
-                .andExpect(content().string("[{\"depositId\":1,\"depositName\":\"depositName1\"," +
-                        "\"depositMinTerm\":12,\"depositMinAmount\":100,\"depositCurrency\":\"usd\"," +
-                        "\"depositInterestRate\":4,\"depositAddConditions\":\"condition1\"," +
-                        "\"depositorCount\":2,\"depositorAmountSum\":2000,\"depositorAmountPlusSum\":200," +
-                        "\"depositorAmountMinusSum\":200},{\"depositId\":2,\"depositName\":\"depositName2\"," +
-                        "\"depositMinTerm\":12,\"depositMinAmount\":100,\"depositCurrency\":\"usd\"," +
-                        "\"depositInterestRate\":4,\"depositAddConditions\":\"condition2\"," +
-                        "\"depositorCount\":2,\"depositorAmountSum\":2000,\"depositorAmountPlusSum\":200," +
-                        "\"depositorAmountMinusSum\":200}]"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("indexRestMain"))
+                .andExpect(model().attributeExists("responseRaw","responseJson"))
+                .andExpect(model().attribute("depositor", Matchers.isA(BankDepositor.class)))
+                .andExpect(model().attribute("deposit",Matchers.isA(BankDeposit.class)))
+                .andExpect(model().attribute("responseRaw",Matchers.isA(Arrays.asList().getClass())))
+                .andExpect(model().attribute("responseJson", Matchers.isA(JSONArray.class)))
+                .andExpect(status().isOk())
+                .andDo(log())
+                .andDo(print());
 
         verify(restClient);
     }
