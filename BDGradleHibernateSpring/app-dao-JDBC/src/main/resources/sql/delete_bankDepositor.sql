@@ -1,0 +1,1 @@
+delete from BANKDEPOSITOR where depositorId = ?

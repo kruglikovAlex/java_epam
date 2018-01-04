@@ -14,4 +14,3 @@ insert into BANKDEPOSITOR (depositorId,depositorName,depositorDateDeposit,deposi
 insert into BANKDEPOSITOR (depositorId,depositorName,depositorDateDeposit,depositorAmountDeposit,depositorAmountPlusDeposit,depositorAmountMinusDeposit,depositorDateReturnDeposit,depositorMarkReturnDeposit,depositId) values (default,'depositorName9','2015-12-09',996,90,90,'2015-12-10',0,4);
 insert into BANKDEPOSITOR (depositorId,depositorName,depositorDateDeposit,depositorAmountDeposit,depositorAmountPlusDeposit,depositorAmountMinusDeposit,depositorDateReturnDeposit,depositorMarkReturnDeposit,depositId) values (default,'depositorName5','2015-12-05',1005,60,60,'2015-12-06',0,5);
 insert into BANKDEPOSITOR (depositorId,depositorName,depositorDateDeposit,depositorAmountDeposit,depositorAmountPlusDeposit,depositorAmountMinusDeposit,depositorDateReturnDeposit,depositorMarkReturnDeposit,depositId) values (default,'depositorName10','2015-12-10',995,100,100,'2015-12-11',0,5);
-

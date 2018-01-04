@@ -100,7 +100,7 @@ import java.util.Map;
      * @return Map - a bank deposit with a report on all relevant
      * bank depositors
      */
-     Map getBankDepositByNameWithDepositors(String name);
+    Map getBankDepositByNameWithDepositors(String name);
 
     /**
      * Get Bank Deposit by NAME with depositors from-to Date Deposit values
