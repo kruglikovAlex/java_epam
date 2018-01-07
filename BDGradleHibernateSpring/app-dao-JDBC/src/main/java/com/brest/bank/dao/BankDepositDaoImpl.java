@@ -300,19 +300,19 @@ public class BankDepositDaoImpl implements BankDepositDao{
     @Override
     public Map getBankDepositByIdWithDepositors(Long depositId) {
         LOGGER.debug("getBankDepositByIdAllDepositors(depositId={})", depositId);
-        return jdbcTemplate.queryForMap(selectBankDepositsByIdWithAllBankDeposittorsSql, new BankDepositDepositorMapper(),depositId);
+        return jdbcTemplate.queryForMap(selectBankDepositsByIdWithAllBankDeposittorsSql, depositId);
     }
 
     @Override
     public Map getBankDepositByIdFromToDateDepositWithDepositors(Long depositId, Date startDate, Date endDate) {
         LOGGER.debug("getBankDepositsByIdWithAllDepositorsBetweenDateDeposit(depositId={}, Dates:{},{})", depositId, dateFormat.format(startDate),dateFormat.format(endDate));
-        return jdbcTemplate.queryForMap(selectBankDepositsByIdWithAllBankDeposittorsBetweenDateDepositSql, new BankDepositDepositorMapper(),dateFormat.format(startDate),dateFormat.format(endDate),depositId);
+        return jdbcTemplate.queryForMap(selectBankDepositsByIdWithAllBankDeposittorsBetweenDateDepositSql, dateFormat.format(startDate),dateFormat.format(endDate),depositId);
     }
 
     @Override
     public Map getBankDepositByIdFromToDateReturnDepositWithDepositors(Long depositId, Date startDate, Date endDate) {
         LOGGER.debug("getBankDepositsByIdWithAllDepositorsBetweenDateReturnDeposit(depositId={}, Dates:{},{})", depositId, dateFormat.format(startDate),dateFormat.format(endDate));
-        return jdbcTemplate.queryForMap(selectBankDepositsByIdWithAllBankDeposittorsBetweenDateReturnDepositSql, new BankDepositDepositorMapper(),dateFormat.format(startDate),dateFormat.format(endDate),depositId);
+        return jdbcTemplate.queryForMap(selectBankDepositsByIdWithAllBankDeposittorsBetweenDateReturnDepositSql, dateFormat.format(startDate),dateFormat.format(endDate),depositId);
     }
 
     @Override
@@ -378,7 +378,7 @@ public class BankDepositDaoImpl implements BankDepositDao{
      */
     public Map getBankDepositByDepositorIdWithDepositors(Long id){
         LOGGER.debug("getBankDepositByDepositorIdWithDepositors(id ={})", id);
-        return jdbcTemplate.queryForMap(selectBankDepositByDepositorIdWithDepositorsSql, new BankDepositDepositorMapper(),id);
+        return jdbcTemplate.queryForMap(selectBankDepositByDepositorIdWithDepositorsSql, id);
     }
 
     /**
@@ -390,7 +390,7 @@ public class BankDepositDaoImpl implements BankDepositDao{
      */
     public Map getBankDepositByDepositorNameWithDepositors(String name){
         LOGGER.debug("getBankDepositByDepositorNameWithDepositors(name ={})", name);
-        return jdbcTemplate.queryForMap(selectBankDepositByDepositorNameWithDepositorsSql, new BankDepositDepositorMapper(),name);
+        return jdbcTemplate.queryForMap(selectBankDepositByDepositorNameWithDepositorsSql, name);
     }
 
     /**

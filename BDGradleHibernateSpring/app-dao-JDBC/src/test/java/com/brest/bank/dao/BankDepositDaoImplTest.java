@@ -434,13 +434,13 @@ public class BankDepositDaoImplTest {
         assertTrue("Error sum minus amount", sumAmountMinusDeposit >=
                 Integer.parseInt(list.get("SumMinusAmount").toString()));
     }
-/*
+
     @Test
     public void testGetBankDepositByNameFromToDateReturnDepositWithDepositors() throws ParseException{
         Integer sumAmountDeposit=0,
                 sumAmountPlusDeposit=0,
                 sumAmountMinusDeposit=0;
-        String name = "depositName0";
+        String name = "depositName1";
         Date start = dateFormat.parse("2015-12-02");
         Date end = dateFormat.parse("2015-12-07");
 
@@ -470,11 +470,11 @@ public class BankDepositDaoImplTest {
         assertEquals(deposit.getDepositAddConditions(), list.get("depositAddConditions"));
 
         assertTrue("Error sum amount", sumAmountDeposit >=
-                Integer.parseInt(list.get("depositorAmountSum").toString()));
+                Integer.parseInt(list.get("sumAmount").toString()));
         assertTrue("Error sum plus amount", sumAmountPlusDeposit >=
-                Integer.parseInt(list.get("depositorAmountPlusSum").toString()));
+                Integer.parseInt(list.get("sumPlusAmount").toString()));
         assertTrue("Error sum minus amount", sumAmountMinusDeposit >=
-                Integer.parseInt(list.get("depositorAmountMinusSum").toString()));
+                Integer.parseInt(list.get("sumMinusAmount").toString()));
     }
 
     @Test
@@ -509,11 +509,11 @@ public class BankDepositDaoImplTest {
         assertEquals(deposit.getDepositAddConditions(), list.get("depositAddConditions"));
 
         assertTrue("Error sum amount", sumAmountDeposit ==
-                Integer.parseInt(list.get("depositorAmountSum").toString()));
+                Integer.parseInt(list.get("sumAmount").toString()));
         assertTrue("Error sum plus amount", sumAmountPlusDeposit ==
-                Integer.parseInt(list.get("depositorAmountPlusSum").toString()));
+                Integer.parseInt(list.get("sumPlusAmount").toString()));
         assertTrue("Error sum minus amount", sumAmountMinusDeposit ==
-                Integer.parseInt(list.get("depositorAmountMinusSum").toString()));
+                Integer.parseInt(list.get("sumMinusAmount").toString()));
     }
 
     @Test
@@ -546,11 +546,11 @@ public class BankDepositDaoImplTest {
         assertEquals(deposit.getDepositAddConditions(), list.get("depositAddConditions"));
 
         assertTrue("Error sum amount", sumAmountDeposit ==
-                Integer.parseInt(list.get("depositorAmountSum").toString()));
+                Integer.parseInt(list.get("sumAmount").toString()));
         assertTrue("Error sum plus amount", sumAmountPlusDeposit ==
-                Integer.parseInt(list.get("depositorAmountPlusSum").toString()));
+                Integer.parseInt(list.get("sumPlusAmount").toString()));
         assertTrue("Error sum minus amount", sumAmountMinusDeposit ==
-                Integer.parseInt(list.get("depositorAmountMinusSum").toString()));
+                Integer.parseInt(list.get("sumMinusAmount").toString()));
     }
 
     @Test
@@ -583,11 +583,11 @@ public class BankDepositDaoImplTest {
         assertEquals(deposit.getDepositAddConditions(), list.get("depositAddConditions"));
 
         assertTrue("Error sum amount", sumAmountDeposit ==
-                Integer.parseInt(list.get("depositorAmountSum").toString()));
+                Integer.parseInt(list.get("sumAmount").toString()));
         assertTrue("Error sum plus amount", sumAmountPlusDeposit ==
-                Integer.parseInt(list.get("depositorAmountPlusSum").toString()));
+                Integer.parseInt(list.get("sumPlusAmount").toString()));
         assertTrue("Error sum minus amount", sumAmountMinusDeposit ==
-                Integer.parseInt(list.get("depositorAmountMinusSum").toString()));
+                Integer.parseInt(list.get("sumMinusAmount").toString()));
     }
 
 
@@ -626,11 +626,11 @@ public class BankDepositDaoImplTest {
         assertEquals(deposit.getDepositAddConditions(), list.get("depositAddConditions"));
 
         assertTrue("Error sum amount", sumAmountDeposit >=
-                Integer.parseInt(list.get("depositorAmountSum").toString()));
+                Integer.parseInt(list.get("sumAmount").toString()));
         assertTrue("Error sum plus amount", sumAmountPlusDeposit >=
-                Integer.parseInt(list.get("depositorAmountPlusSum").toString()));
+                Integer.parseInt(list.get("sumPlusAmount").toString()));
         assertTrue("Error sum minus amount", sumAmountMinusDeposit >=
-                Integer.parseInt(list.get("depositorAmountMinusSum").toString()));
+                Integer.parseInt(list.get("sumMinusAmount").toString()));
     }
 
     @Test
@@ -667,13 +667,13 @@ public class BankDepositDaoImplTest {
         assertEquals(deposit.getDepositAddConditions(), list.get("depositAddConditions"));
 
         assertTrue("Error sum amount", sumAmountDeposit >=
-                Integer.parseInt(list.get("depositorAmountSum").toString()));
+                Integer.parseInt(list.get("sumAmount").toString()));
         assertTrue("Error sum plus amount", sumAmountPlusDeposit >=
-                Integer.parseInt(list.get("depositorAmountPlusSum").toString()));
+                Integer.parseInt(list.get("sumPlusAmount").toString()));
         assertTrue("Error sum minus amount", sumAmountMinusDeposit >=
-                Integer.parseInt(list.get("depositorAmountMinusSum").toString()));
+                Integer.parseInt(list.get("sumMinusAmount").toString()));
     }
-
+/*
     @Test
     public void testGetBankDepositsByTermWithDepositors() throws ParseException{
         int[]   sumAmountDeposit =      new int[]{0, 0},
