@@ -7,6 +7,7 @@ from BANKDEPOSIT as deposit
 			sum(dep.depositorAmountMinusDeposit) as sumMinusAmount,
 			count(dep.depositorId) as numDepositors
 	 from BANKDEPOSITOR as dep
+	 where dep.depositorAmountDeposit between ? and ?
 	 group by depId) as depositor
 	 on deposit.depositId = depositor.depId
-where depositor.depositorAmountDeposit = ?
+where deposit.depositId = depositor.depId
