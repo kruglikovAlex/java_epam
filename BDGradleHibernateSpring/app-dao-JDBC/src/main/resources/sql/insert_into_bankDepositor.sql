@@ -1,18 +1,18 @@
 insert into BANKDEPOSITOR (depositorId,
                         depositorName,
-                        depositorIdDeposit,
 						depositorDateDeposit,
 						depositorAmountDeposit,
 						depositorAmountPlusDeposit,
 						depositorAmountMinusDeposit,
 						depositorDateReturnDeposit,
-						depositorMarkReturnDeposit)
+						depositorMarkReturnDeposit,
+						depositId)
 values (:depositorId,
         :depositorName,
-        :depositorIdDeposit,
         :depositorDateDeposit,
         :depositorAmountDeposit,
         :depositorAmountPlusDeposit,
         :depositorAmountMinusDeposit,
 		:depositorDateReturnDeposit,
-		:depositorMarkReturnDeposit)
+		:depositorMarkReturnDeposit,
+		:depositId)

@@ -46,7 +46,7 @@ public class BankDepositorDaoImplTest {
     }
 
     @After
-    public void endUp() throws Exception{
+    public void endUp() throws Exception {
     }
 
     @Test
@@ -59,11 +59,11 @@ public class BankDepositorDaoImplTest {
     }
 
     @Test
-    public void testGetBankDepositorsFromToDateDeposit() throws ParseException{
+    public void testGetBankDepositorsFromToDateDeposit() throws ParseException {
         Date startDate = dateFormat.parse("2015-11-02");
         Date endDate = dateFormat.parse("2015-12-04");
 
-        depositors = depositorDao.getBankDepositorsFromToDateDeposit(startDate,endDate);
+        depositors = depositorDao.getBankDepositorsFromToDateDeposit(startDate, endDate);
         LOGGER.debug("depositors.size()= {}", depositors.size());
 
         assertFalse(depositors.isEmpty());
@@ -71,7 +71,7 @@ public class BankDepositorDaoImplTest {
     }
 
     @Test
-    public void testGetBankDepositorsFromToDateReturnDeposit() throws ParseException{
+    public void testGetBankDepositorsFromToDateReturnDeposit() throws ParseException {
         Date startDate = dateFormat.parse("2015-11-02");
         Date endDate = dateFormat.parse("2015-12-04");
 
@@ -90,7 +90,7 @@ public class BankDepositorDaoImplTest {
         assertEquals("BankDepositor: { depositorId=1, depositorName=depositorName6," +
                 " depositorDateDeposit=2015-12-06, depositorAmountDeposit=999, " +
                 "depositorAmountPlusDeposit=60, depositorAmountMinusDeposit=60, " +
-                "depositorDateReturnDeposit=2015-12-07, depositorMarkReturnDeposit=0}",depositor.toString());
+                "depositorDateReturnDeposit=2015-12-07, depositorMarkReturnDeposit=0}", depositor.toString());
     }
 
     @Test
@@ -98,9 +98,9 @@ public class BankDepositorDaoImplTest {
         depositors = depositorDao.getBankDepositorByIdDepositCriteria(1L);
         LOGGER.debug("depositors = {}", depositors);
 
-        assertFalse(ERROR_EMPTY_BD,depositors.isEmpty());
-        assertThat(ERROR_SIZE,depositors.size(), is(not(0)));
-        assertNotNull(ERROR_NULL,depositors);
+        assertFalse(ERROR_EMPTY_BD, depositors.isEmpty());
+        assertThat(ERROR_SIZE, depositors.size(), is(not(0)));
+        assertNotNull(ERROR_NULL, depositors);
     }
 
     @Test
@@ -111,7 +111,17 @@ public class BankDepositorDaoImplTest {
         assertEquals("BankDepositor: { depositorId=0, depositorName=depositorName1, depositorDateDeposit=2015-12-01, " +
                 "depositorAmountDeposit=1001, depositorAmountPlusDeposit=20, " +
                 "depositorAmountMinusDeposit=20, depositorDateReturnDeposit=2015-12-02, " +
-                "depositorMarkReturnDeposit=0}",depositor.toString());
+                "depositorMarkReturnDeposit=0}", depositor.toString());
     }
 
+    @Test
+    public void testAddBankDepositor() {
+        depositor = depositorDao.getBankDepositorByIdCriteria(1L);
+        depositor.setDepositorId(null);
+        depositor.setDepositorName("New");
+        depositorDao.addBankDepositor(1L, depositor);
+
+        assertNotEquals(depositors.size(), depositorDao.getBankDepositorsCriteria().size());
+
+    }
 }
