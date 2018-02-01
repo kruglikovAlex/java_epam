@@ -41,14 +41,12 @@ public class BankDepositorDaoImplTest {
 
     @Before
     public void setUp() throws Exception {
-        //hibernateTemplate.getSessionFactory().getCurrentSession().beginTransaction();
         depositor = new BankDepositor();
         depositors = new ArrayList<BankDepositor>();
     }
 
     @After
     public void endUp() throws Exception{
-        //hibernateTemplate.getSessionFactory().getCurrentSession().getTransaction().commit();
     }
 
     @Test
@@ -89,9 +87,10 @@ public class BankDepositorDaoImplTest {
         depositor = depositorDao.getBankDepositorByIdCriteria(1L);
         LOGGER.debug("depositor = {}", depositor);
 
-        assertEquals("BankDepositor: { depositorId=1, depositorName=depositorName1, depositorDateDeposit=2015-12-01, " +
-                "depositorAmountDeposit=1001, depositorAmountPlusDeposit=20, depositorAmountMinusDeposit=20, " +
-                "depositorDateReturnDeposit=2015-12-02, depositorMarkReturnDeposit=0}",depositor.toString());
+        assertEquals("BankDepositor: { depositorId=1, depositorName=depositorName6," +
+                " depositorDateDeposit=2015-12-06, depositorAmountDeposit=999, " +
+                "depositorAmountPlusDeposit=60, depositorAmountMinusDeposit=60, " +
+                "depositorDateReturnDeposit=2015-12-07, depositorMarkReturnDeposit=0}",depositor.toString());
     }
 
     @Test
@@ -109,9 +108,10 @@ public class BankDepositorDaoImplTest {
         depositor = depositorDao.getBankDepositorByNameCriteria("depositorName1");
         LOGGER.debug("depositor = {}", depositor);
 
-        assertEquals("BankDepositor: { depositorId=1, depositorName=depositorName1, depositorDateDeposit=2015-12-01, " +
-                "depositorAmountDeposit=1001, depositorAmountPlusDeposit=20, depositorAmountMinusDeposit=20, " +
-                "depositorDateReturnDeposit=2015-12-02, depositorMarkReturnDeposit=0}",depositor.toString());
+        assertEquals("BankDepositor: { depositorId=0, depositorName=depositorName1, depositorDateDeposit=2015-12-01, " +
+                "depositorAmountDeposit=1001, depositorAmountPlusDeposit=20, " +
+                "depositorAmountMinusDeposit=20, depositorDateReturnDeposit=2015-12-02, " +
+                "depositorMarkReturnDeposit=0}",depositor.toString());
     }
 
 }
