@@ -128,7 +128,7 @@ public class BankDepositorDaoImpl implements BankDepositorDao{
 
     @Override
     public List<BankDepositor> getBankDepositorByIdDepositCriteria(Long depositId) {
-        LOGGER.debug("getBankDepositorByIdDeposit(depositorIdDeposit={})", depositId);
+        LOGGER.debug("getBankDepositorByIdDeposit(depositId={})", depositId);
         return jdbcTemplate.query(selectBankDepositorByIdDepositSql, new BankDepositorMapper(),depositId);
     }
 

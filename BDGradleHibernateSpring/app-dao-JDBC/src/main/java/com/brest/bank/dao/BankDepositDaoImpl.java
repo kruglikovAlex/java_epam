@@ -2,6 +2,7 @@ package com.brest.bank.dao;
 
 import com.brest.bank.domain.BankDeposit;
 
+import com.sun.istack.internal.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,14 +23,16 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.util.Assert;
 
 @Component
@@ -49,6 +52,8 @@ public class BankDepositDaoImpl implements BankDepositDao{
     public static final String DEPOSITOR_AMOUNT_PLUS = "sumPlusAmount";
     public static final String DEPOSITOR_AMOUNT_MINUS = "sumMinusAmount";
     public static final String DEPOSITOR_NUMBER = "numDepositors";
+    private static final String NAMEFILE = "../BDGradleHibernateSpring/app-dao-JDBC/src/main/resources/sql/select_bankDeposits_by_var_args.sql";
+
     private static final Logger LOGGER=LogManager.getLogger();
     @Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${insert_into_bankDeposit_path}')).inputStream)}")
     public String addNewBankDepositSql;
@@ -62,7 +67,7 @@ public class BankDepositDaoImpl implements BankDepositDao{
     public String selectBankDepositByIdSql;
     @Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${select_bankDeposit_by_name_path}')).inputStream)}")
     public String selectBankDepositByNameSql;
-//============
+
     @Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${select_bankDeposit_by_currency_path}')).inputStream)}")
     public String selectBankDepositByCurrencySql;
     @Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${select_bankDeposit_by_interest_rate_path}')).inputStream)}")
@@ -95,10 +100,9 @@ public class BankDepositDaoImpl implements BankDepositDao{
     public String selectBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsSql;
     @Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${select_bankDeposits_by_depositorMarkReturn_with_depositors_path}')).inputStream)}")
     public String selectBankDepositsByDepositorMarkReturnWithDepositorsSql;
-    @Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${select_bankDeposits_by_depositorMarkReturn_with_depositors_path}')).inputStream)}")
 
     public String selectBankDepositsByVarArgsSql;
-    //=============
+
     @Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${select_all_bankDeposits_with_all_bankDepositors_path}')).inputStream)}")
     public String selectAllBankDepositsWithAllBankDepositorsSql;
     @Value("#{T(org.apache.commons.io.IOUtils).toString((new org.springframework.core.io.ClassPathResource('${select_all_bankDeposits_with_all_bankDeposittors_between_date_deposit_path}')).inputStream)}")
@@ -427,11 +431,11 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<Map> a list of all bank deposits with a report on all relevant
      * bank depositors with the specified task`s date deposit
      */
-    public List<Map> getBankDepositsByCurrencyFromToDateDepositWithDepositors(String currency,
-                                                                              Date startDate,
-                                                                              Date endDate){
+    public List<Map> getBankDepositsByCurrencyFromToDateDepositWithDepositors(Date startDate,
+                                                                              Date endDate,
+                                                                              String currency){
         LOGGER.debug("getBankDepositsByCurrencyFromToDateDepositWithDepositors(currency ={}, startDate ={}, endDate = {})", currency, startDate, endDate);
-        return jdbcTemplate.query(selectBankDepositsByCurrencyFromToDateDepositWithDepositorsSql, new BankDepositDepositorMapper(),currency, startDate, endDate);
+        return jdbcTemplate.query(selectBankDepositsByCurrencyFromToDateDepositWithDepositorsSql, new BankDepositDepositorMapper(), dateFormat.format(startDate),dateFormat.format(endDate),currency);
     }
 
     /**
@@ -443,11 +447,11 @@ public class BankDepositDaoImpl implements BankDepositDao{
      * @return List<Map> a list of all bank deposits with a report on all relevant
      * bank depositors with the specified task`s date return deposit
      */
-    public List<Map> getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(String currency,
-                                                                                    Date startDate,
-                                                                                    Date endDate){
+    public List<Map> getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(Date startDate,
+                                                                                    Date endDate,
+                                                                                    String currency){
         LOGGER.debug("getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(currency ={}, startDate ={}, endDate = {})", currency, startDate, endDate);
-        return jdbcTemplate.query(selectBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsSql, new BankDepositDepositorMapper(),currency, startDate, endDate);
+        return jdbcTemplate.query(selectBankDepositsByCurrencyFromToDateReturnDepositWithDepositorsSql, new BankDepositDepositorMapper(), startDate, endDate,currency);
     }
 
     /**
@@ -471,7 +475,9 @@ public class BankDepositDaoImpl implements BankDepositDao{
      */
     public List<Map> getBankDepositsByVarArgs(Object... args){
         LOGGER.debug("getBankDepositsByVarArgs(args ={})", args);
-        return jdbcTemplate.query(selectBankDepositsByVarArgsSql, new BankDepositDepositorMapper(),args);
+        selectBankDepositsByVarArgsSql = buildSqlString(args);
+        LOGGER.debug("selectBankDepositsByVarArgsSql\n{}",selectBankDepositsByVarArgsSql);
+        return jdbcTemplate.query(selectBankDepositsByVarArgsSql, new BankDepositDepositorMapper());
     }
 
     public class BankDepositMapper implements RowMapper<BankDeposit> {
@@ -508,4 +514,166 @@ public class BankDepositDaoImpl implements BankDepositDao{
             return list;
         }
     }
+
+    private String buildSqlString(Object... args){
+        LOGGER.debug("writeSqlFile(args: {})",args);
+        Assert.notNull(args,ERROR_METHOD_PARAM);
+
+        String resultVarArgs = "";
+        //== convert String.class to Date.class or Integer.class
+        for(int i=0; i<args.length;i=i+2){
+            try{
+                args[i+1] = Integer.parseInt(args[i+1].toString());
+            } catch (Exception intE){
+                LOGGER.error("error - parseInt - {}, {}",args[i+1] ,intE.toString());
+                if(args[i+1].getClass()==Date.class){
+                    args[i+1] = dateFormat.format(args[i+1]);
+                }
+                LOGGER.debug("args[i+1] as Date={}",args[i+1]);
+            }
+        }
+
+        List<Object[]> listLe = new ArrayList<Object[]>();
+        List<Object[]> listGe = new ArrayList<Object[]>();
+
+        for(int i=0; i<args.length; i=i+2){
+            for(int j=i+2; j<args.length; j=j+2){
+                if(args[i].toString().equals(args[j].toString())){
+                    Object[] le = {args[i],args[i+1]};
+                    Object[] ge = {args[j],args[j+1]};
+                    listLe.add(le);
+                    listGe.add(ge);
+                    LOGGER.debug("le-{}",le);
+                    LOGGER.debug("ge-{}",ge);
+                }
+            }
+        }
+
+        LOGGER.debug("listLe.size({})",listLe.size());
+        LOGGER.debug("listGe.size({})",listGe.size());
+
+        Map restrict = new HashMap();
+        for(int i=0; i<args.length; i=i+2){
+            if(listLe.size()==0){
+                restrict.put(args[i].toString(),args[i+1]);
+            }else{
+                int count = 0;
+                for(int j=0; j<listLe.size(); j++){
+                    if(!args[i].toString().equals(listLe.get(j)[0].toString())){
+                        count++;
+                    }
+                }
+                if(count==listLe.size()){
+                    restrict.put(args[i].toString(),args[i+1]);
+                }
+            }
+        }
+        LOGGER.debug("restrict.size({})",restrict.size());
+        LOGGER.debug("restrict({})",restrict);
+        LOGGER.debug("restrict.get(0)({})",restrict.values().toString());
+
+        // get set of elements
+        Set<Map.Entry<String, Integer>> set = restrict.entrySet();
+        // query string
+        String queryStringDeposit = "";
+        String queryStringDepositor = "";
+        int addAndDeposit=0, addAndDepositor=0;
+        for (Map.Entry<String, Integer> resTemp : set) {
+            if(resTemp.getKey().contains("depositor")){
+                addAndDepositor++;
+            }else {
+                addAndDeposit++;
+            }
+        }
+        addAndDeposit--;
+        addAndDepositor--;
+        LOGGER.debug("addAndDepositor({})",addAndDepositor);
+        for (Map.Entry<String, Integer> resTemp : set) {
+            if(resTemp.getKey().contains("depositor")){
+                queryStringDepositor += resTemp.getKey() +"='"+resTemp.getValue()+"'\n";
+            }else {
+                queryStringDeposit += resTemp.getKey() +"='"+resTemp.getValue()+"'\n";
+            }
+
+            if(addAndDepositor>0){
+                addAndDepositor--;
+                queryStringDepositor += " and ";
+            }
+            if(addAndDeposit>0){
+                addAndDeposit--;
+                queryStringDeposit += " and ";
+            }
+        }
+
+        String betweenStringDeposit = "";
+        String betweenStringDepositor = "";
+        for (int i=0; i<listLe.size(); i++){
+            LOGGER.debug("listLe.get({})[0].toString()-{}",i,listLe.get(i)[0].toString());
+            if(listLe.get(i)[0].toString().contains("depositor")){
+                if(!betweenStringDepositor.isEmpty()){
+                    betweenStringDepositor += " and ";
+                }
+                if(listLe.get(i)[0].toString().equals("depositor.depositorDateDeposit")||
+                        listLe.get(i)[0].toString().equals("depositor.depositorDateReturnDeposit")){
+                    betweenStringDepositor += listLe.get(i)[0].toString()+
+                            " between '"+listLe.get(i)[1]+"' and '"+listGe.get(i)[1]+"'";
+                }else{
+                    betweenStringDepositor += listLe.get(i)[0].toString()+
+                            " between "+listLe.get(i)[1].toString()+" and "+listGe.get(i)[1].toString();
+                }
+            }else{
+                if(!betweenStringDeposit.isEmpty()){
+                    betweenStringDeposit += " and ";
+                }
+                betweenStringDeposit += listLe.get(i)[0].toString()+
+                        " between "+listLe.get(i)[1].toString()+" and "+listGe.get(i)[1].toString();
+            }
+        }
+
+        String queryStringDepositorRep = queryStringDepositor.replaceAll("depositor.d","dep.d");
+        LOGGER.debug("queryStringDepositorRep={}",queryStringDepositorRep);
+        String betweenStringDepositorRep = betweenStringDepositor.replaceAll("depositor.d","dep.d");
+        LOGGER.debug("betweenStringDepositorRep={}",betweenStringDepositorRep);
+
+        resultVarArgs +="select deposit.*, depositor.*\n" +
+                "from BANKDEPOSIT as deposit\n" +
+                "\tleft join\n" +
+                "\t(select dep.depositId as depId,\n" +
+                "\t\t\tsum(dep.depositorAmountDeposit) as sumAmount,\n" +
+                "\t\t\tsum(dep.depositorAmountPlusDeposit) as sumPlusAmount,\n" +
+                "\t\t\tsum(dep.depositorAmountMinusDeposit) as sumMinusAmount,\n" +
+                "\t\t\tcount(dep.depositorId) as numDepositors\n" +
+                "\t from BANKDEPOSITOR as dep\n";
+
+        if(!queryStringDepositorRep.isEmpty()||!betweenStringDepositorRep.isEmpty()){
+            resultVarArgs+=" where ";
+        }
+        if(!queryStringDepositorRep.isEmpty()){
+            resultVarArgs+=queryStringDepositorRep;
+        }
+        if(!betweenStringDepositorRep.isEmpty()){
+            if(!queryStringDepositorRep.isEmpty()){
+                resultVarArgs+=" and ";
+            }
+            resultVarArgs+=betweenStringDepositorRep;
+        }
+
+        resultVarArgs+="\t group by depId) as depositor\n" +
+                "\t on deposit.depositId = depositor.depId\n" +
+                "where deposit.depositId = depositor.depId and\n";
+
+        if(!queryStringDeposit.isEmpty()){
+            resultVarArgs+=queryStringDeposit;
+        }
+        if(!betweenStringDeposit.isEmpty()){
+            if(!queryStringDeposit.isEmpty()){
+                resultVarArgs+=" and ";
+            }
+            resultVarArgs+=betweenStringDeposit;
+        }
+
+        LOGGER.debug("resultVarArgs\n{}",resultVarArgs);
+        return resultVarArgs;
+    }
+
 }

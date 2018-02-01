@@ -6,3 +6,4 @@ from BANKDEPOSIT as deposit
 	 where dep.depositorDateReturnDeposit between ? and ?
 	 group by depId) as depositor
 	 on deposit.depositId = depositor.depId
+where deposit.depositId = depositor.depId

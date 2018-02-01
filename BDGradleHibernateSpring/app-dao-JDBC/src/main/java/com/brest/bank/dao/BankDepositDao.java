@@ -266,9 +266,9 @@ import java.util.Map;
      * @return List<Map> a list of all bank deposits with a report on all relevant
      * bank depositors with the specified task`s date deposit
      */
-     List<Map> getBankDepositsByCurrencyFromToDateDepositWithDepositors(String currency,
-                                                                        Date startDate,
-                                                                        Date endDate);
+     List<Map> getBankDepositsByCurrencyFromToDateDepositWithDepositors(Date startDate,
+                                                                        Date endDate,
+                                                                        String currency);
 
     /**
      * Get Bank Deposit from-to Date Return Deposit by Currency with depositors
@@ -279,9 +279,9 @@ import java.util.Map;
      * @return List<Map> a list of all bank deposits with a report on all relevant
      * bank depositors with the specified task`s date return deposit
      */
-     List<Map> getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(String currency,
-                                                                              Date startDate,
-                                                                              Date endDate);
+     List<Map> getBankDepositsByCurrencyFromToDateReturnDepositWithDepositors(Date startDate,
+                                                                              Date endDate,
+                                                                              String currency);
 
      /**
       * Get Bank Deposits by Depositor mark return with depositors
